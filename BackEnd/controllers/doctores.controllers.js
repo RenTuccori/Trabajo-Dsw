@@ -1,10 +1,10 @@
 import { pool } from '../bd.js';
 
-export const getUsers = async (req, res) => {
+export const getDoctors = async (req, res) => {
   try {
-    const [result] = await pool.query('SELECT * FROM usuarios');
+    const [result] = await pool.query('SELECT * FROM doctores');
     if (result.length === 0) {
-      return res.status(404).json({ message: 'No hay usuarios cargados' });
+      return res.status(404).json({ message: 'No hay doctores cargados' });
     } else {
       res.json(result);
     }
@@ -13,13 +13,13 @@ export const getUsers = async (req, res) => {
   }
 };
 
-export const getUserByDni = async (req, res) => {
+export const getDoctorByDni = async (req, res) => {
   try {
-    const [result] = await pool.query('SELECT * FROM usuarios WHERE dni = ?', [
+    const [result] = await pool.query('SELECT * FROM doctores WHERE dni = ?', [
       req.params.dni,
     ]);
     if (result.length === 0) {
-      return res.status(404).json({ message: 'Usuario no encontrado' });
+      return res.status(404).json({ message: 'Doctor no encontrado' });
     } else {
       res.json(result[0]);
     }
@@ -28,11 +28,12 @@ export const getUserByDni = async (req, res) => {
   }
 };
 
-export const createUser = async (req, res) => {
+export const createDoctor = async (req, res) => {
   const {
     nombre,
     apellido,
     dni,
+    matricula,
     fechaNac,
     sexo,
     telefono,
@@ -42,11 +43,12 @@ export const createUser = async (req, res) => {
   } = req.body;
   try {
     await pool.query(
-      'INSERT INTO usuarios (nombre, apellido, dni,fechaNac, sexo, telefono, mail, direccion, codpostal) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
+      'INSERT INTO usuarios (nombre, apellido, dni, matricula, fechaNac, sexo, telefono, mail, direccion, codpostal) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
       [
         nombre,
         apellido,
         dni,
+        matricula,
         fechaNac,
         sexo,
         telefono,
@@ -59,6 +61,7 @@ export const createUser = async (req, res) => {
       nombre,
       apellido,
       dni,
+      matricula,
       fechaNac,
       sexo,
       telefono,
@@ -71,28 +74,28 @@ export const createUser = async (req, res) => {
   }
 };
 
-export const updateUser = async (req, res) => {
+export const updateDoctor = async (req, res) => {
   try {
-    const [result] = await pool.query('UPDATE usuarios SET / WHERE dni = ?', [
+    const [result] = await pool.query('UPDATE doctores SET / WHERE dni = ?', [
       req.body,
       req.params.dni,
     ]);
     if (result.affectedRows === 0) {
-      return res.status(404).json({ message: 'Usuario no encontrado' });
+      return res.status(404).json({ message: 'Doctor no encontrado' });
     }
-    res.json({ message: 'Usuario actualizado' });
+    res.json({ message: 'Doctor actualizado' });
   } catch (error) {
     return res.status(500).json({ message: error.message });
   }
 };
 
-export const deleteUser = async (req, res) => {
+export const deleteDoctor = async (req, res) => {
   try {
-    const [result] = await pool.query('DELETE FROM usuarios WHERE dni = ?', [
+    const [result] = await pool.query('DELETE FROM doctores WHERE dni = ?', [
       req.params.dni,
     ]);
     if (result.affectedRows === 0) {
-      return res.status(404).json({ message: 'Usuario no encontrado' });
+      return res.status(404).json({ message: 'Doctor no encontrado' });
     }
     return res.sendStatus(204);
   } catch (error) {
