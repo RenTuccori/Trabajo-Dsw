@@ -1,4 +1,4 @@
-import { pool } from '../bd.js';
+import { pool } from '../db.js';
 
 export const getDoctors = async (req, res) => {
   try {
@@ -43,7 +43,7 @@ export const createDoctor = async (req, res) => {
   } = req.body;
   try {
     await pool.query(
-      'INSERT INTO usuarios (nombre, apellido, dni, matricula, fechaNac, sexo, telefono, mail, direccion, codpostal) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
+      'INSERT INTO doctores (nombre, apellido, dni, matricula, fechaNac, sexo, telefono, mail, direccion, codpostal) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
       [
         nombre,
         apellido,
