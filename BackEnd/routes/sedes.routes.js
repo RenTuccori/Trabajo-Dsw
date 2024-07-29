@@ -6,8 +6,8 @@ import {
 
 const router = Router();
 
-router.get('/sedes', getSedes);
+router.get('/api/sedes', getSedes);
 
-router.get('/sedes/:id', getSedeById);
+router.get('/api/sedes/:id', getSedeById);
 
 export default router;

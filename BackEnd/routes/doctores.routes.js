@@ -9,14 +9,14 @@ import {
 
 const router = Router();
 
-router.get('/doctors', getDoctors);
+router.get('/api/doctors', getDoctors);
 
-router.get('/doctors/:dni', getDoctorByDni);
+router.get('/api/doctors/', getDoctorByDni);
 
-router.post('/doctors', createDoctor);
+router.post('/api/doctors/', createDoctor);
 
-router.put('/doctors/:dni', updateDoctor);
+router.put('/api/doctors/', updateDoctor);
 
-router.delete('/doctors/:dni', deleteDoctor);
+router.delete('/api/doctors/', deleteDoctor);
 
 export default router;

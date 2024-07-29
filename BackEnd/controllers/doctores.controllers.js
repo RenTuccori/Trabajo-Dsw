@@ -2,7 +2,8 @@ import { pool } from '../db.js';
 
 export const getDoctors = async (req, res) => {
   try {
-    const [result] = await pool.query('SELECT * FROM doctores');
+    const {idSede, idEspecialidad}=req.params;
+    const [result] = await pool.query('SELECT  FROM doctores');
     if (result.length === 0) {
       return res.status(404).json({ message: 'No hay doctores cargados' });
     } else {
@@ -13,7 +14,7 @@ export const getDoctors = async (req, res) => {
   }
 };
 
-export const getDoctorByDni = async (req, res) => {
+/*export const getDoctorByDni = async (req, res) => {
   try {
     const [result] = await pool.query('SELECT * FROM doctores WHERE dni = ?', [
       req.params.dni,
@@ -26,7 +27,7 @@ export const getDoctorByDni = async (req, res) => {
   } catch (error) {
     return res.status(500).json({ message: error.message });
   }
-};
+};*/
 
 export const createDoctor = async (req, res) => {
   const {

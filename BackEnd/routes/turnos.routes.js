@@ -8,12 +8,12 @@ import {
 
 const router = Router();
 
-router.get('/turnos', getTurnos);
+router.get('/api/turnos', getTurnos);
 
-router.get('/turnos/:id', getTurnoById);
+router.get('/api/turnos/:id', getTurnoById);
 
-router.post('/turnos', createTurno);
+router.post('/api/turnos', createTurno);
 
-router.delete('/turnos/:id', deleteTurno);
+router.delete('/api/turnos/:id', deleteTurno);
 
 export default router;

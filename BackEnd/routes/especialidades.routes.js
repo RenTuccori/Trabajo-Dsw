@@ -9,14 +9,14 @@ import {
 
 const router = Router();
 
-router.get('/specialties', getSpecialties);
+router.get('/api/specialties', getSpecialties);
 
-router.get('/specialties/:id', getSpecialtyById);
+router.get('/api/specialties/:id', getSpecialtyById);
 
-router.post('/specialties', createSpecialty);
+router.post('/api/specialties', createSpecialty);
 
-router.put('/specialties/:id', updateSpecialty);
+router.put('/api/specialties/:id', updateSpecialty);
 
-router.delete('/specialties/:id', deleteSpecialty);
+router.delete('/api/specialties/:id', deleteSpecialty);
 
 export default router;
