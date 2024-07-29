@@ -14,7 +14,7 @@ export const getDoctors = async (req, res) => {
   }
 };
 
-/*export const getDoctorByDni = async (req, res) => {
+export const getDoctorByDni = async (req, res) => {
   try {
     const [result] = await pool.query('SELECT * FROM doctores WHERE dni = ?', [
       req.params.dni,
@@ -27,7 +27,7 @@ export const getDoctors = async (req, res) => {
   } catch (error) {
     return res.status(500).json({ message: error.message });
   }
-};*/
+};
 
 export const createDoctor = async (req, res) => {
   const {

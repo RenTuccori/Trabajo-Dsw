@@ -30,7 +30,7 @@ CREATE TABLE Turnos (
   idTurno INT AUTOINCREMENT,
   idHorario INT,
   idPaciente INT,
-  fecha DATE,
+  fechaYHoraTurno DATE,
   fechaCancelacion DATE,
   fechaConfirmacion DATE,
   estado VARCHAR(20),

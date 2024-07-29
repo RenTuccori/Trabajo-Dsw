@@ -9,7 +9,7 @@ import {
 
 const router = Router();
 
-//router.get('/api/users', getUsers);
+router.get('/api/users', getUsers);
 
 router.get('/api/users/:dni', getUserByDni);
 

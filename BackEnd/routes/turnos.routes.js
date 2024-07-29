@@ -1,16 +1,13 @@
 import { Router } from 'express';
 import {
-  getTurnos,
-  getTurnoById,
+  getTurnoByDni,
   createTurno,
   deleteTurno,
 } from '../controllers/turnos.controllers.js';
 
 const router = Router();
 
-router.get('/api/turnos', getTurnos);
-
-router.get('/api/turnos/:id', getTurnoById);
+router.get('/api/turnos/:dni', getTurnoByDni);
 
 router.post('/api/turnos', createTurno);
 
