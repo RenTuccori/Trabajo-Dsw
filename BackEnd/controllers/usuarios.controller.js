@@ -30,41 +30,35 @@ export const getUserByDni = async (req, res) => {
 
 export const createUser = async (req, res) => {
   const {
-    nombre,
-    apellido,
-    dni,
-    fechaNac,
-    sexo,
-    telefono,
-    mail,
-    direccion,
-    codpostal,
+       dni,
+       nombre,  
+       apellido,  
+       telefono, 
+       email,  
+       direccion,  
+       idObraSocial, 
   } = req.body;
   try {
     await pool.query(
-      'INSERT INTO usuarios (nombre, apellido, dni,fechaNac, sexo, telefono, mail, direccion, codpostal) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
+      'INSERT INTO usuarios (dni, nombre, apellido, telefono, email, direccion, idObraSocial) VALUES (?, ?, ?, ?, ?, ?, ?)',
       [
-        nombre,
-        apellido,
-        dni,
-        fechaNac,
-        sexo,
-        telefono,
-        mail,
-        direccion,
-        codpostal,
+       dni,
+       nombre,  
+       apellido,  
+       telefono, 
+       email,  
+       direccion,  
+       idObraSocial, 
       ]
     );
     res.json({
-      nombre,
-      apellido,
-      dni,
-      fechaNac,
-      sexo,
-      telefono,
-      mail,
-      direccion,
-      codpostal,
+       dni,
+       nombre,  
+       apellido,  
+       telefono, 
+       email,  
+       direccion,  
+       idObraSocial, 
     });
   } catch (error) {
     return res.status(500).json({ message: error.message });

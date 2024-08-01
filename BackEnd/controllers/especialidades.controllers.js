@@ -2,7 +2,10 @@ import { pool } from '../db.js';
 
 export const getSpecialties = async (req, res) => {
   try {
-    const [result] = await pool.query('SELECT * FROM especialidades');
+    const {idSede} = req.params;
+    const [result] = await pool.query(
+    'SELECT DISTINCT sde.idEspecialidad, es.nombre FROM especialidades es INNER JOIN sededoctoresp sde ON es.idEspecialidad = sde.idEspecialidad WHERE sde.idSede = ?',
+    [idSede]);
     res.json(result);
   } catch (error) {
     return res.status(500).json({ message: error.message });
@@ -26,15 +29,14 @@ export const getSpecialtyById = async (req, res) => {
 
 export const createSpecialty = async (req, res) => {
   try {
-    const { id, nombre } = req.body;
+    const { idEspecialidad, nombre } = req.body;
     const [result] = await pool.query(
-      'INSERT INTO especialidades(id, nombre, descripcion) VALUES (?,?,?) ',
-      [id, nombre, descripcion]
+      'INSERT INTO especialidades(id, nombre, descripcion) VALUES (?,?) ',
+      [idEspecialidad, nombre]
     );
     res.json({
       id: result.insertId,
       nombre,
-      descripcion,
     });
   } catch (error) {
     return res.status(500).json({ message: error.message });

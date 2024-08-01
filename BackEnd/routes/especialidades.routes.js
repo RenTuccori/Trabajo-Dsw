@@ -9,7 +9,7 @@ import {
 
 const router = Router();
 
-router.get('/api/specialties', getSpecialties);
+router.get('/api/specialties/:idSede', getSpecialties);
 
 router.get('/api/specialties/:id', getSpecialtyById);
 

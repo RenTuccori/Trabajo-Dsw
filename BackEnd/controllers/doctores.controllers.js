@@ -2,15 +2,18 @@ import { pool } from '../db.js';
 
 export const getDoctors = async (req, res) => {
   try {
-    const {idSede, idEspecialidad}=req.params;
-    const [result] = await pool.query('SELECT  FROM doctores');
+    const { idSede, idEspecialidad } = req.params;
+    const [result] = await pool.query(
+      'select distinct doc.idDoctor, u.nombre, u.apellido sde INNER JOIN doctores doc ON sde.idDoctor = doc.idDoctor WHERE sde.idSede = ? AND sde.idEspecialidad = ?',
+      [idSede, idEspecialidad]
+    );
     if (result.length === 0) {
       return res.status(404).json({ message: 'No hay doctores cargados' });
     } else {
       res.json(result);
     }
   } catch (error) {
-    console.log(error);
+    return res.status(500).json({ message: error.message });
   }
 };
 
