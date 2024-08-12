@@ -2,7 +2,7 @@ import { pool } from '../db.js';
 
 export const getSpecialties = async (req, res) => {
   try {
-    const {idSede} = req.params;
+    const {idSede} = req.body;
     const [result] = await pool.query(
     'SELECT DISTINCT sde.idEspecialidad, es.nombre FROM especialidades es INNER JOIN sededoctoresp sde ON es.idEspecialidad = sde.idEspecialidad WHERE sde.idSede = ?',
     [idSede]);

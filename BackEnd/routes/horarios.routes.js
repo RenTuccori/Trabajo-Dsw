@@ -1,10 +1,12 @@
 import { Router } from 'express';
 import {
-  getHorariosDisp
+  getHorariosDispDocEspSed,
+  getHorariosDispEspSed
 } from '../controllers/horarios.controllers.js';
 
 const router = Router();
 
-router.get('/api/horariosdisp', getHorariosDisp);
+router.get('/api/DispDocEspSed', getHorariosDispDocEspSed);
+router.get('/api/DispEspSed', getHorariosDispEspSed);
 
 export default router;

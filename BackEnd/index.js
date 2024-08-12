@@ -3,6 +3,7 @@ import usersRouter from './routes/usuarios.routes.js';
 import doctorsRouter from './routes/doctores.routes.js';
 import specialtiesRouter from './routes/especialidades.routes.js';
 import turnosRouter from './routes/turnos.routes.js';
+import horariosRouter from './routes/horarios.routes.js';
 
 const app = express();
 const PORT = 3000;
@@ -12,6 +13,7 @@ app.use(usersRouter);
 app.use(doctorsRouter);
 app.use(specialtiesRouter);
 app.use(turnosRouter);
+app.use(horariosRouter);
 
 app.listen(PORT, () => {
   console.log(`Server is running on PORT ${PORT}`);
