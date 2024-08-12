@@ -31,7 +31,7 @@ export const createSpecialty = async (req, res) => {
   try {
     const { idEspecialidad, nombre } = req.body;
     const [result] = await pool.query(
-      'INSERT INTO especialidades(id, nombre, descripcion) VALUES (?,?) ',
+      'INSERT INTO especialidades(id, nombre, descripcion) VALUES (?,?,?) ',
       [idEspecialidad, nombre]
     );
     res.json({

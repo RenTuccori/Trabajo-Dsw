@@ -61,7 +61,7 @@ export const createTurno = async (req, res) => {
 
 export const deleteTurno = async (req, res) => {
   try {
-    const [result] = await pool.query('DELETE FROM doctores WHERE idTurno = ?', [
+    const [result] = await pool.query('DELETE FROM turnos WHERE idTurno = ?', [
       req.params.idTurnos,
     ]);
     if (result.affectedRows === 0) {
