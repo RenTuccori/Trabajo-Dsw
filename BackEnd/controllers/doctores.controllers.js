@@ -35,53 +35,28 @@ export const getDoctorByDni = async (req, res) => {
 
 export const createDoctor = async (req, res) => {
   const {
+<<<<<<< HEAD
     idDoctor, 
     dni,
     duracionTurno
   } = req.body;
+=======
+    idPaciente,
+    dni
+    } = req.body;
+>>>>>>> 31fb89fdec6787f570b8728b7c280f3d7c9af2d9
   try {
     await pool.query(
-      'INSERT INTO doctores (nombre, apellido, dni, matricula, fechaNac, sexo, telefono, mail, direccion, codpostal) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
+      'INSERT INTO doctores (idPaciente,dni) VALUES (?,?)',
       [
-        nombre,
-        apellido,
-        dni,
-        matricula,
-        fechaNac,
-        sexo,
-        telefono,
-        mail,
-        direccion,
-        codpostal,
+        idPaciente,
+        dni
       ]
     );
     res.json({
-      nombre,
-      apellido,
-      dni,
-      matricula,
-      fechaNac,
-      sexo,
-      telefono,
-      mail,
-      direccion,
-      codpostal,
+      idPaciente,
+      dni
     });
-  } catch (error) {
-    return res.status(500).json({ message: error.message });
-  }
-};
-
-export const updateDoctor = async (req, res) => {
-  try {
-    const [result] = await pool.query('UPDATE doctores SET / WHERE dni = ?', [
-      req.body,
-      req.params.dni,
-    ]);
-    if (result.affectedRows === 0) {
-      return res.status(404).json({ message: 'Doctor no encontrado' });
-    }
-    res.json({ message: 'Doctor actualizado' });
   } catch (error) {
     return res.status(500).json({ message: error.message });
   }
