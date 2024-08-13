@@ -2,9 +2,12 @@ import { pool } from '../db.js';
 
 export const getTurnoByDni = async (req, res) => {
   try {
-    const [result] = await pool.query('SELECT pac.dni, tur.fechaYHora, sed.nombre Sede, sed.direccion Direccion, esp.nombre Especialidad, usudoc.apellido Doctor  FROM usuarios usu inner JOIN pacientes pac on usu.dni = pac.dni inner join turnos tur on pac.idPaciente = tur.idPaciente inner join sedes sed on sed.idSede = tur.idSede inner join doctores doc on tur.idDoctor = doc.idDoctor inner join especialidades esp on esp.idEspecialidad = tur.idEspecialidad inner join usuarios usudoc on doc.dni = usudoc.dni WHERE usu.dni = ?', [
-      req.params.dni,
-    ]);
+    const {dni} = req.body;
+    const [result] = await pool.query('SELECT pac.dni, tur.fechaYHora, sed.nombre Sede, sed.direccion Direccion, esp.nombre Especialidad, usudoc.apellido Doctor  FROM usuarios usu inner JOIN pacientes pac on usu.dni = pac.dni inner join turnos tur on pac.idPaciente = tur.idPaciente inner join sedes sed on sed.idSede = tur.idSede inner join doctores doc on tur.idDoctor = doc.idDoctor inner join especialidades esp on esp.idEspecialidad = tur.idEspecialidad inner join usuarios usudoc on doc.dni = usudoc.dni WHERE usu.dni = ?', 
+      [dni]);
+      [
+      req.body.dni,
+    ];
     if (result.length === 0) {
       return res.status(404).json({ message: 'error' });
     } else {

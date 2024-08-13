@@ -8,7 +8,7 @@ CREATE TABLE `doctores` (
   `idEspecialidad` int NOT NULL,
   `nombre` varchar(100) NOT NULL,
   PRIMARY KEY (`idEspecialidad`)
-) CREATE TABLE `horarios_disponibles` (
+) CREATE TABLE horarios_disponibles (
   `idSede` int NOT NULL,
   `idDoctor` int NOT NULL,
   `idEspecialidad` int NOT NULL,

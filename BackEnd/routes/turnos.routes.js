@@ -7,7 +7,7 @@ import {
 
 const router = Router();
 
-router.get('/api/turnos/:dni', getTurnoByDni);
+router.get('/api/turnos', getTurnoByDni);
 
 router.post('/api/turnos', createTurno);
 
