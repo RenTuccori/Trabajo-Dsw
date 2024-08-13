@@ -35,16 +35,9 @@ export const getDoctorByDni = async (req, res) => {
 
 export const createDoctor = async (req, res) => {
   const {
-    nombre,
-    apellido,
+    idDoctor, 
     dni,
-    matricula,
-    fechaNac,
-    sexo,
-    telefono,
-    mail,
-    direccion,
-    codpostal,
+    duracionTurno
   } = req.body;
   try {
     await pool.query(
