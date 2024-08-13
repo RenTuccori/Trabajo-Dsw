@@ -1,6 +1,6 @@
 CREATE TABLE `doctores` (
   `idDoctor` int NOT NULL,
-  `dni` int DEFAULT NULL,
+  `dni` int NOT NULL,
   PRIMARY KEY (`idDoctor`),
   KEY `dni` (`dni`),
   CONSTRAINT `doctores_ibfk_1` FOREIGN KEY (`dni`) REFERENCES `usuarios` (`dni`)

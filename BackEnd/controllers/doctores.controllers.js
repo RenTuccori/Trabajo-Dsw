@@ -4,11 +4,13 @@ export const getDoctors = async (req, res) => {
   try {
     const { idSede, idEspecialidad } = req.body;
     const [result] = await pool.query(
-      'select distinct doc.idDoctor, u.nombre, u.apellido sde INNER JOIN doctores doc ON sde.idDoctor = doc.idDoctor WHERE sde.idSede = ? AND sde.idEspecialidad = ?',
+    `select distinct doc.idDoctor, u.nombre, u.apellido sde
+     INNER JOIN doctores doc ON sde.idDoctor = doc.idDoctor
+     WHERE sde.idSede = ? AND sde.idEspecialidad = ?`,
       [idSede, idEspecialidad]
     );
     if (result.length === 0) {
-      return res.status(404).json({ message: 'No hay doctores cargados' });
+      return res.status(404).json({ message: 'No hay doctores para esta especialidad' });
     } else {
       res.json(result);
     }
@@ -20,7 +22,11 @@ export const getDoctors = async (req, res) => {
 export const getDoctorByDni = async (req, res) => {
   try {
     const [dni] = req.body;
-    const [result] = await pool.query('SELECT * FROM doctores WHERE dni = ?', [
+    const [result] = await pool.query(`SELECT doc.dni as DNI, u.nombre, u.apellido, u.email FROM 
+      doctores doc INNER JOIN usuarios u 
+      ON doc.dni = u.dni
+      WHERE doc.dni = ?`, 
+      [
       [dni],
     ]);
     if (result.length === 0) {
@@ -35,26 +41,19 @@ export const getDoctorByDni = async (req, res) => {
 
 export const createDoctor = async (req, res) => {
   const {
-<<<<<<< HEAD
-    idDoctor, 
-    dni,
-    duracionTurno
-  } = req.body;
-=======
-    idPaciente,
+    idDoctor,
     dni
     } = req.body;
->>>>>>> 31fb89fdec6787f570b8728b7c280f3d7c9af2d9
   try {
     await pool.query(
       'INSERT INTO doctores (idPaciente,dni) VALUES (?,?)',
       [
-        idPaciente,
+        idDoctor,
         dni
       ]
     );
     res.json({
-      idPaciente,
+      idDoctor,
       dni
     });
   } catch (error) {
