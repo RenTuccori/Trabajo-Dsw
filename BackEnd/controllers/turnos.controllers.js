@@ -3,13 +3,18 @@ import { pool } from '../db.js';
 export const getTurnoByDni = async (req, res) => {
   try {
     const {dni} = req.body;
-    const [result] = await pool.query('SELECT pac.dni, tur.fechaYHora, sed.nombre Sede, sed.direccion Direccion, esp.nombre Especialidad, usudoc.apellido Doctor  FROM usuarios usu inner JOIN pacientes pac on usu.dni = pac.dni inner join turnos tur on pac.idPaciente = tur.idPaciente inner join sedes sed on sed.idSede = tur.idSede inner join doctores doc on tur.idDoctor = doc.idDoctor inner join especialidades esp on esp.idEspecialidad = tur.idEspecialidad inner join usuarios usudoc on doc.dni = usudoc.dni WHERE usu.dni = ?', 
+    const [result] = await pool.query(`
+      SELECT pac.dni, DATE_FORMAT(tur.fechaYhora, '%Y-%m-%d %H:%i:%s') AS fecha_hora, sed.nombre Sede, sed.direccion Direccion, esp.nombre Especialidad, usudoc.apellido Doctor 
+      FROM usuarios usu
+      inner JOIN pacientes pac on usu.dni = pac.dni 
+      inner join turnos tur on pac.idPaciente = tur.idPaciente 
+      inner join sedes sed on sed.idSede = tur.idSede
+      inner join doctores doc on tur.idDoctor = doc.idDoctor 
+      inner join especialidades esp on esp.idEspecialidad = tur.idEspecialidad 
+      inner join usuarios usudoc on doc.dni = usudoc.dni WHERE usu.dni = ?`, 
       [dni]);
-      [
-      req.body.dni,
-    ];
     if (result.length === 0) {
-      return res.status(404).json({ message: 'error' });
+      return res.status(404).json({ message: 'No hay próximos turnos para este paciente' });
     } else {
       res.json(result);
     }
@@ -21,38 +26,39 @@ export const getTurnoByDni = async (req, res) => {
 export const createTurno = async (req, res) => {
   const {
     idTurno,
-    idHorario,
     idPaciente,
-    fechaTurno,
+    fechaYHora,
     fechaCancelacion,
     fechaConfirmacion,
     estado,
+    idEspecialidad,
     idDoctor,
     idSede,
   } = req.body;
   try {
     await pool.query(
-      'INSERT INTO turnos (idTurno, idHorario, idPaciente, fechaTurno, fechaCancelacion, fechaConfirmacion, estado, idDoctor, idSede) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)',
+      `INSERT INTO turnos (idTurno, idPaciente, fechaYHora, fechaCancelacion, fechaConfirmacion, estado, idEspecialidad, idDoctor, idSede) 
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
       [
     idTurno,
-    idHorario,
     idPaciente,
-    fechaTurno,
+    fechaYHora,
     fechaCancelacion,
     fechaConfirmacion,
     estado,
+    idEspecialidad,
     idDoctor,
     idSede,
       ]
     );
     res.json({
     idTurno,
-    idHorario,
     idPaciente,
-    fechaTurno,
+    fechaYHora,
     fechaCancelacion,
     fechaConfirmacion,
     estado,
+    idEspecialidad,
     idDoctor,
     idSede,
     });

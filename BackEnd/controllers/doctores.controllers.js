@@ -19,8 +19,9 @@ export const getDoctors = async (req, res) => {
 
 export const getDoctorByDni = async (req, res) => {
   try {
+    const [dni] = req.body;
     const [result] = await pool.query('SELECT * FROM doctores WHERE dni = ?', [
-      req.params.dni,
+      [dni],
     ]);
     if (result.length === 0) {
       return res.status(404).json({ message: 'Doctor no encontrado' });
