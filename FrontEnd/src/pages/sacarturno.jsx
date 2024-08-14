@@ -6,8 +6,10 @@ import { getDoctores } from '../api/doctores.api';
 import { getFechasDispTodos, getHorariosDisp } from '../api/horarios.api';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
+import { useNavigate } from 'react-router-dom';
 
-export function Ingreso() {
+export function SacarTurno() {
+    const navigate = useNavigate();
     const [sedes, setSedes] = useState([]);
     const [especialidades, setEspecialidades] = useState([]);
     const [doctores, setDoctores] = useState([]);
@@ -160,6 +162,7 @@ export function Ingreso() {
                     value={selectedHorario}
                     isDisabled={!selectedFecha}
                 />
+                <button onClick={() => navigate('/datospersonales')}>Continuar</button>
             </div>
         </div>
     );

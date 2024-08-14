@@ -1,7 +1,7 @@
 import { Router } from 'express';
 import {
   getUsers,
-  getUserByDni,
+  getUserByDniFecha,
   createUser,
   updateUser,
   deleteUser,
@@ -9,14 +9,15 @@ import {
 
 const router = Router();
 
-router.get('/api/users', getUsers);
 
-router.get('/api/users/:dni', getUserByDni);
+router.post('/api/usersdnifecha', getUserByDniFecha);
+
+router.get('/api/userstodos', getUsers);
 
 router.post('/api/users', createUser);
 
-router.put('/api/users/:dni', updateUser);
+router.put('/api/users/', updateUser);
 
-router.delete('/api/users/:dni', deleteUser);
+router.delete('/api/users/', deleteUser);
 
 export default router;

@@ -13,3 +13,38 @@ body{
 .form {
   width: 30%;
 }
+.app {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100vh;
+  width: 100vw;
+  box-sizing: border-box;
+}
+
+.nav {
+  position: absolute;
+  top: 1rem;
+  right: 1rem;
+}
+
+.nav.hide {
+  display: none;
+}
+
+.home, .ingreso {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+  width: 100%;
+}
+
+button {
+  padding: 0.5rem 1rem;
+  font-size: 1rem;
+  cursor: pointer;
+  margin-top: 1rem;
+}
