@@ -47,38 +47,38 @@ export const getUserByDniFecha = async (req, res) => {
 
 export const createUser = async (req, res) => {
   const {
-      dni,
-      nombre,
-      apellido,
-      fechaNacimiento,
-      direccion,
-      telefono,
-      email,
-      idObraSocial
+        dni,
+        fechaNacimiento,
+        nombre,
+        apellido,
+        telefono,
+        email,
+        direccion,
+        idObraSocial
   } = req.body;
   try {
     await pool.query(
-      'INSERT INTO usuarios (dni, nombre, apellido, fechaNacimiento, telefono, email, direccion, idObraSocial) VALUES (?, ?, ?, ?, ?, ?, ?, ?)',
+      'INSERT INTO usuarios (dni, fechaNacimiento, nombre, apellido, telefono, email, direccion, idObraSocial) VALUES (?, ?, ?, ?, ?, ?, ?, ?)',
       [
         dni,
+        fechaNacimiento,
         nombre,
         apellido,
-        fechaNacimiento,
-        direccion,
         telefono,
         email,
+        direccion,
         idObraSocial
       ]
     );
     res.json({
-      dni,
-      nombre,
-      apellido,
-      fechaNacimiento,
-      direccion,
-      telefono,
-      email,
-      idObraSocial 
+        dni,
+        fechaNacimiento,
+        nombre,
+        apellido,
+        telefono,
+        email,
+        direccion,
+        idObraSocial
     });
   } catch (error) {
     return res.status(500).json({ message: error.message });

@@ -47,7 +47,7 @@ export const createDoctor = async (req, res) => {
     } = req.body;
   try {
     await pool.query(
-      'INSERT INTO doctores (idPaciente,dni) VALUES (?,?)',
+      'INSERT INTO doctores (idDoctor,dni) VALUES (?,?)',
       [
         idDoctor,
         dni

@@ -13,9 +13,9 @@ export function DatosPersonales() {
         fechaNacimiento: '',
         nombre: '',
         apellido: '',
-        direccion: '',
         telefono: '',
         email: '',
+        direccion: '',
         idObraSocial: ''
     });
     const [userExists, setUserExists] = useState(false); // Estado para manejar si el usuario existe o no
@@ -44,8 +44,9 @@ export function DatosPersonales() {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
+        console.log(formData);
         const response = await createUser(formData);
-        if (response.data.success) {
+        if (response.data) {
             console.log('Usuario registrado con éxito');
             navigate('/'); // Redirige a una página de confirmación, si existe
         } else {
@@ -135,7 +136,7 @@ export function DatosPersonales() {
                     />
                     <p>Obra Social</p>
                     <Select
-                        options={obrasociales.map(obrasociales => ({ value: obrasociales.nombre, label: obrasociales.nombre }))}
+                        options={obrasociales.map(obrasociales => ({ value: obrasociales.idObraSocial, label: obrasociales.nombre }))}
                         onChange={handleObraSocialChange}
                         value={selectedObraSociales}
                     />
