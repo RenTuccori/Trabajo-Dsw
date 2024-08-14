@@ -7,8 +7,8 @@ import {
 
 const router = Router();
 
-router.get('/api/DispDocEspSed', getFechasDispDocEspSed);
+router.post('/api/DispDocEspSed', getFechasDispDocEspSed);
 router.get('/api/DispEspSed', getFechasDispEspSed);
-router.get('/api/HorariosDispDocEspSed', getHorariosDispDocEspSed);
+router.post('/api/HorariosDispDocEspSed', getHorariosDispDocEspSed);
 
 export default router;
