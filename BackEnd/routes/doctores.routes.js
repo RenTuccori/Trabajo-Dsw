@@ -8,7 +8,7 @@ import {
 
 const router = Router();
 
-router.get('/api/doctors', getDoctors);
+router.post('/api/doctors', getDoctors);
 
 router.get('/api/doctorsdni', getDoctorByDni);
 

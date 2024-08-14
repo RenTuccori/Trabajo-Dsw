@@ -7,11 +7,12 @@ import horariosRouter from './routes/horarios.routes.js';
 import pacienteRouter from './routes/pacientes.routes.js';
 import obrassocialesRouter from './routes/obrassociales.routes.js';
 import sedesRouter from './routes/sedes.routes.js';
-
+import cors from 'cors';
 
 const app = express();
 const PORT = 3000;
 
+app.use(cors());
 app.use(express.json()); //para usar json en el body
 app.use(usersRouter);
 app.use(doctorsRouter);

@@ -9,7 +9,7 @@ import {
 
 const router = Router();
 
-router.get('/api/allspecialties', getSpecialties);
+router.post('/api/allspecialties', getSpecialties);
 
 router.get('/api/idspecialties', getSpecialtyById);
 
