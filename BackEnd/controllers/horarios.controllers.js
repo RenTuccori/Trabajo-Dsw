@@ -111,8 +111,8 @@ export const getFechasDispEspSed = async (req, res) => {
                         WHEN 'Saturday' THEN 'Sábado'
                         WHEN 'Sunday' THEN 'Domingo'
                     END
-    WHERE hd.idEspecialidad = 1 
-      AND hd.idSede = 1
+    WHERE hd.idEspecialidad = ?
+      AND hd.idSede = ?
 
     UNION ALL
 
@@ -150,8 +150,8 @@ export const getFechasDispEspSed = async (req, res) => {
                 END
     AND CONCAT(ts.fecha, ' ', ts.start_time) = tur.fechaYHora
     WHERE (tur.idTurno IS NULL OR tur.fechaCancelacion IS NOT NULL)
-    AND ts.idEspecialidad = 1
-    AND ts.idSede = 1
+    AND ts.idEspecialidad = ?
+    AND ts.idSede = ?
     GROUP BY ts.fecha, ts.dia, usu.nombre, usu.apellido  -- Agrupar por fecha y día
     ORDER BY ts.fecha;`,
     [idEspecialidad,idSede]);
