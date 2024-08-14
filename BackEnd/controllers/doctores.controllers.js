@@ -4,9 +4,10 @@ export const getDoctors = async (req, res) => {
   try {
     const { idSede, idEspecialidad } = req.body;
     const [result] = await pool.query(
-    `select distinct doc.idDoctor, u.nombre, u.apellido sde
+    `select doc.idDoctor, concat(u.nombre, " ", u.apellido) nombreyapellido from sededoctoresp sde
      INNER JOIN doctores doc ON sde.idDoctor = doc.idDoctor
-     WHERE sde.idSede = ? AND sde.idEspecialidad = ?`,
+     INNER join usuarios u on doc.dni = u.dni 
+     where sde.idSede = ? and sde.idEspecialidad = ?`,
       [idSede, idEspecialidad]
     );
     if (result.length === 0) {
