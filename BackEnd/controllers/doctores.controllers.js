@@ -20,6 +20,7 @@ export const getDoctors = async (req, res) => {
   }
 };
 
+
 export const getDoctorByDni = async (req, res) => {
   try {
     const [dni] = req.body;

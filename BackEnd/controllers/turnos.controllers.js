@@ -23,6 +23,32 @@ export const getTurnoByDni = async (req, res) => {
   }
 };
 
+export const getTurnoByDoctor = async (req, res) => {
+  try {
+    const {dni,contra} = req.body;
+    const [result] = await pool.query(`select sed.nombre sede,esp.nombre especialidad,tur.fechaYHora,tur.estado,usu.dni,concat(usu.apellido,' ',usu.nombre) nomyapel from doctores doc
+      inner join turnos tur
+      on tur.idDoctor = doc.idDoctor
+      inner join pacientes pac
+      on pac.idPaciente = tur.idPaciente
+      inner join usuarios usu 
+      on usu.dni = pac.dni
+      inner join sedes sed
+      on sed.idSede = tur.idSede
+      inner join especialidades esp
+      on esp.idEspecialidad = tur.idEspecialidad
+      where doc.dni = ? and doc.contra = ?`, 
+      [dni,contra]);
+    if (result.length === 0) {
+      return res.status(404).json({ message: 'No hay próximos turnos para este paciente' });
+    } else {
+      res.json(result);
+    }
+  } catch (error) {
+    return res.status(500).json({ message: error.message });
+  }
+};
+
 export const createTurno = async (req, res) => {
   const {
     idTurno,

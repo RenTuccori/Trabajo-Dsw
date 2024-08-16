@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { createUser, getUserDniFecha } from '../api/usuarios.api'; // checkUserExists es una nueva función que verifica si el usuario existe
 import Select from 'react-select';
 import { getObraSociales } from '../api/obrasociales.api';
+import '../estilos/white-text.css';
 
 export function DatosPersonales() {
     const [obrasociales, setObraSociales] = useState([]);
@@ -74,7 +75,7 @@ export function DatosPersonales() {
         <div className="container">
             {!userExists ? (
                 <form onSubmit={handleCheckUser}>
-                    <p>DNI</p>
+                    <p className='text'>DNI</p>
                     <input
                         type="text"
                         name="dni"
@@ -82,7 +83,7 @@ export function DatosPersonales() {
                         onChange={handleInputChange}
                         required
                     />
-                    <p>Fecha de Nacimiento</p>
+                    <p className='text'>Fecha de Nacimiento</p>
                     <input
                         type="date"
                         name="fechaNacimiento"
@@ -94,7 +95,7 @@ export function DatosPersonales() {
                 </form>
             ) : (
                 <form onSubmit={handleSubmit}>
-                    <p>Nombre</p>
+                    <p className='text'>Nombre</p>
                     <input
                         type="text"
                         name="nombre"
@@ -102,7 +103,7 @@ export function DatosPersonales() {
                         onChange={handleInputChange}
                         required
                     />
-                    <p>Apellido</p>
+                    <p className='text'>Apellido</p>
                     <input
                         type="text"
                         name="apellido"
@@ -110,7 +111,7 @@ export function DatosPersonales() {
                         onChange={handleInputChange}
                         required
                     />
-                    <p>Dirección</p>
+                    <p className='text'>Dirección</p>
                     <input
                         type="text"
                         name="direccion"
@@ -118,7 +119,7 @@ export function DatosPersonales() {
                         onChange={handleInputChange}
                         required
                     />
-                    <p>Teléfono</p>
+                    <p className='text'>Teléfono</p>
                     <input
                         type="text"
                         name="telefono"
@@ -126,7 +127,7 @@ export function DatosPersonales() {
                         onChange={handleInputChange}
                         required
                     />
-                    <p>Email</p>
+                    <p className='text'>Email</p>
                     <input
                         type="email"
                         name="email"
@@ -134,7 +135,7 @@ export function DatosPersonales() {
                         onChange={handleInputChange}
                         required
                     />
-                    <p>Obra Social</p>
+                    <p className='text'>Obra Social</p>
                     <Select
                         options={obrasociales.map(obrasociales => ({ value: obrasociales.idObraSocial, label: obrasociales.nombre }))}
                         onChange={handleObraSocialChange}

@@ -2,16 +2,14 @@
 import { useNavigate } from 'react-router-dom';
 import '../estilos/home.css';
 
-function Home() {
+function HomeDoctor() {
   const navigate = useNavigate();
 
   return (
     <div className="home-container">
-      <button onClick={() => navigate('/doctor')}>Doctor</button>
-      <button onClick={() => navigate('/paciente')}>Paciente</button>
-
+      <button onClick={() => navigate('/turnosdoctor')}>Ver mis turnos</button>
     </div>
   );
 }
 
-export default Home;
+export default HomeDoctor;

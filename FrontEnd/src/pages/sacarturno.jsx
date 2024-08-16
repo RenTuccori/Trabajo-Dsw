@@ -7,6 +7,7 @@ import { getFechasDispTodos, getHorariosDisp } from '../api/horarios.api';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import { useNavigate } from 'react-router-dom';
+import '../estilos/white-text.css';
 
 export function SacarTurno() {
     const navigate = useNavigate();
@@ -124,20 +125,20 @@ export function SacarTurno() {
     return (
         <div className="container">
             <div className="form">
-                <p>Sede</p>
+                <p className='text'>Sede</p>
                 <Select
                     options={sedes.map(sede => ({ value: sede.idSede, label: sede.nombre }))}
                     onChange={handleSedeChange}
                     value={selectedSede}
                 />
-                <p>Especialidad</p>
+                <p className='text'>Especialidad</p>
                 <Select
                     options={especialidades.map(especialidad => ({ value: especialidad.idEspecialidad, label: especialidad.nombre }))}
                     onChange={handleEspecilidadChange}
                     value={selectedEspecialidad}
                     isDisabled={!selectedSede}
                 />
-                <p>Doctores</p>
+                <p className='text'>Doctores</p>
                 <Select
                     options={doctores.map(doctor => ({ value: doctor.idDoctor, label: doctor.nombreyapellido }))}
                     value={selectedDoctor}
@@ -155,7 +156,7 @@ export function SacarTurno() {
                         />
                     </>
                 )}
-                <p>Horario</p>
+                <p className='text'>Horario</p>
                 <Select
                     options={horarios.map(horario => ({ value: horario.hora_inicio, label: horario.hora_inicio }))}
                     onChange={handleHorarioChange}

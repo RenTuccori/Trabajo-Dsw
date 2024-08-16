@@ -3,11 +3,14 @@ import {
   getTurnoByDni,
   createTurno,
   deleteTurno,
+  getTurnoByDoctor,
 } from '../controllers/turnos.controllers.js';
 
 const router = Router();
 
 router.get('/api/turnos', getTurnoByDni);
+
+router.post('/api/turnosdoc', getTurnoByDoctor);
 
 router.post('/api/turnos', createTurno);
 

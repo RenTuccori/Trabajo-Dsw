@@ -3,7 +3,7 @@ import {
   getDoctors,
   getDoctorByDni,
   createDoctor,
-  deleteDoctor,
+  deleteDoctor
 } from '../controllers/doctores.controllers.js';
 
 const router = Router();
