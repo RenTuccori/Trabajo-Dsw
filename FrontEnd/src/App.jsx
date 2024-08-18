@@ -5,8 +5,9 @@ import HomeUsuario from './pages/homeUsuario';
 import HomeDoctor from './pages/homeDoctor';
 import { SacarTurno } from './pages/sacarturno';
 import {DatosPersonales} from './pages/datospersonales';
-import { VerTurnosDoctor } from './pages/turnosdoctor';
+import {VerTurnosDoctorHistorico } from './pages/turnosDoctorHistorico';
 import Navbar from './componentes/navbar';
+import { VerTurnosDoctorHoy } from './pages/turnosDoctorHoy';
 
 function App() {
   return (
@@ -19,7 +20,8 @@ function App() {
           <Route path="/doctor" element={<HomeDoctor />} />
           <Route path="/sacarturno" element={<SacarTurno />} />
           <Route path="/datospersonales" element={<DatosPersonales />} />
-          <Route path="/turnosdoctor" element={<VerTurnosDoctor />} />
+          <Route path="/turnoshist" element={<VerTurnosDoctorHistorico />} />
+          <Route path="/turnoshoy" element={<VerTurnosDoctorHoy />} />
         </Routes>
       </div>
     </Router>

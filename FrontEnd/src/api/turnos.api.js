@@ -1,4 +1,7 @@
 import axios from 'axios';
-export const getTurnosDoctor = async ({dni,contra}) => {
-    return await axios.post('http://localhost:3000/api/turnosdoc',{dni,contra});
+export const getTurnosHistoricoDoctor = async ({idDoctor}) => {
+    return await axios.post('http://localhost:3000/api/turnosdoc',{idDoctor});
+}
+export const getTurnosDoctorHoy = async ({idDoctor}) => {
+    return await axios.post('http://localhost:3000/api/turnosdochoy',{idDoctor});
 }
