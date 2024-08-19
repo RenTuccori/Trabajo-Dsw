@@ -4,6 +4,7 @@ import '../estilos/home.css';
 
 function Home() {
   const navigate = useNavigate();
+  localStorage.clear();
 
   return (
     <div className="home-container">

@@ -8,6 +8,7 @@ import {DatosPersonales} from './pages/datospersonales';
 import {VerTurnosDoctorHistorico } from './pages/turnosDoctorHistorico';
 import Navbar from './componentes/navbar';
 import { VerTurnosDoctorHoy } from './pages/turnosDoctorHoy';
+import { VerTurnosDoctorFecha } from './pages/turnosDoctorFecha';
 
 function App() {
   return (
@@ -22,6 +23,7 @@ function App() {
           <Route path="/datospersonales" element={<DatosPersonales />} />
           <Route path="/turnoshist" element={<VerTurnosDoctorHistorico />} />
           <Route path="/turnoshoy" element={<VerTurnosDoctorHoy />} />
+          <Route path="/turnosfecha" element={<VerTurnosDoctorFecha />} />
         </Routes>
       </div>
     </Router>

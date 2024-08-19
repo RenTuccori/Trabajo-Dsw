@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { verifyDoctor } from '../api/doctores.api'; 
 import '../estilos/home.css';
@@ -8,8 +8,16 @@ function HomeDoctor() {
   const [dniDoctor, setDniDoctor] = useState('');
   const [contraseña, setContra] = useState('');
   const [isVerified, setIsVerified] = useState(false);
-  const [errorMessage, setErrorMessage] = useState(''); // Estado para el mensaje de error
+  const [errorMessage, setErrorMessage] = useState('');
   const navigate = useNavigate();
+
+  useEffect(() => {
+    // Verificar si el idDoctor ya existe en localStorage al cargar el componente
+    const idDoctor = localStorage.getItem('idDoctor');
+    if (idDoctor) {
+      setIsVerified(true);
+    }
+  }, []);
 
   const handleDniChange = (event) => {
     setDniDoctor(event.target.value);
@@ -27,7 +35,7 @@ function HomeDoctor() {
         console.log('Doctor verificado con ID:', response.data.idDoctor);
         setIsVerified(true);
         localStorage.setItem('idDoctor', response.data.idDoctor);
-        setErrorMessage(''); // Limpiar el mensaje de error
+        setErrorMessage('');
       } else {
         setErrorMessage('Doctor no encontrado');
       }
@@ -66,19 +74,18 @@ function HomeDoctor() {
           >
             Verificar
           </button>
-          {errorMessage && <p className="text">{errorMessage}</p>} {/* Mostrar mensaje de error */}
+          {errorMessage && <p className="text">{errorMessage}</p>}
         </div>
       ) : (
         <div className="home-container">
           <button onClick={() => navigate('/turnoshoy')}>Turnos de hoy</button>
-          <button onClick={() => navigate('/')}>Turnos por Fecha</button>
+          <button onClick={() => navigate('/turnosfecha')}>Turnos por Fecha</button>
           <button onClick={() => navigate('/turnoshist')}>Historial Turnos</button>
+          <button onClick={() => navigate('/')}>Volver</button>
         </div>
-
       )}
     </div>
   );
 }
 
 export default HomeDoctor;
-

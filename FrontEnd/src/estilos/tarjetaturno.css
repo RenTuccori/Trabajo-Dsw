@@ -32,6 +32,12 @@
 }
 
 .turnos-container {
-    margin-top: 20px;
-    width: 100%;
-}
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    height: 100vh; /* Ocupa toda la altura de la ventana */
+    width: 35vw;   /* Ocupa el 35% del ancho de la ventana */
+    margin: 0 auto; /* Centra el contenedor horizontalmente */
+    text-align: center; /* Centra el texto dentro del contenedor */
+  }

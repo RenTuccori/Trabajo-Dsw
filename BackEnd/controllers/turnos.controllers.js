@@ -38,7 +38,7 @@ export const getTurnoByDoctorHistorico = async (req, res) => {
       where tur.idDoctor = ?`, 
       [idDoctor]);
     if (result.length === 0) {
-      return res.status(404).json({ message: 'No hay próximos turnos para este paciente' });
+      return res.status(404).json({ message: 'No hay turnos' });
     } else {
       res.json(result);
     }
@@ -63,7 +63,7 @@ export const getTurnoByDoctorHoy = async (req, res) => {
       where tur.idDoctor = ? and date(tur.fechaYHora) = current_date()`, 
       [idDoctor]);
     if (result.length === 0) {
-      return res.status(404).json({ message: 'No hay próximos turnos para este paciente' });
+      return res.status(404).json({ message: 'No hay turnos' });
     } else {
       res.json(result);
     }
@@ -71,6 +71,32 @@ export const getTurnoByDoctorHoy = async (req, res) => {
     return res.status(500).json({ message: error.message });
   }
 };
+
+
+export const getTurnoByDoctorFecha = async (req, res) => {
+  try {
+    const {idDoctor,fechaYHora} = req.body;
+    const [result] = await pool.query(`select sed.nombre sede,esp.nombre especialidad,tur.fechaYHora,tur.estado,usu.dni,concat(usu.apellido,' ',usu.nombre) nomyapel from  turnos tur
+      inner join pacientes pac
+      on pac.idPaciente = tur.idPaciente
+      inner join usuarios usu 
+      on usu.dni = pac.dni
+      inner join sedes sed
+      on sed.idSede = tur.idSede
+      inner join especialidades esp
+      on esp.idEspecialidad = tur.idEspecialidad
+      where tur.idDoctor = ? and date(tur.fechaYHora) = ?`, 
+      [idDoctor,fechaYHora]);
+    if (result.length === 0) {
+      return res.status(404).json({ message: 'No hay turnos' });
+    } else {
+      res.json(result);
+    }
+  } catch (error) {
+    return res.status(500).json({ message: error.message });
+  }
+};
+
 
 export const createTurno = async (req, res) => {
   const {

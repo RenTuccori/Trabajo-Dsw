@@ -1,9 +1,12 @@
 import { useEffect, useState } from 'react';
 import { getTurnosDoctorHoy } from '../api/turnos.api'; 
+import { useNavigate } from 'react-router-dom';
 import '../estilos/white-text.css';
 import '../estilos/tarjetaturno.css';
+import '../estilos/home.css';
 
 export function VerTurnosDoctorHoy() {
+    const navigate = useNavigate();
     const [turnos, setTurnos] = useState([]);
     const [busquedaRealizada, setBusquedaRealizada] = useState(false);
 
@@ -48,7 +51,11 @@ export function VerTurnosDoctorHoy() {
     };
     
     return (
-        <div className="container">
+        <div className="home-container">
+            <div className= "home-container">
+                <button className = "button" onClick={() => navigate('/doctor')}>Volver</button>
+                <h1 className="text">Turnos de hoy</h1>
+            </div>
             <div className="turnos-container">
                 {busquedaRealizada && turnos.length > 0 ? (
                     turnos.map((turno, index) => (

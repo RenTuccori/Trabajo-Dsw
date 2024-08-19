@@ -5,8 +5,8 @@
     align-items: center;
     height: 100vh; /* Ocupa toda la altura de la ventana */
     width: 35vw;   /* Ocupa el 35% del ancho de la ventana */
-    margin: 0 auto; /* Centra el contenedor horizontalmente */
-    text-align: center; /* Centra el texto dentro del contenedor */
+    margin: 0 auto; /* Centra el contenedor horizontalmente */ 
+    text-align: center; /* Centra el texto dentro del contenedor */ 
   }
   
   .home-container h1 {
@@ -14,7 +14,7 @@
   }
   
   .home-container button {
-    padding: 10px 20px; /* Espaciado dentro del botón */
+    padding: 10px 20px; /* Espaciado dentro del botón  */
     font-size: 16px; /* Tamaño de la fuente del botón */
   }
   
