@@ -14,9 +14,10 @@ export const getSpecialties = async (req, res) => {
 
 export const getSpecialtyById = async (req, res) => {
   try {
+    const {idEspecialidad} = req.body;
     const [result] = await pool.query(
-      'SELECT * FROM especialidades WHERE id = ?',
-      [req.params.id]
+      'SELECT * FROM especialidades WHERE idEspecialidad = ?',
+      [idEspecialidad]
     );
     if (result.length === 0) {
       return res.status(404).json({ message: 'Especialidad no encontrada' });

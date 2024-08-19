@@ -35,7 +35,7 @@ export function SacarTurno() {
 
     const handleSedeChange = async (selectedOption) => {
         setSelectedSede(selectedOption);
-        localStorage.setItem('idSede',selectedOption);
+        localStorage.setItem('idSede',selectedOption.value);
         setSelectedEspecialidad(null);
         setSelectedDoctor(null);
         setDoctores([]);
@@ -51,7 +51,8 @@ export function SacarTurno() {
 
     const handleEspecilidadChange = async (selectedOption) => {
         setSelectedEspecialidad(selectedOption);
-        localStorage.setItem('idEspecialidad',selectedOption);
+        localStorage.setItem('idEspecialidad',selectedOption.value);
+        console.log('Especialidad seleccionada:', selectedOption.value);
         setSelectedDoctor(null);
         setShowDatePicker(false); // Ocultar DatePicker al cambiar especialidad
         if (selectedSede && selectedOption) {
@@ -68,7 +69,8 @@ export function SacarTurno() {
 
     const handleDoctorChange = async (selectedOption) => {
         setSelectedDoctor(selectedOption);
-        localStorage.setItem('idDoctor',selectedOption);
+        localStorage.setItem('idDoctor',selectedOption.value);
+        console.log('Doctor seleccionado:', selectedOption.value);
         setSelectedFecha(null);
         setShowDatePicker(true); // Mostrar DatePicker al seleccionar doctor
         if (selectedSede && selectedOption && selectedEspecialidad) {
@@ -105,6 +107,7 @@ export function SacarTurno() {
         const day = (date.getDate()).toString().padStart(2, '0');
         date = `${year}-${month}-${day}`
         localStorage.setItem('fecha',date);
+        console.log('Fecha seleccionada:', date);
         setSelectedHorario(null);
         if (selectedSede && date && selectedEspecialidad && selectedDoctor) {
             const response = await getHorariosDisp({
@@ -123,8 +126,8 @@ export function SacarTurno() {
    
     const handleHorarioChange = (selectedOption) => {
         setSelectedHorario(selectedOption);
-        localStorage.setItem('hora',selectedOption);
-        console.log('Horario seleccionado:', selectedOption);
+        localStorage.setItem('hora',selectedOption.value);
+        console.log('Horario seleccionado:', selectedOption.value);
     };
 
     return (

@@ -41,6 +41,26 @@ export const getDoctorByDni = async (req, res) => {
   }
 };
 
+
+export const getDoctorById = async (req, res) => {
+  try {
+    const {idDoctor} = req.body;
+    const [result] = await pool.query(`SELECT u.nombre, u.apellido FROM 
+      doctores doc INNER JOIN usuarios u 
+      ON doc.dni = u.dni
+      WHERE doc.idDoctor = ?`, 
+      [idDoctor]
+    );
+    if (result.length === 0) {
+      return res.status(404).json({ message: 'Doctor no encontrado' });
+    } else {
+      res.json(result[0]);
+    }
+  } catch (error) {
+    return res.status(500).json({ message: error.message });
+  }
+};
+
 export const getDoctorByDniContra = async (req, res) => {
   try {
     const {dni,contra} = req.body;

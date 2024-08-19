@@ -15,9 +15,10 @@ export const getSedes = async (req, res) => {
 
 export const getSedeById = async (req, res) => {
   try {
-    const [result] = await pool.query('SELECT * FROM sedes WHERE idSede = ?', [
-      req.params.idSede,
-    ]);
+    const { idSede } = req.body;
+    const [result] = await pool.query('SELECT * FROM sedes WHERE idSede = ?',
+      [idSede],
+);
     if (result.length === 0) {
       return res.status(404).json({ message: '' });
     } else {

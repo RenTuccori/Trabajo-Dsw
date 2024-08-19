@@ -111,7 +111,7 @@ export const createTurno = async (req, res) => {
   } = req.body;
   try {
     const [result] = await pool.query(
-      `INSERT INTO turnos (idTurno, idPaciente, fechaYHora, fechaCancelacion, fechaConfirmacion, estado, idEspecialidad, idDoctor, idSede) 
+      `INSERT INTO turnos (idPaciente, fechaYHora, fechaCancelacion, fechaConfirmacion, estado, idEspecialidad, idDoctor, idSede) 
       VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
       [
     idPaciente,

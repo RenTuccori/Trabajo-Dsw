@@ -8,6 +8,6 @@ const router = Router();
 
 router.get('/api/sedes', getSedes);
 
-router.get('/api/sedes/:id', getSedeById);
+router.get('/api/sedes', getSedeById);
 
 export default router;
