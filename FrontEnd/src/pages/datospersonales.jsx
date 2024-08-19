@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { createUser, getUserDniFecha } from '../api/usuarios.api'; // checkUserExists es una nueva función que verifica si el usuario existe
 import Select from 'react-select';
 import { getObraSociales } from '../api/obrasociales.api';
+import { getPacienteDni,createPaciente } from '../api/pacientes.api';
 import '../estilos/white-text.css';
 
 export function DatosPersonales() {
@@ -33,10 +34,15 @@ export function DatosPersonales() {
         e.preventDefault();
         const { dni, fechaNacimiento } = formData;
         const response = await getUserDniFecha({ dni, fechaNacimiento });
+
         if (response.data) {
             console.log('Usuario encontrado');
+            const datapaciente = await getPacienteDni({dni});
+            console.log('Paciente encontrado:', datapaciente.data.idPaciente);
+            localStorage.setItem('idPaciente',datapaciente.data.idPaciente);
+            console.log('idPaciente:',localStorage.getItem('idPaciente'));
             // Si el usuario existe, puedes redirigirlo a otra página o hacer algo diferente
-            navigate('/confirmacion'); // Redirige a una página de confirmación, si existe
+            navigate('/confirmacionturno'); // Redirige a una página de confirmación, si existe
         } else {
             console.log('Usuario no encontrado, mostrar formulario completo');
             setUserExists(true); // Cambia el estado para mostrar el formulario completo
@@ -47,9 +53,14 @@ export function DatosPersonales() {
         e.preventDefault();
         console.log(formData);
         const response = await createUser(formData);
+        const response1 = await createPaciente({dni:formData.dni});
         if (response.data) {
             console.log('Usuario registrado con éxito');
-            navigate('/'); // Redirige a una página de confirmación, si existe
+            if (response1.data){
+                console.log('Paciente registrado con éxito');}
+                const reponse2 = await getPacienteDni({dni:formData.dni});
+                localStorage.setItem('idPaciente',reponse2.data.idPaciente);
+            navigate('/confirmacionturno'); // Redirige a una página de confirmación, si existe
         } else {
             console.log('Error al registrar usuario');
         }

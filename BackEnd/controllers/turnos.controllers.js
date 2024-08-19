@@ -100,7 +100,6 @@ export const getTurnoByDoctorFecha = async (req, res) => {
 
 export const createTurno = async (req, res) => {
   const {
-    idTurno,
     idPaciente,
     fechaYHora,
     fechaCancelacion,
@@ -111,11 +110,10 @@ export const createTurno = async (req, res) => {
     idSede,
   } = req.body;
   try {
-    await pool.query(
+    const [result] = await pool.query(
       `INSERT INTO turnos (idTurno, idPaciente, fechaYHora, fechaCancelacion, fechaConfirmacion, estado, idEspecialidad, idDoctor, idSede) 
-      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
       [
-    idTurno,
     idPaciente,
     fechaYHora,
     fechaCancelacion,
@@ -127,7 +125,7 @@ export const createTurno = async (req, res) => {
       ]
     );
     res.json({
-    idTurno,
+    idTurno : result.insertId,
     idPaciente,
     fechaYHora,
     fechaCancelacion,

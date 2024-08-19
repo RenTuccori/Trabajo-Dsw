@@ -35,6 +35,7 @@ export function SacarTurno() {
 
     const handleSedeChange = async (selectedOption) => {
         setSelectedSede(selectedOption);
+        localStorage.setItem('idSede',selectedOption);
         setSelectedEspecialidad(null);
         setSelectedDoctor(null);
         setDoctores([]);
@@ -50,6 +51,7 @@ export function SacarTurno() {
 
     const handleEspecilidadChange = async (selectedOption) => {
         setSelectedEspecialidad(selectedOption);
+        localStorage.setItem('idEspecialidad',selectedOption);
         setSelectedDoctor(null);
         setShowDatePicker(false); // Ocultar DatePicker al cambiar especialidad
         if (selectedSede && selectedOption) {
@@ -66,6 +68,7 @@ export function SacarTurno() {
 
     const handleDoctorChange = async (selectedOption) => {
         setSelectedDoctor(selectedOption);
+        localStorage.setItem('idDoctor',selectedOption);
         setSelectedFecha(null);
         setShowDatePicker(true); // Mostrar DatePicker al seleccionar doctor
         if (selectedSede && selectedOption && selectedEspecialidad) {
@@ -101,6 +104,7 @@ export function SacarTurno() {
         const month = (date.getMonth() + 1).toString().padStart(2, '0'); // Meses empiezan desde 0
         const day = (date.getDate()).toString().padStart(2, '0');
         date = `${year}-${month}-${day}`
+        localStorage.setItem('fecha',date);
         setSelectedHorario(null);
         if (selectedSede && date && selectedEspecialidad && selectedDoctor) {
             const response = await getHorariosDisp({
@@ -119,6 +123,7 @@ export function SacarTurno() {
    
     const handleHorarioChange = (selectedOption) => {
         setSelectedHorario(selectedOption);
+        localStorage.setItem('hora',selectedOption);
         console.log('Horario seleccionado:', selectedOption);
     };
 
