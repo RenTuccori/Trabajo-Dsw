@@ -4,5 +4,5 @@ export const getSedes = async () => {
 }
 
 export const getSedeById = async ({idSede}) => {
-    return await axios.get('http://localhost:3000/api/sedes',{idSede});
+    return await axios.post('http://localhost:3000/api/sedes',{idSede});
 }

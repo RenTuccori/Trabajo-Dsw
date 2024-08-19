@@ -1,8 +1,11 @@
 import { useEffect, useState } from 'react';
 import { createTurno } from '../api/turnos.api';
-import { getSpecialtyById } from '../api/especialidades.api';
+import { getEspecialidadById } from '../api/especialidades.api';
 import { getDoctorById } from '../api/doctores.api';
 import { getSedeById } from '../api/sedes.api';
+import '../estilos/home.css';
+import '../estilos/tarjetaturno.css';
+import { useNavigate } from 'react-router-dom';
 
 export function ConfirmacionTurno() {
     const [nombreEspecialidad, setNombreEspecialidad] = useState('');
@@ -10,44 +13,45 @@ export function ConfirmacionTurno() {
     const [apellidoDoctor, setApellidoDoctor] = useState('');
     const [nombreSede, setNombreSede] = useState('');
     const [direccionSede, setDireccionSede] = useState('');
+    const navigate = useNavigate();
 
+    const idPaciente = localStorage.getItem('idPaciente');
+    const fecha = localStorage.getItem('fecha');
+    const hora = localStorage.getItem('hora');
+    const idEspecialidad = localStorage.getItem('idEspecialidad');
+    const idDoctor = localStorage.getItem('idDoctor');
+    const idSede = localStorage.getItem('idSede');
+    const fechaCancelacion = null;
+    const fechaConfirmacion = null;
+    const estado = 'Pendiente';
+
+    const fechaYHora = `${fecha} ${hora}`;
+
+    const body = {
+        idPaciente,
+        fechaYHora,
+        fechaCancelacion,
+        fechaConfirmacion,
+        estado,
+        idEspecialidad,
+        idDoctor,
+        idSede,
+    };
+
+    // Crear el turno
     useEffect(() => {
-        // Obtener los valores del localStorage
-        const idPaciente = localStorage.getItem('idPaciente');
-        const fecha = localStorage.getItem('fecha');
-        const hora = localStorage.getItem('hora');
-        const idEspecialidad = localStorage.getItem('idEspecialidad');
-        const idDoctor = localStorage.getItem('idDoctor');
-        const idSede = localStorage.getItem('idSede');
-        const fechaCancelacion = null;
-        const fechaConfirmacion = null;
-        const estado = 'Pendiente';
-
-        const fechaYHora = `${fecha} ${hora}`;
-
-        const body = {
-            idPaciente,
-            fechaYHora,
-            fechaCancelacion,
-            fechaConfirmacion,
-            estado,
-            idEspecialidad,
-            idDoctor,
-            idSede,
-        };
-        console.log('Body:', body);
-
-        // Crear el turno
-        createTurno({ body })
+        createTurno(body)
             .then(response => {
                 console.log('Turno creado con éxito:', response);
             })
             .catch(error => {
                 console.error('Error al crear el turno:', error);
             });
+    }, []); // The empty array ensures that the effect runs only once after the initial render
 
-        // Obtener los datos adicionales de especialidad, doctor y sede
-        getSpecialtyById({ idEspecialidad })
+    // Obtener los datos adicionales de especialidad, doctor y sede
+    useEffect(() => {
+        getEspecialidadById({ idEspecialidad })
             .then(response => {
                 setNombreEspecialidad(response.data.nombre);
                 console.log('Especialidad:', response.data.nombre);
@@ -73,125 +77,31 @@ export function ConfirmacionTurno() {
             .catch(error => {
                 console.error('Error al obtener la sede:', error);
             });
-    }, []); // El array vacío asegura que el efecto se ejecute solo una vez después del primer render
-
-    const fecha = localStorage.getItem('fecha');
-    const hora = localStorage.getItem('hora');
-    const fechaYHora = `${fecha} ${hora}`;
+    }, []);
 
     return (
-        <div>
-            <h1>Turno confirmado:</h1>
-            <p><strong>Fecha y Hora:</strong> {fechaYHora}</p>
-            <p><strong>Especialidad:</strong> {nombreEspecialidad}</p>
-            <p><strong>Doctor:</strong> {nombreDoctor} {apellidoDoctor}</p>
-            <p><strong>Sede:</strong> {nombreSede}, {direccionSede}</p>
-            <p><strong>Estado:</strong> Pendiente</p>
+        <div className='container'>
+            <div className='turno-card'>
+                <h1>Turno confirmado:</h1>
+                <p>
+                    <strong>Fecha y Hora:</strong> {fechaYHora}
+                </p>
+                <p>
+                    <strong>Especialidad:</strong> {nombreEspecialidad}
+                </p>
+                <p>
+                    <strong>Doctor:</strong> {nombreDoctor} {apellidoDoctor}
+                </p>
+                <p>
+                    <strong>Sede:</strong> {nombreSede}, {direccionSede}
+                </p>
+                <p>
+                    <strong>Estado:</strong> Pendiente
+                </p>
+            </div>
+            <button className='button' onClick={() => navigate('/paciente')}>
+                Volver
+            </button>
         </div>
     );
 }
-
-
-
-/*import { useEffect } from 'react';
-import { createTurno } from '../api/turnos.api';
-import { getSpecialtyById } from '../api/especialidades.api';
-import { getDoctorById } from '../api/doctores.api';
-import { getSedeById } from '../api/sedes.api';
-/*import { getObraSocial } from '../api/obrasociales.api';
-import { getPacienteDni } from '../api/pacientes.api';
-
-export function ConfirmacionTurno() {
-    useEffect(() => {
-        // Obtener los valores del localStorage
-        const idPaciente = localStorage.getItem('idPaciente');
-        const fecha = localStorage.getItem('fecha');
-        const hora = localStorage.getItem('hora');
-        const idEspecialidad = localStorage.getItem('idEspecialidad');
-        const idDoctor = localStorage.getItem('idDoctor');
-        const idSede = localStorage.getItem('idSede');
-        const fechaCancelacion = null;
-        const fechaConfirmacion = null;
-        const estado = 'Pendiente';
-
-        // Concatenar la fecha y la hora
-        const fechaYHora = `${fecha} ${hora}`;
-
-        // Crear el cuerpo de la solicitud
-        const body = {
-            idPaciente,
-            fechaYHora,
-            fechaCancelacion,
-            fechaConfirmacion,
-            estado,
-            idEspecialidad,
-            idDoctor,
-            idSede,
-        };
-
-        // Llamar a la función createTurno
-        createTurno({body})
-            .then(response => {
-                // Manejar la respuesta si es necesario
-                console.log('Turno creado con éxito:', response);
-            })
-            .catch(error => {
-                // Manejar el error si ocurre
-                console.error('Error al crear el turno:', error);
-            });
-
-    }, []); // El array vacío asegura que el efecto se ejecute solo una vez después del primer render
-    
-    const idEspecialidad = localStorage.getItem('idEspecialidad');
-    const idDoctor = localStorage.getItem('idDoctor');
-    const idSede = localStorage.getItem('idSede');
-    const fecha = localStorage.getItem('fecha');
-    const hora = localStorage.getItem('hora');
-    const fechaYHora = `${fecha} ${hora}`;
-    
-    let nombreEspecialidad;
-    let nombreDoctor;
-    let apellidoDoctor;
-    let nombreSede;
-    let direccionSede;
-
-    getSpecialtyById({ idEspecialidad })
-        .then(response => {
-            console.log('Especialidad:', response.data);
-            nombreEspecialidad = response.data.nombre;
-            console.log('Especialidad:', response.data);
-        })
-        .catch(error => {
-            console.error('Error al obtener la especialidad:', error);
-        });
-
-    getDoctorById({ idDoctor })
-        .then(response => {
-            nombreDoctor = response.data.nombre;
-            apellidoDoctor = response.data.apellido;
-            console.log('Doctor:', response.data);
-        })
-        .catch(error => {
-            console.error('Error al obtener el doctor:', error);
-        });
-    
-    getSedeById({ idSede }) 
-        .then(response => {
-            nombreSede = response.data.nombre;
-            direccionSede = response.data.direccion;
-            console.log('Sede:', response.data);
-        })
-        .catch(error => {
-            console.error('Error al obtener la sede:', error);});  
-
-    return (    
-        <div>
-            <h1>Turno confirmado:</h1>
-            <p><strong>Fecha y Hora:</strong> {fechaYHora}</p>
-            <p><strong>Especialidad:</strong> {nombreEspecialidad}</p>
-            <p><strong>Doctor:</strong> {{ nombreDoctor }} {{ apellidoDoctor }}</p>
-            <p><strong>Sede:</strong> {{nombreSede}} {{direccionSede}}</p>
-            <p><strong>Estado:</strong> Pendiente</p>
-        </div>
-    );}
-*/

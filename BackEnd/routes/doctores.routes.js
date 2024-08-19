@@ -14,7 +14,7 @@ router.post('/api/doctors', getDoctors);
 
 router.post('/api/doctorscontra', getDoctorByDniContra);
 
-router.get('/api/doctorsId', getDoctorById);
+router.post('/api/doctorsId', getDoctorById);
 
 router.get('/api/doctorsdni', getDoctorByDni);
 

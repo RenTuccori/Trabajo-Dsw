@@ -8,5 +8,5 @@ export const verifyDoctor = async ({dni,contra}) => {
 }
 
 export const getDoctorById = async ({idDoctor}) => {
-    return await axios.get('http://localhost:3000/api/doctorsId',{idDoctor});
+    return await axios.post('http://localhost:3000/api/doctorsId',{idDoctor});
 }

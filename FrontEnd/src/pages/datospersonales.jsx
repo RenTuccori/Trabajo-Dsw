@@ -69,9 +69,7 @@ export function DatosPersonales() {
         const fetchObraSociales = async () => {
             const response = await getObraSociales();
             setObraSociales(response.data);
-            console.log('Obras sociales fetched:', response.data);
         };
-
         fetchObraSociales();
     }, []);
 

@@ -27,7 +27,6 @@ export function SacarTurno() {
         const fetchSedes = async () => {
             const response = await getSedes();
             setSedes(response.data);
-            console.log('Sedes fetched:', response.data);
         };
 
         fetchSedes();
@@ -42,7 +41,6 @@ export function SacarTurno() {
         setShowDatePicker(false); // Ocultar DatePicker al cambiar sede
         if (selectedOption) {
             const response = await getEspecialidades({ idSede: selectedOption.value });
-            console.log('Especialidades fetched:', response.data);
             setEspecialidades(response.data);
         } else {
             setEspecialidades([]);
@@ -60,7 +58,6 @@ export function SacarTurno() {
                 idSede: selectedSede.value,
                 idEspecialidad: selectedOption.value
             });
-            console.log('Doctores fetched:', response.data);
             setDoctores(response.data);
         } else {
             setDoctores([]);
@@ -79,9 +76,7 @@ export function SacarTurno() {
                 idEspecialidad: selectedEspecialidad.value,
                 idSede: selectedSede.value
             });
-            console.log('Fechas fetched:', response.data);
             const fechasFormateadas = response.data.map(item => {
-                console.log('Fecha original:', item.fecha);
                 return new Date(item.fecha);
             });
             setFechas(fechasFormateadas);
@@ -116,7 +111,6 @@ export function SacarTurno() {
                 idSede: selectedSede.value,
                 fecha: date
             });
-            console.log('Horarios fetched:', response.data);
             setHorarios(response.data);
         } else {
             setHorarios([]);
