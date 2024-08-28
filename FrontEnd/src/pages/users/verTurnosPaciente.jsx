@@ -105,7 +105,7 @@ export function TurnosPersonales() {
                             <p><strong>Estado:</strong> {turno.estado}</p>
                             <button 
                                 onClick={() => handleConfirmarTurno(turno.idTurno)}
-                                disabled={turno.estado === 'Confirmado', turno.estado === 'Cancelado'}
+                                disabled={turno.estado === 'Confirmado' || turno.estado === 'Cancelado'}
                             >
                                 Confirmar
                             </button>
