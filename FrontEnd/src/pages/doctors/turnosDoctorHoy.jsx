@@ -1,9 +1,9 @@
 import { useEffect, useState } from 'react';
-import { getTurnosDoctorHoy } from '../api/turnos.api'; 
+import { getTurnosDoctorHoy } from '../../api/turnos.api'; 
 import { useNavigate } from 'react-router-dom';
-import '../estilos/white-text.css';
-import '../estilos/tarjetaturno.css';
-import '../estilos/home.css';
+import '../../estilos/white-text.css';
+import '../../estilos/tarjetaturno.css';
+import '../../estilos/home.css';
 
 export function VerTurnosDoctorHoy() {
     const navigate = useNavigate();

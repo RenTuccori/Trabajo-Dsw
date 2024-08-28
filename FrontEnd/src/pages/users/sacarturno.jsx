@@ -1,13 +1,13 @@
 import Select from 'react-select';
 import { useEffect, useState } from 'react';
-import { getSedes } from '../api/sedes.api';
-import { getEspecialidades } from '../api/especialidades.api';
-import { getDoctores } from '../api/doctores.api';
-import { getFechasDispTodos, getHorariosDisp } from '../api/horarios.api';
+import { getSedes } from '../../api/sedes.api';
+import { getEspecialidades } from '../../api/especialidades.api';
+import { getDoctores } from '../../api/doctores.api';
+import { getFechasDispTodos, getHorariosDisp } from '../../api/horarios.api';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import { useNavigate } from 'react-router-dom';
-import '../estilos/white-text.css';
+import '../../estilos/white-text.css';
 
 export function SacarTurno() {
     const navigate = useNavigate();

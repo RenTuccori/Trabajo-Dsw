@@ -1,11 +1,11 @@
 import { useEffect, useState } from 'react';
-import { getTurnosHistoricoDoctor, getTurnosDoctorFecha } from '../api/turnos.api'; 
+import { getTurnosHistoricoDoctor, getTurnosDoctorFecha } from '../../api/turnos.api'; 
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import { useNavigate } from 'react-router-dom';
-import '../estilos/white-text.css';
-import '../estilos/tarjetaturno.css';
-import '../estilos/home.css';
+import '../../estilos/white-text.css';
+import '../../estilos/tarjetaturno.css';
+import '../../estilos/home.css';
 
 export function VerTurnosDoctorFecha() {
     const navigate = useNavigate();

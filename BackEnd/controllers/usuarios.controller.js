@@ -87,18 +87,23 @@ export const createUser = async (req, res) => {
 
 export const updateUser = async (req, res) => {
   try {
-    const [result] = await pool.query('UPDATE usuarios SET / WHERE dni = ?', [
-      req.body,
-      req.params.dni,
-    ]);
+    const { dni, nombre, apellido, telefono, email, direccion, idObraSocial } = req.body;
+
+    const [result] = await pool.query(
+      'UPDATE usuarios SET nombre = ?, apellido = ?, telefono = ?, email = ?, direccion = ?, idObraSocial = ? WHERE dni = ?',
+      [nombre, apellido, telefono, email, direccion, idObraSocial, dni]
+    );
+
     if (result.affectedRows === 0) {
       return res.status(404).json({ message: 'Usuario no encontrado' });
     }
+
     res.json({ message: 'Usuario actualizado' });
   } catch (error) {
     return res.status(500).json({ message: error.message });
   }
 };
+
 
 export const deleteUser = async (req, res) => {
   try {
@@ -113,3 +118,4 @@ export const deleteUser = async (req, res) => {
     return res.status(500).json({ message: error.message });
   }
 };
+

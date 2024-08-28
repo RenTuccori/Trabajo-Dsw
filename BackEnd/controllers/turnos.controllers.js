@@ -2,17 +2,17 @@ import { pool } from '../db.js';
 
 export const getTurnoByDni = async (req, res) => {
   try {
-    const {dni} = req.body;
+    const {dni,fechaNacimiento} = req.body;
     const [result] = await pool.query(`
-      SELECT pac.dni, DATE_FORMAT(tur.fechaYhora, '%Y-%m-%d %H:%i:%s') AS fecha_hora, sed.nombre Sede, sed.direccion Direccion, esp.nombre Especialidad, usudoc.apellido Doctor 
+      SELECT pac.dni, DATE_FORMAT(tur.fechaYhora, '%Y-%m-%d %H:%i:%s') AS fecha_hora, sed.nombre Sede, sed.direccion Direccion, esp.nombre Especialidad, usudoc.apellido Doctor, tur.estado, tur.idTurno
       FROM usuarios usu
       inner JOIN pacientes pac on usu.dni = pac.dni 
       inner join turnos tur on pac.idPaciente = tur.idPaciente 
       inner join sedes sed on sed.idSede = tur.idSede
       inner join doctores doc on tur.idDoctor = doc.idDoctor 
       inner join especialidades esp on esp.idEspecialidad = tur.idEspecialidad 
-      inner join usuarios usudoc on doc.dni = usudoc.dni WHERE usu.dni = ?`, 
-      [dni]);
+      inner join usuarios usudoc on doc.dni = usudoc.dni WHERE usu.dni = ? and usu.fechaNacimiento = ?`, 
+      [dni,fechaNacimiento]);
     if (result.length === 0) {
       return res.status(404).json({ message: 'No hay próximos turnos para este paciente' });
     } else {
@@ -97,6 +97,44 @@ export const getTurnoByDoctorFecha = async (req, res) => {
   }
 };
 
+export const confirmarTurno = async (req, res) => {
+  try {
+    const { idTurno } = req.body;
+
+    const [result] = await pool.query(
+      'UPDATE turnos SET estado = ? WHERE idTurno = ?',
+      ["Confirmado", idTurno]
+    );
+
+    if (result.affectedRows === 0) {
+      return res.status(404).json({ message: 'Turno no encontrado' });
+    }
+
+    res.json({ message: 'Estado del turno actualizado a "Confirmado"' });
+  } catch (error) {
+    return res.status(500).json({ message: error.message });
+  }
+};
+
+export const cancelarTurno = async (req, res) => {
+  try {
+    const { idTurno } = req.body;
+
+    const [result] = await pool.query(
+      'UPDATE turnos SET estado = ? WHERE idTurno = ?',
+      ["Cancelado", idTurno]
+    );
+
+    if (result.affectedRows === 0) {
+      return res.status(404).json({ message: 'Turno no encontrado' });
+    }
+
+    res.json({ message: 'Estado del turno actualizado a "Cancelado"' });
+  } catch (error) {
+    return res.status(500).json({ message: error.message });
+  }
+};
+
 
 export const createTurno = async (req, res) => {
   const {
@@ -154,3 +192,4 @@ export const deleteTurno = async (req, res) => {
     return res.status(500).json({ message: error.message });
   }
 };
+

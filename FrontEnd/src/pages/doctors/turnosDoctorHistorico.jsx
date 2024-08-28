@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react';
-import { getTurnosHistoricoDoctor } from '../api/turnos.api'; 
+import { getTurnosHistoricoDoctor } from '../../api/turnos.api'; 
 import { useNavigate } from 'react-router-dom';
-import '../estilos/white-text.css';
-import '../estilos/home.css';
+import '../../estilos/white-text.css';
+import '../../estilos/home.css';
 
 export function VerTurnosDoctorHistorico() {
     const [turnos, setTurnos] = useState([]);

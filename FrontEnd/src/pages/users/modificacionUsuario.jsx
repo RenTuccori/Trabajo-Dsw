@@ -1,12 +1,11 @@
-import { useEffect,useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { createUser, getUserDniFecha } from '../api/usuarios.api'; // checkUserExists es una nueva función que verifica si el usuario existe
+import { getUserDniFecha, updateUser } from '../../api/usuarios.api';
 import Select from 'react-select';
-import { getObraSociales } from '../api/obrasociales.api';
-import { getPacienteDni,createPaciente } from '../api/pacientes.api';
-import '../estilos/white-text.css';
+import { getObraSociales } from '../../api/obrasociales.api';
+import '../../estilos/white-text.css';
 
-export function DatosPersonales() {
+export function EditarDatosPersonales() {
     const [obrasociales, setObraSociales] = useState([]);
     const [selectedObraSociales, setSelectedObraSociales] = useState(null);
     const navigate = useNavigate();
@@ -20,7 +19,7 @@ export function DatosPersonales() {
         direccion: '',
         idObraSocial: ''
     });
-    const [userExists, setUserExists] = useState(false); // Estado para manejar si el usuario existe o no
+    const [userExists, setUserExists] = useState(false);
 
     const handleInputChange = (e) => {
         const { name, value } = e.target;
@@ -29,7 +28,7 @@ export function DatosPersonales() {
             [name]: value
         }));
     };
-    
+
     const handleCheckUser = async (e) => {
         e.preventDefault();
         const { dni, fechaNacimiento } = formData;
@@ -37,34 +36,39 @@ export function DatosPersonales() {
 
         if (response.data) {
             console.log('Usuario encontrado');
-            const datapaciente = await getPacienteDni({dni});
-            console.log('Paciente encontrado:', datapaciente.data.idPaciente);
-            localStorage.setItem('idPaciente',datapaciente.data.idPaciente);
-            console.log('idPaciente:',localStorage.getItem('idPaciente'));
-            // Si el usuario existe, puedes redirigirlo a otra página o hacer algo diferente
-            navigate('/confirmacionturno'); // Redirige a una página de confirmación, si existe
+            const user = response.data;
+            setFormData({
+                ...formData,
+                nombre: user.nombre,
+                apellido: user.apellido,
+                telefono: user.telefono,
+                email: user.email,
+                direccion: user.direccion,
+                idObraSocial: user.idObraSocial
+            });
+            setSelectedObraSociales({ 
+                value: user.idObraSocial, 
+                label: obrasociales.find(os => os.idObraSocial === user.idObraSocial)?.nombre || 'No asignada' 
+            });
+            setUserExists(true);
         } else {
-            console.log('Usuario no encontrado, mostrar formulario completo');
-            setUserExists(true); // Cambia el estado para mostrar el formulario completo
+            console.log('Usuario no encontrado');
+            alert('Usuario no encontrado');
         }
-    }
+    };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        console.log(formData);
-        const response = await createUser(formData);
-        const response1 = await createPaciente({dni:formData.dni});
+        const response = await updateUser(formData);
+
         if (response.data) {
-            console.log('Usuario registrado con éxito');
-            if (response1.data){
-                console.log('Paciente registrado con éxito');}
-                const reponse2 = await getPacienteDni({dni:formData.dni});
-                localStorage.setItem('idPaciente',reponse2.data.idPaciente);
-            navigate('/confirmacionturno'); // Redirige a una página de confirmación, si existe
+            console.log('Usuario actualizado con éxito');
+            navigate('/paciente');
         } else {
-            console.log('Error al registrar usuario');
+            console.log('Error al actualizar usuario');
         }
-    };  
+    };
+
     useEffect(() => {
         const fetchObraSociales = async () => {
             const response = await getObraSociales();
@@ -79,7 +83,8 @@ export function DatosPersonales() {
             ...prevFormData,
             idObraSocial: selectedOption.value
         }));
-    }
+    };
+
     return (
         <div className="container">
             {!userExists ? (
@@ -150,11 +155,9 @@ export function DatosPersonales() {
                         onChange={handleObraSocialChange}
                         value={selectedObraSociales}
                     />
-                    <button type="submit">Enviar</button>
+                    <button type="submit">Guardar Cambios</button>
                 </form>
-                
             )}
         </div>
     );
 }
-

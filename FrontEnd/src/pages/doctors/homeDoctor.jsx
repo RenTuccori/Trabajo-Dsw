@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { verifyDoctor } from '../api/doctores.api'; 
-import '../estilos/home.css';
-import '../estilos/white-text.css';
+import { verifyDoctor } from '../../api/doctores.api'; 
+import '../../estilos/home.css';
+import '../../estilos/white-text.css';
 
 function HomeDoctor() {
   const [dniDoctor, setDniDoctor] = useState('');
