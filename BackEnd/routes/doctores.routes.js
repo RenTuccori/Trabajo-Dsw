@@ -4,11 +4,17 @@ import {
   getDoctorByDni,
   createDoctor,
   deleteDoctor,
+  getDoctorByDniContra,
+  getDoctorById
 } from '../controllers/doctores.controllers.js';
 
 const router = Router();
 
 router.post('/api/doctors', getDoctors);
+
+router.post('/api/doctorscontra', getDoctorByDniContra);
+
+router.post('/api/doctorsId', getDoctorById);
 
 router.get('/api/doctorsdni', getDoctorByDni);
 

@@ -9,8 +9,8 @@ const router = Router();
 
 router.get('/api/patient', getPacientes);
 
-router.get('/api/patientDni', getPacienteByDni);
+router.post('/api/patientdni', getPacienteByDni);
 
-router.post('/api/patient/', createPaciente);
+router.post('/api/patientcreate/', createPaciente);
 
 export default router;

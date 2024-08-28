@@ -4,5 +4,5 @@ export const pool = createPool({
   host: 'localhost',
   user: 'root',
   password: 'dtmvrtnt03',
-  database: 'hospital',
+  database: 'sanatorio'
 });

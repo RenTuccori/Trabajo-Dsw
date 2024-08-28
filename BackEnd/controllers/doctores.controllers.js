@@ -20,6 +20,7 @@ export const getDoctors = async (req, res) => {
   }
 };
 
+
 export const getDoctorByDni = async (req, res) => {
   try {
     const [dni] = req.body;
@@ -40,6 +41,45 @@ export const getDoctorByDni = async (req, res) => {
   }
 };
 
+
+export const getDoctorById = async (req, res) => {
+  try {
+    const {idDoctor} = req.body;
+    const [result] = await pool.query(`SELECT u.nombre, u.apellido FROM 
+      doctores doc INNER JOIN usuarios u 
+      ON doc.dni = u.dni
+      WHERE doc.idDoctor = ?`, 
+      [idDoctor]
+    );
+    if (result.length === 0) {
+      return res.status(404).json({ message: 'Doctor no encontrado' });
+    } else {
+      res.json(result[0]);
+    }
+  } catch (error) {
+    return res.status(500).json({ message: error.message });
+  }
+};
+
+export const getDoctorByDniContra = async (req, res) => {
+  try {
+    const {dni,contra} = req.body;
+    const [result] = await pool.query(`SELECT doc.idDoctor FROM 
+      doctores doc 
+      WHERE doc.dni = ? and doc.contra = ?`, 
+      [
+      dni, contra,
+    ]);
+    if (result.length === 0) {
+      return res.status(404).json({ message: 'Doctor no encontrado' });
+    } else {
+      res.json(result[0]);
+    }
+  } catch (error) {
+    return res.status(500).json({ message: error.message });
+  }
+};
+
 export const createDoctor = async (req, res) => {
   const {
     idDoctor,
@@ -47,7 +87,7 @@ export const createDoctor = async (req, res) => {
     } = req.body;
   try {
     await pool.query(
-      'INSERT INTO doctores (idPaciente,dni) VALUES (?,?)',
+      'INSERT INTO doctores (idDoctor,dni) VALUES (?,?)',
       [
         idDoctor,
         dni
