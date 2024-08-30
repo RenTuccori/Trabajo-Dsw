@@ -96,14 +96,14 @@ export const getTurnoByDoctorFecha = async (req, res) => {
     return res.status(500).json({ message: error.message });
   }
 };
-
 export const confirmarTurno = async (req, res) => {
   try {
     const { idTurno } = req.body;
+    const currentDate = new Date().toISOString().slice(0, 19).replace('T', ' '); // Formato 'YYYY-MM-DD HH:MM:SS'
 
     const [result] = await pool.query(
-      'UPDATE turnos SET estado = ? WHERE idTurno = ?',
-      ["Confirmado", idTurno]
+      'UPDATE turnos SET estado = ?, fechaConfirmacion = ? WHERE idTurno = ?',
+      ["Confirmado", currentDate, idTurno]
     );
 
     if (result.affectedRows === 0) {
@@ -116,13 +116,15 @@ export const confirmarTurno = async (req, res) => {
   }
 };
 
+
 export const cancelarTurno = async (req, res) => {
   try {
     const { idTurno } = req.body;
+    const currentDate = new Date().toISOString().slice(0, 19).replace('T', ' '); // Formato 'YYYY-MM-DD HH:MM:SS'
 
     const [result] = await pool.query(
-      'UPDATE turnos SET estado = ? WHERE idTurno = ?',
-      ["Cancelado", idTurno]
+      'UPDATE turnos SET estado = ?, fechaCancelacion = ? WHERE idTurno = ?',
+      ["Cancelado", currentDate, idTurno]
     );
 
     if (result.affectedRows === 0) {

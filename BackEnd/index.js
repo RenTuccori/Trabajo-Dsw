@@ -7,6 +7,7 @@ import horariosRouter from './routes/horarios.routes.js';
 import pacienteRouter from './routes/pacientes.routes.js';
 import obrassocialesRouter from './routes/obrassociales.routes.js';
 import sedesRouter from './routes/sedes.routes.js';
+import adminRouter from './routes/admin.routes.js';
 import cors from 'cors';
 
 const app = express();
@@ -22,6 +23,7 @@ app.use(horariosRouter);
 app.use(pacienteRouter);
 app.use(obrassocialesRouter);
 app.use(sedesRouter);
+app.use(adminRouter);
 
 app.listen(PORT, () => {
   console.log(`Server is running on PORT ${PORT}`);

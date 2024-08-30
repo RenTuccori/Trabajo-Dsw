@@ -12,6 +12,7 @@ import { VerTurnosDoctorFecha } from './pages/doctors/turnosDoctorFecha.jsx';
 import { EditarDatosPersonales } from './pages/users/modificacionUsuario.jsx';
 import { TurnosPersonales } from './pages/users/verTurnosPaciente.jsx';
 import { ConfirmacionTurno } from './pages/users/confirmacionTurno';
+import HomeAdmin from './pages/administration/homeAdministracion.jsx';
 
 
 function App() {
@@ -31,6 +32,7 @@ function App() {
           <Route path="/editardatospersonales" element={<EditarDatosPersonales />} />
           <Route path="/confirmacionturno" element={<ConfirmacionTurno />} />
           <Route path="/verturnos" element={<TurnosPersonales />} />
+          <Route path="/admin" element={<HomeAdmin />} />
         </Routes>
       </div>
     </Router>

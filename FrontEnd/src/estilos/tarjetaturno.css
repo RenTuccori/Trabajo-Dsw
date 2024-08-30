@@ -25,7 +25,7 @@
     cursor: pointer;
 }
 
-.dni-input, .contra-input {
+.dni-input, .contra-input, .usuario-input {
     width: 100%;
     padding: 8px;
     margin-bottom: 5px; /* Reduce el margen inferior para reducir espacio entre los campos */

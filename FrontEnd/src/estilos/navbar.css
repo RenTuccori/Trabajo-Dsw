@@ -1,18 +1,31 @@
-/* src/components/Navbar.css */
 .navbar {
     position: fixed;
     top: 0;
     width: 100%;
     background-color: #333;
-    padding: 10px;
+    padding: 10px 20px; /* Aumenta el padding horizontal para darle más espacio */
     z-index: 1000;
-    text-align: center;
-    left: 0;
-    right: 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    box-sizing: border-box; /* Asegura que el padding no afecte el ancho total */
 }
 
 .navbar-brand {
     color: white;
     text-decoration: none;
     font-size: 24px;
+    position: relative;
+}
+
+.navbar-tool {
+    color: white;
+    font-size: 1.5rem;
+    position: absolute;
+    right: 20px; /* Ajusta el espacio a la derecha */
+    text-decoration: none;
+}
+
+.navbar-tool:hover {
+    color: #ddd; /* Cambia el color al hacer hover */
 }
