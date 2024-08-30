@@ -1,27 +1,28 @@
 import axios from 'axios';
+const dbUrl = import.meta.env.VITE_DB_URL
 export const getTurnosHistoricoDoctor = async ({idDoctor}) => {
-    return await axios.post('http://localhost:3000/api/turnosdoc',{idDoctor});
+    return await axios.post(`http://${dbUrl}/api/turnosdoc`,{idDoctor});
 }
 export const getTurnosDoctorHoy = async ({idDoctor}) => {
-    return await axios.post('http://localhost:3000/api/turnosdochoy',{idDoctor});
+    return await axios.post(`http://${dbUrl}/api/turnosdochoy`,{idDoctor});
 }
 
 export const getTurnosDoctorFecha = async ({idDoctor,fechaYHora}) => {
-    return await axios.post('http://localhost:3000/api/turnosdocfecha',{idDoctor,fechaYHora});
+    return await axios.post(`http://${dbUrl}/api/turnosdocfecha`,{idDoctor,fechaYHora});
 }
 
 export const createTurno = async ({idPaciente,fechaYHora,fechaCancelacion,fechaConfirmacion,estado,idEspecialidad,idDoctor,idSede}) => {
-    return await axios.post('http://localhost:3000/api/turnos',{idPaciente,fechaYHora,fechaCancelacion,fechaConfirmacion,estado,idEspecialidad,idDoctor,idSede});
+    return await axios.post(`http://${dbUrl}/api/turnos`,{idPaciente,fechaYHora,fechaCancelacion,fechaConfirmacion,estado,idEspecialidad,idDoctor,idSede});
 }
 
 export const getTurnosPaciente = async ({dni,fechaNacimiento}) => {
-    return await axios.post('http://localhost:3000/api/turnospac',{dni,fechaNacimiento});
+    return await axios.post(`http://${dbUrl}/api/turnospac`,{dni,fechaNacimiento});
 }
 
 export const confirmarTurno = async ({idTurno}) => {
-    return await axios.put('http://localhost:3000/api/turnos',{idTurno});
+    return await axios.put(`http://${dbUrl}/api/turnos`,{idTurno});
 }
 
 export const cancelarTurno = async ({idTurno}) => {
-    return await axios.put('http://localhost:3000/api/turnoscancel',{idTurno});
+    return await axios.put(`http://${dbUrl}/api/turnoscancel`,{idTurno});
 }
