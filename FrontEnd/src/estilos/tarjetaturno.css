@@ -1,6 +1,5 @@
 form input[type="text"],
 form input[type="date"] {
-    width: 100%;
     padding: 10px;
     margin-bottom: 10px;
     border: 1px solid #ccc;

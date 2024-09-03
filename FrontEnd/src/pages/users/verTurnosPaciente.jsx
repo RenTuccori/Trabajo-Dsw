@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { getTurnosPaciente, confirmarTurno, cancelarTurno } from '../../api/turnos.api'; 
-import '../../estilos/sacarturno.css';
+import { getTurnosPaciente, confirmarTurno, cancelarTurno } from '../../api/turnos.api';
+
 
 export function TurnosPersonales() {
     const [turnos, setTurnos] = useState([]);
@@ -26,11 +26,11 @@ export function TurnosPersonales() {
         const response = await getTurnosPaciente({ dni, fechaNacimiento });
 
         if (response.data && response.data.length > 0) {
-            setTurnos(response.data); 
+            setTurnos(response.data);
             setBusquedaRealizada(true);
         } else {
             console.log('No se encontraron turnos para el paciente');
-            setBusquedaRealizada(true); 
+            setBusquedaRealizada(true);
         }
     };
 
@@ -70,8 +70,6 @@ export function TurnosPersonales() {
 
     return (
         <div className="home-container">
-            <div className="home-container">
-            </div>
             <form onSubmit={handleCheckUser} className='form'>
                 <p>DNI</p>
                 <input
@@ -102,28 +100,28 @@ export function TurnosPersonales() {
                             <p><strong>Doctor:</strong> {turno.Doctor}</p>
                             <p><strong>DNI Paciente:</strong> {turno.dni}</p>
                             <p><strong>Estado:</strong> {turno.estado}</p>
-                            <button 
+                            <button
                                 onClick={() => handleConfirmarTurno(turno.idTurno)}
                                 disabled={turno.estado === 'Confirmado' || turno.estado === 'Cancelado'}
                             >
                                 Confirmar
                             </button>
-                            <button 
+                            <button
                                 onClick={() => handleCancelarTurno(turno.idTurno)}
                                 disabled={turno.estado === 'Cancelado'}
                             >
                                 Cancelar
                             </button>
-                            
+
                         </div>
-                        
+
                     ))
                 ) : (
                     busquedaRealizada && <p>No hay turnos para mostrar</p>
                 )}
                 <button onClick={() => navigate('/paciente')}>Volver</button>
             </div>
-            
+
         </div>
     );
 }

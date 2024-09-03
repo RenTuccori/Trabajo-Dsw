@@ -8,7 +8,7 @@ import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import { useNavigate } from 'react-router-dom';
 import '../../estilos/sacarturno.css';
-import '../../estilos/tarjetaturno.css';
+
 
 export function SacarTurno() {
     const navigate = useNavigate();

@@ -20,15 +20,13 @@ body {
   background-color: #2a2e45;
   border-radius: 12px;
   padding: 30px;
-  width: 100%;
   max-width: 600px;
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
   display: flex;
   flex-direction: column;
-  gap: 10px;
-  backdrop-filter: blur(10px);
-
-  /* Efecto de desenfoque en el fondo del formulario */
+  gap: 20px;
+  text-align: center;
+  /* Aumenta el espacio entre los elementos */
 }
 
 /* Aplicación general */
@@ -86,4 +84,16 @@ p {
   font-weight: 500;
   color: #ffffff;
   font-family: 'Poppins', sans-serif;
+}
+
+input {
+
+  border: 2px solid #5368e0;
+  padding: 10px;
+  border-radius: 5px;
+  font-size: 1rem;
+  font-family: 'Poppins', sans-serif;
+  outline: none;
+  /* Centra el texto */
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
 }
