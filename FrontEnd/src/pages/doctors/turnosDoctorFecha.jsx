@@ -3,7 +3,7 @@ import { getTurnosHistoricoDoctor, getTurnosDoctorFecha } from '../../api/turnos
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import { useNavigate } from 'react-router-dom';
-import '../../estilos/white-text.css';
+import '../../estilos/sacarturno.css';
 import '../../estilos/tarjetaturno.css';
 import '../../estilos/home.css';
 

@@ -7,7 +7,8 @@ import { getFechasDispTodos, getHorariosDisp } from '../../api/horarios.api';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import { useNavigate } from 'react-router-dom';
-import '../../estilos/white-text.css';
+import '../../estilos/sacarturno.css';
+import '../../estilos/tarjetaturno.css';
 
 export function SacarTurno() {
     const navigate = useNavigate();
@@ -126,22 +127,22 @@ export function SacarTurno() {
 
     return (
         <div className="container">
-            <div className="form">
+            <div className="form" >
                 <p className='text'>Sede</p>
-                <Select
+                <Select class = 'select'
                     options={sedes.map(sede => ({ value: sede.idSede, label: sede.nombre }))}
                     onChange={handleSedeChange}
                     value={selectedSede}
                 />
                 <p className='text'>Especialidad</p>
-                <Select
+                <Select class = 'select'
                     options={especialidades.map(especialidad => ({ value: especialidad.idEspecialidad, label: especialidad.nombre }))}
                     onChange={handleEspecilidadChange}
                     value={selectedEspecialidad}
                     isDisabled={!selectedSede}
                 />
                 <p className='text'>Doctores</p>
-                <Select
+                <Select class = 'select'
                     options={doctores.map(doctor => ({ value: doctor.idDoctor, label: doctor.nombreyapellido }))}
                     value={selectedDoctor}
                     onChange={handleDoctorChange}
@@ -159,7 +160,7 @@ export function SacarTurno() {
                     </>
                 )}
                 <p className='text'>Horario</p>
-                <Select
+                <Select class = 'select'
                     options={horarios.map(horario => ({ value: horario.hora_inicio, label: horario.hora_inicio }))}
                     onChange={handleHorarioChange}
                     value={selectedHorario}

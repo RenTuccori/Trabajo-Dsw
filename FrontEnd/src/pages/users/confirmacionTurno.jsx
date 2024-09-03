@@ -4,7 +4,7 @@ import { getEspecialidadById } from '../../api/especialidades.api';
 import { getDoctorById } from '../../api/doctores.api';
 import { getSedeById } from '../../api/sedes.api';
 import '../../estilos/home.css';
-import '../../estilos/tarjetaturno.css';
+import '../../estilos/sacarturno.css';
 import { useNavigate } from 'react-router-dom';
 
 export function ConfirmacionTurno() {

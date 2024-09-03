@@ -1,8 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { getAdmin } from '../../api/admin.api'; 
-import '../../estilos/home.css';
-import '../../estilos/white-text.css';
+import '../../estilos/sacarturno.css';
 
 function HomeAdmin() {
   const [usuario, setUsuario] = useState('');

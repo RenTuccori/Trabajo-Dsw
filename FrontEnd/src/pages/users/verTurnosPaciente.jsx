@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { getTurnosPaciente, confirmarTurno, cancelarTurno } from '../../api/turnos.api'; 
-import '../../estilos/white-text.css';
+import '../../estilos/sacarturno.css';
 
 export function TurnosPersonales() {
     const [turnos, setTurnos] = useState([]);
@@ -71,10 +71,9 @@ export function TurnosPersonales() {
     return (
         <div className="home-container">
             <div className="home-container">
-                <button className="button" onClick={() => navigate('/paciente')}>Volver</button>
             </div>
-            <form onSubmit={handleCheckUser}>
-                <p className='text'>DNI</p>
+            <form onSubmit={handleCheckUser} className='form'>
+                <p>DNI</p>
                 <input
                     type="text"
                     name="dni"
@@ -82,7 +81,7 @@ export function TurnosPersonales() {
                     onChange={handleInputChange}
                     required
                 />
-                <p className='text'>Fecha de Nacimiento</p>
+                <p>Fecha de Nacimiento</p>
                 <input
                     type="date"
                     name="fechaNacimiento"
@@ -115,12 +114,16 @@ export function TurnosPersonales() {
                             >
                                 Cancelar
                             </button>
+                            
                         </div>
+                        
                     ))
                 ) : (
                     busquedaRealizada && <p>No hay turnos para mostrar</p>
                 )}
+                <button onClick={() => navigate('/paciente')}>Volver</button>
             </div>
+            
         </div>
     );
 }
