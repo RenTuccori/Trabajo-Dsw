@@ -4,7 +4,7 @@ import { FaCog } from 'react-icons/fa'; // Asegúrate de tener react-icons insta
 
 const Navbar = () => {
     return (
-        <nav className="navbar">
+        <nav className="navbar d-flex justify-content-between">
             <Link to="/" className="navbar-brand">
                 Sanatorio UTN
             </Link>
@@ -16,3 +16,4 @@ const Navbar = () => {
 };
 
 export default Navbar;
+

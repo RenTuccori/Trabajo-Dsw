@@ -20,8 +20,6 @@
     font-size: 28px;
     font-family: 'Poppins', sans-serif;
     font-weight: 700;
-    position: relative;
-    flex: 1;
     /* Permite que la marca ocupe todo el espacio disponible */
     text-align: center;
     /* Centra el texto dentro del espacio */
@@ -35,9 +33,8 @@
 .navbar-tool {
     color: #ffffff;
     font-size: 1.5rem;
-    position: absolute;
-    right: 30px;
-    /* Mantiene la herramienta a la derecha */
+    /* Posiciona el icono de engranaje a la derecha */
+    margin-left: auto;
     text-decoration: none;
     transition: color 0.3s ease;
 }

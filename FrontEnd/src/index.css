@@ -20,7 +20,6 @@ body {
   background-color: #2a2e45;
   border-radius: 12px;
   padding: 30px;
-  max-width: 600px;
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
   display: flex;
   flex-direction: column;
@@ -35,8 +34,7 @@ body {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  height: 100vh;
-  width: 100vw;
+
   box-sizing: border-box;
   padding: 20px;
   font-family: 'Poppins', sans-serif;
@@ -80,8 +78,8 @@ button:hover {
 }
 
 p {
-  font-size: 1rem;
-  font-weight: 500;
+  font-size: 1.2rem;
+  font-weight: bold;
   color: #ffffff;
   font-family: 'Poppins', sans-serif;
 }
@@ -96,4 +94,15 @@ input {
   outline: none;
   /* Centra el texto */
   transition: border-color 0.3s ease, box-shadow 0.3s ease;
+  color: black;
+}
+
+form input[type="text"],
+form input[type="date"] {
+  padding: 10px;
+  margin-bottom: 10px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  color: black;
+  font-weight: bold;
 }
