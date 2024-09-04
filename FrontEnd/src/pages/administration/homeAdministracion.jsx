@@ -1,17 +1,16 @@
-import { useState,useEffect} from 'react';  
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import '../../estilos/sacarturno.css';
 import { useAdministracion } from '../../context/administracion/AdministracionProvider.jsx';
 
 function HomeAdmin() {
-  const { idAdmin, login , comprobarToken} = useAdministracion();
+  const { idAdmin, login, comprobarToken } = useAdministracion();
   const [usuario, setUsuario] = useState('');
   const [contra, setContra] = useState('');
   const navigate = useNavigate();
 
 
   const handleLogin = async () => {
-    await login({usuario,contra});
+    await login({ usuario, contra });
   };
 
   const handleUsuarioChange = (event) => {
@@ -55,7 +54,7 @@ function HomeAdmin() {
           >
             Verificar
           </button>
-          
+
         </div>
       ) : (
         <div className="home-container">

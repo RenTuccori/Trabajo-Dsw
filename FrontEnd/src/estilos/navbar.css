@@ -37,9 +37,20 @@
     margin-left: auto;
     text-decoration: none;
     transition: color 0.3s ease;
+    margin-top: 7px;
 }
 
 .navbar-tool:hover {
     color: #5368e0;
     /* Cambia el color al hacer hover */
+}
+
+.navbar-logo {
+    height: 40px;
+    /* Ajusta la altura del logo */
+    margin-right: 10px;
+    /* Espacio entre el logo y el texto */
+    width: auto;
+    /* Mantén la proporción del logo */
+    margin-bottom: -10px;
 }

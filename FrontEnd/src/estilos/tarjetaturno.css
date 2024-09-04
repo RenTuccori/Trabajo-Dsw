@@ -4,6 +4,5 @@ form input[type="date"] {
     margin-bottom: 10px;
     border: 1px solid #ccc;
     border-radius: 4px;
-    color: black;
-    font-weight: bold;
+    border: 2px solid #5368e0;
 }

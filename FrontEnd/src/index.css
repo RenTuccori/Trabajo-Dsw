@@ -23,8 +23,10 @@ body {
   box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
   display: flex;
   flex-direction: column;
-  gap: 20px;
+  gap: 0;
   text-align: center;
+  margin-top: 30px;
+  font-size: 1rem;
   /* Aumenta el espacio entre los elementos */
 }
 
@@ -67,7 +69,6 @@ button {
   margin-top: 1rem;
   transition: background-color 0.3s ease, transform 0.2s ease;
   font-family: 'Poppins', sans-serif;
-
 }
 
 button:hover {
@@ -85,7 +86,6 @@ p {
 }
 
 input {
-
   border: 2px solid #5368e0;
   padding: 10px;
   border-radius: 5px;
@@ -104,5 +104,5 @@ form input[type="date"] {
   border: 1px solid #ccc;
   border-radius: 4px;
   color: black;
-  font-weight: bold;
+  border: 2px solid #5368e0;
 }

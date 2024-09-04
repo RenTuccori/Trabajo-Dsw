@@ -7,7 +7,7 @@ function HomeUsuario() {
   localStorage.clear();
 
   return (
-    <div className="home-container">
+    <div className="form">
       <button onClick={() => navigate('/sacarturno')}>Sacar un Turno</button>
       <button onClick={() => navigate('/verturnos')}>Ver mis turnos</button>
       <button onClick={() => navigate('/editardatospersonales')}>Modificar datos personales</button>

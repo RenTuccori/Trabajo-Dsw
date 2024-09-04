@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { getTurnosPaciente, confirmarTurno, cancelarTurno } from '../../api/turnos.api';
+import '../../estilos/tarjetaturno.css';
 
 
 export function TurnosPersonales() {
@@ -75,6 +76,7 @@ export function TurnosPersonales() {
                 <input
                     type="text"
                     name="dni"
+                    placeholder="DNI"
                     value={formData.dni}
                     onChange={handleInputChange}
                     required

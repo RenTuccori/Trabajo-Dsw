@@ -46,9 +46,9 @@ export function EditarDatosPersonales() {
                 direccion: user.direccion,
                 idObraSocial: user.idObraSocial
             });
-            setSelectedObraSociales({ 
-                value: user.idObraSocial, 
-                label: obrasociales.find(os => os.idObraSocial === user.idObraSocial)?.nombre || 'No asignada' 
+            setSelectedObraSociales({
+                value: user.idObraSocial,
+                label: obrasociales.find(os => os.idObraSocial === user.idObraSocial)?.nombre || 'No asignada'
             });
             setUserExists(true);
         } else {
@@ -93,6 +93,7 @@ export function EditarDatosPersonales() {
                     <input
                         type="text"
                         name="dni"
+                        placeholder="DNI"
                         value={formData.dni}
                         onChange={handleInputChange}
                         required
