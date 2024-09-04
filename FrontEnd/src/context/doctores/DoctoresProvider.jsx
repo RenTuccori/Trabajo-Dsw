@@ -1,6 +1,9 @@
 import { DoctoresContext } from './DoctoresContext';
 import { verifyDoctor } from '../../api/doctores.api.js';
-import { getTurnosHistoricoDoctor } from '../../api/turnos.api.js';
+import { getTurnosHistoricoDoctor,
+          getTurnosDoctorFecha,
+          getTurnosDoctorHoy
+} from '../../api/turnos.api.js';
 import { useContext, useEffect, useState } from 'react';
 import { jwtDecode } from "jwt-decode";
 import PropTypes from 'prop-types';
@@ -21,6 +24,9 @@ export const useDoctores = () => {
     
     const [idDoctor, setidDoctor] = useState('');
     const [turnosHist, setTurnosHist] = useState([]);
+    const [turnosFecha, setTurnosFecha] = useState([]);
+    const [turnosHoy, setTurnosHoy] = useState([]);
+    const [fechas, setFechas] = useState([]);
   
 
     useEffect(() => {
@@ -60,11 +66,21 @@ export const useDoctores = () => {
     async function Historico(){
       const response = await getTurnosHistoricoDoctor({idDoctor});
       setTurnosHist(response.data);
+      const fechasDisponibles = response.data.map(turno => new Date(turno.fechaYHora.split('T')[0]));
+      setFechas(fechasDisponibles);
     }
-
+    async function Fecha(fecha){
+      const formattedDate = `${fecha.getFullYear()}-${(fecha.getMonth() + 1).toString().padStart(2, '0')}-${fecha.getDate().toString().padStart(2, '0')}`
+      const response = await getTurnosDoctorFecha({ idDoctor, fechaYHora: formattedDate });
+      setTurnosFecha(response.data);
+    }
+    async function TurnosHoy(){
+      const response = await getTurnosDoctorHoy({idDoctor});
+      setTurnosHoy(response.data);
+    }
     return (
       <DoctoresContext.Provider
-        value={{ login, comprobarToken, Historico, turnosHist, idDoctor}}>
+        value={{ login, comprobarToken, Historico, turnosHist, idDoctor, fechas, turnosFecha, Fecha, turnosHoy,TurnosHoy}}>
         {children}
       </DoctoresContext.Provider>
     );

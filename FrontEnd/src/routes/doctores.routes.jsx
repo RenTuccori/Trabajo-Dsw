@@ -10,9 +10,9 @@ export function DoctoresRoutes() {
     <DoctoresProvider>
       <Routes>
         <Route path="/" element={<HomeDoctor/>} />
-        <Route path="../turnoshist" element={<VerTurnosDoctorHistorico />} />
-        <Route path="../turnoshoy" element={<VerTurnosDoctorHoy />} />
-        <Route path="../turnosfecha" element={<VerTurnosDoctorFecha />} />
+        <Route path="/turnoshist" element={<VerTurnosDoctorHistorico />} />
+        <Route path="/turnoshoy" element={<VerTurnosDoctorHoy />} />
+        <Route path="/turnosfecha" element={<VerTurnosDoctorFecha />} />
       </Routes>
     </DoctoresProvider>
   );

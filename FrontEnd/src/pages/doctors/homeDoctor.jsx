@@ -25,6 +25,7 @@ function HomeDoctor() {
 
   useEffect(() => {
     comprobarToken();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
 
