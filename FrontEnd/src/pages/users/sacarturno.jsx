@@ -7,7 +7,7 @@ import { getFechasDispTodos, getHorariosDisp } from '../../api/horarios.api';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import { useNavigate } from 'react-router-dom';
-import '../../estilos/sacarturno.css';
+import '../../estilos/home.css';
 
 
 export function SacarTurno() {
@@ -35,7 +35,7 @@ export function SacarTurno() {
 
     const handleSedeChange = async (selectedOption) => {
         setSelectedSede(selectedOption);
-        localStorage.setItem('idSede',selectedOption.value);
+        localStorage.setItem('idSede', selectedOption.value);
         setSelectedEspecialidad(null);
         setSelectedDoctor(null);
         setDoctores([]);
@@ -50,7 +50,7 @@ export function SacarTurno() {
 
     const handleEspecilidadChange = async (selectedOption) => {
         setSelectedEspecialidad(selectedOption);
-        localStorage.setItem('idEspecialidad',selectedOption.value);
+        localStorage.setItem('idEspecialidad', selectedOption.value);
         console.log('Especialidad seleccionada:', selectedOption.value);
         setSelectedDoctor(null);
         setShowDatePicker(false); // Ocultar DatePicker al cambiar especialidad
@@ -67,7 +67,7 @@ export function SacarTurno() {
 
     const handleDoctorChange = async (selectedOption) => {
         setSelectedDoctor(selectedOption);
-        localStorage.setItem('idDoctor',selectedOption.value);
+        localStorage.setItem('idDoctor', selectedOption.value);
         console.log('Doctor seleccionado:', selectedOption.value);
         setSelectedFecha(null);
         setShowDatePicker(true); // Mostrar DatePicker al seleccionar doctor
@@ -87,14 +87,14 @@ export function SacarTurno() {
     };
 
     const isDateAvailable = (date) => {
-        const result = fechas.some(f => 
+        const result = fechas.some(f =>
             f.getFullYear() === date.getFullYear() &&
             f.getMonth() === date.getMonth() &&
-            f.getDate() === (date.getDate()-1)
+            f.getDate() === (date.getDate() - 1)
         );
         return result;
     };
-    
+
 
     const handleFechaChange = async (date) => {
         setSelectedFecha(date);
@@ -102,7 +102,7 @@ export function SacarTurno() {
         const month = (date.getMonth() + 1).toString().padStart(2, '0'); // Meses empiezan desde 0
         const day = (date.getDate()).toString().padStart(2, '0');
         date = `${year}-${month}-${day}`
-        localStorage.setItem('fecha',date);
+        localStorage.setItem('fecha', date);
         console.log('Fecha seleccionada:', date);
         setSelectedHorario(null);
         if (selectedSede && date && selectedEspecialidad && selectedDoctor) {
@@ -117,32 +117,32 @@ export function SacarTurno() {
             setHorarios([]);
         }
     };
-    
-   
+
+
     const handleHorarioChange = (selectedOption) => {
         setSelectedHorario(selectedOption);
-        localStorage.setItem('hora',selectedOption.value);
+        localStorage.setItem('hora', selectedOption.value);
         console.log('Horario seleccionado:', selectedOption.value);
     };
 
     return (
-        <div className="container">
+        <div className="home-container">
             <div className="form" >
                 <p className='text'>Sede</p>
-                <Select class = 'select'
+                <Select class='select'
                     options={sedes.map(sede => ({ value: sede.idSede, label: sede.nombre }))}
                     onChange={handleSedeChange}
                     value={selectedSede}
                 />
                 <p className='text'>Especialidad</p>
-                <Select class = 'select'
+                <Select class='select'
                     options={especialidades.map(especialidad => ({ value: especialidad.idEspecialidad, label: especialidad.nombre }))}
                     onChange={handleEspecilidadChange}
                     value={selectedEspecialidad}
                     isDisabled={!selectedSede}
                 />
                 <p className='text'>Doctores</p>
-                <Select class = 'select'
+                <Select class='select'
                     options={doctores.map(doctor => ({ value: doctor.idDoctor, label: doctor.nombreyapellido }))}
                     value={selectedDoctor}
                     onChange={handleDoctorChange}
@@ -160,7 +160,7 @@ export function SacarTurno() {
                     </>
                 )}
                 <p className='text'>Horario</p>
-                <Select class = 'select'
+                <Select class='select'
                     options={horarios.map(horario => ({ value: horario.hora_inicio, label: horario.hora_inicio }))}
                     onChange={handleHorarioChange}
                     value={selectedHorario}
@@ -168,6 +168,7 @@ export function SacarTurno() {
                 />
                 <button onClick={() => navigate('/datospersonales')}>Continuar</button>
             </div>
+            <button onClick={() => navigate('/')}>Volver</button>
         </div>
     );
 }

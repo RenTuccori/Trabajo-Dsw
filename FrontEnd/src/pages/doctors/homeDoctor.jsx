@@ -5,14 +5,14 @@ import '../../estilos/home.css';
 import '../../estilos/sacarturno.css';
 
 function HomeDoctor() {
-  const { idDoctor, login , comprobarToken} = useDoctores();
+  const { idDoctor, login, comprobarToken } = useDoctores();
   const [dni, setDni] = useState('');
   const [contra, setContra] = useState('');
   const navigate = useNavigate();
 
 
   const handleLogin = async () => {
-    await login({dni,contra});
+    await login({ dni, contra });
   };
 
   const handleDniChange = (event) => {
@@ -25,7 +25,7 @@ function HomeDoctor() {
 
   useEffect(() => {
     comprobarToken();
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
 

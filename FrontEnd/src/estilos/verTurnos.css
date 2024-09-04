@@ -1,0 +1,51 @@
+.lista-wrapper {
+  padding: 20px;
+  background-color: #1a1f36;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.text-turno {
+  margin-bottom: 10px;
+  color: white;
+  font-family: 'Poppins', sans-serif;
+}
+
+.button {
+  margin-bottom: 20px;
+  padding: 10px 20px;
+  background-color: #5368e0;
+  color: #ffffff;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-family: 'Poppins', sans-serif;
+}
+
+.button:hover {
+  background-color: #4054b2;
+}
+
+.turnos-lista {
+  max-height: 300px;
+  /* Ajusta la altura según tus necesidades */
+  overflow-y: auto;
+  width: 100%;
+  padding: 10px;
+  border: 1px solid #1a1f36;
+  border-radius: 5px;
+}
+
+.turno-item {
+  list-style: none;
+  padding: 10px;
+  margin-bottom: 10px;
+  background-color: #2a2e45;
+  border-radius: 5px;
+}
+
+.turno-item:last-child {
+  margin-bottom: 0;
+  border-bottom: none;
+}

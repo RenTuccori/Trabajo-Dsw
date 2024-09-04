@@ -6,17 +6,17 @@ import '../../estilos/home.css';
 import '../../estilos/sacarturno.css';
 
 export function VerTurnosDoctorHistorico() {
-  const {turnosHist , Historico, comprobarToken} = useDoctores();
-  const navigate = useNavigate();
+    const { turnosHist, Historico, comprobarToken } = useDoctores();
+    const navigate = useNavigate();
 
 
-  useEffect(() => {
-    comprobarToken();
-    Historico();
+    useEffect(() => {
+        comprobarToken();
+        Historico();
 
-  }, []);
+    }, []);
 
-  const formatFechaHora = (fechaYHora) => {
+    const formatFechaHora = (fechaYHora) => {
         const opciones = {
             year: 'numeric',
             month: 'long',
@@ -28,29 +28,26 @@ export function VerTurnosDoctorHistorico() {
         };
         return new Date(fechaYHora).toLocaleString('es-ES', opciones);
     };
-
     return (
-        <div className="home-container">
-            <div className= "home-container">
-                <button className = "button" onClick={() => navigate('/doctor')}>Volver</button>
-                <h1 className="text">Turnos de hoy</h1>
-            </div>
-            <div className="turnos-container">
+        <div className="lista-wrapper">
+            <h1 className="text-turno">Historial Turnos</h1>
+            <div className="turnos-lista">
                 {turnosHist.length > 0 ? (
-                    turnosHist.map((turnosHist, index) => (
-                        <div key={index} className="turno-card">
-                            <p><strong>Sede:</strong> {turnosHist.sede}</p>
-                            <p><strong>Especialidad:</strong> {turnosHist.especialidad}</p>
-                            <p><strong>Fecha y Hora:</strong> {formatFechaHora(turnosHist.fechaYHora)}</p>
-                            <p><strong>Estado:</strong> {turnosHist.estado}</p>
-                            <p><strong>DNI Paciente:</strong> {turnosHist.dni}</p>
-                            <p><strong>Apellido y Nombre:</strong> {turnosHist.nomyapel}</p>
-                        </div>
+                    turnosHist.map((turno, index) => (
+                        <ul key={index} className="turno-item">
+                            <p><strong>Sede:</strong> {turno.sede}</p>
+                            <p><strong>Especialidad:</strong> {turno.especialidad}</p>
+                            <p><strong>Fecha y Hora:</strong> {formatFechaHora(turno.fechaYHora)}</p>
+                            <p><strong>Estado:</strong> {turno.estado}</p>
+                            <p><strong>DNI Paciente:</strong> {turno.dni}</p>
+                            <p><strong>Apellido y Nombre:</strong> {turno.nomyapel}</p>
+                        </ul>
                     ))
                 ) : (
                     <p>No hay turnos para mostrar</p>
                 )}
             </div>
-            </div>
+            <button className="button" onClick={() => navigate('/doctor')}>Volver</button>
+        </div>
     );
 }
