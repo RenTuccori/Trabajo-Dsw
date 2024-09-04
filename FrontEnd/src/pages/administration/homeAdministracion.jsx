@@ -1,22 +1,18 @@
-import { useState, useEffect } from 'react';
+import { useState,useEffect} from 'react';  
 import { useNavigate } from 'react-router-dom';
-import { getAdmin } from '../../api/admin.api'; 
 import '../../estilos/sacarturno.css';
+import { useAdministracion } from '../../context/administracion/AdministracionProvider.jsx';
 
 function HomeAdmin() {
+  const { idAdmin, login , comprobarToken} = useAdministracion();
   const [usuario, setUsuario] = useState('');
-  const [contraseña, setContra] = useState('');
-  const [isVerified, setIsVerified] = useState(false);
-  const [errorMessage, setErrorMessage] = useState('');
+  const [contra, setContra] = useState('');
   const navigate = useNavigate();
 
-  useEffect(() => {
-    // Verificar si el idDoctor ya existe en localStorage al cargar el componente
-    const idAdmin = localStorage.getItem('idAdmin');
-    if (idAdmin) {
-      setIsVerified(true);
-    }
-  }, []);
+
+  const handleLogin = async () => {
+    await login({usuario,contra});
+  };
 
   const handleUsuarioChange = (event) => {
     setUsuario(event.target.value);
@@ -26,27 +22,13 @@ function HomeAdmin() {
     setContra(event.target.value);
   };
 
-  const handleVerificarAdmin = async () => {
-    try {
-      const response = await getAdmin({ usuario: usuario, contra: contraseña });
-
-      if (response.data && response.data.idAdmin) {
-        console.log('Admin verificado con ID:', response.data.idAdmin);
-        setIsVerified(true);
-        localStorage.setItem('idAdmin', response.data.idAdmin);
-        setErrorMessage('');
-      } else {
-        setErrorMessage('Admin no encontrado');
-      }
-    } catch (error) {
-      console.error('Error al verificar el admin:', error);
-      setErrorMessage('Admin no encontrado');
-    }
-  };
+  useEffect(() => {
+    comprobarToken();
+  }, []);
 
   return (
     <div className="home-container">
-      {!isVerified ? (
+      {!idAdmin ? (
         <div className="form">
           <div className="input-group">
             <p className='text'>Ingrese su usuario</p>
@@ -60,20 +42,20 @@ function HomeAdmin() {
             <p className='text'>Ingrese su Contraseña</p>
             <input
               type="password"
-              value={contraseña}
+              value={contra}
               onChange={handleContraChange}
               placeholder="Contraseña"
               className="contra-input"
             />
           </div>
           <button
-            onClick={handleVerificarAdmin}
-            disabled={!usuario || !contraseña}
+            onClick={handleLogin}
+            disabled={!usuario || !contra}
             className="verify-button"
           >
             Verificar
           </button>
-          {errorMessage && <p className="text">{errorMessage}</p>}
+          
         </div>
       ) : (
         <div className="home-container">
