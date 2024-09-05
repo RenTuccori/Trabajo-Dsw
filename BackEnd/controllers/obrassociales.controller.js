@@ -1,16 +1,16 @@
 import { pool } from '../db.js';
 
 export const getObrasSociales = async (req, res) => {
-  try {
-    const [result] = await pool.query('SELECT * FROM obrasociales');
-    if (result.length === 0) {
-      return res.status(404).json({ message: 'No hay obras sociales' });
-    } else {
-      res.json(result);
+    try {
+        const [result] = await pool.query('SELECT * FROM obrasociales');
+        if (result.length === 0) {
+            return res.status(404).json({ message: 'No hay obras sociales' });
+        } else {
+            res.json(result);
+        }
+    } catch (error) {
+        console.log(error);
     }
-  } catch (error) {
-    console.log(error);
-  }
 };
 
 export const getObraSocialById = async (req, res) => {
@@ -31,19 +31,16 @@ export const getObraSocialById = async (req, res) => {
 
 export const createObraSocial = async (req, res) => {
     const {
-        idObraSocial,
         nombre
     } = req.body;
     try {
         await pool.query(
-            'INSERT INTO obrasociales (idObraSocial,nombre) VALUES (?,?)',
+            'INSERT INTO obrasociales (nombre) VALUES (?)',
             [
-                idObraSocial,
                 nombre
             ]
         );
         res.json({
-            idObraSocial,
             nombre
 
         });
