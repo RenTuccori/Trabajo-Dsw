@@ -39,7 +39,6 @@ export const useDoctores = () => {
         localStorage.setItem('token', token);
         const decoded = jwtDecode(token);
         setidDoctor(decoded.idDoctor);
-        window.location.reload(); //recarga la pagina para que se actualice el rol globalmente en los componentes hijos
     }
     
     function comprobarToken(){

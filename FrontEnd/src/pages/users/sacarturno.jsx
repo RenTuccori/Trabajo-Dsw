@@ -1,22 +1,15 @@
 import Select from 'react-select';
-import { useEffect, useState } from 'react';
-import { getSedes } from '../../api/sedes.api';
-import { getEspecialidades } from '../../api/especialidades.api';
-import { getDoctores } from '../../api/doctores.api';
-import { getFechasDispTodos, getHorariosDisp } from '../../api/horarios.api';
+import { usePacientes } from '../../context/paciente/PacientesProvider';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import { useNavigate } from 'react-router-dom';
 import '../../estilos/home.css';
+import { useEffect,useState } from 'react';
 
 
 export function SacarTurno() {
     const navigate = useNavigate();
-    const [sedes, setSedes] = useState([]);
-    const [especialidades, setEspecialidades] = useState([]);
-    const [doctores, setDoctores] = useState([]);
-    const [fechas, setFechas] = useState([]);
-    const [horarios, setHorarios] = useState([]);
+    const {sedes,especialidades,doctores, ObtenerSedes,ObtenerEspecialidades, ObtenerDoctores,fechas, ObtenerFechas,horarios, ObtenerHorarios, setDetalles} = usePacientes();
     const [selectedSede, setSelectedSede] = useState(null);
     const [selectedEspecialidad, setSelectedEspecialidad] = useState(null);
     const [selectedDoctor, setSelectedDoctor] = useState(null);
@@ -25,65 +18,35 @@ export function SacarTurno() {
     const [showDatePicker, setShowDatePicker] = useState(false); // Nuevo estado
 
     useEffect(() => {
-        const fetchSedes = async () => {
-            const response = await getSedes();
-            setSedes(response.data);
-        };
-
-        fetchSedes();
+        ObtenerSedes();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
-
+  
     const handleSedeChange = async (selectedOption) => {
         setSelectedSede(selectedOption);
-        localStorage.setItem('idSede', selectedOption.value);
         setSelectedEspecialidad(null);
         setSelectedDoctor(null);
-        setDoctores([]);
         setShowDatePicker(false); // Ocultar DatePicker al cambiar sede
         if (selectedOption) {
-            const response = await getEspecialidades({ idSede: selectedOption.value });
-            setEspecialidades(response.data);
-        } else {
-            setEspecialidades([]);
-        }
+            ObtenerEspecialidades({idSede: selectedOption.value});
+        } 
     };
 
     const handleEspecilidadChange = async (selectedOption) => {
         setSelectedEspecialidad(selectedOption);
-        localStorage.setItem('idEspecialidad', selectedOption.value);
-        console.log('Especialidad seleccionada:', selectedOption.value);
         setSelectedDoctor(null);
         setShowDatePicker(false); // Ocultar DatePicker al cambiar especialidad
         if (selectedSede && selectedOption) {
-            const response = await getDoctores({
-                idSede: selectedSede.value,
-                idEspecialidad: selectedOption.value
-            });
-            setDoctores(response.data);
-        } else {
-            setDoctores([]);
-        }
-    };
+          ObtenerDoctores({idSede: selectedSede.value, idEspecialidad: selectedOption.value});  
+        }};
 
     const handleDoctorChange = async (selectedOption) => {
         setSelectedDoctor(selectedOption);
-        localStorage.setItem('idDoctor', selectedOption.value);
-        console.log('Doctor seleccionado:', selectedOption.value);
         setSelectedFecha(null);
         setShowDatePicker(true); // Mostrar DatePicker al seleccionar doctor
         if (selectedSede && selectedOption && selectedEspecialidad) {
-            const response = await getFechasDispTodos({
-                idDoctor: selectedOption.value,
-                idEspecialidad: selectedEspecialidad.value,
-                idSede: selectedSede.value
-            });
-            const fechasFormateadas = response.data.map(item => {
-                return new Date(item.fecha);
-            });
-            setFechas(fechasFormateadas);
-        } else {
-            setFechas([]);
-        }
+            ObtenerFechas({selectedOption, selectedEspecialidad, selectedSede});
+            }
     };
 
     const isDateAvailable = (date) => {
@@ -102,28 +65,18 @@ export function SacarTurno() {
         const month = (date.getMonth() + 1).toString().padStart(2, '0'); // Meses empiezan desde 0
         const day = (date.getDate()).toString().padStart(2, '0');
         date = `${year}-${month}-${day}`
-        localStorage.setItem('fecha', date);
-        console.log('Fecha seleccionada:', date);
         setSelectedHorario(null);
         if (selectedSede && date && selectedEspecialidad && selectedDoctor) {
-            const response = await getHorariosDisp({
-                idDoctor: selectedDoctor.value,
-                idEspecialidad: selectedEspecialidad.value,
-                idSede: selectedSede.value,
-                fecha: date
-            });
-            setHorarios(response.data);
-        } else {
-            setHorarios([]);
-        }
+            ObtenerHorarios({selectedDoctor, selectedEspecialidad, selectedSede, date});
+        } 
     };
 
-
+    
     const handleHorarioChange = (selectedOption) => {
         setSelectedHorario(selectedOption);
-        localStorage.setItem('hora', selectedOption.value);
-        console.log('Horario seleccionado:', selectedOption.value);
+        setDetalles({selectedSede, selectedEspecialidad, selectedDoctor, selectedFecha, selectedHorario});
     };
+
 
     return (
         <div className="home-container">
@@ -166,7 +119,7 @@ export function SacarTurno() {
                     value={selectedHorario}
                     isDisabled={!selectedFecha}
                 />
-                <button onClick={() => navigate('/datospersonales')}>Continuar</button>
+                <button onClick={() => navigate('/paciente/datospersonales')}>Continuar</button>
             </div>
             <button onClick={() => navigate('/')}>Volver</button>
         </div>

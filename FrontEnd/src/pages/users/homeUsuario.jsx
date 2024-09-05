@@ -8,9 +8,9 @@ function HomeUsuario() {
 
   return (
     <div className="form">
-      <button onClick={() => navigate('/sacarturno')}>Sacar un Turno</button>
-      <button onClick={() => navigate('/verturnos')}>Ver mis turnos</button>
-      <button onClick={() => navigate('/editardatospersonales')}>Modificar datos personales</button>
+      <button onClick={() => navigate('sacarturno')}>Sacar un Turno</button>
+      <button onClick={() => navigate('verturnos')}>Ver mis turnos</button>
+      <button onClick={() => navigate('editardatospersonales')}>Modificar datos personales</button>
       <button onClick={() => navigate('/')}>Volver a inicio</button>
     </div>
   );
