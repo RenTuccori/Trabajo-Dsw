@@ -9,7 +9,7 @@ const router = Router();
 router.post("/api/admin", getAdmin);
 router.post('/api/adminCreateSeEspDoc', createSeEspDoc);
 router.post('/api/adminCreateDr', createDoctor);
-router.delete("/api/adminDeleteDr", deleteDoctor);
+router.delete("/api/adminDeleteDr/:idDoctor", deleteDoctor);
 router.put('/api/adminUpdateDr/:idDoctor', updateDoctor);
 router.post('/api/adminCreateSede', createSede);
 router.put('/api/adminUpdateSede/:idSede', updateSede);

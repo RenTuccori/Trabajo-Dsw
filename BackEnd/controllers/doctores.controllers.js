@@ -109,8 +109,8 @@ export const createDoctor = async (req, res) => {
 
 export const deleteDoctor = async (req, res) => {
   try {
-    const [result] = await pool.query('DELETE FROM doctores WHERE dni = ?', [
-      req.params.dni,
+    const [result] = await pool.query('DELETE FROM doctores WHERE idDoctor = ?', [
+      req.params.idDoctor,
     ]);
     if (result.affectedRows === 0) {
       return res.status(404).json({ message: 'Doctor no encontrado' });
