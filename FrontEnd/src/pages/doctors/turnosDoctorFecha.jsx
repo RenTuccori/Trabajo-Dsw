@@ -1,73 +1,26 @@
 import { useEffect, useState } from 'react';
-import { getTurnosHistoricoDoctor, getTurnosDoctorFecha } from '../../api/turnos.api'; 
+import { useDoctores } from '../../context/doctores/DoctoresProvider.jsx';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import { useNavigate } from 'react-router-dom';
-import '../../estilos/white-text.css';
+import '../../estilos/sacarturno.css';
 import '../../estilos/tarjetaturno.css';
-import '../../estilos/home.css';
+import '../../estilos/verTurnos.css';
+
 
 export function VerTurnosDoctorFecha() {
     const navigate = useNavigate();
-    const [turnos, setTurnos] = useState([]);
-    const [fechas, setFechas] = useState([]);
     const [selectedFecha, setSelectedFecha] = useState(null);
-    const [busquedaRealizada, setBusquedaRealizada] = useState(false);
-
-    // Función para obtener turnos históricos y fechas disponibles
-    const obtenerTurnos = async () => {
-        const idDoctor = localStorage.getItem('idDoctor');
-        console.log('ID del doctor:', idDoctor);
-        if (idDoctor) {
-            try {
-                const response = await getTurnosHistoricoDoctor({ idDoctor });
-                if (response.data && response.data.length > 0) {
-                    console.log('Turnos obtenidos:', response.data);
-                    // Extraer y formatear las fechas disponibles
-                    const fechasDisponibles = response.data.map(turno => new Date(turno.fechaYHora.split('T')[0]));
-                    setFechas(fechasDisponibles);
-                } else {
-                    console.log('No se encontraron turnos para el ID proporcionado');
-                    setTurnos([]);
-                }
-            } catch (error) {
-                console.error('Error al obtener los turnos:', error);
-                setTurnos([]);
-            }
-        } else {
-            console.error('ID del doctor no encontrado en localStorage');
-        }
-        setBusquedaRealizada(true);
-    }; 
-
-    // Función para obtener turnos de una fecha específica
-    const obtenerTurnosPorFecha = async (fecha) => {
-        const idDoctor = localStorage.getItem('idDoctor');
-        if (idDoctor && fecha) {
-            // Convertir la fecha al formato yyyy-mm-dd
-            const formattedDate = `${fecha.getFullYear()}-${(fecha.getMonth() + 1).toString().padStart(2, '0')}-${fecha.getDate().toString().padStart(2, '0')}`;
-            console.log(formattedDate)
-            try {
-                const response = await getTurnosDoctorFecha({ idDoctor, fechaYHora: formattedDate });
-                console.log('Turnos de la fecha obtenidos:', response.data);
-                setTurnos(response.data);
-            } catch (error) {
-                console.error('Error al obtener los turnos por fecha:', error);
-                setTurnos([]);
-            }
-        }
-    };
+    const { fechas, Historico, turnosFecha, Fecha, comprobarToken } = useDoctores();
 
     // Llamar a obtenerTurnos cuando se monta el componente
     useEffect(() => {
-        obtenerTurnos();
+        comprobarToken();
+        Historico();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
-    useEffect(() => {
-        if (selectedFecha) {
-            obtenerTurnosPorFecha(selectedFecha);
-        }
-    }, [selectedFecha]);
+
 
     const formatHora = (fechaYHora) => {
         const opciones = {
@@ -80,50 +33,51 @@ export function VerTurnosDoctorFecha() {
     };
 
     const isDateAvailable = (date) => {
-        return fechas.some(f => 
+        return fechas.some(f =>
             f.getFullYear() === date.getFullYear() &&
             f.getMonth() === date.getMonth() &&
-            f.getDate() === (date.getDate() -1)
+            f.getDate() === (date.getDate() - 1)
         );
     };
-
+    const handleDateChange = (date) => {
+        setSelectedFecha(date);
+        if (date) {
+            console.log('Fecha seleccionada:', date);
+            Fecha(date); // Llamar a la función Fecha con la fecha seleccionada
+        }
+    };
     return (
-        <div className="home-container">
-            <div className="home-container">
-                <button className="button" onClick={() => navigate('/doctor')}>Volver</button>
-                <h1 className="text">Turnos</h1>
-            </div>
-            <div className="form">
-                <p className='text'>Fecha</p>
-                <DatePicker
-                    selected={selectedFecha}
-                    onChange={date => {
-                        setSelectedFecha(date);
-                        console.log('Fecha seleccionada:', date);
-                        setTurnos([]); // Limpiar los turnos al seleccionar una nueva fecha
-                    }}
-                    filterDate={isDateAvailable}
-                    placeholderText="Selecciona una fecha"
-                />
-            </div>
+        <div className="lista-wrapper">
+            <h1 className="text-turno">Turnos</h1>
+            {!selectedFecha && (
+                <div className="form">
+                    <p className='text'>Fecha</p>
+                    <DatePicker
+                        selected={selectedFecha}
+                        onChange={handleDateChange}
+                        filterDate={isDateAvailable}
+                        placeholderText="Selecciona una fecha"
+                    />
+                </div>)}
             {selectedFecha && (
-                <div className="turnos-container">
-                    {busquedaRealizada && turnos.length > 0 ? (
-                        turnos.map((turno, index) => (
-                            <div key={index} className="turno-card">
+                <div className="turnos-lista">
+                    {turnosFecha.length > 0 ? (
+                        turnosFecha.map((turno, index) => (
+                            <ul key={index} className="turno-item">
                                 <p><strong>Sede:</strong> {turno.sede}</p>
                                 <p><strong>Especialidad:</strong> {turno.especialidad}</p>
-                                <p><strong>Fecha y Hora:</strong> {formatHora(turno.fechaYHora)}</p>
+                                <p><strong>Hora:</strong> {formatHora(turno.fechaYHora)}</p>
                                 <p><strong>Estado:</strong> {turno.estado}</p>
                                 <p><strong>DNI Paciente:</strong> {turno.dni}</p>
                                 <p><strong>Apellido y Nombre:</strong> {turno.nomyapel}</p>
-                            </div>
+                            </ul>
                         ))
                     ) : (
-                        busquedaRealizada && <p>No hay turnos para mostrar</p>
+                        <p>No hay turnos para mostrar</p>
                     )}
                 </div>
             )}
+            <button className="button" onClick={() => navigate('/doctor')}>Volver</button>
         </div>
     );
 }

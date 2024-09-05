@@ -3,7 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { getUserDniFecha, updateUser } from '../../api/usuarios.api';
 import Select from 'react-select';
 import { getObraSociales } from '../../api/obrasociales.api';
-import '../../estilos/white-text.css';
+import '../../estilos/sacarturno.css';
 
 export function EditarDatosPersonales() {
     const [obrasociales, setObraSociales] = useState([]);
@@ -46,9 +46,9 @@ export function EditarDatosPersonales() {
                 direccion: user.direccion,
                 idObraSocial: user.idObraSocial
             });
-            setSelectedObraSociales({ 
-                value: user.idObraSocial, 
-                label: obrasociales.find(os => os.idObraSocial === user.idObraSocial)?.nombre || 'No asignada' 
+            setSelectedObraSociales({
+                value: user.idObraSocial,
+                label: obrasociales.find(os => os.idObraSocial === user.idObraSocial)?.nombre || 'No asignada'
             });
             setUserExists(true);
         } else {
@@ -88,11 +88,12 @@ export function EditarDatosPersonales() {
     return (
         <div className="container">
             {!userExists ? (
-                <form onSubmit={handleCheckUser}>
+                <form onSubmit={handleCheckUser} className='form'>
                     <p className='text'>DNI</p>
                     <input
                         type="text"
                         name="dni"
+                        placeholder="DNI"
                         value={formData.dni}
                         onChange={handleInputChange}
                         required
@@ -108,7 +109,7 @@ export function EditarDatosPersonales() {
                     <button type="submit">Verificar</button>
                 </form>
             ) : (
-                <form onSubmit={handleSubmit}>
+                <form onSubmit={handleSubmit} className='form'>
                     <p className='text'>Nombre</p>
                     <input
                         type="text"

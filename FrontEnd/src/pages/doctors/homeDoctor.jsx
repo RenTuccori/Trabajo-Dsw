@@ -1,59 +1,43 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { verifyDoctor } from '../../api/doctores.api'; 
+import { useDoctores } from '../../context/doctores/DoctoresProvider.jsx';
 import '../../estilos/home.css';
-import '../../estilos/white-text.css';
+import '../../estilos/sacarturno.css';
 
 function HomeDoctor() {
-  const [dniDoctor, setDniDoctor] = useState('');
-  const [contraseña, setContra] = useState('');
-  const [isVerified, setIsVerified] = useState(false);
-  const [errorMessage, setErrorMessage] = useState('');
+  const { idDoctor, login, comprobarToken } = useDoctores();
+  const [dni, setDni] = useState('');
+  const [contra, setContra] = useState('');
   const navigate = useNavigate();
 
-  useEffect(() => {
-    // Verificar si el idDoctor ya existe en localStorage al cargar el componente
-    const idDoctor = localStorage.getItem('idDoctor');
-    if (idDoctor) {
-      setIsVerified(true);
-    }
-  }, []);
+
+  const handleLogin = async () => {
+    await login({ dni, contra });
+  };
 
   const handleDniChange = (event) => {
-    setDniDoctor(event.target.value);
+    setDni(event.target.value);
   };
 
   const handleContraChange = (event) => {
     setContra(event.target.value);
   };
 
-  const handleVerificarDoctor = async () => {
-    try {
-      const response = await verifyDoctor({ dni: dniDoctor, contra: contraseña });
+  useEffect(() => {
+    comprobarToken();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
-      if (response.data && response.data.idDoctor) {
-        console.log('Doctor verificado con ID:', response.data.idDoctor);
-        setIsVerified(true);
-        localStorage.setItem('idDoctor', response.data.idDoctor);
-        setErrorMessage('');
-      } else {
-        setErrorMessage('Doctor no encontrado');
-      }
-    } catch (error) {
-      console.error('Error al verificar el doctor:', error);
-      setErrorMessage('Doctor no encontrado');
-    }
-  };
 
   return (
     <div className="home-container">
-      {!isVerified ? (
+      {!idDoctor ? (
         <div className="form">
           <div className="input-group">
             <p className='text'>Ingrese su DNI</p>
             <input
               type="text"
-              value={dniDoctor}
+              value={dni}
               onChange={handleDniChange}
               placeholder="DNI"
               className="dni-input"
@@ -61,26 +45,25 @@ function HomeDoctor() {
             <p className='text'>Ingrese su Contraseña</p>
             <input
               type="password"
-              value={contraseña}
+              value={contra}
               onChange={handleContraChange}
               placeholder="Contraseña"
               className="contra-input"
             />
           </div>
           <button
-            onClick={handleVerificarDoctor}
-            disabled={!dniDoctor || !contraseña}
+            onClick={handleLogin}
+            disabled={!dni || !contra}
             className="verify-button"
           >
             Verificar
           </button>
-          {errorMessage && <p className="text">{errorMessage}</p>}
         </div>
       ) : (
         <div className="home-container">
-          <button onClick={() => navigate('/turnoshoy')}>Turnos de hoy</button>
-          <button onClick={() => navigate('/turnosfecha')}>Turnos por Fecha</button>
-          <button onClick={() => navigate('/turnoshist')}>Historial Turnos</button>
+          <button onClick={() => navigate('turnoshoy')}>Turnos de hoy</button>
+          <button onClick={() => navigate('turnosfecha')}>Turnos por Fecha</button>
+          <button onClick={() => navigate('turnoshist')}>Historial Turnos</button>
           <button onClick={() => navigate('/')}>Volver</button>
         </div>
       )}

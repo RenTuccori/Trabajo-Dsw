@@ -1,4 +1,5 @@
 import { pool } from '../db.js';
+import jwt from "jsonwebtoken";
 
 export const getDoctors = async (req, res) => {
   try {
@@ -73,7 +74,9 @@ export const getDoctorByDniContra = async (req, res) => {
     if (result.length === 0) {
       return res.status(404).json({ message: 'Doctor no encontrado' });
     } else {
-      res.json(result[0]);
+      const token = jwt.sign({ idDoctor: result[0].idDoctor}, "CLAVE_SUPER_SEGURISIMA", { expiresIn: "5m" });
+      console.log('Token generado:', token);
+      res.json(token);
     }
   } catch (error) {
     return res.status(500).json({ message: error.message });

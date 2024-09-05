@@ -8,9 +8,10 @@ function Home() {
 
   return (
     <div className="home-container">
-      <button onClick={() => navigate('/doctor')}>Doctor</button>
-      <button onClick={() => navigate('/paciente')}>Paciente</button>
-
+      <h1>¡Bienvenido al Sanatorio UTN!</h1>
+      <p>Por favor, selecciona tu rol para continuar:</p>
+      <button className='botonInicio' onClick={() => navigate('/doctor')}>Soy doctor</button>
+      <button className='botonInicio' onClick={() => navigate('/paciente')}>Soy paciente</button>
     </div>
   );
 }

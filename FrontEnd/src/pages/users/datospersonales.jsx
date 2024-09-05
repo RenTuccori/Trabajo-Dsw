@@ -4,7 +4,7 @@ import { createUser, getUserDniFecha } from '../../api/usuarios.api'; // checkUs
 import Select from 'react-select';
 import { getObraSociales } from '../../api/obrasociales.api';
 import { getPacienteDni,createPaciente } from '../../api/pacientes.api';
-import '../../estilos/white-text.css';
+import '../../estilos/sacarturno.css';
 
 export function DatosPersonales() {
     const [obrasociales, setObraSociales] = useState([]);
@@ -83,7 +83,7 @@ export function DatosPersonales() {
     return (
         <div className="container">
             {!userExists ? (
-                <form onSubmit={handleCheckUser}>
+                <form onSubmit={handleCheckUser} className='form'>
                     <p className='text'>DNI</p>
                     <input
                         type="text"
@@ -103,7 +103,7 @@ export function DatosPersonales() {
                     <button type="submit">Verificar</button>
                 </form>
             ) : (
-                <form onSubmit={handleSubmit}>
+                <form onSubmit={handleSubmit} className='form'>
                     <p className='text'>Nombre</p>
                     <input
                         type="text"
