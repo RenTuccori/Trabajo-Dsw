@@ -22,6 +22,31 @@ export function SacarTurno() {
         ObtenerSedes();
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
+
+    const customStyles = {
+        option: (provided, state) => ({
+            ...provided,
+            backgroundColor: state.isFocused ? '#5368e0' : '#2a2e45', // Color de fondo cuando está seleccionado o enfocado
+            color: '#ffffff', // Color de texto blanco
+        }),
+        control: (provided) => ({
+            ...provided,
+            backgroundColor: 'white', // Fondo del select
+            color: '#5368e0', // Texto blanco en el control
+            borderRadius: '5px', // Borde redondeado
+            border: '2px solid #5368e0', // Borde del control
+            padding: '5px', // Espaciado
+        }),
+        menu: (provided) => ({
+            ...provided,
+            border: '0.1rem solid white',
+            borderRadius: '5px', // Borde redondeado
+        }),
+        singleValue: (provided) => ({
+            ...provided,
+            color: '#2a2e45', // Color del valor seleccionado
+        }),
+    };
   
     const handleSedeChange = async (selectedOption) => {
         setSelectedSede(selectedOption);
