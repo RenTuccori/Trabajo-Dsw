@@ -45,7 +45,7 @@ export const getDoctorByDni = async (req, res) => {
 
 export const getDoctorById = async (req, res) => {
   try {
-    const { idDoctor } = req.body;
+    const  { idDoctor } = req.params;
     const [result] = await pool.query(`SELECT u.nombre, u.apellido FROM 
       doctores doc INNER JOIN usuarios u 
       ON doc.dni = u.dni
@@ -82,6 +82,7 @@ export const getDoctorByDniContra = async (req, res) => {
     return res.status(500).json({ message: error.message });
   }
 };
+
 
 export const createDoctor = async (req, res) => {
   const { dni, duracionTurno, contra } = req.body;

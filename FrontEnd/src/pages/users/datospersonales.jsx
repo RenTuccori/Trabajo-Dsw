@@ -27,7 +27,6 @@ export function DatosPersonales() {
     direccion: "",
     idObraSocial: "",
   });
-  const [userExists, setUserExists] = useState(false); // Estado para manejar si el usuario existe o no
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -42,7 +41,6 @@ export function DatosPersonales() {
     const formdni = formData.dni;
     const formfecha = formData.fechaNacimiento;
     Login({ dni: formdni, fechaNacimiento: formfecha });
-    console.log(dni);
     if (dni != null) {
     navigate("/paciente/confirmacionturno"); // Redirige a una página de confirmación, si existe}
     }
@@ -74,7 +72,7 @@ export function DatosPersonales() {
 
   return (
     <div className="container">
-      {!userExists ? (
+      {!dni ? (
         <form onSubmit={handleCheckUser} className="form">
           <p className="text">DNI</p>
           <input

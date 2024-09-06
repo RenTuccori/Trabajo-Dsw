@@ -9,7 +9,8 @@ import { useEffect,useState } from 'react';
 
 export function SacarTurno() {
     const navigate = useNavigate();
-    const {sedes,especialidades,doctores, ObtenerSedes,ObtenerEspecialidades, ObtenerDoctores,fechas, ObtenerFechas,horarios, ObtenerHorarios, setDetalles} = usePacientes();
+    const {sedes,especialidades,doctores, ObtenerSedes,ObtenerEspecialidades, ObtenerDoctores,fechas, ObtenerFechas,horarios, ObtenerHorarios, setFechaYHora,
+        setIdDoctor, setIdEspecialidad, setIdSede, setEstado, setFechaCancelacion, setFechaConfirmacion} = usePacientes();
     const [selectedSede, setSelectedSede] = useState(null);
     const [selectedEspecialidad, setSelectedEspecialidad] = useState(null);
     const [selectedDoctor, setSelectedDoctor] = useState(null);
@@ -60,11 +61,11 @@ export function SacarTurno() {
 
 
     const handleFechaChange = async (date) => {
-        setSelectedFecha(date);
         const year = date.getFullYear();
         const month = (date.getMonth() + 1).toString().padStart(2, '0'); // Meses empiezan desde 0
         const day = (date.getDate()).toString().padStart(2, '0');
         date = `${year}-${month}-${day}`
+        setSelectedFecha(date);
         setSelectedHorario(null);
         if (selectedSede && date && selectedEspecialidad && selectedDoctor) {
             ObtenerHorarios({selectedDoctor, selectedEspecialidad, selectedSede, date});
@@ -74,9 +75,14 @@ export function SacarTurno() {
     
     const handleHorarioChange = (selectedOption) => {
         setSelectedHorario(selectedOption);
-        setDetalles({selectedSede, selectedEspecialidad, selectedDoctor, selectedFecha, selectedHorario});
-    };
-
+        setFechaYHora(`${selectedFecha} ${selectedOption.value}`);
+        setIdDoctor(selectedDoctor.value);
+        setIdEspecialidad(selectedEspecialidad.value);
+        setIdSede(selectedSede.value);
+        setEstado('Pendiente');
+        setFechaCancelacion(null);
+        setFechaConfirmacion(null);
+}
 
     return (
         <div className="home-container">
@@ -119,7 +125,7 @@ export function SacarTurno() {
                     value={selectedHorario}
                     isDisabled={!selectedFecha}
                 />
-                <button onClick={() => navigate('/paciente/datospersonales')}>Continuar</button>
+                <button disabled={!selectedHorario} onClick={() => navigate('/paciente/confirmacionturno')}>Continuar</button>
             </div>
             <button onClick={() => navigate('/')}>Volver</button>
         </div>

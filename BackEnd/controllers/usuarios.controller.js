@@ -23,7 +23,7 @@ export const getUserByDniFecha = async (req, res) => {
     );
 
     if (result.length === 0) {
-      return res.status(200).json(null); // Devuelve null si no encuentra al usuario
+      return res.status(404).json({ message: 'Usuario no encontrado' });
     } else {
       const token = jwt.sign({ dni: result[0].dni}, "CLAVE_SUPER_SEGURISIMA", { expiresIn: "5m" });
       console.log('Token generado:', token);

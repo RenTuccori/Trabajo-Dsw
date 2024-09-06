@@ -15,7 +15,7 @@ export const getSedes = async (req, res) => {
 
 export const getSedeById = async (req, res) => {
   try {
-    const { idSede } = req.body;
+    const { idSede } = req.params;
     const [result] = await pool.query('SELECT * FROM sedes WHERE idSede = ?',
       [idSede],
     );
