@@ -6,8 +6,6 @@ body {
   /* Texto blanco para mejor contraste */
   font-family: 'Poppins', sans-serif;
   /* Fuente moderna */
-  margin: 0;
-  /* Elimina márgenes por defecto */
   display: flex;
   align-items: center;
   justify-content: center;
@@ -27,6 +25,7 @@ body {
   text-align: center;
   margin-top: 30px;
   font-size: 1rem;
+  margin: 0;
   /* Aumenta el espacio entre los elementos */
 }
 

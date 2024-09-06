@@ -3,7 +3,7 @@ import { pool } from '../db.js';
 //Fechas disponibles por un medico, especialidad y sede
 export const getFechasDispDocEspSed = async (req, res) => {
     try {
-        const {idDoctor,idEspecialidad,idSede} = req.body;
+        const { idDoctor, idEspecialidad, idSede } = req.body;
         const [result] = await pool.query(`
             WITH RECURSIVE time_slots AS (
     SELECT 
@@ -32,6 +32,7 @@ export const getFechasDispDocEspSed = async (req, res) => {
     WHERE hd.idDoctor = ?
       AND hd.idEspecialidad = ? 
       AND hd.idSede = ?
+      AND fe.fechas > current_date()
 
     UNION ALL
 
@@ -75,17 +76,17 @@ LEFT JOIN turnos tur
     GROUP BY ts.fecha, ts.dia, usu.nombre, usu.apellido 
     ORDER BY ts.fecha;
         `, [idDoctor, idEspecialidad, idSede, idDoctor, idEspecialidad, idSede]);
-            [idDoctor,idEspecialidad,idSede];
-            res.json(result);
+        [idDoctor, idEspecialidad, idSede];
+        res.json(result);
     } catch (error) {
         return res.status(500).json({ message: error.message });
     }
 }
-   
+
 //Fechas disponibles para todos los medicos y una especialidad y una sede
 export const getFechasDispEspSed = async (req, res) => {
-        try {
-        const {idEspecialidad,idSede} = req.body;
+    try {
+        const { idEspecialidad, idSede } = req.body;
         const [result] = await pool.query(`
             WITH RECURSIVE time_slots AS (
     SELECT 
@@ -154,8 +155,8 @@ export const getFechasDispEspSed = async (req, res) => {
     AND ts.idSede = ?
     GROUP BY ts.fecha, ts.dia, usu.nombre, usu.apellido  -- Agrupar por fecha y día
     ORDER BY ts.fecha;`,
-    [idEspecialidad,idSede]);
-    res.json(result);
+            [idEspecialidad, idSede]);
+        res.json(result);
     } catch (error) {
         return res.status(500).json({ message: error.message });
     }
@@ -164,7 +165,7 @@ export const getFechasDispEspSed = async (req, res) => {
 //Horarios disponibles por medico, especialidad y sede
 export const getHorariosDispDocEspSed = async (req, res) => {
     try {
-        const { idDoctor, idEspecialidad, idSede, fecha} = req.body;
+        const { idDoctor, idEspecialidad, idSede, fecha } = req.body;
         const [result] = await pool.query(`
             WITH RECURSIVE time_slots AS (
             SELECT 
@@ -244,7 +245,7 @@ export const getHorariosDispDocEspSed = async (req, res) => {
 
 export const getHorariosDispEspSed = async (req, res) => {
     try {
-        const {idEspecialidad, idSede, fecha} = req.body;
+        const { idEspecialidad, idSede, fecha } = req.body;
         const [result] = await pool.query(`
             WITH RECURSIVE time_slots AS (
             SELECT 

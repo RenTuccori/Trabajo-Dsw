@@ -10,6 +10,8 @@ import { useNavigate } from 'react-router-dom';
 import '../../estilos/home.css';
 
 
+
+
 export function SacarTurno() {
     const navigate = useNavigate();
     const [sedes, setSedes] = useState([]);
@@ -32,6 +34,31 @@ export function SacarTurno() {
 
         fetchSedes();
     }, []);
+
+    const customStyles = {
+        option: (provided, state) => ({
+            ...provided,
+            backgroundColor: state.isFocused ? '#5368e0' : '#2a2e45', // Color de fondo cuando está seleccionado o enfocado
+            color: '#ffffff', // Color de texto blanco
+        }),
+        control: (provided) => ({
+            ...provided,
+            backgroundColor: 'white', // Fondo del select
+            color: '#5368e0', // Texto blanco en el control
+            borderRadius: '5px', // Borde redondeado
+            border: '2px solid #5368e0', // Borde del control
+            padding: '5px', // Espaciado
+        }),
+        menu: (provided) => ({
+            ...provided,
+            border: '0.1rem solid white',
+            borderRadius: '5px', // Borde redondeado
+        }),
+        singleValue: (provided) => ({
+            ...provided,
+            color: '#2a2e45', // Color del valor seleccionado
+        }),
+    };
 
     const handleSedeChange = async (selectedOption) => {
         setSelectedSede(selectedOption);
@@ -126,13 +153,14 @@ export function SacarTurno() {
     };
 
     return (
-        <div className="home-container">
+        <form className="home-container">
             <div className="form" >
                 <p className='text'>Sede</p>
                 <Select class='select'
                     options={sedes.map(sede => ({ value: sede.idSede, label: sede.nombre }))}
                     onChange={handleSedeChange}
                     value={selectedSede}
+                    styles={customStyles}
                 />
                 <p className='text'>Especialidad</p>
                 <Select class='select'
@@ -140,6 +168,7 @@ export function SacarTurno() {
                     onChange={handleEspecilidadChange}
                     value={selectedEspecialidad}
                     isDisabled={!selectedSede}
+                    styles={customStyles}
                 />
                 <p className='text'>Doctores</p>
                 <Select class='select'
@@ -147,6 +176,7 @@ export function SacarTurno() {
                     value={selectedDoctor}
                     onChange={handleDoctorChange}
                     isDisabled={!selectedEspecialidad}
+                    styles={customStyles}
                 />
                 {showDatePicker && (
                     <>
@@ -165,10 +195,11 @@ export function SacarTurno() {
                     onChange={handleHorarioChange}
                     value={selectedHorario}
                     isDisabled={!selectedFecha}
+                    styles={customStyles}
                 />
                 <button onClick={() => navigate('/datospersonales')}>Continuar</button>
             </div>
             <button onClick={() => navigate('/')}>Volver</button>
-        </div>
+        </form>
     );
 }
