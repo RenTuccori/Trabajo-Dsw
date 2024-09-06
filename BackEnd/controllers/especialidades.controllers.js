@@ -14,7 +14,7 @@ export const getSpecialties = async (req, res) => {
 
 export const getSpecialtyById = async (req, res) => {
   try {
-    const {idEspecialidad} = req.body;
+    const {idEspecialidad} = req.params;
     const [result] = await pool.query(
       'SELECT * FROM especialidades WHERE idEspecialidad = ?',
       [idEspecialidad]

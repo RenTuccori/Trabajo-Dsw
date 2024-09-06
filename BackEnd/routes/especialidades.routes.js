@@ -11,7 +11,7 @@ const router = Router();
 
 router.post('/api/allspecialties', getSpecialties);
 
-router.post('/api/idspecialties', getSpecialtyById);
+router.get('/api/idspecialties/:idEspecialidad', getSpecialtyById);
 
 router.post('/api/specialties/', createSpecialty);
 

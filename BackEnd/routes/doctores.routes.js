@@ -2,8 +2,6 @@ import { Router } from 'express';
 import {
   getDoctors,
   getDoctorByDni,
-  createDoctor,
-  deleteDoctor,
   getDoctorByDniContra,
   getDoctorById
 } from '../controllers/doctores.controllers.js';
@@ -14,12 +12,9 @@ router.post('/api/doctors', getDoctors);
 
 router.post('/api/doctorscontra', getDoctorByDniContra);
 
-router.post('/api/doctorsId', getDoctorById);
+router.get('/api/doctorsId/:idDoctor', getDoctorById);
 
 router.get('/api/doctorsdni', getDoctorByDni);
 
-router.post('/api/doctors/', createDoctor);
-
-router.delete('/api/doctors/', deleteDoctor);
 
 export default router;

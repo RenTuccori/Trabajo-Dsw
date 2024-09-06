@@ -1,8 +1,20 @@
 import { Router } from "express";
-import { getAdmin } from "../controllers/admin.controllers.js";
+import { getAdmin, createSeEspDoc } from "../controllers/admin.controllers.js";
+import { createDoctor, deleteDoctor, updateDoctor } from "../controllers/doctores.controllers.js";
+import { createSede, updateSede } from "../controllers/sedes.controllers.js";
+import { createObraSocial } from "../controllers/obrassociales.controller.js";
 
 const router = Router();
 
 router.post("/api/admin", getAdmin);
+router.post('/api/adminCreateSeEspDoc', createSeEspDoc);
+router.post('/api/adminCreateDr', createDoctor);
+router.delete("/api/adminDeleteDr/:idDoctor", deleteDoctor);
+router.put('/api/adminUpdateDr/:idDoctor', updateDoctor);
+router.post('/api/adminCreateSede', createSede);
+router.put('/api/adminUpdateSede/:idSede', updateSede);
+router.post('/api/adminCreateObraSocial', createObraSocial);
+
+
 
 export default router;
