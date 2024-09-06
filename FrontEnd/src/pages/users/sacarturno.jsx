@@ -7,6 +7,8 @@ import '../../estilos/home.css';
 import { useEffect,useState } from 'react';
 
 
+
+
 export function SacarTurno() {
     const navigate = useNavigate();
     const {sedes,especialidades,doctores, ObtenerSedes,ObtenerEspecialidades, ObtenerDoctores,fechas, ObtenerFechas,horarios, ObtenerHorarios, setFechaYHora,
@@ -47,7 +49,7 @@ export function SacarTurno() {
             color: '#2a2e45', // Color del valor seleccionado
         }),
     };
-  
+
     const handleSedeChange = async (selectedOption) => {
         setSelectedSede(selectedOption);
         setSelectedEspecialidad(null);
@@ -110,13 +112,14 @@ export function SacarTurno() {
 }
 
     return (
-        <div className="home-container">
+        <form className="home-container">
             <div className="form" >
                 <p className='text'>Sede</p>
                 <Select class='select'
                     options={sedes.map(sede => ({ value: sede.idSede, label: sede.nombre }))}
                     onChange={handleSedeChange}
                     value={selectedSede}
+                    styles={customStyles}
                 />
                 <p className='text'>Especialidad</p>
                 <Select class='select'
@@ -124,6 +127,7 @@ export function SacarTurno() {
                     onChange={handleEspecilidadChange}
                     value={selectedEspecialidad}
                     isDisabled={!selectedSede}
+                    styles={customStyles}
                 />
                 <p className='text'>Doctores</p>
                 <Select class='select'
@@ -131,6 +135,7 @@ export function SacarTurno() {
                     value={selectedDoctor}
                     onChange={handleDoctorChange}
                     isDisabled={!selectedEspecialidad}
+                    styles={customStyles}
                 />
                 {showDatePicker && (
                     <>
@@ -149,10 +154,11 @@ export function SacarTurno() {
                     onChange={handleHorarioChange}
                     value={selectedHorario}
                     isDisabled={!selectedFecha}
+                    styles={customStyles}
                 />
                 <button disabled={!selectedHorario} onClick={() => navigate('/paciente/confirmacionturno')}>Continuar</button>
             </div>
             <button onClick={() => navigate('/')}>Volver</button>
-        </div>
+        </form>
     );
 }
