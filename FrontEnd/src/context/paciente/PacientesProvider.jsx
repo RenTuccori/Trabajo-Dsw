@@ -118,6 +118,7 @@ export const usePacientes = () => {
                 localStorage.removeItem('token');
             }else{
               setDni(decoded.dni);
+              ObtenerPacienteDni();
             }
         } catch (error) {
             console.error('Error decoding token:', error);
@@ -162,7 +163,6 @@ export const usePacientes = () => {
     } 
 
     async function CrearTurno(){
-     await ObtenerPacienteDni();
      console.log({idPaciente,fechaYHora,fechaCancelacion,fechaConfirmacion,estado,idEspecialidad,idDoctor,idSede})
      await createTurno({idPaciente,fechaYHora,fechaCancelacion,fechaConfirmacion,estado,idEspecialidad,idDoctor,idSede});
     }
@@ -174,12 +174,11 @@ export const usePacientes = () => {
     return (
       <PacientesContext.Provider
         value={{ sedes, especialidades, doctores, ObtenerSedes, ObtenerEspecialidades, ObtenerDoctores, fechas, 
-        ObtenerFechas, horarios, ObtenerHorarios, login, dni, 
-        obraSociales, ObtenerObraSociales,
-        idPacienteCreado,usuario,CrearPaciente,
-        CrearUsuario,comprobarToken, ObtenerDoctorId, 
-        ObtenerEspecialidadId, ObtenerSedeId, nombreDoctor,nombreEspecialidad,nombreSede,apellidoDoctor,direccionSede,CrearTurno, fechaYHora, setFechaYHora,
-        setIdDoctor, setIdEspecialidad, setIdSede, setEstado, setFechaCancelacion, setFechaConfirmacion
+        ObtenerFechas, horarios, ObtenerHorarios, login, dni, obraSociales, ObtenerObraSociales,
+        idPacienteCreado,usuario,CrearPaciente,CrearUsuario,comprobarToken, ObtenerDoctorId, 
+        ObtenerEspecialidadId, ObtenerSedeId, nombreDoctor,nombreEspecialidad,nombreSede,apellidoDoctor,
+        direccionSede,CrearTurno, fechaYHora, setFechaYHora,setIdDoctor, setIdEspecialidad,
+        setIdSede, setEstado, setFechaCancelacion, setFechaConfirmacion
         }}>
         {children}
       </PacientesContext.Provider>

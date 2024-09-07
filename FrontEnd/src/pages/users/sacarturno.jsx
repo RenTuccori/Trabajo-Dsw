@@ -12,7 +12,7 @@ import { useEffect,useState } from 'react';
 export function SacarTurno() {
     const navigate = useNavigate();
     const {sedes,especialidades,doctores, ObtenerSedes,ObtenerEspecialidades, ObtenerDoctores,fechas, ObtenerFechas,horarios, ObtenerHorarios, setFechaYHora,
-        setIdDoctor, setIdEspecialidad, setIdSede, setEstado, setFechaCancelacion, setFechaConfirmacion} = usePacientes();
+        setIdDoctor, setIdEspecialidad, setIdSede, setEstado, setFechaCancelacion, setFechaConfirmacion,comprobarToken} = usePacientes();
     const [selectedSede, setSelectedSede] = useState(null);
     const [selectedEspecialidad, setSelectedEspecialidad] = useState(null);
     const [selectedDoctor, setSelectedDoctor] = useState(null);
@@ -22,6 +22,7 @@ export function SacarTurno() {
 
     useEffect(() => {
         ObtenerSedes();
+        comprobarToken();
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
