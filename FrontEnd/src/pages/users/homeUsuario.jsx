@@ -19,6 +19,7 @@ function HomeUsuario() {
 
   const handleFechaChange = (event) => {
     setFecha(event.target.value);
+    console.log(event.target.value);
   };
 
   useEffect(() => {

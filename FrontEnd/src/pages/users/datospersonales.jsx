@@ -54,7 +54,7 @@ export function DatosPersonales() {
   };
 
   return (
-    <div className="home=container">
+    <div className="home-registrar">
       <form onSubmit={handleSubmit} className="form">
         <p className="text">DNI</p>
         <input

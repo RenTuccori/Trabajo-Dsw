@@ -26,6 +26,21 @@
   /* Permite desplazarse si es necesario */
 }
 
+.home-registrar {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  /* Ocupa toda la altura de la ventana */
+  width: 35vw;
+  /* Ocupa el 35% del ancho de la ventana */
+  /* Centra el contenedor horizontalmente */
+  text-align: center;
+  /* Centra el texto dentro del contenedor */
+  margin-top:45vh;
+  margin-bottom: 5vh
+}
+
 @media (max-width: 600px) {
   .turno-container {
     padding: 30px;
@@ -39,6 +54,11 @@
 
   .home-container h1 {
     margin-bottom: 20px;
+    /* Espacio entre el título y el botón */
+  }
+
+  .home-registrar {
+    margin-top: 60vh;
     /* Espacio entre el título y el botón */
   }
 
@@ -58,3 +78,4 @@
     align-self: center;
     width: auto;
   }
+}
