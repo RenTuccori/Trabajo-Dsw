@@ -159,7 +159,7 @@ export function SacarTurno() {
                 />
                 <button disabled={!selectedHorario} onClick={() => navigate('/paciente/confirmacionturno')}>Continuar</button>
             </div>
-            <button onClick={() => navigate('/')}>Volver</button>
+            <button onClick={() => navigate('/paciente')}>Volver</button>
         </form>
     );
 }

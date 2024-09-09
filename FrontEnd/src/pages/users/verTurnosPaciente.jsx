@@ -1,64 +1,26 @@
-import { useState } from 'react';
+import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { getTurnosPaciente, confirmarTurno, cancelarTurno } from '../../api/turnos.api';
-import '../../estilos/tarjetaturno.css';
-
+import { usePacientes } from '../../context/paciente/PacientesProvider';
+import '../../estilos/home.css';
+import '../../estilos/sacarturno.css';
+import '../../estilos/verTurnos.css';
 
 export function TurnosPersonales() {
-    const [turnos, setTurnos] = useState([]);
-    const [busquedaRealizada, setBusquedaRealizada] = useState(false);
     const navigate = useNavigate();
-    const [formData, setFormData] = useState({
-        dni: '',
-        fechaNacimiento: '',
-    });
+    const { ObtenerTurnosPaciente, ConfirmarTurno, CancelarTurno,turnos,comprobarToken } = usePacientes();
 
-    const handleInputChange = (e) => {
-        const { name, value } = e.target;
-        setFormData(prevFormData => ({
-            ...prevFormData,
-            [name]: value
-        }));
-    };
-
-    const handleCheckUser = async (e) => {
-        e.preventDefault();
-        const { dni, fechaNacimiento } = formData;
-        const response = await getTurnosPaciente({ dni, fechaNacimiento });
-
-        if (response.data && response.data.length > 0) {
-            setTurnos(response.data);
-            setBusquedaRealizada(true);
-        } else {
-            console.log('No se encontraron turnos para el paciente');
-            setBusquedaRealizada(true);
-        }
-    };
+    useEffect(() => {
+        comprobarToken();
+        ObtenerTurnosPaciente();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
 
     const handleConfirmarTurno = async (idTurno) => {
-        try {
-            await confirmarTurno({ idTurno });
-            setTurnos(prevTurnos =>
-                prevTurnos.map(turno =>
-                    turno.idTurno === idTurno ? { ...turno, estado: 'Confirmado' } : turno
-                )
-            );
-        } catch (error) {
-            console.error('Error al confirmar el turno:', error);
-        }
+        ConfirmarTurno({ idTurno });
     };
 
     const handleCancelarTurno = async (idTurno) => {
-        try {
-            await cancelarTurno({ idTurno });
-            setTurnos(prevTurnos =>
-                prevTurnos.map(turno =>
-                    turno.idTurno === idTurno ? { ...turno, estado: 'Cancelado' } : turno
-                )
-            );
-        } catch (error) {
-            console.error('Error al cancelar el turno:', error);
-        }
+        CancelarTurno({ idTurno });
     };
 
     const formatFechaHora = (fechaHora) => {
@@ -70,31 +32,11 @@ export function TurnosPersonales() {
     };
 
     return (
-        <div className="home-container">
-            <form onSubmit={handleCheckUser} className='form'>
-                <p>DNI</p>
-                <input
-                    type="text"
-                    name="dni"
-                    placeholder="DNI"
-                    value={formData.dni}
-                    onChange={handleInputChange}
-                    required
-                />
-                <p>Fecha de Nacimiento</p>
-                <input
-                    type="date"
-                    name="fechaNacimiento"
-                    value={formData.fechaNacimiento}
-                    onChange={handleInputChange}
-                    required
-                />
-                <button type="submit">Buscar Turnos</button>
-            </form>
-            <div className="turnos-container">
-                {busquedaRealizada && turnos.length > 0 ? (
+            <div className="lista-wrapper">
+                <div className="turnos-lista">
+                {turnos.length > 0 ? (
                     turnos.map((turno, index) => (
-                        <div key={index} className="turno-card">
+                        <div key={index} className="turno-item">
                             <p><strong>Sede:</strong> {turno.Sede}</p>
                             <p><strong>Dirección:</strong> {turno.Direccion}</p>
                             <p><strong>Especialidad:</strong> {turno.Especialidad}</p>
@@ -102,13 +44,14 @@ export function TurnosPersonales() {
                             <p><strong>Doctor:</strong> {turno.Doctor}</p>
                             <p><strong>DNI Paciente:</strong> {turno.dni}</p>
                             <p><strong>Estado:</strong> {turno.estado}</p>
-                            <button
+                            <button className='button'
                                 onClick={() => handleConfirmarTurno(turno.idTurno)}
                                 disabled={turno.estado === 'Confirmado' || turno.estado === 'Cancelado'}
                             >
                                 Confirmar
                             </button>
-                            <button
+                            <button className='button-cancelar'
+                                
                                 onClick={() => handleCancelarTurno(turno.idTurno)}
                                 disabled={turno.estado === 'Cancelado'}
                             >
@@ -119,12 +62,11 @@ export function TurnosPersonales() {
 
                     ))
                 ) : (
-                    busquedaRealizada && <p>No hay turnos para mostrar</p>
+                    <p>No hay turnos para mostrar</p>
                 )}
+                </div>
                 <button onClick={() => navigate('/paciente')}>Volver</button>
             </div>
-
-        </div>
     );
 }
 

@@ -14,7 +14,6 @@ export const getAdmin = async (req, res) => {
       return res.status(404).json({ message: 'Usuario no encontrado' });
     } else {
       const token = jwt.sign({ idAdmin: result[0].idAdmin }, "CLAVE_SUPER_SEGURISIMA", { expiresIn: "5m" });
-      console.log('Token generado:', token);
       res.json(token);
     }
   } catch (error) {

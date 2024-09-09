@@ -75,7 +75,6 @@ export const getDoctorByDniContra = async (req, res) => {
       return res.status(404).json({ message: 'Doctor no encontrado' });
     } else {
       const token = jwt.sign({ idDoctor: result[0].idDoctor }, "CLAVE_SUPER_SEGURISIMA", { expiresIn: "5m" });
-      console.log('Token generado:', token);
       res.json(token);
     }
   } catch (error) {

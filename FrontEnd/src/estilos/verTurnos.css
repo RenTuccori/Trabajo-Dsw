@@ -23,6 +23,19 @@
   font-family: 'Poppins', sans-serif;
 }
 
+.button-cancelar {
+  margin-bottom: 20px;
+  padding: 10px 20px;
+  background-color: #5368e0;
+  color: #ffffff;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  float: right;
+  font-family: 'Poppins', sans-serif;
+}
+
+
 .button:hover {
   background-color: #4054b2;
 }

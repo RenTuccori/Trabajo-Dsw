@@ -15,6 +15,8 @@ import { getDoctorById } from '../../api/doctores.api';
 import { getSedeById } from '../../api/sedes.api';
 import { createTurno } from '../../api/turnos.api';
 import { getPacienteDni } from '../../api/pacientes.api';
+import { getTurnosPaciente, confirmarTurno, cancelarTurno } from '../../api/turnos.api';
+
 
 
 
@@ -54,6 +56,7 @@ export const usePacientes = () => {
     const [estado, setEstado] = useState('');
     const [fechaCancelacion, setFechaCancelacion] = useState('');
     const [fechaConfirmacion, setFechaConfirmacion] = useState('');
+    const [turnos, setTurnos] = useState([]);
  
   
 
@@ -95,9 +98,9 @@ export const usePacientes = () => {
     async function login({dni,fechaNacimiento}) {
       try {
       const response = await getUserDniFecha({dni,fechaNacimiento});
-      console.log(response);
+      //console.log(response);
       const token = response.data;
-      console.log(token);
+      //console.log(token);
       localStorage.setItem('token', token);
       const decoded = jwtDecode(token);
       setDni(decoded.dni);
@@ -138,6 +141,7 @@ export const usePacientes = () => {
     async function CrearUsuario(data){
       const response = await createUser(data);
       setUsuario(response.data);
+      createPaciente({dni: data.dni});
     }
 
     async function CrearPaciente({dni}){
@@ -163,13 +167,35 @@ export const usePacientes = () => {
     } 
 
     async function CrearTurno(){
-     console.log({idPaciente,fechaYHora,fechaCancelacion,fechaConfirmacion,estado,idEspecialidad,idDoctor,idSede})
      await createTurno({idPaciente,fechaYHora,fechaCancelacion,fechaConfirmacion,estado,idEspecialidad,idDoctor,idSede});
     }
 
     async function ObtenerPacienteDni(){
       const reponse = await getPacienteDni({dni});
       setIdPaciente(reponse.data.idPaciente);
+    }
+
+    async function ObtenerTurnosPaciente(){
+      const response = await getTurnosPaciente({dni});
+      setTurnos(response.data);
+    }
+
+    async function ConfirmarTurno({idTurno}){
+      await confirmarTurno({idTurno});
+      setTurnos(prevTurnos =>
+        prevTurnos.map(turno =>
+            turno.idTurno === idTurno ? { ...turno, estado: 'Confirmado' } : turno
+        )
+    );
+    }
+
+    async function CancelarTurno({idTurno}){
+      await cancelarTurno({idTurno});
+      setTurnos(prevTurnos =>
+        prevTurnos.map(turno =>
+            turno.idTurno === idTurno ? { ...turno, estado: 'Cancelado' } : turno
+        )
+    );
     }
     return (
       <PacientesContext.Provider
@@ -178,7 +204,8 @@ export const usePacientes = () => {
         idPacienteCreado,usuario,CrearPaciente,CrearUsuario,comprobarToken, ObtenerDoctorId, 
         ObtenerEspecialidadId, ObtenerSedeId, nombreDoctor,nombreEspecialidad,nombreSede,apellidoDoctor,
         direccionSede,CrearTurno, fechaYHora, setFechaYHora,setIdDoctor, setIdEspecialidad,
-        setIdSede, setEstado, setFechaCancelacion, setFechaConfirmacion
+        setIdSede, setEstado, setFechaCancelacion, setFechaConfirmacion,
+        ObtenerTurnosPaciente, turnos, ConfirmarTurno, CancelarTurno
         }}>
         {children}
       </PacientesContext.Provider>

@@ -15,8 +15,8 @@ export const createTurno = async ({idPaciente,fechaYHora,fechaCancelacion,fechaC
     return await axios.post(`http://${dbUrl}/api/turnos`,{idPaciente,fechaYHora,fechaCancelacion,fechaConfirmacion,estado,idEspecialidad,idDoctor,idSede});
 }
 
-export const getTurnosPaciente = async ({dni,fechaNacimiento}) => {
-    return await axios.post(`http://${dbUrl}/api/turnospac`,{dni,fechaNacimiento});
+export const getTurnosPaciente = async ({dni}) => {
+    return await axios.post(`http://${dbUrl}/api/turnospac`,{dni});
 }
 
 export const confirmarTurno = async ({idTurno}) => {

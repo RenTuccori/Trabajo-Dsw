@@ -2,7 +2,7 @@ import { pool } from '../db.js';
 
 export const getTurnoByDni = async (req, res) => {
   try {
-    const { dni, fechaNacimiento } = req.body;
+    const { dni} = req.body;
     const [result] = await pool.query(`
       SELECT pac.dni, DATE_FORMAT(tur.fechaYhora, '%Y-%m-%d %H:%i:%s') AS fecha_hora, sed.nombre Sede, sed.direccion Direccion, esp.nombre Especialidad, usudoc.apellido Doctor, tur.estado, tur.idTurno
       FROM usuarios usu
@@ -11,8 +11,8 @@ export const getTurnoByDni = async (req, res) => {
       inner join sedes sed on sed.idSede = tur.idSede
       inner join doctores doc on tur.idDoctor = doc.idDoctor 
       inner join especialidades esp on esp.idEspecialidad = tur.idEspecialidad 
-      inner join usuarios usudoc on doc.dni = usudoc.dni WHERE usu.dni = ? and usu.fechaNacimiento = ?`,
-      [dni, fechaNacimiento]);
+      inner join usuarios usudoc on doc.dni = usudoc.dni WHERE usu.dni = ?`,
+      [dni]);
     if (result.length === 0) {
       return res.status(404).json({ message: 'No hay próximos turnos para este paciente' });
     } else {

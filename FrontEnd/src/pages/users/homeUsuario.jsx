@@ -56,7 +56,7 @@ function HomeUsuario() {
             Verificar
           </button>
           <button 
-            onClick={() => navigate('/')}
+            onClick={() => navigate('/paciente/datospersonales')}
           >Registrarse</button>
         </div>
       ) : (
@@ -64,7 +64,7 @@ function HomeUsuario() {
           <button onClick={() => navigate('/paciente/sacarturno')}>Sacar un Turno</button>
           <button onClick={() => navigate('/paciente/verturnos')}>Ver mis turnos</button>
           <button onClick={() => navigate('/paciente/editardatospersonales')}>Modificar datos personales</button>
-          <button onClick={() => navigate('/paciente')}>Volver a inicio</button>
+          <button onClick={() => navigate('/')}>Volver a inicio</button>
         </div>
       )}
     </div>
