@@ -4,15 +4,15 @@ import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import { useNavigate } from 'react-router-dom';
 import '../../estilos/home.css';
-import { useEffect,useState } from 'react';
+import { useEffect, useState } from 'react';
 
 
 
 
 export function SacarTurno() {
     const navigate = useNavigate();
-    const {sedes,especialidades,doctores, ObtenerSedes,ObtenerEspecialidades, ObtenerDoctores,fechas, ObtenerFechas,horarios, ObtenerHorarios, setFechaYHora,
-        setIdDoctor, setIdEspecialidad, setIdSede, setEstado, setFechaCancelacion, setFechaConfirmacion,comprobarToken} = usePacientes();
+    const { sedes, especialidades, doctores, ObtenerSedes, ObtenerEspecialidades, ObtenerDoctores, fechas, ObtenerFechas, horarios, ObtenerHorarios, setFechaYHora,
+        setIdDoctor, setIdEspecialidad, setIdSede, setEstado, setFechaCancelacion, setFechaConfirmacion, comprobarToken } = usePacientes();
     const [selectedSede, setSelectedSede] = useState(null);
     const [selectedEspecialidad, setSelectedEspecialidad] = useState(null);
     const [selectedDoctor, setSelectedDoctor] = useState(null);
@@ -57,8 +57,8 @@ export function SacarTurno() {
         setSelectedDoctor(null);
         setShowDatePicker(false); // Ocultar DatePicker al cambiar sede
         if (selectedOption) {
-            ObtenerEspecialidades({idSede: selectedOption.value});
-        } 
+            ObtenerEspecialidades({ idSede: selectedOption.value });
+        }
     };
 
     const handleEspecilidadChange = async (selectedOption) => {
@@ -66,16 +66,17 @@ export function SacarTurno() {
         setSelectedDoctor(null);
         setShowDatePicker(false); // Ocultar DatePicker al cambiar especialidad
         if (selectedSede && selectedOption) {
-          ObtenerDoctores({idSede: selectedSede.value, idEspecialidad: selectedOption.value});  
-        }};
+            ObtenerDoctores({ idSede: selectedSede.value, idEspecialidad: selectedOption.value });
+        }
+    };
 
     const handleDoctorChange = async (selectedOption) => {
         setSelectedDoctor(selectedOption);
         setSelectedFecha(null);
         setShowDatePicker(true); // Mostrar DatePicker al seleccionar doctor
         if (selectedSede && selectedOption && selectedEspecialidad) {
-            ObtenerFechas({selectedOption, selectedEspecialidad, selectedSede});
-            }
+            ObtenerFechas({ selectedOption, selectedEspecialidad, selectedSede });
+        }
     };
 
     const isDateAvailable = (date) => {
@@ -96,11 +97,11 @@ export function SacarTurno() {
         setSelectedFecha(date);
         setSelectedHorario(null);
         if (selectedSede && date && selectedEspecialidad && selectedDoctor) {
-            ObtenerHorarios({selectedDoctor, selectedEspecialidad, selectedSede, date});
-        } 
+            ObtenerHorarios({ selectedDoctor, selectedEspecialidad, selectedSede, date });
+        }
     };
 
-    
+
     const handleHorarioChange = (selectedOption) => {
         setSelectedHorario(selectedOption);
         setFechaYHora(`${selectedFecha} ${selectedOption.value}`);
@@ -110,10 +111,10 @@ export function SacarTurno() {
         setEstado('Pendiente');
         setFechaCancelacion(null);
         setFechaConfirmacion(null);
-}
+    }
 
     return (
-        <form className="home-container">
+        <form className="turno-container">
             <div className="form" >
                 <p className='text'>Sede</p>
                 <Select class='select'
