@@ -17,11 +17,14 @@ export const deleteDoctor = async ({ idDoctor }) => {
 export const updateDoctor = async ({ idDoctor, duracionTurno, contra }) => {
     return await axios.put(`http://${dbUrl}/api/adminUpdateDr/${idDoctor}`, { idDoctor, duracionTurno, contra });
 }
-export const createSede = async ({ idSede, nombre, direccion }) => {
-    return await axios.post(`http://${dbUrl}/api/adminCreateSede`, { idSede, nombre, direccion });
+export const createSede = async ({ nombre, direccion }) => {
+    return await axios.post(`http://${dbUrl}/api/adminCreateSede`, { nombre, direccion });
 }
 export const updateSede = async ({ idSede, nombre, direccion }) => {
     return await axios.put(`http://${dbUrl}/api/adminUpdateSede/${idSede}`, { nombre, direccion });
+}
+export const deleteSede = async (idSede) => {
+    return await axios.delete(`http://${dbUrl}/api/adminDeleteSede/${idSede}`, idSede);
 }
 export const createObraSocial = async ({ nombre }) => {
     return await axios.post(`http://${dbUrl}/api/adminCreateObraSocial`, { nombre });

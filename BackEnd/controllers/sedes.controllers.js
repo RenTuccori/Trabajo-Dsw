@@ -31,21 +31,20 @@ export const getSedeById = async (req, res) => {
 
 export const createSede = async (req, res) => {
   const {
-    idSede,
     nombre,
     direccion,
   } = req.body;
   try {
-    await pool.query(
-      'INSERT INTO sede (idSede, nombre, direccion) VALUES (?, ?, ?)',
-      [
-        idSede,
-        nombre,
-        direccion,
-      ]
-    );
+    const [result] =
+      await pool.query(
+        'INSERT INTO sedes (nombre, direccion) VALUES (?, ?)',
+        [
+          nombre,
+          direccion,
+        ]
+      );
     res.json({
-      idSede,
+      idSede: result.insertId,
       nombre,
       direccion,
     });

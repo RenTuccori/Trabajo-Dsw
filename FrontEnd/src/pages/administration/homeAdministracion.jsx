@@ -23,7 +23,7 @@ function HomeAdmin() {
 
   useEffect(() => {
     comprobarToken();
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (
@@ -59,11 +59,11 @@ function HomeAdmin() {
         </div>
       ) : (
         <div className="home-container">
-          <button onClick={() => navigate('/')}>Sedes</button>
-          <button onClick={() => navigate('/')}>Especialidades</button>
-          <button onClick={() => navigate('/')}>Doctores</button>
-          <button onClick={() => navigate('/')}>Asignar combinacion</button>
-          <button onClick={() => navigate('/')}>Obras Sociales</button>
+          <button onClick={() => navigate('/admin/crearSede')}>Sedes</button>
+          <button onClick={() => navigate('/admin/crearEsp')}>Especialidades</button>
+          <button onClick={() => navigate('/admin/crearDoc')}>Doctores</button>
+          <button onClick={() => navigate('/admin/SedEspDoc')}>Asignar combinacion</button>
+          <button onClick={() => navigate('/admin/crearOS')}>Obras Sociales</button>
           <button onClick={() => navigate('/')}>Volver</button>
         </div>
       )}
