@@ -22,6 +22,7 @@ import {
 } from '../../api/turnos.api';
 import { getUserDni } from '../../api/usuarios.api';
 import { updateUser } from '../../api/usuarios.api';
+import { useNavigate } from 'react-router-dom';
 
 // eslint-disable-next-line react-refresh/only-export-components
 export const usePacientes = () => {
@@ -34,7 +35,7 @@ export const usePacientes = () => {
 
 const PacientesProvider = ({ children }) => {
   //proveedor para acceder a los datos de los empleados desde cualquier componente
-
+  const navigate = useNavigate();
   const [sedes, setSedes] = useState([]);
   const [especialidades, setEspecialidades] = useState([]);
   const [doctores, setDoctores] = useState([]);
@@ -132,6 +133,7 @@ const PacientesProvider = ({ children }) => {
         if (decoded.exp < Date.now() / 1000) {
           console.error('Token expired');
           localStorage.removeItem('token');
+          navigate('/')
         } else {
           setDni(decoded.dni);
           ObtenerPacienteDni();
@@ -139,6 +141,7 @@ const PacientesProvider = ({ children }) => {
       } catch (error) {
         console.error('Error decoding token:', error);
         localStorage.removeItem('token');
+        navigate('/')
       }
     } else {
       setDni('');

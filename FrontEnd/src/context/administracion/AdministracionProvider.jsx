@@ -4,7 +4,7 @@ import { useContext, useEffect, useState } from 'react';
 import { getSedes } from '../../api/sedes.api.js'; // Asegúrate de tener una función para obtener las sedes en la API
 import { jwtDecode } from "jwt-decode";
 import PropTypes from 'prop-types';
-
+import { useNavigate } from 'react-router-dom'; 
 // eslint-disable-next-line react-refresh/only-export-components
 export const useAdministracion = () => {
   const context = useContext(AdministracionContext);
@@ -19,8 +19,9 @@ export const useAdministracion = () => {
 const AdministracionProvider = ({ children }) => {
   const [idAdmin, setIdAdmin] = useState('');
   const [sedes, setSedes] = useState([]); // Estado para almacenar las sedes
+  const navigate = useNavigate(); // Hook de React Router para navegar entre rutas
 
-  useEffect(() => {
+  useEffect(() => { 
     comprobarToken();
     // Podrías llamar a una función para obtener las sedes al cargar el componente
   }, []);
@@ -41,12 +42,14 @@ const AdministracionProvider = ({ children }) => {
         if (decoded.exp < Date.now() / 1000) {
           console.error('Token expired');
           localStorage.removeItem('token');
+          navigate('/')
         } else {
           setIdAdmin(decoded.idAdmin);
         }
       } catch (error) {
         console.error('Error decoding token:', error);
         localStorage.removeItem('token');
+        navigate('/')
       }
     } else {
       setIdAdmin('');
