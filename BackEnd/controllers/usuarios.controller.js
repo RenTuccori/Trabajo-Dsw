@@ -33,7 +33,19 @@ export const getUserByDniFecha = async (req, res) => {
   }
 };
 
-
+export const getUserByDni = async (req, res) => {
+  try {
+    const { dni } = req.body;
+    const [result] = await pool.query('SELECT * FROM usuarios WHERE dni = ?', [dni]);
+    if (result.length === 0) {
+      return res.status(404).json({ message: 'Usuario no encontrado' });
+    } else {
+      res.json(result[0]);
+    }
+  } catch (error) {
+    return res.status(500).json({ message: error.message });
+  }
+}
 
 export const createUser = async (req, res) => {
   const {
