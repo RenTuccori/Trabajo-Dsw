@@ -24,6 +24,7 @@
   /* Espacio extra para evitar que choque con la navbar */
   overflow-y: auto;
   /* Permite desplazarse si es necesario */
+  padding-top: 4rem;
 }
 
 .home-registrar {
@@ -37,8 +38,9 @@
   /* Centra el contenedor horizontalmente */
   text-align: center;
   /* Centra el texto dentro del contenedor */
-  margin-top:45vh;
-  margin-bottom: 5vh
+  margin-top: 45vh;
+  margin-bottom: 5vh;
+  padding-top: 20rem;
 }
 
 @media (max-width: 600px) {
