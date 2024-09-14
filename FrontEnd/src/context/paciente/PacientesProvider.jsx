@@ -7,7 +7,7 @@ import { useContext, useState } from 'react';
 import { getUserDniFecha } from '../../api/usuarios.api';
 import PropTypes from 'prop-types';
 import { jwtDecode } from 'jwt-decode';
-import { getObraSociales } from '../../api/obrasociales.api';
+import { getObrasSociales } from '../../api/obrasociales.api';
 import { createUser } from '../../api/usuarios.api';
 import { createPaciente } from '../../api/pacientes.api';
 import { getEspecialidadById } from '../../api/especialidades.api';
@@ -149,7 +149,7 @@ const PacientesProvider = ({ children }) => {
   }
 
   async function ObtenerObraSociales() {
-    const response = await getObraSociales();
+    const response = await getObrasSociales();
     setObraSociales(response.data);
   }
 

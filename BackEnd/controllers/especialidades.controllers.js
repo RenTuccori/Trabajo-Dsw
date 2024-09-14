@@ -2,10 +2,10 @@ import { pool } from '../db.js';
 
 export const getSpecialties = async (req, res) => {
   try {
-    const {idSede} = req.body;
+    const { idSede } = req.body;
     const [result] = await pool.query(
-    'SELECT DISTINCT sde.idEspecialidad, es.nombre FROM especialidades es INNER JOIN sededoctoresp sde ON es.idEspecialidad = sde.idEspecialidad WHERE sde.idSede = ?',
-    [idSede]);
+      'SELECT DISTINCT sde.idEspecialidad, es.nombre FROM especialidades es INNER JOIN sededoctoresp sde ON es.idEspecialidad = sde.idEspecialidad WHERE sde.idSede = ?',
+      [idSede]);
     res.json(result);
   } catch (error) {
     return res.status(500).json({ message: error.message });
@@ -14,7 +14,7 @@ export const getSpecialties = async (req, res) => {
 
 export const getSpecialtyById = async (req, res) => {
   try {
-    const {idEspecialidad} = req.params;
+    const { idEspecialidad } = req.params;
     const [result] = await pool.query(
       'SELECT * FROM especialidades WHERE idEspecialidad = ?',
       [idEspecialidad]
@@ -30,13 +30,14 @@ export const getSpecialtyById = async (req, res) => {
 
 export const createSpecialty = async (req, res) => {
   try {
-    const { idEspecialidad, nombre } = req.body;
+    const { nombre, } = req.body;
     const [result] = await pool.query(
-      'INSERT INTO especialidades(id, nombre, descripcion) VALUES (?,?,?) ',
-      [idEspecialidad, nombre]
+      'INSERT INTO especialidades(nombre) VALUES (?) ',
+      [nombre]
     );
+    const idEspecialidad = result.insertId;
     res.json({
-      id: result.insertId,
+      idEspecialidad,
       nombre,
     });
   } catch (error) {

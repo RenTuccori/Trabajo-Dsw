@@ -8,6 +8,7 @@ export function CrearSede() {
   const { sedes, crearNuevaSede, ObtenerSedes, borrarSede } = useAdministracion();
   const [nombreSede, setNombreSede] = useState('');
   const [direccionSede, setDireccionSede] = useState('');
+  const [mensajeExito, setMensajeExito] = useState(''); // Estado para el mensaje de éxito
 
   // Obtener sedes al cargar el componente
   useEffect(() => {
@@ -22,6 +23,8 @@ export function CrearSede() {
       await crearNuevaSede({ nombre: nombreSede, direccion: direccionSede });
       setNombreSede('');
       setDireccionSede('');
+      setMensajeExito('¡Sede creada con éxito!'); // Mostrar mensaje de éxito
+      setTimeout(() => setMensajeExito(''), 5000); // Ocultar mensaje después de 5 segundos
       ObtenerSedes(); // Actualizar la lista después de crear una sede
     }
   };
@@ -34,6 +37,14 @@ export function CrearSede() {
   return (
     <div>
       <h2>Crear Nueva Sede</h2>
+
+      {/* Mostrar mensaje de éxito si existe */}
+      {mensajeExito && (
+        <div className="mensaje-exito visible">
+          {mensajeExito}
+        </div>
+      )}
+
       <form onSubmit={handleCrearSede}>
         <input
           type="text"
