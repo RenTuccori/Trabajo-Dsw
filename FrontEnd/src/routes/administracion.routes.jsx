@@ -4,6 +4,7 @@ import HomeAdmin from "../pages/administration/homeAdministracion.jsx";
 import { CrearSede } from "../pages/administration/crearSede.jsx";
 import { CrearEspecialidad } from "../pages/administration/crearEspecialidad.jsx";
 import { CrearObraSocial } from "../pages/administration/crearObraSocial.jsx";
+import { AsignarCombinacion } from "../pages/administration/crearCombinacion.jsx";
 
 
 
@@ -15,6 +16,7 @@ export function AdministracionRoutes() {
         <Route path="/crearSede" element={<CrearSede />} />
         <Route path="/crearEsp" element={<CrearEspecialidad />} />
         <Route path="/crearOS" element={<CrearObraSocial />} />
+        <Route path="/combinacion" element={<AsignarCombinacion />} />
       </Routes>
     </AdministracionProvider>
   );

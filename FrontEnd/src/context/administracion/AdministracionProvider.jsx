@@ -1,7 +1,12 @@
 import { AdministracionContext } from './AdministracionContext';
-import { getAdmin, createSede, deleteSede, createSpecialty, deleteSpecialty, createObraSocial, deleteObraSocial, updateObraSocial } from '../../api/admin.api.js'; // Asegúrate de tener una función para crear la sede en la API
+import {
+  getAdmin, createSede, deleteSede, createSpecialty, deleteSpecialty, createObraSocial, deleteObraSocial, updateObraSocial,
+  createSeEspDoc
+} from '../../api/admin.api.js'; // Asegúrate de tener una función para crear la sede en la API
 import { useContext, useEffect, useState } from 'react';
-import { getSedes } from '../../api/sedes.api.js'; // Asegúrate de tener una función para obtener las sedes en la API
+import { getSedes } from '../../api/sedes.api.js';
+import { getEspecialidades } from '../../api/especialidades.api';
+import { getDoctores } from '../../api/doctores.api';
 import { getObrasSociales } from '../../api/obrasociales.api.js';
 import { jwtDecode } from "jwt-decode";
 import PropTypes from 'prop-types';
@@ -22,6 +27,10 @@ const AdministracionProvider = ({ children }) => {
   const [sedes, setSedes] = useState([]); // Estado para almacenar las sedes
   const [especialidades, setEspecialidades] = useState('');
   const [obrasSociales, setObrasSociales] = useState('');
+  const [doctores, setDoctores] = useState('');
+  const [selectedDoctor, setSelectedDoctor] = useState(null);
+  const [selectedEspecialidad, setSelectedEspecialidad] = useState(null);
+  const [selectedSede, setSelectedSede] = useState(null);
   const navigate = useNavigate(); // Hook de React Router para navegar entre rutas
 
   useEffect(() => {
@@ -59,7 +68,7 @@ const AdministracionProvider = ({ children }) => {
     }
   }
 
-  // Función para crear una nueva sede
+  //Sede
   async function crearNuevaSede({ nombre, direccion }) {
     try {
       const response = await createSede({ nombre, direccion }); // Llamada a la API
@@ -82,6 +91,11 @@ const AdministracionProvider = ({ children }) => {
     }
   }
 
+  //Especialidad
+  async function ObtenerEspecialidades({ idSede }) {
+    const response = await getEspecialidades({ idSede });
+    setEspecialidades(response.data);
+  }
   async function crearEspecialidad({ nombre }) {
     try {
       const response = await createSpecialty({ nombre });
@@ -98,6 +112,14 @@ const AdministracionProvider = ({ children }) => {
       console.error('Error al borrar la especialidad:', error);
     }
   }
+
+  //Doctor
+  async function ObtenerDoctores() {
+    const response = await getDoctores();
+    setDoctores(response.data);
+  }
+
+  //Obra Social
   async function crearObraSocial({ nombre }) {
     try {
       const response = await createObraSocial({ nombre });
@@ -127,6 +149,7 @@ const AdministracionProvider = ({ children }) => {
 
   async function actualizarObraSocial({ idObraSocial, nombre }) {
     try {
+      console.log('idObraSocial:', idObraSocial, 'nombre:', nombre);
       const response = await updateObraSocial({ idObraSocial, nombre });
       console.log('Obra Social actualizada:', response.data);
     } catch (error) {
@@ -143,13 +166,22 @@ const AdministracionProvider = ({ children }) => {
       }
     }*/
 
-
+  //Combinaciones de sede, especialidad y doctor
+  async function crearSeEspDoc({ idSede, idEspecialidad, idDoctor }) {
+    try {
+      const response = await createSeEspDoc({ idSede, idEspecialidad, idDoctor });
+      console.log('Sede, especialidad y doctor creados:', response.data);
+    } catch (error) {
+      console.error('Error al obtener las sedes:', error);
+    }
+  }
 
   return (
     <AdministracionContext.Provider
       value={{
         login, comprobarToken, idAdmin, sedes, crearNuevaSede, ObtenerSedes, borrarSede, crearEspecialidad, especialidades, setEspecialidades,
-        borrarEspecialidad, crearObraSocial, ObtenerOS, obrasSociales, borrarObraSocial, actualizarObraSocial
+        borrarEspecialidad, crearObraSocial, ObtenerOS, obrasSociales, borrarObraSocial, actualizarObraSocial, crearSeEspDoc, ObtenerEspecialidades,
+        ObtenerDoctores, doctores, selectedDoctor, setSelectedDoctor, selectedEspecialidad, setSelectedEspecialidad, selectedSede, setSelectedSede
       }}>
       {children}
     </AdministracionContext.Provider>

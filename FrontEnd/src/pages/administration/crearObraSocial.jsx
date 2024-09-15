@@ -70,18 +70,20 @@ export function CrearObraSocial() {
         </div>
       )}
 
-      {/* Formulario para crear una nueva obra social */}
-      <form onSubmit={handleCrearObraSocial}>
-        <input
-          type="text"
-          placeholder="Nombre de la obra social"
-          value={nombreObraSocial}
-          onChange={(e) => setNombreObraSocial(e.target.value)}
-        />
-        <button type="submit">Crear Obra Social</button>
-      </form>
+      {/* Formulario para crear una nueva obra social, solo visible cuando no se está editando */}
+      {!obraSocialAEditar && (
+        <form onSubmit={handleCrearObraSocial}>
+          <input
+            type="text"
+            placeholder="Nombre de la obra social"
+            value={nombreObraSocial}
+            onChange={(e) => setNombreObraSocial(e.target.value)}
+          />
+          <button type="submit">Crear Obra Social</button>
+        </form>
+      )}
 
-      {/* Formulario para actualizar una obra social */}
+      {/* Formulario para actualizar una obra social, solo visible cuando se está editando */}
       {obraSocialAEditar && (
         <form onSubmit={handleActualizarObraSocial}>
           <input

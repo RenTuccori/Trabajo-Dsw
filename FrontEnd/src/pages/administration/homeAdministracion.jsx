@@ -62,7 +62,7 @@ function HomeAdmin() {
           <button onClick={() => navigate('/admin/crearSede')}>Sedes</button>
           <button onClick={() => navigate('/admin/crearEsp')}>Especialidades</button>
           <button onClick={() => navigate('/admin/crearDoc')}>Doctores</button>
-          <button onClick={() => navigate('/admin/SedEspDoc')}>Asignar combinacion</button>
+          <button onClick={() => navigate('/admin/combinacion')}>Asignar combinacion</button>
           <button onClick={() => navigate('/admin/crearOS')}>Obras Sociales</button>
           <button onClick={() => navigate('/')}>Volver</button>
         </div>

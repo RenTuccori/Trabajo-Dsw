@@ -33,7 +33,7 @@ export const createObraSocial = async ({ nombre }) => {
     return await axios.post(`http://${dbUrl}/api/adminCreateObraSocial`, { nombre });
 }
 export const updateObraSocial = async ({ idObraSocial, nombre }) => {
-    return await axios.put(`http://${dbUrl}/api/adminUpdateOS${idObraSocial}`, { nombre });
+    return await axios.put(`http://${dbUrl}/api/adminUpdateOS/${idObraSocial}`, { nombre });
 }
 export const deleteObraSocial = async (idObraSocial) => {
     return await axios.delete(`http://${dbUrl}/api/adminDeleteOS/${idObraSocial}`, idObraSocial);
