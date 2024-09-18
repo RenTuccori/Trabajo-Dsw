@@ -1,10 +1,13 @@
-// src/App.jsx
-import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
-import Home from './pages/home';
+import {
+  BrowserRouter as Router,
+  Route,
+  Routes,
+  Navigate,
+} from 'react-router-dom';
 import Navbar from './components/navbar';
 import { AdministracionRoutes } from './routes/administracion.routes.jsx';
 import { DoctoresRoutes } from './routes/doctores.routes.jsx';
-import { PacientesRoutes } from './routes/pacientes.routes.jsx'; 
+import { PacientesRoutes } from './routes/pacientes.routes.jsx';
 
 function App() {
   return (
@@ -12,7 +15,8 @@ function App() {
       <div>
         <Navbar />
         <Routes>
-          <Route path="/" element={<Home />} />
+          {/* Redirige desde "/" a "/paciente" */}
+          <Route path="/" element={<Navigate to="/paciente" />} />
           <Route path="/paciente/*" element={<PacientesRoutes />} />
           <Route path="/doctor/*" element={<DoctoresRoutes />} />
           <Route path="/admin/*" element={<AdministracionRoutes />} />
