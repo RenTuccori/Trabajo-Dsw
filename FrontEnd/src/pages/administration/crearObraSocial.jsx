@@ -1,6 +1,5 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import '../../estilos/home.css';
 import { useAdministracion } from '../../context/administracion/AdministracionProvider.jsx';
 
 export function CrearObraSocial() {
@@ -60,76 +59,104 @@ export function CrearObraSocial() {
   };
 
   return (
-    <div>
-      <h2>Crear Nueva Obra Social</h2>
+    <div className="min-h-screen bg-gradient-to-b from-blue-100 to-white flex items-center justify-center p-4">
+      <div className="bg-white rounded-lg shadow-md w-full max-w-md p-6 space-y-4">
+        <h2 className="text-xl font-semibold text-center text-gray-800">Crear Nueva Obra Social</h2>
 
-      {/* Mostrar mensaje de éxito si existe */}
-      {mensajeExito && (
-        <div className="mensaje-exito visible">
-          {mensajeExito}
-        </div>
-      )}
+        {/* Mostrar mensaje de éxito si existe */}
+        {mensajeExito && (
+          <div className="bg-green-100 text-green-800 p-2 rounded-lg text-center">
+            {mensajeExito}
+          </div>
+        )}
 
-      {/* Formulario para crear una nueva obra social, solo visible cuando no se está editando */}
-      {!obraSocialAEditar && (
-        <form onSubmit={handleCrearObraSocial}>
-          <input
-            type="text"
-            placeholder="Nombre de la obra social"
-            value={nombreObraSocial}
-            onChange={(e) => setNombreObraSocial(e.target.value)}
-          />
-          <button type="submit">Crear Obra Social</button>
-        </form>
-      )}
+        {/* Formulario para crear una nueva obra social */}
+        {!obraSocialAEditar && (
+          <form onSubmit={handleCrearObraSocial} className="space-y-4">
+            <input
+              type="text"
+              placeholder="Nombre de la obra social"
+              value={nombreObraSocial}
+              onChange={(e) => setNombreObraSocial(e.target.value)}
+              className="w-full p-2 border border-gray-300 rounded-lg"
+            />
+            <button
+              type="submit"
+              className="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition-colors"
+            >
+              Crear Obra Social
+            </button>
+          </form>
+        )}
 
-      {/* Formulario para actualizar una obra social, solo visible cuando se está editando */}
-      {obraSocialAEditar && (
-        <form onSubmit={handleActualizarObraSocial}>
-          <input
-            type="text"
-            placeholder="Nuevo nombre de la obra social"
-            value={nuevoNombreObraSocial}
-            onChange={(e) => setNuevoNombreObraSocial(e.target.value)}
-          />
-          <button type="submit">Actualizar Obra Social</button>
-          <button type="button" onClick={() => setObraSocialAEditar(null)}>Cancelar</button>
-        </form>
-      )}
-
-      <button type="button" onClick={() => navigate('/admin')}>Volver</button>
-
-      <h3>Obras Sociales Creadas</h3>
-      <ul>
-        {obrasSociales.length > 0 ? (
-          obrasSociales.map((obraSocial) => (
-            <li key={obraSocial.idObraSocial}>
-              <strong>{obraSocial.nombre}</strong>
+        {/* Formulario para actualizar una obra social */}
+        {obraSocialAEditar && (
+          <form onSubmit={handleActualizarObraSocial} className="space-y-4">
+            <input
+              type="text"
+              placeholder="Nuevo nombre de la obra social"
+              value={nuevoNombreObraSocial}
+              onChange={(e) => setNuevoNombreObraSocial(e.target.value)}
+              className="w-full p-2 border border-gray-300 rounded-lg"
+            />
+            <div className="flex justify-between space-x-2">
               <button
-                onClick={() => handleBorrarObraSocial(obraSocial.idObraSocial)}
-                className="delete-button"
-                style={{ marginLeft: '10px', color: 'red' }}
-              >
-                Delete
-              </button>
-
-              {/* Botón para activar el formulario de actualización */}
-              <button
-                onClick={() => {
-                  setObraSocialAEditar(obraSocial.idObraSocial);
-                  setNuevoNombreObraSocial(obraSocial.nombre); // Prellena el campo con el nombre actual
-                }}
-                className="update-button"
-                style={{ marginLeft: '10px', color: 'blue' }}
+                type="submit"
+                className="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition-colors"
               >
                 Actualizar
               </button>
-            </li>
-          ))
-        ) : (
-          <p>No hay obras sociales creadas aún.</p>
+              <button
+                type="button"
+                onClick={() => setObraSocialAEditar(null)}
+                className="w-full bg-gray-200 text-gray-700 py-2 rounded-lg hover:bg-gray-300 transition-colors"
+              >
+                Cancelar
+              </button>
+            </div>
+          </form>
         )}
-      </ul>
+
+        <button
+          type="button"
+          onClick={() => navigate('/admin')}
+          className="w-full bg-gray-200 text-gray-700 py-2 rounded-lg hover:bg-gray-300 transition-colors mt-4"
+        >
+          Volver
+        </button>
+
+        <h3 className="text-lg font-medium text-gray-800 mt-6">Obras Sociales Creadas</h3>
+        <ul className="space-y-2">
+          {obrasSociales.length > 0 ? (
+            obrasSociales.map((obraSocial) => (
+              <li key={obraSocial.idObraSocial} className="bg-gray-100 p-4 rounded-lg flex justify-between items-center">
+                <span>
+                  <strong>{obraSocial.nombre}</strong>
+                </span>
+                <div className="flex space-x-2">
+                  <button
+                    onClick={() => handleBorrarObraSocial(obraSocial.idObraSocial)}
+                    className="text-red-600 hover:text-red-800"
+                  >
+                    Delete
+                  </button>
+                  <button
+                    onClick={() => {
+                      setObraSocialAEditar(obraSocial.idObraSocial);
+                      setNuevoNombreObraSocial(obraSocial.nombre);
+                    }}
+                    className="text-blue-600 hover:text-blue-800"
+                  >
+                    Actualizar
+                  </button>
+                </div>
+              </li>
+            ))
+          ) : (
+            <p className="text-center text-gray-600">No hay obras sociales creadas aún.</p>
+          )}
+        </ul>
+      </div>
     </div>
   );
 }

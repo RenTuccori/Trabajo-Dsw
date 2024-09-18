@@ -1,18 +1,21 @@
 import { Link } from 'react-router-dom';
-import '../estilos/navbar.css';
 import { FaCog } from 'react-icons/fa'; // Asegúrate de tener react-icons instalado
 import logo from '../assets/logo.png'; // Asegúrate de que la ruta al logo sea correcta
 
 const Navbar = () => {
     return (
-        <nav className="navbar d-flex justify-content-between">
-            <Link to="/" className="navbar-brand d-flex align-items-center">
-                <img src={logo} alt="Logo" className="navbar-logo" />
-                <span>Sanatorio UTN</span>
-            </Link>
-            <Link to="/admin" className="navbar-tool">
-                <FaCog />
-            </Link>
+        <nav className="bg-white shadow-md py-4">
+            <div className="container mx-auto flex items-center justify-between px-6">
+                <div className="flex items-center space-x-6">
+                    <Link to="/" className="flex items-center space-x-4">
+                        <img src={logo} alt="Logo" className="h-14 w-14" /> {/* Tamaño del logo */}
+                        <span className="text-2xl font-bold text-blue-800">Sanatorio UTN</span> {/* Tamaño del texto */}
+                    </Link>
+                </div>
+                <Link to="/admin" className="text-blue-800 hover:text-blue-600 transition-colors ml-auto">
+                    <FaCog size={32} /> {/* Tamaño del ícono */}
+                </Link>
+            </div>
         </nav>
     );
 };

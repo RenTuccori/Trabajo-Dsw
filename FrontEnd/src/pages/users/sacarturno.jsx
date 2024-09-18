@@ -3,7 +3,6 @@ import { usePacientes } from '../../context/paciente/PacientesProvider';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import { useNavigate } from 'react-router-dom';
-import '../../estilos/home.css';
 import { useEffect, useState } from 'react';
 
 
@@ -29,25 +28,27 @@ export function SacarTurno() {
     const customStyles = {
         option: (provided, state) => ({
             ...provided,
-            backgroundColor: state.isFocused ? '#5368e0' : '#2a2e45', // Color de fondo cuando está seleccionado o enfocado
-            color: '#ffffff', // Color de texto blanco
+            backgroundColor: state.isFocused ? '#1e40af' : '#374151', // Ajusta los colores para que se alineen con el estilo
+            color: '#ffffff', // Texto blanco
+            padding: '10px', // Espaciado
         }),
         control: (provided) => ({
             ...provided,
-            backgroundColor: 'white', // Fondo del select
-            color: '#5368e0', // Texto blanco en el control
-            borderRadius: '5px', // Borde redondeado
-            border: '2px solid #5368e0', // Borde del control
+            backgroundColor: 'white', // Fondo blanco del select
+            borderColor: '#1e40af', // Color del borde
+            borderRadius: '0.375rem', // Bordes redondeados (Tailwind: rounded-md)
+            boxShadow: '0 0 0 1px rgba(29, 78, 216, 0.1)', // Sombra sutil
             padding: '5px', // Espaciado
         }),
         menu: (provided) => ({
             ...provided,
-            border: '0.1rem solid white',
-            borderRadius: '5px', // Borde redondeado
+            border: '0.1rem solid #1e40af', // Borde del menú
+            borderRadius: '0.375rem', // Bordes redondeados
+            marginTop: '4px', // Espaciado superior
         }),
         singleValue: (provided) => ({
             ...provided,
-            color: '#2a2e45', // Color del valor seleccionado
+            color: '#1e40af', // Color del valor seleccionado
         }),
     };
 
@@ -114,53 +115,73 @@ export function SacarTurno() {
     }
 
     return (
-        <form className="turno-container">
-            <div className="form" >
-                <p className='text'>Sede</p>
-                <Select class='select'
-                    options={sedes.map(sede => ({ value: sede.idSede, label: sede.nombre }))}
-                    onChange={handleSedeChange}
-                    value={selectedSede}
-                    styles={customStyles}
-                />
-                <p className='text'>Especialidad</p>
-                <Select class='select'
-                    options={especialidades.map(especialidad => ({ value: especialidad.idEspecialidad, label: especialidad.nombre }))}
-                    onChange={handleEspecilidadChange}
-                    value={selectedEspecialidad}
-                    isDisabled={!selectedSede}
-                    styles={customStyles}
-                />
-                <p className='text'>Doctores</p>
-                <Select class='select'
-                    options={doctores.map(doctor => ({ value: doctor.idDoctor, label: doctor.nombreyapellido }))}
-                    value={selectedDoctor}
-                    onChange={handleDoctorChange}
-                    isDisabled={!selectedEspecialidad}
-                    styles={customStyles}
-                />
-                {showDatePicker && (
-                    <>
-                        <p>Fecha</p>
-                        <DatePicker
-                            selected={selectedFecha}
-                            onChange={handleFechaChange}
-                            filterDate={isDateAvailable}
-                            placeholderText="Selecciona una fecha"
-                        />
-                    </>
-                )}
-                <p className='text'>Horario</p>
-                <Select class='select'
-                    options={horarios.map(horario => ({ value: horario.hora_inicio, label: horario.hora_inicio }))}
-                    onChange={handleHorarioChange}
-                    value={selectedHorario}
-                    isDisabled={!selectedFecha}
-                    styles={customStyles}
-                />
-                <button disabled={!selectedHorario} onClick={() => navigate('/paciente/confirmacionturno')}>Continuar</button>
+        <form className="min-h-screen bg-gradient-to-b from-blue-100 to-white flex items-center justify-center p-4">
+            <div className="bg-white rounded-lg shadow-md w-full max-w-md p-6 space-y-4">
+                <div className="space-y-4">
+                    <p className="text-center text-gray-600 text-lg">Sede</p>
+                    <Select
+                        className="react-select"
+                        options={sedes.map(sede => ({ value: sede.idSede, label: sede.nombre }))}
+                        onChange={handleSedeChange}
+                        value={selectedSede}
+                        styles={customStyles}
+                    />
+                    <p className="text-center text-gray-600 text-lg">Especialidad</p>
+                    <Select
+                        className="react-select"
+                        options={especialidades.map(especialidad => ({ value: especialidad.idEspecialidad, label: especialidad.nombre }))}
+                        onChange={handleEspecilidadChange}
+                        value={selectedEspecialidad}
+                        isDisabled={!selectedSede}
+                        styles={customStyles}
+                    />
+                    <p className="text-center text-gray-600 text-lg">Doctores</p>
+                    <Select
+                        className="react-select"
+                        options={doctores.map(doctor => ({ value: doctor.idDoctor, label: doctor.nombreyapellido }))}
+                        value={selectedDoctor}
+                        onChange={handleDoctorChange}
+                        isDisabled={!selectedEspecialidad}
+                        styles={customStyles}
+                    />
+                    {showDatePicker && (
+                        <>
+                            <p className="text-center text-gray-600 text-lg">Fecha</p>
+                            <DatePicker
+                                selected={selectedFecha}
+                                onChange={handleFechaChange}
+                                filterDate={isDateAvailable}
+                                placeholderText="Selecciona una fecha"
+                                className="w-full border border-gray-300 rounded-lg p-2 focus:outline-none focus:border-blue-500"
+                            />
+                        </>
+                    )}
+                    <p className="text-center text-gray-600 text-lg">Horario</p>
+                    <Select
+                        className="react-select"
+                        options={horarios.map(horario => ({ value: horario.hora_inicio, label: horario.hora_inicio }))}
+                        onChange={handleHorarioChange}
+                        value={selectedHorario}
+                        isDisabled={!selectedFecha}
+                        styles={customStyles}
+                    />
+                </div>
+                <button
+                    type="button"
+                    disabled={!selectedHorario}
+                    onClick={() => navigate('/paciente/confirmacionturno')}
+                    className="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50"
+                >
+                    Continuar
+                </button>
+                <button
+                    type="button"
+                    onClick={() => navigate('/paciente')}
+                    className="w-full bg-gray-200 text-gray-700 py-2 rounded-lg hover:bg-gray-300 transition-colors"
+                >
+                    Volver
+                </button>
             </div>
-            <button onClick={() => navigate('/paciente')}>Volver</button>
         </form>
     );
 }
