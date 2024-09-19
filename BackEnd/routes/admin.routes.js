@@ -8,7 +8,6 @@ const router = Router();
 
 router.post("/api/admin", getAdmin);
 //Doctor
-router.post('/api/adminCreateSeEspDoc', createSeEspDoc);
 router.post('/api/adminCreateDr', createDoctor);
 router.delete("/api/adminDeleteDr/:idDoctor", deleteDoctor);
 router.put('/api/adminUpdateDr/:idDoctor', updateDoctor);
@@ -24,7 +23,8 @@ router.put('/api/adminUpdateOS/:idObraSocial', updateObraSocial);
 //Especialidad
 router.post('/api/adminCreateEsp', createSpecialty);
 router.delete("/api/adminDeleteEsp/:idEspecialidad", deleteSpecialty);
-
+//Combinaciones
+router.post('/api/adminCreateSeEspDoc', createSeEspDoc);
 
 
 export default router;

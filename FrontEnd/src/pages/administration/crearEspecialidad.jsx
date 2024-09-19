@@ -1,12 +1,13 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAdministracion } from '../../context/administracion/AdministracionProvider.jsx';
+import { toast } from 'react-toastify'; // Importa toastify
+import 'react-toastify/dist/ReactToastify.css'; // Importa los estilos de toastify
 
 export function CrearEspecialidad() {
   const navigate = useNavigate();
   const { crearEspecialidad } = useAdministracion();
   const [nombreEspecialidad, setNombreEspecialidad] = useState('');
-  const [mensajeExito, setMensajeExito] = useState(''); // Nuevo estado para mensaje de éxito
 
   useEffect(() => {
     // ObtenerEspecialidades();
@@ -15,11 +16,15 @@ export function CrearEspecialidad() {
   const handleCrearEspecialidad = async (e) => {
     e.preventDefault();
     if (nombreEspecialidad.trim() !== '') {
-      await crearEspecialidad({ nombre: nombreEspecialidad });
-      setNombreEspecialidad(''); // Reiniciar el campo de texto
-      setMensajeExito('Especialidad creada con éxito'); // Establecer el mensaje de éxito
-      setTimeout(() => setMensajeExito(''), 3000); // Ocultar el mensaje después de 3 segundos
-      // ObtenerEspecialidades();
+      try {
+        await crearEspecialidad({ nombre: nombreEspecialidad });
+        setNombreEspecialidad(''); // Reiniciar el campo de texto
+        toast.success('Especialidad creada con éxito'); // Mostrar el mensaje de éxito
+        // ObtenerEspecialidades();
+      } catch (error) {
+        toast.error('Error al crear la especialidad'); // Mostrar mensaje de error
+        console.error('Error al crear especialidad:', error);
+      }
     }
   };
 
@@ -27,13 +32,6 @@ export function CrearEspecialidad() {
     <div className="min-h-screen bg-gradient-to-b from-blue-100 to-white flex items-center justify-center p-4">
       <div className="bg-white rounded-lg shadow-md w-full max-w-md p-6 space-y-4">
         <h2 className="text-xl font-semibold text-center text-gray-800">Crear Especialidad</h2>
-
-        {/* Mostrar el mensaje de éxito si existe */}
-        {mensajeExito && (
-          <div className="bg-green-100 text-green-800 p-2 rounded-lg text-center">
-            {mensajeExito}
-          </div>
-        )}
 
         <form onSubmit={handleCrearEspecialidad} className="space-y-4">
           <div className="space-y-2">
@@ -64,5 +62,4 @@ export function CrearEspecialidad() {
       </div>
     </div>
   );
-
 }

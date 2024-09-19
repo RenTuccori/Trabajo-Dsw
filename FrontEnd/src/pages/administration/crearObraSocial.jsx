@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAdministracion } from '../../context/administracion/AdministracionProvider.jsx';
+import { toast } from 'react-toastify'; // Importa toastify
+import 'react-toastify/dist/ReactToastify.css'; // Importa los estilos de toastify
 
 export function CrearObraSocial() {
   const navigate = useNavigate();
@@ -8,7 +10,6 @@ export function CrearObraSocial() {
   const [nombreObraSocial, setNombreObraSocial] = useState('');
   const [nuevoNombreObraSocial, setNuevoNombreObraSocial] = useState(''); // Estado para el nuevo nombre
   const [obraSocialAEditar, setObraSocialAEditar] = useState(null); // Estado para saber qué obra social estamos editando
-  const [mensajeExito, setMensajeExito] = useState(''); // Estado para el mensaje de éxito
 
   useEffect(() => {
     ObtenerOS();
@@ -18,23 +19,25 @@ export function CrearObraSocial() {
   const handleCrearObraSocial = async (e) => {
     e.preventDefault();
     if (nombreObraSocial.trim() !== '') {
-      await crearObraSocial({ nombre: nombreObraSocial });
-      setNombreObraSocial('');
-      setMensajeExito('¡Obra Social creada con éxito!');
-      setTimeout(() => setMensajeExito(''), 5000);
-      ObtenerOS();
+      try {
+        await crearObraSocial({ nombre: nombreObraSocial });
+        setNombreObraSocial('');
+        toast.success('¡Obra Social creada con éxito!');
+        ObtenerOS();
+      } catch (error) {
+        toast.error('Error al crear la obra social');
+        console.error('Error al crear obra social:', error);
+      }
     }
   };
 
   const handleBorrarObraSocial = async (idObraSocial) => {
     try {
       await borrarObraSocial(idObraSocial);
-      setMensajeExito('¡Obra Social eliminada con éxito!');
-      setTimeout(() => setMensajeExito(''), 5000);
+      toast.success('¡Obra Social eliminada con éxito!');
       ObtenerOS();
     } catch (error) {
-      setMensajeExito('No se puede eliminar esta obra social');
-      setTimeout(() => setMensajeExito(''), 5000);
+      toast.error('No se puede eliminar esta obra social');
       console.error('Error al borrar obra social:', error);
     }
   };
@@ -43,16 +46,13 @@ export function CrearObraSocial() {
     e.preventDefault();
     if (obraSocialAEditar && nuevoNombreObraSocial.trim() !== '') {
       try {
-        console.log('Actualizando obra social:', obraSocialAEditar, nuevoNombreObraSocial);
         await actualizarObraSocial({ idObraSocial: obraSocialAEditar, nombre: nuevoNombreObraSocial });
-        setMensajeExito('¡Obra Social actualizada con éxito!');
-        setTimeout(() => setMensajeExito(''), 5000);
+        toast.success('¡Obra Social actualizada con éxito!');
         setObraSocialAEditar(null); // Resetear el estado de edición
         setNuevoNombreObraSocial(''); // Limpiar el campo de nombre
         ObtenerOS();
       } catch (error) {
-        setMensajeExito('No se puede actualizar esta obra social');
-        setTimeout(() => setMensajeExito(''), 5000);
+        toast.error('No se puede actualizar esta obra social');
         console.error('Error al actualizar obra social:', error);
       }
     }
@@ -62,13 +62,6 @@ export function CrearObraSocial() {
     <div className="min-h-screen bg-gradient-to-b from-blue-100 to-white flex items-center justify-center p-4">
       <div className="bg-white rounded-lg shadow-md w-full max-w-md p-6 space-y-4">
         <h2 className="text-xl font-semibold text-center text-gray-800">Crear Nueva Obra Social</h2>
-
-        {/* Mostrar mensaje de éxito si existe */}
-        {mensajeExito && (
-          <div className="bg-green-100 text-green-800 p-2 rounded-lg text-center">
-            {mensajeExito}
-          </div>
-        )}
 
         {/* Formulario para crear una nueva obra social */}
         {!obraSocialAEditar && (

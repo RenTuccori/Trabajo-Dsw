@@ -12,6 +12,35 @@ export const getSpecialties = async (req, res) => {
   }
 };
 
+export const getAllSpecialities = async (req, res) => {
+  try {
+    const [result] = await pool.query('SELECT * FROM especialidades');
+    res.json(result);
+  } catch (error) {
+    return res.status(500).json({ message: error.message });
+  }
+};
+
+export const getAvailableSpecialties = async (req, res) => {
+  try {
+    const { idSede } = req.body;
+    const [result] = await pool.query(
+      `SELECT es.idEspecialidad, es.nombre 
+       FROM especialidades es 
+       WHERE es.idEspecialidad NOT IN (
+         SELECT sde.idEspecialidad 
+         FROM sededoctoresp sde 
+         WHERE sde.idSede = ?
+       )`,
+      [idSede]
+    );
+    res.json(result);
+  } catch (error) {
+    return res.status(500).json({ message: error.message });
+  }
+};
+
+
 export const getSpecialtyById = async (req, res) => {
   try {
     const { idEspecialidad } = req.params;

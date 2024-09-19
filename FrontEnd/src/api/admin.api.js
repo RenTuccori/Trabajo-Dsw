@@ -6,9 +6,7 @@ export const getAdmin = async ({ usuario, contra }) => {
     return await axios.post(`http://${dbUrl}/api/admin`, { usuario, contra });
 }
 //Doctor
-export const createSeEspDoc = async ({ idSede, idEspecialidad, idDoctor }) => {
-    return await axios.post(`http://${dbUrl}/api/adminCreateSeEspDoc`, { idSede, idEspecialidad, idDoctor });
-}
+
 export const createDoctor = async ({ dni, duracionTurno, contra }) => {
     return await axios.post(`http://${dbUrl}/api/adminCreateDr`, { dni, duracionTurno, contra });
 }
@@ -44,4 +42,9 @@ export const createSpecialty = async ({ nombre }) => {
 }
 export const deleteSpecialty = async (idEspecialidad) => {
     return await axios.delete(`http://${dbUrl}/api/adminDeleteEsp/${idEspecialidad}`, idEspecialidad);
+}
+
+//combinaciones
+export const createSeEspDoc = async ({ idSede, idEspecialidad, idDoctor }) => {
+    return await axios.post(`http://${dbUrl}/api/adminCreateSeEspDoc`, { idSede, idEspecialidad, idDoctor });
 }
