@@ -30,12 +30,14 @@ function HomeUsuario() {
       {/* Fondo de imagen */}
       <div
         className="absolute inset-0 bg-cover bg-center z-0"
-        style={{ backgroundImage: "url('../src/components/fondo.jpg')" }}
+        style={{ backgroundImage: "url('../src/components/image.png')" }}
       ></div>
       <div className="absolute inset-0 bg-gradient-to-b from-transparent to-white z-0"></div>
 
       {/* Contenido */}
       <div className="relative z-10 bg-white rounded-lg shadow-md w-full max-w-md p-6 space-y-4">
+        <h1 className="text-center text-2xl font-semibold text-gray-800">Bienvenido al sistema de turnos</h1>
+
         {!dni ? (
           <div className="space-y-4">
             <p className="text-center text-gray-600 text-lg">Ingrese su DNI</p>

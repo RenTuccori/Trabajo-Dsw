@@ -98,6 +98,7 @@ const AdministracionProvider = ({ children }) => {
       console.log('Sede borrada:', response.data);
     } catch (error) {
       console.error('Error al borrar la sede:', error);
+      throw error;
     }
   }
 
@@ -120,6 +121,7 @@ const AdministracionProvider = ({ children }) => {
       console.log('Especialidad borrada:', response.data);
     } catch (error) {
       console.error('Error al borrar la especialidad:', error);
+      throw error;
     }
   }
   async function ObtenerEspecialidadesDisponibles() {
@@ -154,10 +156,12 @@ const AdministracionProvider = ({ children }) => {
 
   async function borrarObraSocial(idObraSocial) {
     try {
-      const response = await deleteObraSocial(idObraSocial); // Llamada a la API
+      const response = await deleteObraSocial(idObraSocial);
       console.log('Obra Social borrada:', response.data);
     } catch (error) {
       console.error('Error al borrar la obra social:', error);
+      throw error;
+
     }
   }
 

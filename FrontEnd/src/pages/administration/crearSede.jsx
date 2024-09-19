@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { useAdministracion } from '../../context/administracion/AdministracionProvider.jsx';
 import { toast } from 'react-toastify'; // Importa toastify
 import 'react-toastify/dist/ReactToastify.css'; // Importa los estilos de toastify
+import Swal from 'sweetalert2'; // Importa SweetAlert2
 
 export function CrearSede() {
   const navigate = useNavigate();
@@ -34,13 +35,26 @@ export function CrearSede() {
   };
 
   const handleBorrarSede = async (idSede) => {
-    try {
-      await borrarSede(idSede);
-      toast.success('¡Sede eliminada con éxito!'); // Mostrar mensaje de éxito
-      ObtenerSedes(); // Actualizar la lista después de borrar una sede
-    } catch (error) {
-      toast.error('Error al eliminar la sede'); // Mostrar mensaje de error
-      console.error('Error al borrar sede:', error);
+    const result = await Swal.fire({
+      title: '¿Estás seguro?',
+      text: '¿Deseas eliminar esta sede?',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Sí, eliminar',
+      cancelButtonText: 'Cancelar',
+    });
+
+    if (result.isConfirmed) {
+      try {
+        await borrarSede(idSede);
+        toast.success('¡Sede eliminada con éxito!'); // Mostrar mensaje de éxito
+        ObtenerSedes(); // Actualizar la lista después de borrar una sede
+      } catch (error) {
+        toast.error('Error al eliminar la sede'); // Mostrar mensaje de error
+        console.error('Error al borrar sede:', error);
+      }
     }
   };
 

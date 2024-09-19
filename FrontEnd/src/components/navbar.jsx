@@ -4,7 +4,9 @@ import logo from '../assets/logo.png'; // Asegúrate de que la ruta al logo sea 
 
 const Navbar = () => {
   return (
-    <nav className="bg-white shadow-md py-4">
+    <nav className="py-4" style={{
+      background: 'linear - gradient(to right, #e0eafc, #cfdef3)', // W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+
+    }}>
       <div className="container mx-auto flex items-center justify-between px-6">
         <div className="flex items-center space-x-6">
           <Link to="/" className="flex items-center space-x-4">

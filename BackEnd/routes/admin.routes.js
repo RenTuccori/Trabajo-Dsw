@@ -22,7 +22,7 @@ router.delete("/api/adminDeleteOS/:idObraSocial", deleteObraSocial);
 router.put('/api/adminUpdateOS/:idObraSocial', updateObraSocial);
 //Especialidad
 router.post('/api/adminCreateEsp', createSpecialty);
-router.delete("/api/adminDeleteEsp/:idEspecialidad", deleteSpecialty);
+router.delete('/api/deleteSpecialties/:idEspecialidad', deleteSpecialty);
 //Combinaciones
 router.post('/api/adminCreateSeEspDoc', createSeEspDoc);
 

@@ -23,7 +23,31 @@ function App() {
           <Route path="/doctor/*" element={<DoctoresRoutes />} />
           <Route path="/admin/*" element={<AdministracionRoutes />} />
         </Routes>
-        <ToastContainer /> {/* Asegúrate de incluir ToastContainer */}
+        <ToastContainer
+          position="top-center"         // Centrar el toast en la parte superior
+          autoClose={5000}
+          hideProgressBar={false}
+          newestOnTop={false}
+          closeOnClick
+          rtl={false}
+          pauseOnFocusLoss
+          draggable
+          pauseOnHover
+          theme="colored"
+          style={{
+            textAlign: 'center',         // Centrar el texto
+            fontFamily: 'Poppins',       // Usar la fuente Poppins
+          }}
+          bodyStyle={{
+            backgroundColor: '#f0f4ff', // Cambiar color de fondo del toast
+            color: '#2a2e45',           // Cambiar color del texto
+            borderRadius: '5px',        // Bordes redondeados
+          }}
+          toastStyle={{
+            backgroundColor: '#fff',     // Fondo del toast
+            border: '1px solid #5368e0', // Bordes personalizados
+          }}
+        />
       </div>
     </Router>
   );

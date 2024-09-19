@@ -3,13 +3,14 @@ import { useNavigate } from 'react-router-dom';
 import { useAdministracion } from '../../context/administracion/AdministracionProvider.jsx';
 import { toast } from 'react-toastify'; // Importa toastify
 import 'react-toastify/dist/ReactToastify.css'; // Importa los estilos de toastify
+import Swal from 'sweetalert2'; // Importa SweetAlert2
 
 export function CrearObraSocial() {
   const navigate = useNavigate();
   const { obrasSociales, crearObraSocial, ObtenerOS, borrarObraSocial, actualizarObraSocial } = useAdministracion();
   const [nombreObraSocial, setNombreObraSocial] = useState('');
-  const [nuevoNombreObraSocial, setNuevoNombreObraSocial] = useState(''); // Estado para el nuevo nombre
-  const [obraSocialAEditar, setObraSocialAEditar] = useState(null); // Estado para saber qué obra social estamos editando
+  const [nuevoNombreObraSocial, setNuevoNombreObraSocial] = useState('');
+  const [obraSocialAEditar, setObraSocialAEditar] = useState(null);
 
   useEffect(() => {
     ObtenerOS();
@@ -32,13 +33,26 @@ export function CrearObraSocial() {
   };
 
   const handleBorrarObraSocial = async (idObraSocial) => {
-    try {
-      await borrarObraSocial(idObraSocial);
-      toast.success('¡Obra Social eliminada con éxito!');
-      ObtenerOS();
-    } catch (error) {
-      toast.error('No se puede eliminar esta obra social');
-      console.error('Error al borrar obra social:', error);
+    const result = await Swal.fire({
+      title: '¿Estás seguro?',
+      text: '¿Deseas eliminar esta obra social?',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Sí, eliminar',
+      cancelButtonText: 'Cancelar',
+    });
+
+    if (result.isConfirmed) {
+      try {
+        await borrarObraSocial(idObraSocial);
+        toast.success('¡Obra Social eliminada con éxito!');
+        ObtenerOS();
+      } catch (error) {
+        toast.error('No se puede eliminar esta obra social');
+        console.error('Error al borrar obra social:', error);
+      }
     }
   };
 
@@ -48,8 +62,8 @@ export function CrearObraSocial() {
       try {
         await actualizarObraSocial({ idObraSocial: obraSocialAEditar, nombre: nuevoNombreObraSocial });
         toast.success('¡Obra Social actualizada con éxito!');
-        setObraSocialAEditar(null); // Resetear el estado de edición
-        setNuevoNombreObraSocial(''); // Limpiar el campo de nombre
+        setObraSocialAEditar(null);
+        setNuevoNombreObraSocial('');
         ObtenerOS();
       } catch (error) {
         toast.error('No se puede actualizar esta obra social');

@@ -3,6 +3,7 @@ import { useAdministracion } from '../../context/administracion/AdministracionPr
 import { useNavigate } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import { toast } from 'react-toastify'; // Importa toast para las notificaciones
+import Swal from 'sweetalert2'; // Importa SweetAlert2
 
 export function AsignarCombinacion() {
   const navigate = useNavigate();
@@ -74,25 +75,35 @@ export function AsignarCombinacion() {
 
   const confirmarCombinacion = async () => {
     if (selectedSede && selectedEspecialidad && selectedDoctor) {
-      try {
-        console.log('selectedSede:', selectedSede.value);
-        console.log('selectedEspecialidad:', selectedEspecialidad.value);
-        console.log('selectedDoctor:', selectedDoctor.value);
+      // Ventana de confirmación
+      const result = await Swal.fire({
+        title: '¿Estás seguro?',
+        text: '¿Deseas confirmar la asignación?',
+        icon: 'warning',
+        showCancelButton: true,
+        confirmButtonColor: '#3085d6',
+        cancelButtonColor: '#d33',
+        confirmButtonText: 'Sí, confirmar',
+        cancelButtonText: 'Cancelar',
+      });
 
-        await crearSedEspDoc({
-          idSede: selectedSede.value,
-          idEspecialidad: selectedEspecialidad.value,
-          idDoctor: selectedDoctor.value,
-        });
+      if (result.isConfirmed) {
+        try {
+          await crearSedEspDoc({
+            idSede: selectedSede.value,
+            idEspecialidad: selectedEspecialidad.value,
+            idDoctor: selectedDoctor.value,
+          });
 
-        // Si llega aquí, significa que la combinación fue creada con éxito
-        toast.success('¡Combinación creada con éxito!');
-      } catch (error) {
-        // Este bloque catch capturará cualquier error (como 400)
-        if (error.response && error.response.status === 400) {
-          toast.error(error.response.data.message); // Mostrar el mensaje del servidor
-        } else {
-          toast.error('Error al crear la combinación');
+          // Si llega aquí, significa que la combinación fue creada con éxito
+          toast.success('¡Combinación creada con éxito!');
+        } catch (error) {
+          // Este bloque catch capturará cualquier error (como 400)
+          if (error.response && error.response.status === 400) {
+            toast.error(error.response.data.message); // Mostrar el mensaje del servidor
+          } else {
+            toast.error('Error al crear la combinación');
+          }
         }
       }
     }
@@ -106,14 +117,10 @@ export function AsignarCombinacion() {
           <label className="text-gray-700">Sede</label>
           <Select
             className="select"
-            options={
-              Array.isArray(sedes)
-                ? sedes.map((sede) => ({
-                    value: sede.idSede,
-                    label: sede.nombre,
-                  }))
-                : []
-            }
+            options={Array.isArray(sedes) ? sedes.map((sede) => ({
+              value: sede.idSede,
+              label: sede.nombre,
+            })) : []}
             onChange={handleSedeChange}
             value={selectedSede}
             styles={customStyles}
@@ -125,14 +132,10 @@ export function AsignarCombinacion() {
           <label className="text-gray-700">Especialidad</label>
           <Select
             className="select"
-            options={
-              Array.isArray(especialidades)
-                ? especialidades.map((especialidad) => ({
-                    value: especialidad.idEspecialidad,
-                    label: especialidad.nombre,
-                  }))
-                : []
-            }
+            options={Array.isArray(especialidades) ? especialidades.map((especialidad) => ({
+              value: especialidad.idEspecialidad,
+              label: especialidad.nombre,
+            })) : []}
             onChange={handleEspecilidadChange}
             value={selectedEspecialidad}
             isDisabled={!selectedSede}
@@ -145,14 +148,10 @@ export function AsignarCombinacion() {
           <label className="text-gray-700">Doctor</label>
           <Select
             className="select"
-            options={
-              Array.isArray(doctores)
-                ? doctores.map((doctor) => ({
-                    value: doctor.idDoctor,
-                    label: doctor.nombreyapellido,
-                  }))
-                : []
-            }
+            options={Array.isArray(doctores) ? doctores.map((doctor) => ({
+              value: doctor.idDoctor,
+              label: doctor.nombreyapellido,
+            })) : []}
             onChange={handleDoctorChange}
             value={selectedDoctor}
             isDisabled={!selectedEspecialidad}

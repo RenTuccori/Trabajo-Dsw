@@ -4,7 +4,6 @@ import {
   getAvailableSpecialties,
   getSpecialtyById,
   createSpecialty,
-  deleteSpecialty,
   updateSpecialty,
   getAllSpecialities
 } from '../controllers/especialidades.controllers.js';
@@ -23,6 +22,5 @@ router.post('/api/specialties/', createSpecialty);
 
 router.put('/api/specialties/', updateSpecialty);
 
-router.delete('/api/specialties/', deleteSpecialty);
 
 export default router;

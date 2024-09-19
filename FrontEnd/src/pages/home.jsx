@@ -12,7 +12,7 @@ export default function Home() {
     <div className="min-h-screen flex items-center justify-center p-4 relative">
       <div
         className="absolute inset-0 bg-cover bg-center"
-        style={{ backgroundImage: "url('../src/components/fondo.jpg')" }}
+        style={{ backgroundImage: "url('../src/components/image.png')" }}
       ></div>
       <div className="absolute inset-0 bg-gradient-to-b from-transparent to-white"></div>
       <div className="relative bg-white rounded-lg shadow-md w-full max-w-md p-6 z-10">
