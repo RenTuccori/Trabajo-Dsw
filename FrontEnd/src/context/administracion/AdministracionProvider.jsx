@@ -1,14 +1,24 @@
 import { AdministracionContext } from './AdministracionContext';
 import {
-  getAdmin, createSede, deleteSede, createSpecialty, deleteSpecialty, createObraSocial, deleteObraSocial, updateObraSocial,
-  createSeEspDoc
+  getAdmin,
+  createSede,
+  deleteSede,
+  createSpecialty,
+  deleteSpecialty,
+  createObraSocial,
+  deleteObraSocial,
+  updateObraSocial,
+  createSeEspDoc,
 } from '../../api/admin.api.js'; // Asegúrate de tener una función para crear la sede en la API
 import { useContext, useEffect, useState } from 'react';
 import { getSedes } from '../../api/sedes.api.js';
-import { getEspecialidades, getAllSpecialities } from '../../api/especialidades.api';
+import {
+  getEspecialidades,
+  getAllSpecialities,
+} from '../../api/especialidades.api';
 import { getDoctores } from '../../api/doctores.api';
 import { getObrasSociales } from '../../api/obrasociales.api.js';
-import { jwtDecode } from "jwt-decode";
+import { jwtDecode } from 'jwt-decode';
 import PropTypes from 'prop-types';
 import { useNavigate } from 'react-router-dom';
 // eslint-disable-next-line react-refresh/only-export-components
@@ -16,7 +26,7 @@ export const useAdministracion = () => {
   const context = useContext(AdministracionContext);
   if (!context) {
     throw new Error(
-      'useAdministracion must be used within an AdministracionProvider',
+      'useAdministracion must be used within an AdministracionProvider'
     );
   }
   return context;
@@ -54,14 +64,14 @@ const AdministracionProvider = ({ children }) => {
         if (decoded.exp < Date.now() / 1000) {
           console.error('Token expired');
           localStorage.removeItem('token');
-          navigate('/')
+          navigate('/');
         } else {
           setIdAdmin(decoded.idAdmin);
         }
       } catch (error) {
         console.error('Error decoding token:', error);
         localStorage.removeItem('token');
-        navigate('/')
+        navigate('/');
       }
     } else {
       setIdAdmin('');
@@ -164,21 +174,50 @@ const AdministracionProvider = ({ children }) => {
   //Combinaciones de sede, especialidad y doctor
   async function crearSedEspDoc({ idSede, idEspecialidad, idDoctor }) {
     try {
-      const response = await createSeEspDoc({ idSede, idEspecialidad, idDoctor });
+      const response = await createSeEspDoc({
+        idSede,
+        idEspecialidad,
+        idDoctor,
+      });
       console.log('Sede, especialidad y doctor creados:', response.data);
     } catch (error) {
       console.error('Error al obtener las sedes:', error);
+      throw error;
     }
   }
 
   return (
     <AdministracionContext.Provider
       value={{
-        login, comprobarToken, idAdmin, sedes, crearNuevaSede, ObtenerSedes, borrarSede, crearEspecialidad, especialidades, setEspecialidades,
-        borrarEspecialidad, crearObraSocial, ObtenerOS, obrasSociales, borrarObraSocial, actualizarObraSocial, crearSedEspDoc, ObtenerEspecialidades,
-        ObtenerDoctores, doctores, selectedDoctor, setSelectedDoctor, selectedEspecialidad, setSelectedEspecialidad, selectedSede, setSelectedSede,
-        ObtenerEspecialidadesDisponibles
-      }}>
+        login,
+        comprobarToken,
+        idAdmin,
+        sedes,
+        crearNuevaSede,
+        ObtenerSedes,
+        borrarSede,
+        crearEspecialidad,
+        especialidades,
+        setEspecialidades,
+        borrarEspecialidad,
+        crearObraSocial,
+        ObtenerOS,
+        obrasSociales,
+        borrarObraSocial,
+        actualizarObraSocial,
+        crearSedEspDoc,
+        ObtenerEspecialidades,
+        ObtenerDoctores,
+        doctores,
+        selectedDoctor,
+        setSelectedDoctor,
+        selectedEspecialidad,
+        setSelectedEspecialidad,
+        selectedSede,
+        setSelectedSede,
+        ObtenerEspecialidadesDisponibles,
+      }}
+    >
       {children}
     </AdministracionContext.Provider>
   );

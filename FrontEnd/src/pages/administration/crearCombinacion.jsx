@@ -6,7 +6,15 @@ import { toast } from 'react-toastify'; // Importa toast para las notificaciones
 
 export function AsignarCombinacion() {
   const navigate = useNavigate();
-  const { sedes, especialidades, doctores, ObtenerSedes, ObtenerEspecialidadesDisponibles, ObtenerDoctores, crearSedEspDoc } = useAdministracion();
+  const {
+    sedes,
+    especialidades,
+    doctores,
+    ObtenerSedes,
+    ObtenerEspecialidadesDisponibles,
+    ObtenerDoctores,
+    crearSedEspDoc,
+  } = useAdministracion();
   const [selectedSede, setSelectedSede] = useState(null);
   const [selectedEspecialidad, setSelectedEspecialidad] = useState(null);
   const [selectedDoctor, setSelectedDoctor] = useState(null);
@@ -70,14 +78,22 @@ export function AsignarCombinacion() {
         console.log('selectedSede:', selectedSede.value);
         console.log('selectedEspecialidad:', selectedEspecialidad.value);
         console.log('selectedDoctor:', selectedDoctor.value);
+
         await crearSedEspDoc({
           idSede: selectedSede.value,
           idEspecialidad: selectedEspecialidad.value,
-          idDoctor: selectedDoctor.value
+          idDoctor: selectedDoctor.value,
         });
-        toast.success('¡Combinación creada con éxito!'); // Mensaje de éxito
+
+        // Si llega aquí, significa que la combinación fue creada con éxito
+        toast.success('¡Combinación creada con éxito!');
       } catch (error) {
-        toast.error('Error al crear la combinación'); // Mensaje de error
+        // Este bloque catch capturará cualquier error (como 400)
+        if (error.response && error.response.status === 400) {
+          toast.error(error.response.data.message); // Mostrar el mensaje del servidor
+        } else {
+          toast.error('Error al crear la combinación');
+        }
       }
     }
   };
@@ -89,8 +105,15 @@ export function AsignarCombinacion() {
         <div className="space-y-2">
           <label className="text-gray-700">Sede</label>
           <Select
-            className='select'
-            options={Array.isArray(sedes) ? sedes.map(sede => ({ value: sede.idSede, label: sede.nombre })) : []}
+            className="select"
+            options={
+              Array.isArray(sedes)
+                ? sedes.map((sede) => ({
+                    value: sede.idSede,
+                    label: sede.nombre,
+                  }))
+                : []
+            }
             onChange={handleSedeChange}
             value={selectedSede}
             styles={customStyles}
@@ -101,8 +124,15 @@ export function AsignarCombinacion() {
         <div className="space-y-2">
           <label className="text-gray-700">Especialidad</label>
           <Select
-            className='select'
-            options={Array.isArray(especialidades) ? especialidades.map(especialidad => ({ value: especialidad.idEspecialidad, label: especialidad.nombre })) : []}
+            className="select"
+            options={
+              Array.isArray(especialidades)
+                ? especialidades.map((especialidad) => ({
+                    value: especialidad.idEspecialidad,
+                    label: especialidad.nombre,
+                  }))
+                : []
+            }
             onChange={handleEspecilidadChange}
             value={selectedEspecialidad}
             isDisabled={!selectedSede}
@@ -114,8 +144,15 @@ export function AsignarCombinacion() {
         <div className="space-y-2">
           <label className="text-gray-700">Doctor</label>
           <Select
-            className='select'
-            options={Array.isArray(doctores) ? doctores.map(doctor => ({ value: doctor.idDoctor, label: doctor.nombreyapellido })) : []}
+            className="select"
+            options={
+              Array.isArray(doctores)
+                ? doctores.map((doctor) => ({
+                    value: doctor.idDoctor,
+                    label: doctor.nombreyapellido,
+                  }))
+                : []
+            }
             onChange={handleDoctorChange}
             value={selectedDoctor}
             isDisabled={!selectedEspecialidad}
@@ -128,7 +165,7 @@ export function AsignarCombinacion() {
           type="button"
           className="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50"
           disabled={!selectedDoctor}
-          onClick={confirmarCombinacion}  // Llamada a la función confirmarCombinacion
+          onClick={confirmarCombinacion} // Llamada a la función confirmarCombinacion
         >
           Confirmar
         </button>

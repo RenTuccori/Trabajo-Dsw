@@ -10,6 +10,7 @@ export const getAdmin = async (req, res) => {
       [
         usuario, contra,
       ]);
+
     if (result.length === 0) {
       return res.status(404).json({ message: 'Usuario no encontrado' });
     } else {
@@ -30,11 +31,9 @@ export const createSeEspDoc = async (req, res) => {
       'SELECT * FROM sededoctoresp WHERE idSede = ? AND idEspecialidad = ? AND idDoctor = ?',
       [idSede, idEspecialidad, idDoctor]
     );
-
-    if (result.length > 0) {
-      return res.status(400).json({ message: 'Ya existe una asignación con esta combinación de sede, especialidad y doctor.' });
-    }
-
+if (result[0].length > 0) {
+  return res.status(400).json({ message: 'Ya existe una asignación con esta combinación de sede, especialidad y doctor.' });
+}
     // Si no existe, proceder a insertar
     await pool.query(
       'INSERT INTO sededoctoresp (idSede, idEspecialidad, idDoctor) VALUES (?, ?, ?)',
@@ -51,4 +50,3 @@ export const createSeEspDoc = async (req, res) => {
     return res.status(500).json({ message: error.message });
   }
 };
-
