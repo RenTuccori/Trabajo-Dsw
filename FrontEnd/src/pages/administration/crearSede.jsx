@@ -1,13 +1,14 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAdministracion } from '../../context/administracion/AdministracionProvider.jsx';
+import { toast } from 'react-toastify'; // Importa toastify
+import 'react-toastify/dist/ReactToastify.css'; // Importa los estilos de toastify
 
 export function CrearSede() {
   const navigate = useNavigate();
   const { sedes, crearNuevaSede, ObtenerSedes, borrarSede } = useAdministracion();
   const [nombreSede, setNombreSede] = useState('');
   const [direccionSede, setDireccionSede] = useState('');
-  const [mensajeExito, setMensajeExito] = useState(''); // Estado para el mensaje de éxito
 
   // Obtener sedes al cargar el componente
   useEffect(() => {
@@ -19,31 +20,34 @@ export function CrearSede() {
   const handleCrearSede = async (e) => {
     e.preventDefault();
     if (nombreSede.trim() !== '' && direccionSede.trim() !== '') {
-      await crearNuevaSede({ nombre: nombreSede, direccion: direccionSede });
-      setNombreSede('');
-      setDireccionSede('');
-      setMensajeExito('¡Sede creada con éxito!'); // Mostrar mensaje de éxito
-      setTimeout(() => setMensajeExito(''), 5000); // Ocultar mensaje después de 5 segundos
-      ObtenerSedes(); // Actualizar la lista después de crear una sede
+      try {
+        await crearNuevaSede({ nombre: nombreSede, direccion: direccionSede });
+        setNombreSede(''); // Reiniciar el campo de texto
+        setDireccionSede('');
+        toast.success('¡Sede creada con éxito!'); // Mostrar mensaje de éxito
+        ObtenerSedes(); // Actualizar la lista después de crear una sede
+      } catch (error) {
+        toast.error('Error al crear la sede'); // Mostrar mensaje de error
+        console.error('Error al crear sede:', error);
+      }
     }
   };
 
   const handleBorrarSede = async (idSede) => {
-    await borrarSede(idSede);
-    ObtenerSedes(); // Actualizar la lista después de borrar una sede
+    try {
+      await borrarSede(idSede);
+      toast.success('¡Sede eliminada con éxito!'); // Mostrar mensaje de éxito
+      ObtenerSedes(); // Actualizar la lista después de borrar una sede
+    } catch (error) {
+      toast.error('Error al eliminar la sede'); // Mostrar mensaje de error
+      console.error('Error al borrar sede:', error);
+    }
   };
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-blue-100 to-white flex items-center justify-center p-4">
       <div className="bg-white rounded-lg shadow-md w-full max-w-md p-6 space-y-4">
         <h2 className="text-xl font-semibold text-center text-gray-800">Crear Nueva Sede</h2>
-
-        {/* Mostrar mensaje de éxito si existe */}
-        {mensajeExito && (
-          <div className="bg-green-100 text-green-800 p-2 rounded-lg text-center">
-            {mensajeExito}
-          </div>
-        )}
 
         <form onSubmit={handleCrearSede} className="space-y-4">
           <input
@@ -60,7 +64,10 @@ export function CrearSede() {
             onChange={(e) => setDireccionSede(e.target.value)}
             className="w-full p-2 border border-gray-300 rounded-lg"
           />
-          <button type="submit" className="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition-colors">
+          <button
+            type="submit"
+            className="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition-colors"
+          >
             Crear Sede
           </button>
         </form>

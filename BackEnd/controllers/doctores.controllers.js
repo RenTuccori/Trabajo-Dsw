@@ -21,6 +21,32 @@ export const getDoctors = async (req, res) => {
   }
 };
 
+export const getAvailableDoctors = async (req, res) => {
+  try {
+    const { idSede } = req.body;
+    const [result] = await pool.query(
+      `SELECT doc.idDoctor, CONCAT(u.nombre, " ", u.apellido) AS nombreyapellido 
+       FROM doctores doc 
+       INNER JOIN usuarios u ON doc.dni = u.dni
+       WHERE doc.idDoctor NOT IN (
+         SELECT sde.idDoctor 
+         FROM sededoctoresp sde 
+         WHERE sde.idSede = ?
+       )`,
+      [idSede]
+    );
+
+    if (result.length === 0) {
+      return res.status(404).json({ message: 'No hay doctores disponibles para esta especialidad fuera de esta sede' });
+    } else {
+      res.json(result);
+    }
+  } catch (error) {
+    return res.status(500).json({ message: error.message });
+  }
+};
+
+
 export const getDoctores = async (req, res) => {
   try {
     const [result] = await pool.query(

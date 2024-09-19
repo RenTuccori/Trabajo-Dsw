@@ -2,10 +2,11 @@ import Select from 'react-select';
 import { useAdministracion } from '../../context/administracion/AdministracionProvider.jsx';
 import { useNavigate } from 'react-router-dom';
 import { useEffect, useState } from 'react';
+import { toast } from 'react-toastify'; // Importa toast para las notificaciones
 
 export function AsignarCombinacion() {
   const navigate = useNavigate();
-  const { sedes, especialidades, doctores, ObtenerSedes, ObtenerEspecialidades, ObtenerDoctores, setIdDoctor, setIdEspecialidad, setIdSede } = useAdministracion();
+  const { sedes, especialidades, doctores, ObtenerSedes, ObtenerEspecialidadesDisponibles, ObtenerDoctores, crearSedEspDoc } = useAdministracion();
   const [selectedSede, setSelectedSede] = useState(null);
   const [selectedEspecialidad, setSelectedEspecialidad] = useState(null);
   const [selectedDoctor, setSelectedDoctor] = useState(null);
@@ -44,24 +45,41 @@ export function AsignarCombinacion() {
     setSelectedSede(selectedOption);
     setSelectedEspecialidad(null);
     setSelectedDoctor(null);
+
     if (selectedOption) {
-      await ObtenerEspecialidades({ idSede: selectedOption.value });
+      await ObtenerEspecialidadesDisponibles({ idSede: selectedOption.value });
     }
   };
 
   const handleEspecilidadChange = async (selectedOption) => {
     setSelectedEspecialidad(selectedOption);
     setSelectedDoctor(null);
+
     if (selectedSede && selectedOption) {
-      await ObtenerDoctores({ idSede: selectedSede.value, idEspecialidad: selectedOption.value });
+      await ObtenerDoctores();
     }
   };
 
   const handleDoctorChange = (selectedOption) => {
     setSelectedDoctor(selectedOption);
-    setIdDoctor(selectedOption.value);
-    setIdEspecialidad(selectedEspecialidad.value);
-    setIdSede(selectedSede.value);
+  };
+
+  const confirmarCombinacion = async () => {
+    if (selectedSede && selectedEspecialidad && selectedDoctor) {
+      try {
+        console.log('selectedSede:', selectedSede.value);
+        console.log('selectedEspecialidad:', selectedEspecialidad.value);
+        console.log('selectedDoctor:', selectedDoctor.value);
+        await crearSedEspDoc({
+          idSede: selectedSede.value,
+          idEspecialidad: selectedEspecialidad.value,
+          idDoctor: selectedDoctor.value
+        });
+        toast.success('¡Combinación creada con éxito!'); // Mensaje de éxito
+      } catch (error) {
+        toast.error('Error al crear la combinación'); // Mensaje de error
+      }
+    }
   };
 
   return (
@@ -107,9 +125,10 @@ export function AsignarCombinacion() {
 
         {/* Botón para confirmar la asignación */}
         <button
+          type="button"
           className="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50"
           disabled={!selectedDoctor}
-          onClick={() => navigate('/paciente/confirmacioncombinacion')}
+          onClick={confirmarCombinacion}  // Llamada a la función confirmarCombinacion
         >
           Confirmar
         </button>
@@ -123,5 +142,4 @@ export function AsignarCombinacion() {
       </form>
     </div>
   );
-
 }

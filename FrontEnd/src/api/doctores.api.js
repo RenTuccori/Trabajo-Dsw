@@ -12,3 +12,6 @@ export const getDoctorById = async (idDoctor) => {
 export const getDoctores = async () => {
     return await axios.post(`http://${dbUrl}/api/alldoctors`);
 }
+export const getAvailableDoctors = async ({ idSede }) => {
+    return await axios.post(`http://${dbUrl}/api/availabledoctors`, { idSede });
+};

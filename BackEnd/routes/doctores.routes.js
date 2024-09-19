@@ -4,13 +4,16 @@ import {
   getDoctorByDni,
   getDoctorByDniContra,
   getDoctorById,
-  getDoctores
+  getDoctores,
+  getAvailableDoctors
 } from '../controllers/doctores.controllers.js';
 
 const router = Router();
 
 //Doctores a partir de sede y especialidad
 router.post('/api/doctors', getDoctors);
+
+router.post('/api/availabledoctors', getAvailableDoctors);
 //Todos los doctores
 router.post('/api/alldoctors', getDoctores);
 

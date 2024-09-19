@@ -5,7 +5,7 @@ import {
 } from '../../api/admin.api.js'; // Asegúrate de tener una función para crear la sede en la API
 import { useContext, useEffect, useState } from 'react';
 import { getSedes } from '../../api/sedes.api.js';
-import { getEspecialidades } from '../../api/especialidades.api';
+import { getEspecialidades, getAllSpecialities } from '../../api/especialidades.api';
 import { getDoctores } from '../../api/doctores.api';
 import { getObrasSociales } from '../../api/obrasociales.api.js';
 import { jwtDecode } from "jwt-decode";
@@ -112,6 +112,10 @@ const AdministracionProvider = ({ children }) => {
       console.error('Error al borrar la especialidad:', error);
     }
   }
+  async function ObtenerEspecialidadesDisponibles() {
+    const response = await getAllSpecialities();
+    setEspecialidades(response.data);
+  }
 
   //Doctor
   async function ObtenerDoctores() {
@@ -157,17 +161,8 @@ const AdministracionProvider = ({ children }) => {
     }
   }
 
-  /*  async function obtenerEspecialidad() {
-      try {
-        const response = await getSpecialities();
-        setSedes(response.data);
-      } catch (error) {
-        console.error('Error al obtener las sedes:', error);
-      }
-    }*/
-
   //Combinaciones de sede, especialidad y doctor
-  async function crearSeEspDoc({ idSede, idEspecialidad, idDoctor }) {
+  async function crearSedEspDoc({ idSede, idEspecialidad, idDoctor }) {
     try {
       const response = await createSeEspDoc({ idSede, idEspecialidad, idDoctor });
       console.log('Sede, especialidad y doctor creados:', response.data);
@@ -180,8 +175,9 @@ const AdministracionProvider = ({ children }) => {
     <AdministracionContext.Provider
       value={{
         login, comprobarToken, idAdmin, sedes, crearNuevaSede, ObtenerSedes, borrarSede, crearEspecialidad, especialidades, setEspecialidades,
-        borrarEspecialidad, crearObraSocial, ObtenerOS, obrasSociales, borrarObraSocial, actualizarObraSocial, crearSeEspDoc, ObtenerEspecialidades,
-        ObtenerDoctores, doctores, selectedDoctor, setSelectedDoctor, selectedEspecialidad, setSelectedEspecialidad, selectedSede, setSelectedSede
+        borrarEspecialidad, crearObraSocial, ObtenerOS, obrasSociales, borrarObraSocial, actualizarObraSocial, crearSedEspDoc, ObtenerEspecialidades,
+        ObtenerDoctores, doctores, selectedDoctor, setSelectedDoctor, selectedEspecialidad, setSelectedEspecialidad, selectedSede, setSelectedSede,
+        ObtenerEspecialidadesDisponibles
       }}>
       {children}
     </AdministracionContext.Provider>
