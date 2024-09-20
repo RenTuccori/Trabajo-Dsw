@@ -5,7 +5,7 @@ import { useState, useEffect } from 'react';
 
 function HomeUsuario() {
   const navigate = useNavigate();
-  const { dni, login, comprobarToken } = usePacientes();
+  const { dni, login, comprobarToken, ObtenerPacienteDni } = usePacientes();
   const [dniform, setDni] = useState('');
   const [fecha, setFecha] = useState('');
 

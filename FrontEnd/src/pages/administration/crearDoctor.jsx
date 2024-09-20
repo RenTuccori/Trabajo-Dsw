@@ -119,7 +119,7 @@ export function CrearDoctor() {
           <form onSubmit={handleBuscarDNI} className="space-y-4">
             <div>
               <p className="text-center text-gray-600 text-lg">
-                DNI del doctor
+                Por favor, ingresa el DNI del doctor que quieres crear
               </p>
               <input
                 type="text"

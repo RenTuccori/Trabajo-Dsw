@@ -3,7 +3,7 @@ import { getSedes } from '../../api/sedes.api';
 import { getEspecialidades } from '../../api/especialidades.api';
 import { getDoctores } from '../../api/doctores.api';
 import { getFechasDispTodos, getHorariosDisp } from '../../api/horarios.api';
-import { useContext, useState } from 'react';
+import { useState } from 'react';
 import { getUserDniFecha } from '../../api/usuarios.api';
 import PropTypes from 'prop-types';
 import { jwtDecode } from 'jwt-decode';
@@ -24,14 +24,6 @@ import { getUserDni } from '../../api/usuarios.api';
 import { updateUser } from '../../api/usuarios.api';
 import { useNavigate } from 'react-router-dom';
 
-// eslint-disable-next-line react-refresh/only-export-components
-export const usePacientes = () => {
-  const context = useContext(PacientesContext);
-  if (!context) {
-    throw new Error('usePacientes must be used within an PacientesProvider');
-  }
-  return context;
-};
 
 const PacientesProvider = ({ children }) => {
   //proveedor para acceder a los datos de los empleados desde cualquier componente
@@ -130,13 +122,12 @@ const PacientesProvider = ({ children }) => {
     if (localStorage.getItem('token')) {
       try {
         const decoded = jwtDecode(localStorage.getItem('token'));
-        if (decoded.exp < Date.now() / 1000) {
+        if (decoded.exp < Date.now() / 1) {
           console.error('Token expired');
           localStorage.removeItem('token');
           navigate('/');
         } else {
           setDni(decoded.dni);
-          ObtenerPacienteDni();
         }
       } catch (error) {
         console.error('Error decoding token:', error);
@@ -196,6 +187,7 @@ const PacientesProvider = ({ children }) => {
   }
 
   async function ObtenerPacienteDni() {
+    console.log(dni);
     const reponse = await getPacienteDni({ dni });
     setIdPaciente(reponse.data.idPaciente);
   }
@@ -245,6 +237,7 @@ const PacientesProvider = ({ children }) => {
         obraSociales,
         ObtenerObraSociales,
         idPacienteCreado,
+        ObtenerPacienteDni,
         usuario,
         CrearPaciente,
         CrearUsuario,
