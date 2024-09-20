@@ -9,6 +9,9 @@ import {
   deleteObraSocial,
   updateObraSocial,
   createSeEspDoc,
+  createDoctor,
+  updateDoctor,
+  deleteDoctor,
 } from '../../api/admin.api.js'; // Asegúrate de tener una función para crear la sede en la API
 import { useContext, useEffect, useState } from 'react';
 import { getSedes } from '../../api/sedes.api.js';
@@ -18,6 +21,8 @@ import {
 } from '../../api/especialidades.api';
 import { getDoctores } from '../../api/doctores.api';
 import { getObrasSociales } from '../../api/obrasociales.api.js';
+import { getPacienteDni } from '../../api/pacientes.api';
+import { createUser } from '../../api/usuarios.api';
 import { jwtDecode } from 'jwt-decode';
 import PropTypes from 'prop-types';
 import { useNavigate } from 'react-router-dom';
@@ -38,6 +43,7 @@ const AdministracionProvider = ({ children }) => {
   const [especialidades, setEspecialidades] = useState('');
   const [obrasSociales, setObrasSociales] = useState('');
   const [doctores, setDoctores] = useState('');
+  const [usuario, setUsuario] = useState({});
   const [selectedDoctor, setSelectedDoctor] = useState(null);
   const [selectedEspecialidad, setSelectedEspecialidad] = useState(null);
   const [selectedSede, setSelectedSede] = useState(null);
@@ -132,8 +138,35 @@ const AdministracionProvider = ({ children }) => {
   //Doctor
   async function ObtenerDoctores() {
     const response = await getDoctores();
+    console.log('Doctores:', response.data);
     setDoctores(response.data);
   }
+  async function CreaDoctor({ dni, duracionTurno, contra }) {
+    try {
+      const response = await createDoctor({ dni, duracionTurno, contra });
+      console.log('Doctor creado:', response.data);
+    } catch (error) {
+      console.error('Error al obtener las sedes:', error);
+    }
+  }
+  async function borrarDoctor(idDoctor) {
+    try {
+      const response = await deleteDoctor(idDoctor);
+      console.log('Doctor borrado:', response.data);
+    } catch (error) {
+      console.error('Error al borrar el doctor:', error);
+      throw error;
+    }
+  }
+  async function actualizarDoctor({ idDoctor, duracionTurno, contra }) {
+    try {
+      const response = await updateDoctor({ idDoctor, duracionTurno, contra });
+      console.log('Doctor actualizado:', response.data);
+    } catch (error) {
+      console.error('Error al actualizar el doctor:', error);
+    }
+  }
+
 
   //Obra Social
   async function crearObraSocial({ nombre }) {
@@ -190,6 +223,23 @@ const AdministracionProvider = ({ children }) => {
     }
   }
 
+  async function ObtenerPacienteDni({ dni }) {
+    try {
+      const response = await getPacienteDni({ dni });
+      setUsuario(response.data);
+      console.log('Paciente encontrado:', response.data);
+    } catch (error) {
+      console.error('Error al obtener el paciente por DNI:', error);
+      throw error;
+    }
+  }
+
+  async function CrearUsuario(data) {
+    const response = await createUser(data);
+    setUsuario(response.data);
+  }
+
+
   return (
     <AdministracionContext.Provider
       value={{
@@ -220,6 +270,14 @@ const AdministracionProvider = ({ children }) => {
         selectedSede,
         setSelectedSede,
         ObtenerEspecialidadesDisponibles,
+        CreaDoctor,
+        borrarDoctor,
+        actualizarDoctor,
+        ObtenerPacienteDni,
+
+        CrearUsuario,
+        setUsuario,
+        usuario
       }}
     >
       {children}

@@ -51,7 +51,9 @@ export const getDoctores = async (req, res) => {
   try {
     const [result] = await pool.query(
       `select doc.idDoctor, concat(u.nombre, " ", u.apellido) nombreyapellido from doctores doc
-     INNER join usuarios u on doc.dni = u.dni `,
+     INNER join usuarios u on doc.dni = u.dni 
+      order by u.apellido asc
+     `,
     );
     if (result.length === 0) {
       return res.status(404).json({ message: 'No hay doctores' });

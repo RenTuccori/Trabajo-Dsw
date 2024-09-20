@@ -1,6 +1,6 @@
 import { Router } from "express";
 import { getAdmin, createSeEspDoc } from "../controllers/admin.controllers.js";
-import { createDoctor, deleteDoctor, updateDoctor } from "../controllers/doctores.controllers.js";
+import { createDoctor, deleteDoctor, updateDoctor, getDoctors } from "../controllers/doctores.controllers.js";
 import { createSede, updateSede, deleteSede } from "../controllers/sedes.controllers.js";
 import { createObraSocial, getObrasSociales, deleteObraSocial, updateObraSocial } from "../controllers/obrassociales.controller.js";
 import { createSpecialty, deleteSpecialty } from "../controllers/especialidades.controllers.js";

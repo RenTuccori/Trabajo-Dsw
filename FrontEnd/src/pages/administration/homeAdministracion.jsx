@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAdministracion } from '../../context/administracion/AdministracionProvider.jsx';
+import { toast } from 'react-toastify'; // Importa react-toastify
+import 'react-toastify/dist/ReactToastify.css'; // Importa los estilos de react-toastify
 
 function HomeAdmin() {
   const { idAdmin, login, comprobarToken } = useAdministracion();
@@ -8,9 +10,13 @@ function HomeAdmin() {
   const [contra, setContra] = useState('');
   const navigate = useNavigate();
 
-
   const handleLogin = async () => {
-    await login({ usuario, contra });
+    try {
+      await login({ usuario, contra });
+      toast.success('¡Login exitoso!'); // Muestra un toast de éxito si el login es correcto
+    } catch (error) {
+      toast.error('Error: Usuario o contraseña incorrectos'); // Muestra un toast de error si el login falla
+    }
   };
 
   const handleUsuarioChange = (event) => {

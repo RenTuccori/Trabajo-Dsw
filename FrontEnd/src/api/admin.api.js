@@ -16,6 +16,7 @@ export const deleteDoctor = async ({ idDoctor }) => {
 export const updateDoctor = async ({ idDoctor, duracionTurno, contra }) => {
     return await axios.put(`http://${dbUrl}/api/adminUpdateDr/${idDoctor}`, { idDoctor, duracionTurno, contra });
 }
+
 //Sede
 export const createSede = async ({ nombre, direccion }) => {
     return await axios.post(`http://${dbUrl}/api/adminCreateSede`, { nombre, direccion });
