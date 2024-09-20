@@ -21,8 +21,7 @@ import {
 } from '../../api/especialidades.api';
 import { getDoctores } from '../../api/doctores.api';
 import { getObrasSociales } from '../../api/obrasociales.api.js';
-import { getPacienteDni } from '../../api/pacientes.api';
-import { createUser } from '../../api/usuarios.api';
+import { getUserDni, createUser } from '../../api/usuarios.api.js';
 import { jwtDecode } from 'jwt-decode';
 import PropTypes from 'prop-types';
 import { useNavigate } from 'react-router-dom';
@@ -167,7 +166,6 @@ const AdministracionProvider = ({ children }) => {
     }
   }
 
-
   //Obra Social
   async function crearObraSocial({ nombre }) {
     try {
@@ -194,7 +192,6 @@ const AdministracionProvider = ({ children }) => {
     } catch (error) {
       console.error('Error al borrar la obra social:', error);
       throw error;
-
     }
   }
 
@@ -223,9 +220,10 @@ const AdministracionProvider = ({ children }) => {
     }
   }
 
-  async function ObtenerPacienteDni({ dni }) {
+  async function ObtenerUsuarioDni(dni) {
     try {
-      const response = await getPacienteDni({ dni });
+      console.log('dni:', dni);
+      const response = await getUserDni({ dni });
       setUsuario(response.data);
       console.log('Paciente encontrado:', response.data);
     } catch (error) {
@@ -235,10 +233,10 @@ const AdministracionProvider = ({ children }) => {
   }
 
   async function CrearUsuario(data) {
+    console.log('data:', data);
     const response = await createUser(data);
     setUsuario(response.data);
   }
-
 
   return (
     <AdministracionContext.Provider
@@ -273,11 +271,10 @@ const AdministracionProvider = ({ children }) => {
         CreaDoctor,
         borrarDoctor,
         actualizarDoctor,
-        ObtenerPacienteDni,
-
+        ObtenerUsuarioDni,
         CrearUsuario,
         setUsuario,
-        usuario
+        usuario,
       }}
     >
       {children}

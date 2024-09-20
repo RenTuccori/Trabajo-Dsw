@@ -133,7 +133,7 @@ const PacientesProvider = ({ children }) => {
         if (decoded.exp < Date.now() / 1000) {
           console.error('Token expired');
           localStorage.removeItem('token');
-          navigate('/')
+          navigate('/');
         } else {
           setDni(decoded.dni);
           ObtenerPacienteDni();
@@ -141,7 +141,7 @@ const PacientesProvider = ({ children }) => {
       } catch (error) {
         console.error('Error decoding token:', error);
         localStorage.removeItem('token');
-        navigate('/')
+        navigate('/');
       }
     } else {
       setDni('');
@@ -151,6 +151,7 @@ const PacientesProvider = ({ children }) => {
   async function ObtenerObraSociales() {
     const response = await getObrasSociales();
     setObraSociales(response.data);
+    console.log(response.data);
   }
 
   async function CrearUsuario(data) {
