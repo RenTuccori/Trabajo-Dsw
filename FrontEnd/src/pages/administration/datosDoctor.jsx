@@ -110,4 +110,119 @@ export function DatosPersonales() {
                 value={formData.fechaNacimiento}
                 onChange={handleInputChange}
                 required
-                className="w-full border border-gray-300
+                className="w-full border border-gray-300 rounded-lg p-2 focus:outline-none focus:border-blue-500"
+              />
+            </div>
+            <div>
+              <p className="text-center text-gray-600 text-lg">Nombre</p>
+              <input
+                type="text"
+                name="nombre"
+                value={formData.nombre}
+                onChange={handleInputChange}
+                required
+                className="w-full border border-gray-300 rounded-lg p-2 focus:outline-none focus:border-blue-500"
+              />
+            </div>
+            <div>
+              <p className="text-center text-gray-600 text-lg">Apellido</p>
+              <input
+                type="text"
+                name="apellido"
+                value={formData.apellido}
+                onChange={handleInputChange}
+                required
+                className="w-full border border-gray-300 rounded-lg p-2 focus:outline-none focus:border-blue-500"
+              />
+            </div>
+            <div>
+              <p className="text-center text-gray-600 text-lg">Dirección</p>
+              <input
+                type="text"
+                name="direccion"
+                value={formData.direccion}
+                onChange={handleInputChange}
+                required
+                className="w-full border border-gray-300 rounded-lg p-2 focus:outline-none focus:border-blue-500"
+              />
+            </div>
+            <div>
+              <p className="text-center text-gray-600 text-lg">Teléfono</p>
+              <input
+                type="text"
+                name="telefono"
+                value={formData.telefono}
+                onChange={handleInputChange}
+                required
+                className="w-full border border-gray-300 rounded-lg p-2 focus:outline-none focus:border-blue-500"
+              />
+            </div>
+            <div>
+              <p className="text-center text-gray-600 text-lg">Email</p>
+              <input
+                type="email"
+                name="email"
+                value={formData.email}
+                onChange={handleInputChange}
+                required
+                className="w-full border border-gray-300 rounded-lg p-2 focus:outline-none focus:border-blue-500"
+              />
+            </div>
+            <div>
+              <p className="text-center text-gray-600 text-lg">Obra Social</p>
+              <Select
+                options={obraSociales.map(obrasociales => ({
+                  value: obrasociales.idObraSocial,
+                  label: obrasociales.nombre
+                }))}
+                onChange={handleObraSocialChange}
+                value={selectedObraSociales}
+                className="react-select"
+              />
+            </div>
+            <button
+              type="submit"
+              className="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition-colors"
+            >
+              Crear Usuario
+            </button>
+          </form>
+        )}
+
+        {/* Formulario para crear doctor después de crear el usuario */}
+        {usuarioCreado && (
+          <form onSubmit={handleSubmitDoctor} className="space-y-4">
+            <div>
+              <p className="text-center text-gray-600 text-lg">Duración del Turno (minutos)</p>
+              <input
+                type="text"
+                name="duracionTurno"
+                value={doctorData.duracionTurno}
+                onChange={handleDoctorInputChange}
+                required
+                className="w-full border border-gray-300 rounded-lg p-2 focus:outline-none focus:border-blue-500"
+              />
+            </div>
+            <div>
+              <p className="text-center text-gray-600 text-lg">Contraseña</p>
+              <input
+                type="password"
+                name="contra"
+                value={doctorData.contra}
+                onChange={handleDoctorInputChange}
+                required
+                className="w-full border border-gray-300 rounded-lg p-2 focus:outline-none focus:border-blue-500"
+              />
+            </div>
+            <button
+              type="submit"
+              className="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition-colors"
+            >
+              Crear Doctor
+            </button>
+          </form>
+        )}
+      </div>
+    </div>
+  );
+}

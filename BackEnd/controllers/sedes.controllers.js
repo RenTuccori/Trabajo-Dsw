@@ -2,25 +2,27 @@ import { pool } from '../db.js';
 
 export const getSedes = async (req, res) => {
   try {
-    const [result] = await pool.query('SELECT * FROM sedes');
+    const [result] = await pool.query('SELECT * FROM sedes WHERE estado = \'Habilitado\'');
     if (result.length === 0) {
-      return res.status(404).json({ message: 'No hay sedes' });
+      return res.status(404).json({ message: 'No hay sedes habilitadas' });
     } else {
       res.json(result);
     }
   } catch (error) {
     console.log(error);
+    return res.status(500).json({ message: error.message });
   }
 };
 
 export const getSedeById = async (req, res) => {
   try {
     const { idSede } = req.params;
-    const [result] = await pool.query('SELECT * FROM sedes WHERE idSede = ?',
-      [idSede],
+    const [result] = await pool.query(
+      'SELECT * FROM sedes WHERE idSede = ? AND estado = \'Habilitado\'',
+      [idSede]
     );
     if (result.length === 0) {
-      return res.status(404).json({ message: '' });
+      return res.status(404).json({ message: 'Sede no encontrada o no está habilitada' });
     } else {
       res.json(result[0]);
     }

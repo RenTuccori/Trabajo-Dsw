@@ -10,6 +10,7 @@ function HomeUsuario() {
   const [fecha, setFecha] = useState('');
 
   const handleLogin = async () => {
+    ObtenerPacienteDni();
     await login({ dni: dniform, fechaNacimiento: fecha });
   };
   const handleDniChange = (event) => {

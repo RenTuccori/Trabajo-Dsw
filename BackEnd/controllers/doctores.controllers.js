@@ -5,10 +5,11 @@ export const getDoctors = async (req, res) => {
   try {
     const { idSede, idEspecialidad } = req.body;
     const [result] = await pool.query(
-      `select doc.idDoctor, concat(u.nombre, " ", u.apellido) nombreyapellido from sededoctoresp sde
-     INNER JOIN doctores doc ON sde.idDoctor = doc.idDoctor
-     INNER join usuarios u on doc.dni = u.dni 
-     where sde.idSede = ? and sde.idEspecialidad = ?`,
+      `SELECT doc.idDoctor, CONCAT(u.nombre, " ", u.apellido) nombreyapellido 
+       FROM sededoctoresp sde
+       INNER JOIN doctores doc ON sde.idDoctor = doc.idDoctor
+       INNER JOIN usuarios u ON doc.dni = u.dni 
+       WHERE sde.idSede = ? AND sde.idEspecialidad = ? AND doc.estado = 'Habilitado'`,
       [idSede, idEspecialidad]
     );
     if (result.length === 0) {
@@ -32,7 +33,7 @@ export const getAvailableDoctors = async (req, res) => {
          SELECT sde.idDoctor 
          FROM sededoctoresp sde 
          WHERE sde.idSede = ?
-       )`,
+       ) AND doc.estado = 'Habilitado'`,
       [idSede]
     );
 
@@ -46,14 +47,14 @@ export const getAvailableDoctors = async (req, res) => {
   }
 };
 
-
 export const getDoctores = async (req, res) => {
   try {
     const [result] = await pool.query(
-      `select doc.idDoctor, concat(u.nombre, " ", u.apellido) nombreyapellido from doctores doc
-     INNER join usuarios u on doc.dni = u.dni 
-      order by u.apellido asc
-     `,
+      `SELECT doc.idDoctor, CONCAT(u.nombre, " ", u.apellido) nombreyapellido 
+       FROM doctores doc
+       INNER JOIN usuarios u ON doc.dni = u.dni 
+       WHERE doc.estado = 'Habilitado'
+       ORDER BY u.apellido ASC`
     );
     if (result.length === 0) {
       return res.status(404).json({ message: 'No hay doctores' });
@@ -68,13 +69,13 @@ export const getDoctores = async (req, res) => {
 export const getDoctorByDni = async (req, res) => {
   try {
     const [dni] = req.body;
-    const [result] = await pool.query(`SELECT doc.dni as DNI, u.nombre, u.apellido, u.email FROM 
-      doctores doc INNER JOIN usuarios u 
-      ON doc.dni = u.dni
-      WHERE doc.dni = ?`,
-      [
-        [dni],
-      ]);
+    const [result] = await pool.query(
+      `SELECT doc.dni AS DNI, u.nombre, u.apellido, u.email 
+       FROM doctores doc 
+       INNER JOIN usuarios u ON doc.dni = u.dni
+       WHERE doc.dni = ? AND doc.estado = 'Habilitado'`,
+      [dni]
+    );
     if (result.length === 0) {
       return res.status(404).json({ message: 'Doctor no encontrado' });
     } else {
@@ -85,14 +86,14 @@ export const getDoctorByDni = async (req, res) => {
   }
 };
 
-
 export const getDoctorById = async (req, res) => {
   try {
     const { idDoctor } = req.params;
-    const [result] = await pool.query(`SELECT u.nombre, u.apellido FROM 
-      doctores doc INNER JOIN usuarios u 
-      ON doc.dni = u.dni
-      WHERE doc.idDoctor = ?`,
+    const [result] = await pool.query(
+      `SELECT u.nombre, u.apellido 
+       FROM doctores doc 
+       INNER JOIN usuarios u ON doc.dni = u.dni
+       WHERE doc.idDoctor = ? AND doc.estado = 'Habilitado'`,
       [idDoctor]
     );
     if (result.length === 0) {
@@ -108,12 +109,12 @@ export const getDoctorById = async (req, res) => {
 export const getDoctorByDniContra = async (req, res) => {
   try {
     const { dni, contra } = req.body;
-    const [result] = await pool.query(`SELECT doc.idDoctor FROM 
-      doctores doc 
-      WHERE doc.dni = ? and doc.contra = ?`,
-      [
-        dni, contra,
-      ]);
+    const [result] = await pool.query(
+      `SELECT doc.idDoctor 
+       FROM doctores doc 
+       WHERE doc.dni = ? AND doc.contra = ? AND doc.estado = 'Habilitado'`,
+      [dni, contra]
+    );
     if (result.length === 0) {
       return res.status(404).json({ message: 'Doctor no encontrado' });
     } else {
@@ -124,6 +125,7 @@ export const getDoctorByDniContra = async (req, res) => {
     return res.status(500).json({ message: error.message });
   }
 };
+
 
 
 export const createDoctor = async (req, res) => {

@@ -4,8 +4,9 @@ export const getSpecialties = async (req, res) => {
   try {
     const { idSede } = req.body;
     const [result] = await pool.query(
-      'SELECT DISTINCT sde.idEspecialidad, es.nombre FROM especialidades es INNER JOIN sededoctoresp sde ON es.idEspecialidad = sde.idEspecialidad WHERE sde.idSede = ?',
-      [idSede]);
+      'SELECT DISTINCT sde.idEspecialidad, es.nombre FROM especialidades es INNER JOIN sededoctoresp sde ON es.idEspecialidad = sde.idEspecialidad WHERE sde.idSede = ? AND es.estado = \'Habilitado\'',
+      [idSede]
+    );
     res.json(result);
   } catch (error) {
     return res.status(500).json({ message: error.message });
@@ -14,7 +15,7 @@ export const getSpecialties = async (req, res) => {
 
 export const getAllSpecialities = async (req, res) => {
   try {
-    const [result] = await pool.query('SELECT * FROM especialidades');
+    const [result] = await pool.query('SELECT * FROM especialidades WHERE estado = \'Habilitado\'');
     res.json(result);
   } catch (error) {
     return res.status(500).json({ message: error.message });
@@ -31,7 +32,7 @@ export const getAvailableSpecialties = async (req, res) => {
          SELECT sde.idEspecialidad 
          FROM sededoctoresp sde 
          WHERE sde.idSede = ?
-       )`,
+       ) AND es.estado = 'Habilitado'`,
       [idSede]
     );
     res.json(result);
@@ -40,12 +41,11 @@ export const getAvailableSpecialties = async (req, res) => {
   }
 };
 
-
 export const getSpecialtyById = async (req, res) => {
   try {
     const { idEspecialidad } = req.params;
     const [result] = await pool.query(
-      'SELECT * FROM especialidades WHERE idEspecialidad = ?',
+      'SELECT * FROM especialidades WHERE idEspecialidad = ? AND estado = \'Habilitado\'',
       [idEspecialidad]
     );
     if (result.length === 0) {
@@ -56,6 +56,7 @@ export const getSpecialtyById = async (req, res) => {
     return res.status(500).json({ message: error.message });
   }
 };
+
 
 export const createSpecialty = async (req, res) => {
   try {
