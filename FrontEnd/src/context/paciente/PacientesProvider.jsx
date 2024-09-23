@@ -1,28 +1,26 @@
+import { useState, useContext, useEffect } from 'react';
+import PropTypes from 'prop-types';
+import { useNavigate } from 'react-router-dom';
+import { jwtDecode } from 'jwt-decode';
+
 import { PacientesContext } from './PacientesContext';
 import { getSedes } from '../../api/sedes.api';
-import { getEspecialidades } from '../../api/especialidades.api';
-import { getDoctores } from '../../api/doctores.api';
+import { getEspecialidades, getEspecialidadById } from '../../api/especialidades.api';
+import { getDoctors, getDoctorById } from '../../api/doctores.api';
 import { getFechasDispTodos, getHorariosDisp } from '../../api/horarios.api';
-import { useState } from 'react';
-import { getUserDniFecha } from '../../api/usuarios.api';
-import PropTypes from 'prop-types';
-import { jwtDecode } from 'jwt-decode';
+import { getUserDniFecha, createUser, getUserDni, updateUser } from '../../api/usuarios.api';
 import { getObrasSociales } from '../../api/obrasociales.api';
-import { createUser } from '../../api/usuarios.api';
-import { createPaciente } from '../../api/pacientes.api';
-import { getEspecialidadById } from '../../api/especialidades.api';
-import { getDoctorById } from '../../api/doctores.api';
+import { createPaciente, getPacienteDni } from '../../api/pacientes.api';
 import { getSedeById } from '../../api/sedes.api';
-import { createTurno } from '../../api/turnos.api';
-import { getPacienteDni } from '../../api/pacientes.api';
-import {
-  getTurnosPaciente,
-  confirmarTurno,
-  cancelarTurno,
-} from '../../api/turnos.api';
-import { getUserDni } from '../../api/usuarios.api';
-import { updateUser } from '../../api/usuarios.api';
-import { useNavigate } from 'react-router-dom';
+import { createTurno, getTurnosPaciente, confirmarTurno, cancelarTurno } from '../../api/turnos.api';
+
+export const usePacientes = () => {
+  const context = useContext(PacientesContext);
+  if (!context) {
+    throw new Error('usePacientes must be used within an PacientesProvider');
+  }
+  return context;
+};
 
 
 const PacientesProvider = ({ children }) => {
@@ -69,7 +67,9 @@ const PacientesProvider = ({ children }) => {
   }
 
   async function ObtenerDoctores({ idSede, idEspecialidad }) {
-    const response = await getDoctores({ idSede, idEspecialidad });
+    console.log({idSede, idEspecialidad});
+    const response = await getDoctors({ idSede, idEspecialidad });
+    console.log('mis doctores',response.data);
     setDoctores(response.data);
   }
   async function ObtenerFechas({
@@ -118,11 +118,17 @@ const PacientesProvider = ({ children }) => {
     }
   }
 
+  useEffect(() => {
+    if (dni) {
+      ObtenerPacienteDni();
+    }
+  }, [dni]); 
+
   function comprobarToken() {
     if (localStorage.getItem('token')) {
       try {
         const decoded = jwtDecode(localStorage.getItem('token'));
-        if (decoded.exp < Date.now() / 1) {
+        if (decoded.exp < Date.now() / 1000) {
           console.error('Token expired');
           localStorage.removeItem('token');
           navigate('/');
@@ -187,7 +193,6 @@ const PacientesProvider = ({ children }) => {
   }
 
   async function ObtenerPacienteDni() {
-    console.log(dni);
     const reponse = await getPacienteDni({ dni });
     setIdPaciente(reponse.data.idPaciente);
   }

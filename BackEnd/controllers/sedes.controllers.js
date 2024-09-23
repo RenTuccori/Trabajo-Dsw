@@ -30,25 +30,20 @@ export const getSedeById = async (req, res) => {
     return res.status(500).json({ message: error.message });
   }
 };
-
 export const createSede = async (req, res) => {
-  const {
-    nombre,
-    direccion,
-  } = req.body;
+  const { nombre, direccion } = req.body;
+  const estado = 'Habilitado';
+  
   try {
-    const [result] =
-      await pool.query(
-        'INSERT INTO sedes (nombre, direccion) VALUES (?, ?)',
-        [
-          nombre,
-          direccion,
-        ]
-      );
+    const [result] = await pool.query(
+      'INSERT INTO sedes (nombre, direccion, estado) VALUES (?, ?, ?)',
+      [nombre, direccion, estado]
+    );
     res.json({
       idSede: result.insertId,
       nombre,
       direccion,
+      estado
     });
   } catch (error) {
     return res.status(500).json({ message: error.message });

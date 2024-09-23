@@ -67,6 +67,7 @@ export function SacarTurno() {
         setSelectedDoctor(null);
         setShowDatePicker(false); // Ocultar DatePicker al cambiar especialidad
         if (selectedSede && selectedOption) {
+            console.log({idSede: selectedSede.value, idEspecialidad: selectedOption.value})
             ObtenerDoctores({ idSede: selectedSede.value, idEspecialidad: selectedOption.value });
         }
     };

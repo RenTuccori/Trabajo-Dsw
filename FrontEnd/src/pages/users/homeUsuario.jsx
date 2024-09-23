@@ -5,13 +5,13 @@ import { useState, useEffect } from 'react';
 
 function HomeUsuario() {
   const navigate = useNavigate();
-  const { dni, login, comprobarToken, ObtenerPacienteDni } = usePacientes();
+  const { dni, login, comprobarToken, /*ObtenerPacienteDni*/ } = usePacientes();
   const [dniform, setDni] = useState('');
   const [fecha, setFecha] = useState('');
 
   const handleLogin = async () => {
-    ObtenerPacienteDni();
     await login({ dni: dniform, fechaNacimiento: fecha });
+    /*ObtenerPacienteDni();*/
   };
   const handleDniChange = (event) => {
     setDni(event.target.value);
@@ -96,10 +96,13 @@ function HomeUsuario() {
               Modificar datos personales
             </button>
             <button
-              onClick={() => navigate('/')}
+              onClick={() => {
+                localStorage.clear();
+                navigate('/');
+              }}
               className="w-full bg-gray-200 text-gray-700 py-2 rounded-lg hover:bg-gray-300 transition-colors"
             >
-              Volver a inicio
+              Cerrar Sesión
             </button>
           </div>
         )}
