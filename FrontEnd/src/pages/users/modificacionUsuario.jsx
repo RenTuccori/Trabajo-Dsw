@@ -3,6 +3,8 @@ import { useNavigate } from 'react-router-dom';
 import Select from 'react-select';
 import '../../estilos/sacarturno.css';
 import { usePacientes } from '../../context/paciente/PacientesProvider';
+import Swal from 'sweetalert2'; // Importa SweetAlert2
+import { toast } from 'react-toastify'; // Importa toast
 
 export function EditarDatosPersonales() {
   const {
@@ -36,13 +38,30 @@ export function EditarDatosPersonales() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
-    const response = await ActualizarUsuario(formData);
 
-    if (response.data) {
-      console.log('Usuario actualizado con éxito');
-      navigate('/paciente');
-    } else {
-      console.log('Error al actualizar usuario');
+    // Alerta de confirmación
+    const result = await Swal.fire({
+      title: 'Guardar Cambios',
+      text: '¿Estás seguro que deseas guardar los cambios?',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Sí, guardar',
+      cancelButtonText: 'Cancelar',
+    });
+
+    if (result.isConfirmed) {
+      const response = await ActualizarUsuario(formData);
+
+      if (response.data) {
+        console.log('Usuario actualizado con éxito');
+        toast.success('Usuario actualizado con éxito'); // Toast de éxito
+        navigate('/paciente');
+      } else {
+        console.log('Error al actualizar usuario');
+        Swal.fire('Error', 'No se pudo actualizar el usuario', 'error'); // Mensaje de error
+      }
     }
   };
 
@@ -52,7 +71,6 @@ export function EditarDatosPersonales() {
     ObtenerUsuarioDni();
   }, []);
 
-  // Este useEffect se ejecuta una vez que los datos de usuarioDni y obraSociales están cargados.
   useEffect(() => {
     if (usuarioDni && obraSociales.length > 0) {
       setFormData({

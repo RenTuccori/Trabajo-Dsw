@@ -2,17 +2,25 @@
 import { useNavigate } from 'react-router-dom';
 import { usePacientes } from '../../context/paciente/PacientesProvider.jsx';
 import { useState, useEffect } from 'react';
+import { toast } from 'react-toastify'; // Importa toastify
+import 'react-toastify/dist/ReactToastify.css'; // Importa los estilos de toastify
 
 function HomeUsuario() {
   const navigate = useNavigate();
-  const { dni, login, comprobarToken, /*ObtenerPacienteDni*/ } = usePacientes();
+  const { dni, login, comprobarToken } = usePacientes();
   const [dniform, setDni] = useState('');
   const [fecha, setFecha] = useState('');
 
   const handleLogin = async () => {
-    await login({ dni: dniform, fechaNacimiento: fecha });
-    /*ObtenerPacienteDni();*/
+    try {
+      await login({ dni: dniform, fechaNacimiento: fecha });
+      toast.success('¡Login exitoso!'); // Muestra mensaje de éxito
+    } catch (error) {
+      toast.error('Error en el login, verifica tus datos.'); // Muestra mensaje de error si hay fallo
+      console.error('Error de login:', error);
+    }
   };
+
   const handleDniChange = (event) => {
     setDni(event.target.value);
   };

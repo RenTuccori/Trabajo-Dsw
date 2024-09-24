@@ -44,6 +44,7 @@ const AdministracionProvider = ({ children }) => {
   const [especialidades, setEspecialidades] = useState('');
   const [obrasSociales, setObrasSociales] = useState('');
   const [doctores, setDoctores] = useState('');
+  const [doctor, setDoctor] = useState('');
   const [usuario, setUsuario] = useState({});
   const [selectedDoctor, setSelectedDoctor] = useState(null);
   const [selectedEspecialidad, setSelectedEspecialidad] = useState(null);
@@ -147,7 +148,7 @@ const AdministracionProvider = ({ children }) => {
     try {
       const response = await getDoctorById(idDoctor);
       console.log('Doctor encontrado:', response.data);
-      setDoctores(response.data);
+      setDoctor(response.data);
     } catch (error) {
       console.error('Error al obtener el doctor por ID:', error);
       throw error;
@@ -313,7 +314,8 @@ const AdministracionProvider = ({ children }) => {
         borrarSedEspDoc,
         obtenerCombinaciones,
         combinaciones,
-        ObtenerDoctorPorId
+        ObtenerDoctorPorId,
+        doctor
       }}
     >
       {children}

@@ -1,7 +1,9 @@
 import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { usePacientes } from '../../context/paciente/PacientesProvider';
-
+import { toast } from 'react-toastify'; // Importa toastify
+import 'react-toastify/dist/ReactToastify.css'; // Importa los estilos de toastify
+import Swal from 'sweetalert2'; // Importa SweetAlert2
 
 export function TurnosPersonales() {
     const navigate = useNavigate();
@@ -14,19 +16,60 @@ export function TurnosPersonales() {
     }, []);
 
     const handleConfirmarTurno = async (idTurno) => {
-        ConfirmarTurno({ idTurno });
+        const result = await Swal.fire({
+            title: 'Confirmar Turno',
+            text: '¿Estás seguro que deseas confirmar este turno?',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Sí, confirmar',
+            cancelButtonText: 'Cancelar',
+        });
+
+        if (result.isConfirmed) {
+            try {
+                await ConfirmarTurno({ idTurno });
+                toast.success('¡Turno confirmado con éxito!'); // Mensaje de éxito
+            } catch (error) {
+                toast.error('Error al confirmar el turno'); // Mensaje de error
+                console.error('Error al confirmar turno:', error);
+            }
+        }
     };
 
     const handleCancelarTurno = async (idTurno) => {
-        CancelarTurno({ idTurno });
+        const result = await Swal.fire({
+            title: 'Cancelar Turno',
+            text: '¿Estás seguro que deseas cancelar este turno?',
+            icon: 'warning',
+            showCancelButton: true,
+            confirmButtonColor: '#3085d6',
+            cancelButtonColor: '#d33',
+            confirmButtonText: 'Sí, cancelar',
+            cancelButtonText: 'Cancelar',
+        });
+
+        if (result.isConfirmed) {
+            try {
+                await CancelarTurno({ idTurno });
+                toast.success('¡Turno cancelado con éxito!'); // Mensaje de éxito
+            } catch (error) {
+                toast.error('Error al cancelar el turno'); // Mensaje de error
+                console.error('Error al cancelar turno:', error);
+            }
+        }
     };
 
     const formatFechaHora = (fechaHora) => {
         const date = new Date(fechaHora);
-        return date.toLocaleTimeString('es-ES', {
-            hour: '2-digit',
-            minute: '2-digit',
-        });
+        const opcionesFecha = { year: 'numeric', month: 'long', day: 'numeric' };
+        const opcionesHora = { hour: '2-digit', minute: '2-digit' };
+
+        const fecha = date.toLocaleDateString('es-ES', opcionesFecha);
+        const hora = date.toLocaleTimeString('es-ES', opcionesHora);
+
+        return `${fecha} a las ${hora}`; // Retorna la fecha y hora en un solo string
     };
 
     return (
@@ -73,6 +116,3 @@ export function TurnosPersonales() {
         </div>
     );
 }
-
-
-

@@ -8,7 +8,7 @@ import 'react-toastify/dist/ReactToastify.css';
 export function ActualizarDoctor() {
   const navigate = useNavigate();
   const { idDoctor } = useParams(); // Obtenemos el ID del doctor desde la URL
-  const { ObtenerDoctorPorId, ActualizarDoctor, ObtenerOS, obrasSociales } = useAdministracion();
+  const { ObtenerDoctorPorId, ActualizarDoctor, ObtenerOS, obrasSociales, doctor } = useAdministracion();
   const [doctorData, setDoctorData] = useState({
     nombre: '',
     apellido: '',
@@ -23,7 +23,7 @@ export function ActualizarDoctor() {
   useEffect(() => {
     // Obtener datos del doctor
     const fetchDoctorData = async () => {
-      const doctor = await ObtenerDoctorPorId(idDoctor);
+      ObtenerDoctorPorId(idDoctor);
       setDoctorData({
         nombre: doctor.nombre,
         apellido: doctor.apellido,
