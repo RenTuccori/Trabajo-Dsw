@@ -5,9 +5,6 @@ import 'react-datepicker/dist/react-datepicker.css';
 import { useNavigate } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 
-
-
-
 export function SacarTurno() {
     const navigate = useNavigate();
     const { sedes, especialidades, doctores, ObtenerSedes, ObtenerEspecialidades, ObtenerDoctores, fechas, ObtenerFechas, horarios, ObtenerHorarios, setFechaYHora,
@@ -17,7 +14,6 @@ export function SacarTurno() {
     const [selectedDoctor, setSelectedDoctor] = useState(null);
     const [selectedFecha, setSelectedFecha] = useState(null);
     const [selectedHorario, setSelectedHorario] = useState(null);
-    const [showDatePicker, setShowDatePicker] = useState(false); // Nuevo estado
 
     useEffect(() => {
         ObtenerSedes();
@@ -56,7 +52,6 @@ export function SacarTurno() {
         setSelectedSede(selectedOption);
         setSelectedEspecialidad(null);
         setSelectedDoctor(null);
-        setShowDatePicker(false); // Ocultar DatePicker al cambiar sede
         if (selectedOption) {
             ObtenerEspecialidades({ idSede: selectedOption.value });
         }
@@ -65,9 +60,7 @@ export function SacarTurno() {
     const handleEspecilidadChange = async (selectedOption) => {
         setSelectedEspecialidad(selectedOption);
         setSelectedDoctor(null);
-        setShowDatePicker(false); // Ocultar DatePicker al cambiar especialidad
         if (selectedSede && selectedOption) {
-            console.log({idSede: selectedSede.value, idEspecialidad: selectedOption.value})
             ObtenerDoctores({ idSede: selectedSede.value, idEspecialidad: selectedOption.value });
         }
     };
@@ -75,7 +68,6 @@ export function SacarTurno() {
     const handleDoctorChange = async (selectedOption) => {
         setSelectedDoctor(selectedOption);
         setSelectedFecha(null);
-        setShowDatePicker(true); // Mostrar DatePicker al seleccionar doctor
         if (selectedSede && selectedOption && selectedEspecialidad) {
             ObtenerFechas({ selectedOption, selectedEspecialidad, selectedSede });
         }
@@ -90,19 +82,17 @@ export function SacarTurno() {
         return result;
     };
 
-
     const handleFechaChange = async (date) => {
         const year = date.getFullYear();
         const month = (date.getMonth() + 1).toString().padStart(2, '0'); // Meses empiezan desde 0
         const day = (date.getDate()).toString().padStart(2, '0');
-        date = `${year}-${month}-${day}`
+        date = `${year}-${month}-${day}`;
         setSelectedFecha(date);
         setSelectedHorario(null);
         if (selectedSede && date && selectedEspecialidad && selectedDoctor) {
             ObtenerHorarios({ selectedDoctor, selectedEspecialidad, selectedSede, date });
         }
     };
-
 
     const handleHorarioChange = (selectedOption) => {
         setSelectedHorario(selectedOption);
@@ -113,7 +103,7 @@ export function SacarTurno() {
         setEstado('Pendiente');
         setFechaCancelacion(null);
         setFechaConfirmacion(null);
-    }
+    };
 
     return (
         <form className="min-h-screen bg-gradient-to-b from-blue-100 to-white flex items-center justify-center p-4">
@@ -145,18 +135,15 @@ export function SacarTurno() {
                         isDisabled={!selectedEspecialidad}
                         styles={customStyles}
                     />
-                    {showDatePicker && (
-                        <>
-                            <p className="text-center text-gray-600 text-lg">Fecha</p>
-                            <DatePicker
-                                selected={selectedFecha}
-                                onChange={handleFechaChange}
-                                filterDate={isDateAvailable}
-                                placeholderText="Selecciona una fecha"
-                                className="w-full border border-gray-300 rounded-lg p-2 focus:outline-none focus:border-blue-500"
-                            />
-                        </>
-                    )}
+                    <p className="text-center text-gray-600 text-lg">Fecha</p>
+                    <DatePicker
+                        selected={selectedFecha}
+                        onChange={handleFechaChange}
+                        filterDate={isDateAvailable}
+                        placeholderText="Selecciona una fecha"
+                        className="w-full border border-gray-300 rounded-lg p-2 focus:outline-none focus:border-blue-500"
+                        disabled={!selectedDoctor} // Deshabilitar el DatePicker si no hay doctor seleccionado
+                    />
                     <p className="text-center text-gray-600 text-lg">Horario</p>
                     <Select
                         className="react-select"
