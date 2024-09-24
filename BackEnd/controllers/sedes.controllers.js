@@ -33,7 +33,7 @@ export const getSedeById = async (req, res) => {
 export const createSede = async (req, res) => {
   const { nombre, direccion } = req.body;
   const estado = 'Habilitado';
-  
+
   try {
     const [result] = await pool.query(
       'INSERT INTO sedes (nombre, direccion, estado) VALUES (?, ?, ?)',
@@ -72,13 +72,13 @@ export const updateSede = async (req, res) => {
 
 export const deleteSede = async (req, res) => {
   try {
-    const [result] = await pool.query('DELETE FROM sedes WHERE idSede = ?', [
-      req.params.idSede,
-    ]);
+    const { idSede } = req.params;
+    const [result] = await pool.query('UPDATE sedes SET estado = "Deshabilitado" WHERE idSede = ?',
+      [idSede]);
     if (result.affectedRows === 0) {
       return res.status(404).json({ message: 'Sede no encontrada' });
     }
-    return res.sendStatus(204);
+    return res.sendStatus(204); // 204 significa "No Content", que indica que la solicitud fue exitosa, pero no hay contenido para devolver.
   } catch (error) {
     return res.status(500).json({ message: error.message });
   }

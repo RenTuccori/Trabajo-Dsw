@@ -12,6 +12,8 @@ import {
   createDoctor,
   updateDoctor,
   deleteDoctor,
+  deleteSeEspDoc,
+  getCombinaciones
 } from '../../api/admin.api.js'; // Asegúrate de tener una función para crear la sede en la API
 import { useContext, useEffect, useState } from 'react';
 import { getSedes } from '../../api/sedes.api.js';
@@ -19,7 +21,7 @@ import {
   getEspecialidades,
   getAllSpecialities,
 } from '../../api/especialidades.api';
-import { getDoctores } from '../../api/doctores.api';
+import { getDoctores, getDoctorById } from '../../api/doctores.api';
 import { getObrasSociales } from '../../api/obrasociales.api.js';
 import { getUserDni, createUser } from '../../api/usuarios.api.js';
 import { jwtDecode } from 'jwt-decode';
@@ -46,6 +48,7 @@ const AdministracionProvider = ({ children }) => {
   const [selectedDoctor, setSelectedDoctor] = useState(null);
   const [selectedEspecialidad, setSelectedEspecialidad] = useState(null);
   const [selectedSede, setSelectedSede] = useState(null);
+  const [combinaciones, setCombinaciones] = useState([]);
   const navigate = useNavigate(); // Hook de React Router para navegar entre rutas
 
   useEffect(() => {
@@ -140,6 +143,17 @@ const AdministracionProvider = ({ children }) => {
     console.log('Doctores:', response.data);
     setDoctores(response.data);
   }
+  async function ObtenerDoctorPorId(idDoctor) {
+    try {
+      const response = await getDoctorById(idDoctor);
+      console.log('Doctor encontrado:', response.data);
+      setDoctores(response.data);
+    } catch (error) {
+      console.error('Error al obtener el doctor por ID:', error);
+      throw error;
+    }
+  }
+
   async function CreaDoctor({ dni, duracionTurno, contra }) {
     try {
       const response = await createDoctor({ dni, duracionTurno, contra });
@@ -220,6 +234,27 @@ const AdministracionProvider = ({ children }) => {
     }
   }
 
+  async function borrarSedEspDoc({ idSede, idEspecialidad, idDoctor }) {
+    try {
+      const response = await deleteSeEspDoc({ idSede, idEspecialidad, idDoctor });
+      console.log('Sede, especialidad y doctor borrados:', response.data);
+    } catch (error) {
+      console.error('Error al borrar la combinación de sede, especialidad y doctor:', error);
+      throw error;
+    }
+  }
+
+  async function obtenerCombinaciones() {
+    try {
+      const response = await getCombinaciones();
+      setCombinaciones(response.data);
+      console.log('Combinaciones:', response.data);
+    } catch (error) {
+      console.error('Error al obtener las combinaciones de sede, especialidad y doctor:', error);
+      throw error;
+    }
+  }
+
   async function ObtenerUsuarioDni(dni) {
     try {
       console.log('dni:', dni);
@@ -275,6 +310,10 @@ const AdministracionProvider = ({ children }) => {
         CrearUsuario,
         setUsuario,
         usuario,
+        borrarSedEspDoc,
+        obtenerCombinaciones,
+        combinaciones,
+        ObtenerDoctorPorId
       }}
     >
       {children}

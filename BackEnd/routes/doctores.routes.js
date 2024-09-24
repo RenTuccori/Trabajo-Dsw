@@ -23,5 +23,4 @@ router.get('/api/doctorsId/:idDoctor', getDoctorById);
 
 router.get('/api/doctorsdni', getDoctorByDni);
 
-
 export default router;

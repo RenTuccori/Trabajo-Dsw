@@ -34,29 +34,43 @@ export const getObraSocialById = async (req, res) => {
 
 export const createObraSocial = async (req, res) => {
     const { nombre } = req.body;
+    const estado = 'Habilitado'; // Definir el estado directamente
+
     try {
         const [result] = await pool.query(
-            'INSERT INTO obrasociales (nombre) VALUES (?)',
-            [nombre]
+            'INSERT INTO obrasociales (nombre, estado) VALUES (?, ?)',
+            [nombre, estado]
         );
+
         res.json({
             idObraSocial: result.insertId,
-            nombre
+            nombre,
+            estado
         });
     } catch (error) {
         return res.status(500).json({ message: error.message });
     }
-}
+};
+
 
 export const deleteObraSocial = async (req, res) => {
     try {
-        const { idObraSocial } = req.params; // Obtener el idObraSocial desde los parámetros de la URL
-        await pool.query('DELETE FROM obrasociales WHERE idObraSocial = ?', [idObraSocial]);
-        res.json({ message: 'Obra social eliminada' });
+        const { idObraSocial } = req.params;
+        const [result] = await pool.query(
+            'UPDATE obrasociales SET estado = ? WHERE idObraSocial = ?',
+            ['Deshabilitado', idObraSocial]
+        );
+
+        if (result.affectedRows === 0) {
+            return res.status(404).json({ message: 'Obra social no encontrada' });
+        }
+
+        return res.sendStatus(204);  // Solo una respuesta
     } catch (error) {
         return res.status(500).json({ message: error.message });
     }
-}
+};
+
 
 export const updateObraSocial = async (req, res) => {
     try {

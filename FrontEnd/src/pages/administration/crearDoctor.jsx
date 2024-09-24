@@ -16,6 +16,7 @@ export function CrearDoctor() {
     ObtenerOS,
     usuario,
     obrasSociales,
+    borrarDoctor
   } = useAdministracion();
 
   const [dni, setDni] = useState('');
@@ -112,6 +113,30 @@ export function CrearDoctor() {
     }
   };
 
+  const handleDelete = async (idDoctor) => {
+    try {
+      await borrarDoctor(idDoctor);
+      toast.success(`Doctor con ID ${idDoctor} borrado.`);
+      // Actualiza la lista de doctores
+      await ObtenerDoctores();
+    } catch (error) {
+      toast.error(`Error al borrar el doctor con ID ${idDoctor}`);
+      console.error(`Error al borrar el doctor con ID ${idDoctor}:`, error);
+    }
+  };
+
+  const handleUpdate = async (idDoctor) => {
+    try {
+      // Redirigir a un formulario de actualización de doctor con el ID del doctor
+      navigate(`/admin/actualizarDoc/${idDoctor}`);
+      // Después de actualizar, recargar la lista de doctores
+      await ObtenerDoctores();
+    } catch (error) {
+      toast.error(`Error al actualizar el doctor con ID ${idDoctor}`);
+      console.error(`Error al actualizar el doctor con ID ${idDoctor}:`, error);
+    }
+  };
+
   return (
     <div className="min-h-screen bg-gradient-to-b from-blue-100 to-white flex items-center justify-center p-4">
       <div className="bg-white rounded-lg shadow-md w-full max-w-md p-6 space-y-4">
@@ -139,13 +164,10 @@ export function CrearDoctor() {
         )}
         {formularioVisible && (
           <>
-            {/* Si el usuario no existe, mostrar formulario completo */}
             {!usuarioExistente && (
               <form onSubmit={handleCrearDoctor} className="space-y-4">
                 <div>
-                  <p className="text-center text-gray-600 text-lg">
-                    Fecha de Nacimiento
-                  </p>
+                  <p className="text-center text-gray-600 text-lg">Fecha de Nacimiento</p>
                   <input
                     type="date"
                     name="fechaNacimiento"
@@ -211,9 +233,7 @@ export function CrearDoctor() {
                   />
                 </div>
                 <div>
-                  <p className="text-center text-gray-600 text-lg">
-                    Obra Social
-                  </p>
+                  <p className="text-center text-gray-600 text-lg">Obra Social</p>
                   <Select
                     options={obrasSociales.map((obrasocial) => ({
                       value: obrasocial.idObraSocial,
@@ -225,9 +245,7 @@ export function CrearDoctor() {
                   />
                 </div>
                 <div>
-                  <p className="text-center text-gray-600 text-lg">
-                    Duración del turno (en minutos)
-                  </p>
+                  <p className="text-center text-gray-600 text-lg">Duración del turno (en minutos)</p>
                   <input
                     type="text"
                     value={duracionTurno}
@@ -237,9 +255,7 @@ export function CrearDoctor() {
                   />
                 </div>
                 <div>
-                  <p className="text-center text-gray-600 text-lg">
-                    Contraseña
-                  </p>
+                  <p className="text-center text-gray-600 text-lg">Contraseña</p>
                   <input
                     type="password"
                     value={contra}
@@ -256,7 +272,7 @@ export function CrearDoctor() {
                 </button>
               </form>
             )}
-            {/* Si el usuario ya existe, mostrar solo formulario de doctor */}
+
             {usuarioExistente && (
               <form onSubmit={handleCrearDoctor} className="space-y-4">
                 <input
@@ -293,25 +309,33 @@ export function CrearDoctor() {
         >
           Volver
         </button>
-        <h3 className="text-lg font-medium text-gray-800 mt-6">
-          Doctores Creados
-        </h3>
+
+        <h3 className="text-lg font-medium text-gray-800 mt-6">Doctores Creados</h3>
         <ul className="space-y-2">
           {doctores.length > 0 ? (
             doctores.map((doctor) => (
-              <li
-                key={doctor.idDoctor}
-                className="bg-gray-100 p-4 rounded-lg flex justify-between items-center"
-              >
+              <li key={doctor.idDoctor} className="bg-gray-100 p-4 rounded-lg flex justify-between items-center">
                 <span>
                   <strong>{doctor.nombreyapellido}</strong>
                 </span>
+                <div className="flex space-x-4">
+                  <button
+                    onClick={() => handleDelete(doctor.idDoctor)}
+                    className="text-red-600 hover:text-red-800"
+                  >
+                    Delete
+                  </button>
+                  <button
+                    onClick={() => handleUpdate(doctor.idDoctor)}
+                    className="text-blue-600 hover:text-blue-800"
+                  >
+                    Actualizar
+                  </button>
+                </div>
               </li>
             ))
           ) : (
-            <p className="text-center text-gray-600">
-              No hay doctores creados aún.
-            </p>
+            <p className="text-center text-gray-600">No hay doctores creados aún.</p>
           )}
         </ul>
       </div>

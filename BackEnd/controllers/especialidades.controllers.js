@@ -94,7 +94,7 @@ export const deleteSpecialty = async (req, res) => {
   try {
     const { idEspecialidad } = req.params;
     const [result] = await pool.query(
-      'DELETE FROM especialidades WHERE idEspecialidad = ?',
+      'UPDATE especialidad SET estado = "Deshabilitado" WHERE idEspecialidad = ?',
       [idEspecialidad]
     );
     if (result.affectedRows === 0) {

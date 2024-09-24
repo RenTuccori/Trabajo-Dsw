@@ -150,17 +150,17 @@ export const createDoctor = async (req, res) => {
 };
 
 
-
-
 export const deleteDoctor = async (req, res) => {
   try {
-    const [result] = await pool.query('DELETE FROM doctores WHERE idDoctor = ?', [
-      req.params.idDoctor,
-    ]);
+    const { idDoctor } = req.params;
+    const [result] = await pool.query(
+      'UPDATE doctores SET estado = "Deshabilitado" WHERE idDoctor = ?',
+      [idDoctor]
+    );
     if (result.affectedRows === 0) {
       return res.status(404).json({ message: 'Doctor no encontrado' });
     }
-    return res.sendStatus(204);
+    return res.sendStatus(204); // 204 significa "No Content", que indica que la solicitud fue exitosa, pero no hay contenido para devolver.
   } catch (error) {
     return res.status(500).json({ message: error.message });
   }
@@ -170,7 +170,6 @@ export const deleteDoctor = async (req, res) => {
 export const updateDoctor = async (req, res) => {
   const { idDoctor } = req.params;
   const { duracionTurno, contra } = req.body;
-
   try {
     const [result] = await pool.query(
       'UPDATE doctores SET duracionTurno = ?, contra = ? WHERE idDoctor = ?',
