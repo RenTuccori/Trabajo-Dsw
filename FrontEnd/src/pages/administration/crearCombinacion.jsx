@@ -219,12 +219,31 @@ export function AsignarCombinacion() {
             {combinaciones && combinaciones.map((combinacion, index) => (
               <li key={index} className="flex justify-between items-center bg-gray-100 p-2 rounded-md">
                 <span>{`Sede: ${combinacion.nombreSede}, Especialidad: ${combinacion.nombreEspecialidad}, Doctor: ${combinacion.nombreDoctor} ${combinacion.apellidoDoctor}`}</span>
-                <button
-                  className="text-red-600 hover:text-red-800"
-                  onClick={() => handleDeleteCombinacion(combinacion.nombreSede, combinacion.nombreEspecialidad, combinacion.nombreDoctor)}
-                >
-                  Eliminar
-                </button>
+                <div className="flex space-x-4">
+                  {/* Botón de Eliminar */}
+                  <button
+                    className="text-red-600 hover:text-red-800"
+                    onClick={() => handleDeleteCombinacion(combinacion.nombreSede, combinacion.nombreEspecialidad, combinacion.nombreDoctor)}
+                  >
+                    Eliminar
+                  </button>
+
+                  {/* Botón de Agregar Horarios */}
+                  <button
+                    className="text-blue-600 hover:text-blue-800"
+                    onClick={() => {
+                      const data = {
+                        idSede: combinacion.idSede,
+                        idEspecialidad: combinacion.idEspecialidad,
+                        idDoctor: combinacion.idDoctor
+                      };
+                      console.log('Datos a enviar para agregar horarios:', data); // Log de los datos que se envían
+                      navigate(`/admin/horarios`, { state: data });
+                    }}
+                  >
+                    Agregar horarios
+                  </button>
+                </div>
               </li>
             ))}
           </ul>

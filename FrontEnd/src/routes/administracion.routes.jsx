@@ -7,6 +7,8 @@ import { CrearObraSocial } from "../pages/administration/crearObraSocial.jsx";
 import { AsignarCombinacion } from "../pages/administration/crearCombinacion.jsx";
 import { CrearDoctor } from "../pages/administration/crearDoctor.jsx";
 import { ActualizarDoctor } from "../pages/administration/actualizarDoctor.jsx";
+import { CrearHorarios } from "../pages/administration/crearHorarios.jsx";
+
 
 
 
@@ -19,6 +21,7 @@ export function AdministracionRoutes() {
         <Route path="/crearEsp" element={<CrearEspecialidad />} />
         <Route path="/crearOS" element={<CrearObraSocial />} />
         <Route path="/combinacion" element={<AsignarCombinacion />} />
+        <Route path="/horarios" element={<CrearHorarios />} />
         <Route path="/crearDoc" element={<CrearDoctor />} />
         <Route path="/actualizarDoc/:idDoctor" element={<ActualizarDoctor />} />
       </Routes>

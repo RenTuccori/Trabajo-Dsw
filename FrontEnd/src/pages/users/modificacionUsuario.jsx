@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Select from 'react-select';
-import '../../estilos/sacarturno.css';
 import { usePacientes } from '../../context/paciente/PacientesProvider';
 import Swal from 'sweetalert2'; // Importa SweetAlert2
 import { toast } from 'react-toastify'; // Importa toast

@@ -13,7 +13,9 @@ import {
   updateDoctor,
   deleteDoctor,
   deleteSeEspDoc,
-  getCombinaciones
+  getCombinaciones,
+  createHorarios,
+  getHorariosXDoctor
 } from '../../api/admin.api.js'; // Asegúrate de tener una función para crear la sede en la API
 import { useContext, useEffect, useState } from 'react';
 import { getSedes } from '../../api/sedes.api.js';
@@ -50,6 +52,7 @@ const AdministracionProvider = ({ children }) => {
   const [selectedEspecialidad, setSelectedEspecialidad] = useState(null);
   const [selectedSede, setSelectedSede] = useState(null);
   const [combinaciones, setCombinaciones] = useState([]);
+  const [horariosDoctor, setHorariosDoctor] = useState([]);
   const navigate = useNavigate(); // Hook de React Router para navegar entre rutas
 
   useEffect(() => {
@@ -256,6 +259,33 @@ const AdministracionProvider = ({ children }) => {
     }
   }
 
+  //Horarios
+  async function crearHorarios({ idSede, idDoctor, idEspecialidad, dia, horaInicio, horaFin }) {
+    try {
+      const response = await createHorarios({ idSede, idDoctor, idEspecialidad, dia, horaInicio, horaFin });
+      console.log('Horario creado:', response.data);
+    } catch (error) {
+      console.error('Error al crear el horario:', error);
+    }
+  }
+
+  async function obtenerHorariosXDoctor({ idSede, idEspecialidad, idDoctor }) {
+    try {
+      const response = await getHorariosXDoctor({ idSede, idEspecialidad, idDoctor });
+      console.log('Respuesta de horarios:', response.data); // Log para depurar
+      setHorariosDoctor(response.data); // Actualizar el estado
+      return response.data; // Retornar los datos
+    } catch (error) {
+      console.error('Error al obtener los horarios del doctor:', error);
+      throw error;
+    }
+  }
+
+
+
+
+  //Usuario
+
   async function ObtenerUsuarioDni(dni) {
     try {
       console.log('dni:', dni);
@@ -315,7 +345,10 @@ const AdministracionProvider = ({ children }) => {
         obtenerCombinaciones,
         combinaciones,
         ObtenerDoctorPorId,
-        doctor
+        doctor,
+        crearHorarios,
+        obtenerHorariosXDoctor,
+        horariosDoctor
       }}
     >
       {children}

@@ -55,3 +55,10 @@ export const deleteSeEspDoc = async ({ idSede, idEspecialidad, idDoctor }) => {
 export const getCombinaciones = async () => {
     return await axios.get(`http://${dbUrl}/api/adminGetCombinaciones`);
 }
+//Horarios
+export const createHorarios = async ({ idSede, idDoctor, idEspecialidad, dia, horaInicio, horaFin }) => {
+    return await axios.post(`http://${dbUrl}/api/adminCreateHorario`, { idSede, idDoctor, idEspecialidad, dia, horaInicio, horaFin });
+}
+export const getHorariosXDoctor = async ({ idSede, idEspecialidad, idDoctor }) => {
+    return await axios.post(`http://${dbUrl}/api/adminGetHorariosXDoctor`, { idSede, idEspecialidad, idDoctor });
+}
