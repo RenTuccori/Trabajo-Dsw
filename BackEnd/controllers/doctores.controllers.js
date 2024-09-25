@@ -90,9 +90,10 @@ export const getDoctorById = async (req, res) => {
   try {
     const { idDoctor } = req.params;
     const [result] = await pool.query(
-      `SELECT u.nombre, u.apellido 
+      `SELECT u.nombre, u.apellido, u.email, doc.dni, doc.duracionTurno, doc.contra, u.telefono, u.direccion, u.idObraSocial, os.nombre AS obraSocial
        FROM doctores doc 
        INNER JOIN usuarios u ON doc.dni = u.dni
+       INNER JOIN obrasociales os ON u.idObraSocial = os.idObraSocial
        WHERE doc.idDoctor = ? AND doc.estado = 'Habilitado'`,
       [idDoctor]
     );

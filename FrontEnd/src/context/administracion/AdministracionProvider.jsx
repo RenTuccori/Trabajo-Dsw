@@ -15,7 +15,7 @@ import {
   deleteSeEspDoc,
   getCombinaciones,
   createHorarios,
-  getHorariosXDoctor
+  getHorariosXDoctor,
 } from '../../api/admin.api.js'; // Asegúrate de tener una función para crear la sede en la API
 import { useContext, useEffect, useState } from 'react';
 import { getSedes } from '../../api/sedes.api.js';
@@ -25,7 +25,7 @@ import {
 } from '../../api/especialidades.api';
 import { getDoctores, getDoctorById } from '../../api/doctores.api';
 import { getObrasSociales } from '../../api/obrasociales.api.js';
-import { getUserDni, createUser } from '../../api/usuarios.api.js';
+import { getUserDni, createUser, updateUser } from '../../api/usuarios.api.js';
 import { jwtDecode } from 'jwt-decode';
 import PropTypes from 'prop-types';
 import { useNavigate } from 'react-router-dom';
@@ -144,13 +144,11 @@ const AdministracionProvider = ({ children }) => {
   //Doctor
   async function ObtenerDoctores() {
     const response = await getDoctores();
-    console.log('Doctores:', response.data);
     setDoctores(response.data);
   }
   async function ObtenerDoctorPorId(idDoctor) {
     try {
       const response = await getDoctorById(idDoctor);
-      console.log('Doctor encontrado:', response.data);
       setDoctor(response.data);
     } catch (error) {
       console.error('Error al obtener el doctor por ID:', error);
@@ -178,7 +176,7 @@ const AdministracionProvider = ({ children }) => {
   async function actualizarDoctor({ idDoctor, duracionTurno, contra }) {
     try {
       const response = await updateDoctor({ idDoctor, duracionTurno, contra });
-      console.log('Doctor actualizado:', response.data);
+      return response;
     } catch (error) {
       console.error('Error al actualizar el doctor:', error);
     }
@@ -240,10 +238,17 @@ const AdministracionProvider = ({ children }) => {
 
   async function borrarSedEspDoc({ idSede, idEspecialidad, idDoctor }) {
     try {
-      const response = await deleteSeEspDoc({ idSede, idEspecialidad, idDoctor });
+      const response = await deleteSeEspDoc({
+        idSede,
+        idEspecialidad,
+        idDoctor,
+      });
       console.log('Sede, especialidad y doctor borrados:', response.data);
     } catch (error) {
-      console.error('Error al borrar la combinación de sede, especialidad y doctor:', error);
+      console.error(
+        'Error al borrar la combinación de sede, especialidad y doctor:',
+        error
+      );
       throw error;
     }
   }
@@ -254,15 +259,32 @@ const AdministracionProvider = ({ children }) => {
       setCombinaciones(response.data);
       console.log('Combinaciones:', response.data);
     } catch (error) {
-      console.error('Error al obtener las combinaciones de sede, especialidad y doctor:', error);
+      console.error(
+        'Error al obtener las combinaciones de sede, especialidad y doctor:',
+        error
+      );
       throw error;
     }
   }
 
   //Horarios
-  async function crearHorarios({ idSede, idDoctor, idEspecialidad, dia, horaInicio, horaFin }) {
+  async function crearHorarios({
+    idSede,
+    idDoctor,
+    idEspecialidad,
+    dia,
+    horaInicio,
+    horaFin,
+  }) {
     try {
-      const response = await createHorarios({ idSede, idDoctor, idEspecialidad, dia, horaInicio, horaFin });
+      const response = await createHorarios({
+        idSede,
+        idDoctor,
+        idEspecialidad,
+        dia,
+        horaInicio,
+        horaFin,
+      });
       console.log('Horario creado:', response.data);
     } catch (error) {
       console.error('Error al crear el horario:', error);
@@ -271,7 +293,11 @@ const AdministracionProvider = ({ children }) => {
 
   async function obtenerHorariosXDoctor({ idSede, idEspecialidad, idDoctor }) {
     try {
-      const response = await getHorariosXDoctor({ idSede, idEspecialidad, idDoctor });
+      const response = await getHorariosXDoctor({
+        idSede,
+        idEspecialidad,
+        idDoctor,
+      });
       console.log('Respuesta de horarios:', response.data); // Log para depurar
       setHorariosDoctor(response.data); // Actualizar el estado
       return response.data; // Retornar los datos
@@ -280,9 +306,6 @@ const AdministracionProvider = ({ children }) => {
       throw error;
     }
   }
-
-
-
 
   //Usuario
 
@@ -303,10 +326,19 @@ const AdministracionProvider = ({ children }) => {
     const response = await createUser(data);
     setUsuario(response.data);
   }
-
+  async function actualizarUsuario(data) {
+    try {
+      const response = await updateUser(data);
+      console.log('Usuario actualizado:', response.data);
+      return response;
+    } catch (error) {
+      console.error('Error al actualizar el usuario:', error);
+    }
+  }
   return (
     <AdministracionContext.Provider
       value={{
+        actualizarUsuario,
         login,
         comprobarToken,
         idAdmin,
@@ -348,7 +380,7 @@ const AdministracionProvider = ({ children }) => {
         doctor,
         crearHorarios,
         obtenerHorariosXDoctor,
-        horariosDoctor
+        horariosDoctor,
       }}
     >
       {children}

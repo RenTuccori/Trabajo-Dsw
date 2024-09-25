@@ -1,87 +1,130 @@
-import { useState, useEffect } from 'react';
+import { useEffect, useState } from 'react';
+import { useNavigate, useParams } from 'react-router-dom'; // Importa useParams
 import Select from 'react-select';
-import { useNavigate, useParams } from 'react-router-dom';
-import { useAdministracion } from '../../context/administracion/AdministracionProvider.jsx';
-import { toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
+import { useAdministracion } from '../../context/administracion/AdministracionProvider';
+import Swal from 'sweetalert2'; // Importa SweetAlert2
+import { toast } from 'react-toastify'; // Importa toast
 
 export function ActualizarDoctor() {
+  const {
+    comprobarToken,
+    ObtenerOS,
+    obrasSociales,
+    doctor,
+    ObtenerDoctorPorId,
+    actualizarUsuario,
+    actualizarDoctor,
+  } = useAdministracion();
+
+  const [selectedObraSociales, setSelectedObraSociales] = useState(null);
   const navigate = useNavigate();
-  const { idDoctor } = useParams(); // Obtenemos el ID del doctor desde la URL
-  const { ObtenerDoctorPorId, ActualizarDoctor, ObtenerOS, obrasSociales, doctor } = useAdministracion();
-  const [doctorData, setDoctorData] = useState({
+  const { idDoctor } = useParams(); // Usa useParams para obtener el idDoctor desde la URL
+
+  const [formData, setFormData] = useState({
+    idDoctor: '',
+    dni: '',
+    fechaNacimiento: '',
     nombre: '',
     apellido: '',
-    direccion: '',
     telefono: '',
     email: '',
-    duracionTurno: '',
+    direccion: '',
     idObraSocial: '',
+    duracionTurno: '',
+    contra: '',
   });
-  const [selectedObraSociales, setSelectedObraSociales] = useState(null);
-
-  useEffect(() => {
-    // Obtener datos del doctor
-    const fetchDoctorData = async () => {
-      ObtenerDoctorPorId(idDoctor);
-      setDoctorData({
-        nombre: doctor.nombre,
-        apellido: doctor.apellido,
-        direccion: doctor.direccion,
-        telefono: doctor.telefono,
-        email: doctor.email,
-        duracionTurno: doctor.duracionTurno,
-        idObraSocial: doctor.idObraSocial,
-      });
-      setSelectedObraSociales(
-        obrasSociales.find(os => os.idObraSocial === doctor.idObraSocial)
-      );
-    };
-
-    ObtenerOS(); // Obtenemos las obras sociales disponibles
-    fetchDoctorData();
-  }, [idDoctor, ObtenerDoctorPorId, ObtenerOS, obrasSociales]);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
-    setDoctorData({
-      ...doctorData,
+    setFormData((prevFormData) => ({
+      ...prevFormData,
       [name]: value,
-    });
+    }));
   };
 
+  const handleSubmit = async (e) => {
+    e.preventDefault();
+
+    // Alerta de confirmación
+    const result = await Swal.fire({
+      title: 'Guardar Cambios',
+      text: '¿Estás seguro que deseas guardar los cambios?',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonColor: '#3085d6',
+      cancelButtonColor: '#d33',
+      confirmButtonText: 'Sí, guardar',
+      cancelButtonText: 'Cancelar',
+    });
+
+    if (result.isConfirmed) {
+      const response = await actualizarUsuario(formData);
+      const responseDoctor = await actualizarDoctor(formData);
+      console.log(response.data, responseDoctor.data);
+      if (response.data && responseDoctor.data) {
+        console.log('Usuario actualizado con éxito');
+        toast.success('Usuario actualizado con éxito'); // Toast de éxito
+        navigate('/admin/crearDoc'); // Redirige a la lista de doctores
+      } else {
+        console.log('Error al actualizar usuario');
+        Swal.fire('Error', 'No se pudo actualizar el usuario', 'error'); // Mensaje de error
+      }
+    }
+  };
+
+  useEffect(() => {
+    comprobarToken();
+    ObtenerOS();
+    ObtenerDoctorPorId(idDoctor); // Llama a la función con el idDoctor obtenido de la URL
+  }, [idDoctor]);
+
+  // Set formData after all dependencies are loaded
+  useEffect(() => {
+    if (obrasSociales.length > 0 && doctor.dni) {
+      // Ensure all necessary data is available before setting formData
+      setFormData((prevFormData) => ({
+        ...prevFormData,
+        idDoctor: idDoctor,
+        dni: doctor.dni,
+        nombre: doctor.nombre,
+        apellido: doctor.apellido,
+        telefono: doctor.telefono,
+        email: doctor.email,
+        direccion: doctor.direccion,
+        idObraSocial: doctor.idObraSocial,
+        duracionTurno: doctor.duracionTurno,
+        contra: doctor.contra,
+      }));
+
+      setSelectedObraSociales({
+        value: doctor.idObraSocial,
+        label:
+          obrasSociales.find((os) => os.idObraSocial === doctor.idObraSocial)
+            ?.nombre || 'No asignada',
+      });
+    }
+  }, [obrasSociales, doctor]);
   const handleObraSocialChange = (selectedOption) => {
     setSelectedObraSociales(selectedOption);
-    setDoctorData({ ...doctorData, idObraSocial: selectedOption.value });
-  };
-
-  const handleUpdateDoctor = async (e) => {
-    e.preventDefault();
-    try {
-      await ActualizarDoctor(idDoctor, doctorData);
-      toast.success('Doctor actualizado con éxito');
-      navigate('/admin');
-    } catch (error) {
-      toast.error('Error al actualizar el doctor');
-      console.error('Error al actualizar doctor:', error);
-    }
+    setFormData((prevFormData) => ({
+      ...prevFormData,
+      idObraSocial: selectedOption.value,
+    }));
   };
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-blue-100 to-white flex items-center justify-center p-4">
       <div className="bg-white rounded-lg shadow-md w-full max-w-md p-6 space-y-4">
-        <h2 className="text-xl font-semibold text-center text-gray-800">Actualizar Doctor</h2>
-
-        <form onSubmit={handleUpdateDoctor} className="space-y-4">
+        <form onSubmit={handleSubmit} className="space-y-4">
           <div>
             <p className="text-center text-gray-600 text-lg">Nombre</p>
             <input
               type="text"
               name="nombre"
-              value={doctorData.nombre}
+              value={formData.nombre}
               onChange={handleInputChange}
               required
-              className="w-full p-2 border border-gray-300 rounded-lg"
+              className="w-full border border-gray-300 rounded-lg p-2 focus:outline-none focus:border-blue-500"
             />
           </div>
           <div>
@@ -89,10 +132,10 @@ export function ActualizarDoctor() {
             <input
               type="text"
               name="apellido"
-              value={doctorData.apellido}
+              value={formData.apellido}
               onChange={handleInputChange}
               required
-              className="w-full p-2 border border-gray-300 rounded-lg"
+              className="w-full border border-gray-300 rounded-lg p-2 focus:outline-none focus:border-blue-500"
             />
           </div>
           <div>
@@ -100,10 +143,10 @@ export function ActualizarDoctor() {
             <input
               type="text"
               name="direccion"
-              value={doctorData.direccion}
+              value={formData.direccion}
               onChange={handleInputChange}
               required
-              className="w-full p-2 border border-gray-300 rounded-lg"
+              className="w-full border border-gray-300 rounded-lg p-2 focus:outline-none focus:border-blue-500"
             />
           </div>
           <div>
@@ -111,10 +154,10 @@ export function ActualizarDoctor() {
             <input
               type="text"
               name="telefono"
-              value={doctorData.telefono}
+              value={formData.telefono}
               onChange={handleInputChange}
               required
-              className="w-full p-2 border border-gray-300 rounded-lg"
+              className="w-full border border-gray-300 rounded-lg p-2 focus:outline-none focus:border-blue-500"
             />
           </div>
           <div>
@@ -122,18 +165,18 @@ export function ActualizarDoctor() {
             <input
               type="email"
               name="email"
-              value={doctorData.email}
+              value={formData.email}
               onChange={handleInputChange}
               required
-              className="w-full p-2 border border-gray-300 rounded-lg"
+              className="w-full border border-gray-300 rounded-lg p-2 focus:outline-none focus:border-blue-500"
             />
           </div>
           <div>
             <p className="text-center text-gray-600 text-lg">Obra Social</p>
             <Select
-              options={obrasSociales.map((obrasocial) => ({
-                value: obrasocial.idObraSocial,
-                label: obrasocial.nombre,
+              options={obrasSociales.map((obrasociales) => ({
+                value: obrasociales.idObraSocial,
+                label: obrasociales.nombre,
               }))}
               onChange={handleObraSocialChange}
               value={selectedObraSociales}
@@ -141,31 +184,36 @@ export function ActualizarDoctor() {
             />
           </div>
           <div>
-            <p className="text-center text-gray-600 text-lg">Duración del Turno (minutos)</p>
+            <p className="text-center text-gray-600 text-lg">
+              Duración del Turno (minutos)
+            </p>
             <input
-              type="text"
+              type="number"
               name="duracionTurno"
-              value={doctorData.duracionTurno}
+              value={formData.duracionTurno}
               onChange={handleInputChange}
               required
-              className="w-full p-2 border border-gray-300 rounded-lg"
+              className="w-full border border-gray-300 rounded-lg p-2 focus:outline-none focus:border-blue-500"
+            />
+          </div>
+          <div>
+            <p className="text-center text-gray-600 text-lg">Contraseña</p>
+            <input
+              type="password"
+              name="contra"
+              value={formData.contra}
+              onChange={handleInputChange}
+              required
+              className="w-full border border-gray-300 rounded-lg p-2 focus:outline-none focus:border-blue-500"
             />
           </div>
           <button
             type="submit"
-            className="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 focus:outline-none transition-colors"
+            className="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition-colors"
           >
-            Actualizar Doctor
+            Guardar Cambios
           </button>
         </form>
-
-        <button
-          type="button"
-          onClick={() => navigate('/admin')}
-          className="w-full bg-gray-200 text-gray-700 py-2 rounded-lg hover:bg-gray-300 transition-colors mt-4"
-        >
-          Volver
-        </button>
       </div>
     </div>
   );
