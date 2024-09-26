@@ -134,7 +134,7 @@ export function CrearHorarios() {
           }
         }
         toast.success('Horarios guardados exitosamente');
-        navigate('/admin');
+        navigate('/admin/combinacion');
       } catch (error) {
         toast.error('Error al guardar los horarios.');
       }
@@ -154,7 +154,9 @@ export function CrearHorarios() {
           {/* Ingreso de nuevos horarios, con los horarios existentes ya pre-rellenados */}
           {diasSemana.map((dia, index) => (
             <div key={index} className="flex items-center space-x-4">
-              <span className="w-1/4">{dia}</span>
+              <span className="w-1/4">
+                {dia.charAt(0).toUpperCase() + dia.slice(1)}
+              </span>
               <input
                 type="time"
                 className="w-1/3 border border-gray-300 rounded-md p-2"
@@ -185,7 +187,7 @@ export function CrearHorarios() {
 
           <button
             className="w-full bg-gray-200 text-gray-700 py-2 rounded-lg hover:bg-gray-300 transition-colors"
-            onClick={() => navigate('/admin')}
+            onClick={() => navigate('/admin/combinacion')}
           >
             Volver
           </button>
