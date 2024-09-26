@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { getAdmin, createSeEspDoc, deleteSeEspDoc, getCombinaciones, createHorarios, getHorariosXDoctor } from "../controllers/admin.controllers.js";
+import { getAdmin, createSeEspDoc, deleteSeEspDoc, getCombinaciones, createHorarios, getHorariosXDoctor, updateHorarios } from "../controllers/admin.controllers.js";
 import { createDoctor, deleteDoctor, updateDoctor } from "../controllers/doctores.controllers.js";
 import { createSede, updateSede, deleteSede } from "../controllers/sedes.controllers.js";
 import { createObraSocial, getObrasSociales, deleteObraSocial, updateObraSocial } from "../controllers/obrassociales.controller.js";
@@ -30,5 +30,6 @@ router.get('/api/adminGetCombinaciones', getCombinaciones);
 //Horarios
 router.post('/api/adminCreateHorario', createHorarios);
 router.post('/api/adminGetHorariosXDoctor', getHorariosXDoctor);
+router.put('/api/adminUpdateHorario', updateHorarios);
 
 export default router;

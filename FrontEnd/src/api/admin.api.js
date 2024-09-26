@@ -56,9 +56,13 @@ export const getCombinaciones = async () => {
     return await axios.get(`http://${dbUrl}/api/adminGetCombinaciones`);
 }
 //Horarios
-export const createHorarios = async ({ idSede, idDoctor, idEspecialidad, dia, horaInicio, horaFin }) => {
-    return await axios.post(`http://${dbUrl}/api/adminCreateHorario`, { idSede, idDoctor, idEspecialidad, dia, horaInicio, horaFin });
+export const createHorarios = async ({ idSede, idDoctor, idEspecialidad, dia, hora_inicio, hora_fin, estado}) => {
+    return await axios.post(`http://${dbUrl}/api/adminCreateHorario`, { idSede, idDoctor, idEspecialidad, dia, hora_inicio, hora_fin, estado });
 }
 export const getHorariosXDoctor = async ({ idSede, idEspecialidad, idDoctor }) => {
     return await axios.post(`http://${dbUrl}/api/adminGetHorariosXDoctor`, { idSede, idEspecialidad, idDoctor });
+}
+
+export const updateHorarios = async ({ idSede, idDoctor, idEspecialidad, dia, hora_inicio, hora_fin, estado }) => {
+    return await axios.put(`http://${dbUrl}/api/adminUpdateHorario`, { idSede, idDoctor, idEspecialidad, dia, hora_inicio, hora_fin, estado });
 }

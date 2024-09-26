@@ -16,6 +16,7 @@ import {
   getCombinaciones,
   createHorarios,
   getHorariosXDoctor,
+  updateHorarios,
 } from '../../api/admin.api.js'; // Asegúrate de tener una función para crear la sede en la API
 import { useContext, useEffect, useState } from 'react';
 import { getSedes } from '../../api/sedes.api.js';
@@ -273,24 +274,60 @@ const AdministracionProvider = ({ children }) => {
     idDoctor,
     idEspecialidad,
     dia,
-    horaInicio,
-    horaFin,
+    hora_inicio,
+    hora_fin,
+    estado,
   }) {
     try {
+      console.log(
+        'data:',
+        idSede,
+        idDoctor,
+        idEspecialidad,
+        dia,
+        hora_inicio,
+        hora_fin,
+        estado
+      );
       const response = await createHorarios({
         idSede,
         idDoctor,
         idEspecialidad,
         dia,
-        horaInicio,
-        horaFin,
+        hora_inicio,
+        hora_fin,
+        estado,
       });
       console.log('Horario creado:', response.data);
     } catch (error) {
       console.error('Error al crear el horario:', error);
     }
   }
-
+  async function actualizarHorarios({
+    idSede,
+    idDoctor,
+    idEspecialidad,
+    dia,
+    hora_inicio,
+    hora_fin,
+    estado,
+  }) {
+    try {
+      console.log('actualizarHorarios en provider');
+      const response = await updateHorarios({
+        idSede,
+        idDoctor,
+        idEspecialidad,
+        dia,
+        hora_inicio,
+        hora_fin,
+        estado,
+      });
+      console.log('Horario actualizado:', response.data);
+    } catch (error) {
+      console.error('Error al actualizar el horario:', error);
+    }
+  }
   async function obtenerHorariosXDoctor({ idSede, idEspecialidad, idDoctor }) {
     try {
       const response = await getHorariosXDoctor({
@@ -299,10 +336,14 @@ const AdministracionProvider = ({ children }) => {
         idDoctor,
       });
       console.log('Respuesta de horarios:', response.data); // Log para depurar
-      setHorariosDoctor(response.data); // Actualizar el estado
-      return response.data; // Retornar los datos
+      setHorariosDoctor(response.data); // Actualizar el estado con los horarios obtenidos
     } catch (error) {
       console.error('Error al obtener los horarios del doctor:', error);
+      if (error.response && error.response.status === 404) {
+        setHorariosDoctor([]); // Establecer horarios a vacío
+      }
+
+      // Si hay otro tipo de error, lo lanzamos para que se maneje más arriba
       throw error;
     }
   }
@@ -381,6 +422,7 @@ const AdministracionProvider = ({ children }) => {
         crearHorarios,
         obtenerHorariosXDoctor,
         horariosDoctor,
+        actualizarHorarios,
       }}
     >
       {children}
