@@ -176,7 +176,10 @@ export const deleteDoctor = async (req, res) => {
       'UPDATE sededoctoresp SET estado = "Deshabilitado" WHERE idDoctor = ?',
       [idDoctor]
     );
-
+    const [resultHorario] = await pool.query(
+      'UPDATE horarios_disponibles SET estado = "Deshabilitado" WHERE idDoctor = ?',
+      [idDoctor]
+    );
     // Confirmar la transacción si todo salió bien
     await pool.query('COMMIT');
 
