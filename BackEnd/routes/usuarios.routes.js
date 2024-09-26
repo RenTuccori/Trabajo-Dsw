@@ -5,10 +5,12 @@ import {
   createUser,
   updateUser,
   deleteUser,
+  getUserByDni
 } from '../controllers/usuarios.controller.js';
 
 const router = Router();
 
+router.post('/api/usersdni', getUserByDni);
 
 router.post('/api/usersdnifecha', getUserByDniFecha);
 

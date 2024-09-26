@@ -7,7 +7,7 @@ import { getTurnosHistoricoDoctor,
 import { useContext, useEffect, useState } from 'react';
 import { jwtDecode } from "jwt-decode";
 import PropTypes from 'prop-types';
-
+import { useNavigate } from 'react-router-dom';
 // eslint-disable-next-line react-refresh/only-export-components
 export const useDoctores = () => {
     const context = useContext(DoctoresContext);
@@ -21,7 +21,7 @@ export const useDoctores = () => {
   
   const DoctoresProvider = ({ children }) => {  
     //proveedor para acceder a los datos de los empleados desde cualquier componente
-    
+    const navigate = useNavigate();
     const [idDoctor, setidDoctor] = useState('');
     const [turnosHist, setTurnosHist] = useState([]);
     const [turnosFecha, setTurnosFecha] = useState([]);
@@ -39,7 +39,6 @@ export const useDoctores = () => {
         localStorage.setItem('token', token);
         const decoded = jwtDecode(token);
         setidDoctor(decoded.idDoctor);
-        window.location.reload(); //recarga la pagina para que se actualice el rol globalmente en los componentes hijos
     }
     
     function comprobarToken(){
@@ -50,12 +49,14 @@ export const useDoctores = () => {
             if(decoded.exp < Date.now() / 1000){
                 console.error('Token expired');
                 localStorage.removeItem('token');
+                navigate('/')
             }else{
               setidDoctor(decoded.idDoctor);
             }
         } catch (error) {
             console.error('Error decoding token:', error);
             localStorage.removeItem('token');
+            navigate('/')
         }
       }else{
         setidDoctor('');

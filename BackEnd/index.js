@@ -8,6 +8,7 @@ import pacienteRouter from './routes/pacientes.routes.js';
 import obrassocialesRouter from './routes/obrassociales.routes.js';
 import sedesRouter from './routes/sedes.routes.js';
 import adminRouter from './routes/admin.routes.js';
+import emailRoutes from './routes/email.routes.js';
 import cors from 'cors';
 
 const app = express();
@@ -24,7 +25,7 @@ app.use(pacienteRouter);
 app.use(obrassocialesRouter);
 app.use(sedesRouter);
 app.use(adminRouter);
-
+app.use(emailRoutes);
 app.listen(PORT, () => {
   console.log(`Server is running on PORT ${PORT}`);
 });

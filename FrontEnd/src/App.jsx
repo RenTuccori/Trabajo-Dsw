@@ -1,15 +1,15 @@
-// src/App.jsx
-import { BrowserRouter as Router, Route, Routes } from 'react-router-dom';
-import Home from './pages/home';
-import HomeUsuario from './pages/users/homeUsuario.jsx';
-import {SacarTurno} from './pages/users/sacarturno.jsx';
-import {DatosPersonales} from './pages/users/datospersonales.jsx';
+import {
+  BrowserRouter as Router,
+  Route,
+  Routes,
+  Navigate,
+} from 'react-router-dom';
 import Navbar from './components/navbar';
-import { EditarDatosPersonales } from './pages/users/modificacionUsuario.jsx';
-import { TurnosPersonales } from './pages/users/verTurnosPaciente.jsx';
-import { ConfirmacionTurno } from './pages/users/confirmacionTurno';
 import { AdministracionRoutes } from './routes/administracion.routes.jsx';
 import { DoctoresRoutes } from './routes/doctores.routes.jsx';
+import { PacientesRoutes } from './routes/pacientes.routes.jsx';
+import { ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css'; // Importa los estilos de Toastify
 
 function App() {
   return (
@@ -17,16 +17,37 @@ function App() {
       <div>
         <Navbar />
         <Routes>
-          <Route path="/" element={<Home />} />
-          <Route path="/paciente" element={<HomeUsuario />} />
+          {/* Redirige desde "/" a "/paciente" */}
+          <Route path="/" element={<Navigate to="/paciente" />} />
+          <Route path="/paciente/*" element={<PacientesRoutes />} />
           <Route path="/doctor/*" element={<DoctoresRoutes />} />
-          <Route path="/sacarturno" element={<SacarTurno />} />
-          <Route path="/datospersonales" element={<DatosPersonales />} />
-          <Route path="/editardatospersonales" element={<EditarDatosPersonales />} />
-          <Route path="/confirmacionturno" element={<ConfirmacionTurno />} />
-          <Route path="/verturnos" element={<TurnosPersonales />} />
           <Route path="/admin/*" element={<AdministracionRoutes />} />
         </Routes>
+        <ToastContainer
+          position="top-center"         // Centrar el toast en la parte superior
+          autoClose={5000}
+          hideProgressBar={false}
+          newestOnTop={false}
+          closeOnClick
+          rtl={false}
+          pauseOnFocusLoss
+          draggable
+          pauseOnHover
+          theme="colored"
+          style={{
+            textAlign: 'center',         // Centrar el texto
+            fontFamily: 'Poppins',       // Usar la fuente Poppins
+          }}
+          bodyStyle={{
+            backgroundColor: '#f0f4ff', // Cambiar color de fondo del toast
+            color: '#2a2e45',           // Cambiar color del texto
+            borderRadius: '5px',        // Bordes redondeados
+          }}
+          toastStyle={{
+            backgroundColor: '#fff',     // Fondo del toast
+            border: '1px solid #5368e0', // Bordes personalizados
+          }}
+        />
       </div>
     </Router>
   );

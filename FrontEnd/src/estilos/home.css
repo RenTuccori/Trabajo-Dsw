@@ -3,36 +3,81 @@
   flex-direction: column;
   justify-content: center;
   align-items: center;
-  height: 100vh;
   /* Ocupa toda la altura de la ventana */
   width: 35vw;
   /* Ocupa el 35% del ancho de la ventana */
-  margin: 0 auto;
   /* Centra el contenedor horizontalmente */
   text-align: center;
   /* Centra el texto dentro del contenedor */
+  margin-top: 0%;
 }
 
-
-
-.home-container h1 {
-  margin-bottom: 20px;
-  /* Espacio entre el título y el botón */
+.turno-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 35vw;
+  text-align: center;
+  margin-top: 10vh;
+  /* Margen relativo a la altura de la ventana */
+  padding-bottom: 0vh;
+  /* Espacio extra para evitar que choque con la navbar */
+  overflow-y: auto;
+  /* Permite desplazarse si es necesario */
+  padding-top: 4rem;
 }
 
-.home-container button {
-  padding: 10px 20px;
-  /* Espaciado dentro del botón  */
-  font-size: 16px;
-  /* Tamaño de la fuente del botón */
-  align-self: center;
+.home-registrar {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  /* Ocupa toda la altura de la ventana */
+  width: 35vw;
+  /* Ocupa el 35% del ancho de la ventana */
+  /* Centra el contenedor horizontalmente */
+  text-align: center;
+  /* Centra el texto dentro del contenedor */
+  margin-top: 45vh;
+  margin-bottom: 5vh;
+  padding-top: 20rem;
 }
 
-.botonInicio {
-  padding: 10px 20px;
-  /* Espaciado dentro del botón  */
-  font-size: 16px;
-  /* Tamaño de la fuente del botón */
-  align-self: center;
-  width: auto;
+@media (max-width: 600px) {
+  .turno-container {
+    padding: 30px;
+    /* Reduce el padding */
+    width: 90%;
+    padding-top: 20vh;
+    /* Aumenta el ancho para ocupar más espacio horizontal */
+    max-width: none;
+    /* Elimina el límite de ancho máximo */
+  }
+
+  .home-container h1 {
+    margin-bottom: 20px;
+    /* Espacio entre el título y el botón */
+  }
+
+  .home-registrar {
+    margin-top: 60vh;
+    /* Espacio entre el título y el botón */
+  }
+
+  .home-container button {
+    padding: 10px 20px;
+    /* Espaciado dentro del botón  */
+    font-size: 16px;
+    /* Tamaño de la fuente del botón */
+    align-self: center;
+  }
+
+  .botonInicio {
+    padding: 10px 20px;
+    /* Espaciado dentro del botón  */
+    font-size: 16px;
+    /* Tamaño de la fuente del botón */
+    align-self: center;
+    width: auto;
+  }
 }

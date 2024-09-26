@@ -1,107 +1,160 @@
 import { useEffect, useState } from 'react';
-import { createTurno } from '../../api/turnos.api';
-import { getEspecialidadById } from '../../api/especialidades.api';
-import { getDoctorById } from '../../api/doctores.api';
-import { getSedeById } from '../../api/sedes.api';
-import '../../estilos/home.css';
-import '../../estilos/sacarturno.css';
 import { useNavigate } from 'react-router-dom';
+import { usePacientes } from '../../context/paciente/PacientesProvider.jsx';
 
 export function ConfirmacionTurno() {
-    const [nombreEspecialidad, setNombreEspecialidad] = useState('');
-    const [nombreDoctor, setNombreDoctor] = useState('');
-    const [apellidoDoctor, setApellidoDoctor] = useState('');
-    const [nombreSede, setNombreSede] = useState('');
-    const [direccionSede, setDireccionSede] = useState('');
     const navigate = useNavigate();
+    const { 
+        nombreEspecialidad, 
+        nombreDoctor, 
+        apellidoDoctor, 
+        nombreSede, 
+        direccionSede, 
+        fechaYHora, 
+        CrearTurno, 
+        comprobarToken, 
+        ObtenerDoctorId,
+        ObtenerEspecialidadId, 
+        ObtenerSedeId, 
+        mailUsuario, 
+        ObtenerUsuarioDni, 
+        MandarMail 
+    } = usePacientes();
 
-    const idPaciente = localStorage.getItem('idPaciente');
-    const fecha = localStorage.getItem('fecha');
-    const hora = localStorage.getItem('hora');
-    const idEspecialidad = localStorage.getItem('idEspecialidad');
-    const idDoctor = localStorage.getItem('idDoctor');
-    const idSede = localStorage.getItem('idSede');
-    const fechaCancelacion = null;
-    const fechaConfirmacion = null;
-    const estado = 'Pendiente';
+    const [turnoCreado, setTurnoCreado] = useState(false); // Estado para saber si el turno fue creado
 
-    const fechaYHora = `${fecha} ${hora}`;
-
-    const body = {
-        idPaciente,
-        fechaYHora,
-        fechaCancelacion,
-        fechaConfirmacion,
-        estado,
-        idEspecialidad,
-        idDoctor,
-        idSede,
-    };
-
-    // Crear el turno
     useEffect(() => {
-        createTurno(body)
-            .then(response => {
-                console.log('Turno creado con éxito:', response);
-            })
-            .catch(error => {
+        const confirmarTurno = async () => {
+            try {
+                // Asegurarse de que todas las funciones asincrónicas se completen antes de continuar
+                await comprobarToken();
+                await ObtenerUsuarioDni();
+                await ObtenerDoctorId();
+                await ObtenerEspecialidadId();
+                await ObtenerSedeId();
+                
+                // Crear turno
+                await CrearTurno();
+                setTurnoCreado(true);
+            } catch (error) {
                 console.error('Error al crear el turno:', error);
-            });
-    }, []); // The empty array ensures that the effect runs only once after the initial render
+            }
+        };
 
-    // Obtener los datos adicionales de especialidad, doctor y sede
-    useEffect(() => {
-        getEspecialidadById({ idEspecialidad })
-            .then(response => {
-                setNombreEspecialidad(response.data.nombre);
-                console.log('Especialidad:', response.data.nombre);
-            })
-            .catch(error => {
-                console.error('Error al obtener la especialidad:', error);
-            });
+        confirmarTurno();
 
-        getDoctorById({ idDoctor })
-            .then(response => {
-                setNombreDoctor(response.data.nombre);
-                setApellidoDoctor(response.data.apellido);
-            })
-            .catch(error => {
-                console.error('Error al obtener el doctor:', error);
-            });
-
-        getSedeById({ idSede })
-            .then(response => {
-                setNombreSede(response.data.nombre);
-                setDireccionSede(response.data.direccion);
-            })
-            .catch(error => {
-                console.error('Error al obtener la sede:', error);
-            });
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
+    useEffect(() => {
+        if (turnoCreado && mailUsuario) {
+            // Construir el cuerpo del correo como string HTML
+            const cuerpo = `
+            <div style="background-color: #f0f4f8; padding: 20px; border-radius: 10px; font-family: Arial, sans-serif; max-width: 600px; margin: auto;">
+                <h1 style="color: #1c4e80; text-align: center;">¡Tu turno ha sido confirmado!</h1>
+                <div style="background-color: #ffffff; padding: 20px; border-radius: 8px;">
+                    <p><strong>Fecha y Hora:</strong> ${fechaYHora}</p>
+                    <p><strong>Especialidad:</strong> ${nombreEspecialidad}</p>
+                    <p><strong>Doctor:</strong> ${nombreDoctor} ${apellidoDoctor}</p>
+                    <p><strong>Sede:</strong> ${nombreSede}, ${direccionSede}</p>
+                </div>
+                <footer style="text-align: center;">
+                    <p>Nos vemos pronto, ¡gracias por confiar en nosotros!</p>
+                    <p>Sanatorio UTN</p>
+                </footer>
+            </div>`;
+
+
+            // Llamar a la función para mandar el correo
+            MandarMail({
+                to: mailUsuario, // Asegúrate de pasar el destinatario como tal
+                subject: 'Turno Creado',
+                html: cuerpo
+            });
+
+        }
+    }, [turnoCreado, mailUsuario]);  // Este efecto se ejecuta solo cuando `mailUsuario` y `turnoCreado` están listos
+
     return (
-        <div className='container'>
-            <div className='turno-card'>
-                <h1>Turno confirmado:</h1>
-                <p>
+        <div className="min-h-screen bg-gradient-to-b from-blue-100 to-white flex flex-col items-center justify-center p-6">
+            <div className="bg-white rounded-lg shadow-md w-full max-w-md p-6 space-y-4">
+                <h1 className="text-2xl font-bold text-blue-800 text-center">Turno confirmado</h1>
+                <p className="text-gray-700">
                     <strong>Fecha y Hora:</strong> {fechaYHora}
                 </p>
-                <p>
+                <p className="text-gray-700">
                     <strong>Especialidad:</strong> {nombreEspecialidad}
                 </p>
-                <p>
+                <p className="text-gray-700">
                     <strong>Doctor:</strong> {nombreDoctor} {apellidoDoctor}
                 </p>
-                <p>
+                <p className="text-gray-700">
                     <strong>Sede:</strong> {nombreSede}, {direccionSede}
                 </p>
-                <p>
+                <p className="text-gray-700">
                     <strong>Estado:</strong> Pendiente
                 </p>
             </div>
-            <button className='button' onClick={() => navigate('/paciente')}>
+            <button
+                className="mt-6 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+                onClick={() => navigate('/paciente')}
+            >
                 Volver
             </button>
         </div>
     );
 }
+
+/*
+
+import { useEffect } from 'react';
+import { usePacientes } from '../../context/paciente/PacientesProvider';
+import '../../estilos/home.css';
+import '../../estilos/sacarturno.css';
+import { useNavigate } from 'react-router-dom';
+
+export function ConfirmacionTurno() {
+    const navigate = useNavigate();
+    const { nombreEspecialidad, nombreDoctor, apellidoDoctor, nombreSede, direccionSede, fechaYHora, CrearTurno, comprobarToken, ObtenerDoctorId,
+        ObtenerEspecialidadId, ObtenerSedeId } = usePacientes();
+
+    useEffect(() => {
+        comprobarToken();
+        ObtenerDoctorId();
+        ObtenerEspecialidadId();
+        ObtenerSedeId();
+        CrearTurno();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
+
+    return (
+        <div className="min-h-screen bg-gradient-to-b from-blue-100 to-white flex flex-col items-center justify-center p-6">
+            <div className="bg-white rounded-lg shadow-md w-full max-w-md p-6 space-y-4">
+                <h1 className="text-2xl font-bold text-blue-800 text-center">Turno confirmado</h1>
+                <p className="text-gray-700">
+                    <strong>Fecha y Hora:</strong> {fechaYHora}
+                </p>
+                <p className="text-gray-700">
+                    <strong>Especialidad:</strong> {nombreEspecialidad}
+                </p>
+                <p className="text-gray-700">
+                    <strong>Doctor:</strong> {nombreDoctor} {apellidoDoctor}
+                </p>
+                <p className="text-gray-700">
+                    <strong>Sede:</strong> {nombreSede}, {direccionSede}
+                </p>
+                <p className="text-gray-700">
+                    <strong>Estado:</strong> Pendiente
+                </p>
+            </div>
+            <button
+                className="mt-6 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+                onClick={() => navigate('/paciente')}
+            >
+                Volver
+            </button>
+        </div>
+    );
+}
+
+*/
