@@ -39,7 +39,7 @@ function HomeUsuario() {
       {/* Fondo de imagen */}
       <div
         className="absolute inset-0 bg-cover bg-center z-0"
-        style={{ backgroundImage: "url('../src/components/image.png')" }}
+        style={{ backgroundImage: "url('../src/components/fondo2.png')" }}
       ></div>
       <div className="absolute inset-0 bg-gradient-to-b from-transparent to-white z-0"></div>
 

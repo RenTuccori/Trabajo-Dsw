@@ -42,7 +42,7 @@ export const createSpecialty = async ({ nombre }) => {
     return await axios.post(`http://${dbUrl}/api/adminCreateEsp`, { nombre });
 }
 export const deleteSpecialty = async (idEspecialidad) => {
-    return await axios.delete(`http://${dbUrl}/api/deleteSpecialties/${idEspecialidad}`, idEspecialidad);
+    return await axios.put(`http://${dbUrl}/api/deleteSpecialties/${idEspecialidad}`, idEspecialidad);
 }
 
 //combinaciones

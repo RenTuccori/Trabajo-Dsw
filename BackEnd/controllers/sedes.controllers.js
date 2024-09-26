@@ -73,13 +73,37 @@ export const updateSede = async (req, res) => {
 export const deleteSede = async (req, res) => {
   try {
     const { idSede } = req.params;
-    const [result] = await pool.query('UPDATE sedes SET estado = "Deshabilitado" WHERE idSede = ?',
-      [idSede]);
-    if (result.affectedRows === 0) {
+
+    // Iniciar una transacción para asegurar consistencia en las actualizaciones
+    await pool.query('START TRANSACTION');
+
+    // Actualizar el estado de la sede a "Deshabilitado"
+    const [resultSede] = await pool.query(
+      'UPDATE sedes SET estado = "Deshabilitado" WHERE idSede = ?',
+      [idSede]
+    );
+
+    // Si no se encontró la sede, devolver un error
+    if (resultSede.affectedRows === 0) {
+      // Si la sede no existe, hacer un rollback de la transacción
+      await pool.query('ROLLBACK');
       return res.status(404).json({ message: 'Sede no encontrada' });
     }
-    return res.sendStatus(204); // 204 significa "No Content", que indica que la solicitud fue exitosa, pero no hay contenido para devolver.
+
+    // Actualizar el estado de las combinaciones en la tabla sededoctoresp a "Deshabilitado"
+    const [resultCombinacion] = await pool.query(
+      'UPDATE sededoctoresp SET estado = "Deshabilitado" WHERE idSede = ?',
+      [idSede]
+    );
+
+    // Confirmar la transacción si todo salió bien
+    await pool.query('COMMIT');
+
+    // Si la transacción fue exitosa, devolver 204 No Content
+    return res.sendStatus(204); // No hay contenido que devolver, pero la operación fue exitosa
   } catch (error) {
+    // Si ocurre un error, hacer rollback de la transacción
+    await pool.query('ROLLBACK');
     return res.status(500).json({ message: error.message });
   }
 };

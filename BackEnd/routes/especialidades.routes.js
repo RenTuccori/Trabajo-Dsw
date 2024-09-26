@@ -18,7 +18,6 @@ router.post('/api/availablespecialties', getAvailableSpecialties);
 
 router.get('/api/idspecialties/:idEspecialidad', getSpecialtyById);
 
-router.post('/api/specialties/', createSpecialty);
 
 router.put('/api/specialties/', updateSpecialty);
 

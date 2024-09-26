@@ -37,7 +37,8 @@ export const getTurnoByDoctorHistorico = async (req, res) => {
       on sed.idSede = tur.idSede
       inner join especialidades esp
       on esp.idEspecialidad = tur.idEspecialidad
-      where tur.idDoctor = ? and tur.fechaYHora >= current_date()
+      where tur.idDoctor = ? and tur.fechaYHora >= current_date() 
+      and tur.estado != 'Cancelado'
       order by tur.fechaYHora`,
       [idDoctor]);
     if (result.length === 0) {
@@ -64,6 +65,7 @@ export const getTurnoByDoctorHoy = async (req, res) => {
       inner join especialidades esp
       on esp.idEspecialidad = tur.idEspecialidad
       where tur.idDoctor = ? and date(tur.fechaYHora) = current_date()
+      and tur.estado = 'Confirmado'
       order by tur.fechaYHora`,
       [idDoctor]);
     if (result.length === 0) {
