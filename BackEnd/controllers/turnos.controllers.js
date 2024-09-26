@@ -12,7 +12,7 @@ export const getTurnoByDni = async (req, res) => {
       inner join doctores doc on tur.idDoctor = doc.idDoctor 
       inner join especialidades esp on esp.idEspecialidad = tur.idEspecialidad 
       inner join usuarios usudoc on doc.dni = usudoc.dni WHERE usu.dni = ?
-      and date(tur.fechaYHora) > current_date() 
+      and date(tur.fechaYHora) > current_date() and tur.estado != 'Cancelado'
       order by tur.fechaYHora`,
       [dni]);
     if (result.length === 0) {
