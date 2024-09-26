@@ -1,4 +1,5 @@
 .env
 *.env
-BackEnd/.env
+BackEnd/*.env
 FrontEnd/.env
+BackEnd/.env

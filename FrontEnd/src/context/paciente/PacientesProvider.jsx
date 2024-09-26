@@ -13,6 +13,7 @@ import { getObrasSociales } from '../../api/obrasociales.api';
 import { createPaciente, getPacienteDni } from '../../api/pacientes.api';
 import { getSedeById } from '../../api/sedes.api';
 import { createTurno, getTurnosPaciente, confirmarTurno, cancelarTurno } from '../../api/turnos.api';
+import { sendEmail } from '../../api/email.api';
 
 export const usePacientes = () => {
   const context = useContext(PacientesContext);
@@ -50,6 +51,7 @@ const PacientesProvider = ({ children }) => {
   const [fechaConfirmacion, setFechaConfirmacion] = useState('');
   const [turnos, setTurnos] = useState([]);
   const [usuarioDni, setUsuarioDni] = useState({});
+  const [mailUsuario, setMailUsuario] = useState('');
 
   async function ActualizarUsuario(data) {
     const response = await updateUser(data);
@@ -214,6 +216,7 @@ const PacientesProvider = ({ children }) => {
   async function ObtenerUsuarioDni() {
     const response = await getUserDni({ dni });
     setUsuarioDni(response.data);
+    setMailUsuario(response.data.email);
   }
 
   async function CancelarTurno({ idTurno }) {
@@ -223,6 +226,9 @@ const PacientesProvider = ({ children }) => {
         turno.idTurno === idTurno ? { ...turno, estado: 'Cancelado' } : turno
       )
     );
+  }
+  async function MandarMail(data) {
+    await sendEmail(data);
   }
   return (
     <PacientesContext.Provider
@@ -271,6 +277,8 @@ const PacientesProvider = ({ children }) => {
         ObtenerUsuarioDni,
         usuarioDni,
         ActualizarUsuario,
+        MandarMail,
+        mailUsuario
       }}
     >
       {children}
