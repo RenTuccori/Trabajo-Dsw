@@ -7,9 +7,7 @@ import {
   getTurnoByDoctorHoy,
   getTurnoByDoctorFecha,
   confirmarTurno,
-  cancelarTurno,
-  cancelTurnosWithin12Hours,
-  getEmailsForPendingTurnos
+  cancelarTurno
 } from '../controllers/turnos.controllers.js';
 
 const router = Router();
@@ -30,9 +28,6 @@ router.delete('/api/turnos/:id', deleteTurno);
 
 router.put('/api/turnoscancel', cancelarTurno);
 
-router.put('/api/autoturnoscancel', cancelTurnosWithin12Hours);
-
-router.get('/api/turnospendientes', getEmailsForPendingTurnos);
 
 
 export default router; 
