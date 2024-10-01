@@ -202,3 +202,45 @@ export const deleteTurno = async (req, res) => {
   }
 };
 
+export const getEmailsForPendingTurnos = async (req, res) => {
+  try {
+    const [rows] = await pool.query(`
+      SELECT usu.email
+      FROM turnos tur
+      INNER JOIN pacientes pac ON pac.idPaciente = tur.idPaciente
+      INNER JOIN usuarios usu ON usu.dni = pac.dni
+      WHERE tur.fechaConfirmacion IS NULL 
+        AND tur.fechaCancelacion IS NULL 
+        AND DATE(tur.fechaYHora) = DATE(NOW() + INTERVAL 2 DAY)
+    `);
+    
+    if (rows.length === 0) {
+      return res.status(404).json({ message: 'No pending turnos found' });
+    }
+
+    return res.json(rows);
+  } catch (error) {
+    return res.status(500).json({ message: error.message });
+  }
+};
+
+export const cancelTurnosWithin12Hours = async (req, res) => {
+  try {
+    const [result] = await pool.query(`
+      UPDATE turnos tur
+      SET tur.estado = 'Cancelado', 
+          tur.fechaCancelacion = NOW()
+      WHERE tur.fechaConfirmacion IS NULL 
+        AND tur.fechaCancelacion IS NULL 
+        AND TIMESTAMPDIFF(HOUR, NOW(), tur.fechaYHora) <= 12
+    `);
+    
+    if (result.affectedRows === 0) {
+      return res.status(404).json({ message: 'No turnos found to cancel' });
+    }
+
+    return res.json({ message: 'Turnos cancelled successfully' });
+  } catch (error) {
+    return res.status(500).json({ message: error.message });
+  }
+};
