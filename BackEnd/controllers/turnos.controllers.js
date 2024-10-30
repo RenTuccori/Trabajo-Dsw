@@ -146,6 +146,7 @@ export const cancelarTurno = async (req, res) => {
 
 
 export const createTurno = async (req, res) => {
+  const mail = null;
   const {
     idPaciente,
     fechaYHora,
@@ -158,8 +159,8 @@ export const createTurno = async (req, res) => {
   } = req.body;
   try {
     const [result] = await pool.query(
-      `INSERT INTO turnos (idPaciente, fechaYHora, fechaCancelacion, fechaConfirmacion, estado, idEspecialidad, idDoctor, idSede) 
-      VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
+      `INSERT INTO turnos (idPaciente, fechaYHora, fechaCancelacion, fechaConfirmacion, estado, idEspecialidad, idDoctor, idSede, mail) 
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
       [
         idPaciente,
         fechaYHora,
@@ -169,6 +170,7 @@ export const createTurno = async (req, res) => {
         idEspecialidad,
         idDoctor,
         idSede,
+        mail
       ]
     );
     res.json({
@@ -181,6 +183,7 @@ export const createTurno = async (req, res) => {
       idEspecialidad,
       idDoctor,
       idSede,
+      mail
     });
   } catch (error) {
     return res.status(500).json({ message: error.message });

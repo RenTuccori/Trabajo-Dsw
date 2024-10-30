@@ -49,8 +49,8 @@ export const deleteSpecialty = async (idEspecialidad) => {
 export const createSeEspDoc = async ({ idSede, idEspecialidad, idDoctor }) => {
     return await axios.post(`http://${dbUrl}/api/adminCreateSeEspDoc`, { idSede, idEspecialidad, idDoctor });
 }
-export const deleteSeEspDoc = async ({ idSede, idEspecialidad, idDoctor }) => {
-    return await axios.put(`http://${dbUrl}/api/adminDeleteSeEspDoc`, { idSede, idEspecialidad, idDoctor });
+export const deleteSeEspDoc = async ({ idSede, idDoctor, idEspecialidad }) => {
+    return await axios.put(`http://${dbUrl}/api/adminDeleteSeEspDoc`, { idSede, idDoctor, idEspecialidad });
 }
 export const getCombinaciones = async () => {
     return await axios.get(`http://${dbUrl}/api/adminGetCombinaciones`);

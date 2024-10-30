@@ -113,7 +113,7 @@ export function AsignarCombinacion() {
     }
   };
 
-  const handleDeleteCombinacion = async (id) => {
+  const handleDeleteCombinacion = async (idSede,idDoctor,idEspecialidad) => {
     const result = await Swal.fire({
       title: '¿Estás seguro?',
       text: '¿Deseas eliminar esta combinación?',
@@ -127,7 +127,7 @@ export function AsignarCombinacion() {
 
     if (result.isConfirmed) {
       try {
-        await borrarSedEspDoc(id);
+        await borrarSedEspDoc({idSede,idDoctor,idEspecialidad});
         toast.success('¡Combinación eliminada con éxito!');
         // Refresca las combinaciones después de la eliminación
         obtenerCombinaciones();
@@ -223,7 +223,7 @@ export function AsignarCombinacion() {
                   {/* Botón de Eliminar */}
                   <button
                     className="text-red-600 hover:text-red-800"
-                    onClick={() => handleDeleteCombinacion(combinacion.nombreSede, combinacion.nombreEspecialidad, combinacion.nombreDoctor)}
+                    onClick={() => handleDeleteCombinacion(combinacion.idSede, combinacion.idDoctor, combinacion.idEspecialidad)}
                   >
                     Eliminar
                   </button>

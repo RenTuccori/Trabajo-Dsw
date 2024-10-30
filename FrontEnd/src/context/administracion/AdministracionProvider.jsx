@@ -237,12 +237,12 @@ const AdministracionProvider = ({ children }) => {
     }
   }
 
-  async function borrarSedEspDoc({ idSede, idEspecialidad, idDoctor }) {
+  async function borrarSedEspDoc({ idSede, idDoctor, idEspecialidad }) {
     try {
       const response = await deleteSeEspDoc({
         idSede,
-        idEspecialidad,
         idDoctor,
+        idEspecialidad,
       });
       console.log('Sede, especialidad y doctor borrados:', response.data);
     } catch (error) {

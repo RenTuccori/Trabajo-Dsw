@@ -131,10 +131,11 @@ export const getDoctorByDniContra = async (req, res) => {
 
 export const createDoctor = async (req, res) => {
   const { dni, duracionTurno, contra } = req.body;
+  const estado = 'Habilitado';
   try {
     const [result] = await pool.query(
-      'INSERT INTO doctores (dni, duracionTurno, contra) VALUES (?, ?, ?)',
-      [dni, duracionTurno, contra]
+      'INSERT INTO doctores (dni, duracionTurno, contra, estado) VALUES (?, ?, ?,?)',
+      [dni, duracionTurno, contra, estado]
     );
 
     const idDoctor = result.insertId;
@@ -143,7 +144,8 @@ export const createDoctor = async (req, res) => {
       idDoctor,
       dni,
       duracionTurno,
-      contra
+      contra,
+      estado
     });
   } catch (error) {
     return res.status(500).json({ message: error.message });

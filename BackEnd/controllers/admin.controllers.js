@@ -57,12 +57,12 @@ export const createSeEspDoc = async (req, res) => {
 
 export const deleteSeEspDoc = async (req, res) => {
   try {
-    const { idSede, idEspecialidad, idDoctor } = req.body;
-
+    const { idSede, idDoctor, idEspecialidad } = req.body;
+    console.log(req.body);
     // Realizar el update para cambiar el estado a 'Deshabilitado'
     const [result] = await pool.query(
-      'UPDATE sededoctoresp SET estado = ? WHERE idSede = ? AND idEspecialidad = ? AND idDoctor = ?',
-      ['Deshabilitado', idSede, idEspecialidad, idDoctor]
+      'UPDATE sededoctoresp SET estado = "Deshabilitado" WHERE idSede = ? AND idDoctor = ? AND idEspecialidad = ?',
+      [ idSede, idDoctor, idEspecialidad]
     );
 
     // Verificar si la combinación de sede, especialidad y doctor existe
