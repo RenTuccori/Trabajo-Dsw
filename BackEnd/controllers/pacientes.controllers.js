@@ -43,14 +43,16 @@ export const getPacienteByDni = async (req, res) => {
 
 export const createPaciente = async (req, res) => {
   const { dni } = req.body;
+  const estado = 'Habilitado';
   try {
     const [result] = await pool.query(
-      'INSERT INTO pacientes (dni) VALUES (?)',
-      [dni]
+      'INSERT INTO pacientes (dni, estado) VALUES (?, ?)',
+      [dni, estado]
     );
     res.json({
       idPaciente: result.insertId,  // Devuelve el id autogenerado
-      dni
+      dni,
+      estado
     });
   } catch (error) {
     return res.status(500).json({ message: error.message });

@@ -11,6 +11,6 @@ router.get('/api/patient', getPacientes);
 
 router.post('/api/patientdni', getPacienteByDni);
 
-router.post('/api/patientcreate/', createPaciente);
+router.post('/api/patientcreate', createPaciente);
 
 export default router;
