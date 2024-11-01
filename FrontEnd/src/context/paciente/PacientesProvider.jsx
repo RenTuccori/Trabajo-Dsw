@@ -121,16 +121,13 @@ const PacientesProvider = ({ children }) => {
   async function login({ dni, fechaNacimiento }) {
     try {
       const response = await getUserDniFecha({ dni, fechaNacimiento });
-      //console.log(response);
       const token = response.data;
-      //console.log(token);
       localStorage.setItem('token', token);
       const decoded = jwtDecode(token);
       setDni(decoded.dni);
-      /*window.location.reload();*/
     } catch (error) {
       setDni(null);
-      // Handle error here
+      throw error;
     }
   }
 

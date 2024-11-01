@@ -90,10 +90,13 @@ function HomeAdmin() {
         Obras Sociales
       </button>
       <button
-        onClick={() => navigate('/')}
+        onClick={() => {
+          navigate('/');
+          localStorage.removeItem('token');
+        }}
         className="w-full bg-gray-200 text-gray-700 py-2 rounded-lg hover:bg-gray-300 transition-colors"
       >
-        Volver
+        Cerrar Sesión
       </button>
     </div>
   );

@@ -91,15 +91,29 @@ const AdministracionProvider = ({ children }) => {
     }
   }
 
-  //Sede
-  async function crearNuevaSede({ nombre, direccion }) {
-    try {
-      const response = await createSede({ nombre, direccion }); // Llamada a la API
-      console.log('Sede creada:', response.data);
-    } catch (error) {
-      console.error('Error al crear la sede:', error);
+async function crearNuevaSede({ nombre, direccion }) {
+  try {
+    const response = await createSede({ nombre, direccion }); // Llamada a la API
+    console.log("Sede creada:", response.data);
+  } catch (error) {
+    if (error.response) {
+      // Error del servidor o del cliente
+      if (error.response.status === 400) {
+        console.error("La sede ya está habilitada.");
+      } else if (error.response.status === 500) {
+        console.error("Error en el servidor. Inténtalo de nuevo más tarde.");
+      } else {
+        console.error("Ocurrió un error inesperado:", error.response.data);
+      }
+      throw error;
+    } else {
+      // Error que no es de respuesta, como problemas de red
+      console.error("Error de red o de conexión:", error);
     }
+    throw error;
   }
+}
+
   async function ObtenerSedes() {
     const response = await getSedes();
     setSedes(response.data);
@@ -126,6 +140,7 @@ const AdministracionProvider = ({ children }) => {
       console.log('Especialidad creada:', response.data);
     } catch (error) {
       console.error('Error al obtener las sedes:', error);
+      throw error;
     }
   }
   async function borrarEspecialidad(idEspecialidad) {
