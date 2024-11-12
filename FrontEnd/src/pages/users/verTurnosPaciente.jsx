@@ -7,15 +7,16 @@ import Swal from 'sweetalert2'; // Importa SweetAlert2
 
 export function TurnosPersonales() {
     const navigate = useNavigate();
-    const { ObtenerTurnosPaciente, ConfirmarTurno, CancelarTurno, turnos, comprobarToken } = usePacientes();
+    const { ObtenerTurnosPaciente, ConfirmarTurno, CancelarTurno, turnos, comprobarToken,MandarMail, mailUsuario, ObtenerUsuarioDni} = usePacientes();
 
     useEffect(() => {
         comprobarToken();
+        ObtenerUsuarioDni();    
         ObtenerTurnosPaciente();
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
-    const handleConfirmarTurno = async (idTurno) => {
+    const handleConfirmarTurno = async (turno) => {
         const result = await Swal.fire({
             title: 'Confirmar Turno',
             text: '¿Estás seguro que deseas confirmar este turno?',
@@ -29,8 +30,33 @@ export function TurnosPersonales() {
 
         if (result.isConfirmed) {
             try {
-                await ConfirmarTurno({ idTurno });
+                await ConfirmarTurno({ idTurno: turno.idTurno });
                 toast.success('¡Turno confirmado con éxito!'); // Mensaje de éxito
+                const cuerpo = `<div style="background-color: #f0f4f8; padding: 20px; border-radius: 10px; font-family: Arial, sans-serif; max-width: 600px; margin: auto;">
+                    <h1 style="color: #1c4e80; text-align: center;">¡Tu turno ha sido confirmado con éxito!</h1>
+                    <div style="background-color: #ffffff; padding: 20px; border-radius: 8px; margin-top: 20px;">
+                        <p><strong>Sede:</strong> ${turno.Sede}</p>
+                        <p><strong>Dirección:</strong> ${turno.Direccion}</p>
+                        <p><strong>Especialidad:</strong> ${turno.Especialidad}</p>
+                        <p><strong>Fecha y Hora:</strong> ${formatFechaHora(turno.fecha_hora)}</p>
+                        <p><strong>Doctor:</strong> ${turno.Doctor}</p>
+                        <p><strong>DNI Paciente:</strong> ${turno.dni}</p>
+                    </div>
+                    <footer style="text-align: center; margin-top: 20px;">
+                        <p>Nos vemos pronto, ¡gracias por confiar en nosotros!</p>
+                        <p>Sanatorio UTN</p>
+                    </footer>
+                    </div>
+                    `;
+
+
+            // Llamar a la función para mandar el correo
+            MandarMail({
+                to: mailUsuario, // Asegúrate de pasar el destinatario como tal
+                subject: 'Turno Confirmado',
+                html: cuerpo
+            });
+
             } catch (error) {
                 toast.error('Error al confirmar el turno'); // Mensaje de error
                 console.error('Error al confirmar turno:', error);
@@ -38,7 +64,7 @@ export function TurnosPersonales() {
         }
     };
 
-    const handleCancelarTurno = async (idTurno) => {
+    const handleCancelarTurno = async (turno) => {
         const result = await Swal.fire({
             title: 'Cancelar Turno',
             text: '¿Estás seguro que deseas cancelar este turno?',
@@ -52,8 +78,33 @@ export function TurnosPersonales() {
 
         if (result.isConfirmed) {
             try {
-                await CancelarTurno({ idTurno });
+                await CancelarTurno({ idTurno : turno.idTurno });
                 toast.success('¡Turno cancelado con éxito!'); // Mensaje de éxito
+                const cuerpo = `<div style="background-color: #f0f4f8; padding: 20px; border-radius: 10px; font-family: Arial, sans-serif; max-width: 600px; margin: auto;">
+                <h1 style="color: #1c4e80; text-align: center;">¡Tu turno ha sido cancelado con éxito!</h1>
+                <div style="background-color: #ffffff; padding: 20px; border-radius: 8px; margin-top: 20px;">
+                    <p><strong>Sede:</strong> ${turno.Sede}</p>
+                    <p><strong>Dirección:</strong> ${turno.Direccion}</p>
+                    <p><strong>Especialidad:</strong> ${turno.Especialidad}</p>
+                    <p><strong>Fecha y Hora:</strong> ${formatFechaHora(turno.fecha_hora)}</p>
+                    <p><strong>Doctor:</strong> ${turno.Doctor}</p>
+                    <p><strong>DNI Paciente:</strong> ${turno.dni}</p>
+                </div>
+                <footer style="text-align: center; margin-top: 20px;">
+                    <p>Nos vemos pronto, ¡gracias por confiar en nosotros!</p>
+                    <p>Sanatorio UTN</p>
+                </footer>
+                </div>
+                `;
+
+
+        // Llamar a la función para mandar el correo
+        MandarMail({
+            to: mailUsuario, // Asegúrate de pasar el destinatario como tal
+            subject: 'Turno Cancelado',
+            html: cuerpo
+        });
+
             } catch (error) {
                 toast.error('Error al cancelar el turno'); // Mensaje de error
                 console.error('Error al cancelar turno:', error);
@@ -94,15 +145,15 @@ export function TurnosPersonales() {
                             <div className="flex space-x-2 mt-4">
                                 <button
                                     className="bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50"
-                                    onClick={() => handleConfirmarTurno(turno.idTurno)}
+                                    onClick={() => handleConfirmarTurno(turno)}
                                     disabled={turno.estado === 'Confirmado' || turno.estado === 'Cancelado'}
                                 >
                                     Confirmar
                                 </button>
                                 <button
                                     className="bg-red-600 text-white py-2 px-4 rounded-lg hover:bg-red-700 transition-colors disabled:opacity-50"
-                                    onClick={() => handleCancelarTurno(turno.idTurno)}
-                                    disabled={turno.estado === 'Cancelado'}
+                                    onClick={() => handleCancelarTurno(turno)}
+                                    disabled={turno.estado === 'Cancelado' || turno.estado === 'Confirmado'}
                                 >
                                     Cancelar
                                 </button>

@@ -5,14 +5,27 @@ import { jwtDecode } from 'jwt-decode';
 
 import { PacientesContext } from './PacientesContext';
 import { getSedes } from '../../api/sedes.api';
-import { getEspecialidades, getEspecialidadById } from '../../api/especialidades.api';
+import {
+  getEspecialidades,
+  getEspecialidadById,
+} from '../../api/especialidades.api';
 import { getDoctors, getDoctorById } from '../../api/doctores.api';
 import { getFechasDispTodos, getHorariosDisp } from '../../api/horarios.api';
-import { getUserDniFecha, createUser, getUserDni, updateUser } from '../../api/usuarios.api';
+import {
+  getUserDniFecha,
+  createUser,
+  getUserDni,
+  updateUser,
+} from '../../api/usuarios.api';
 import { getObrasSociales } from '../../api/obrasociales.api';
 import { createPaciente, getPacienteDni } from '../../api/pacientes.api';
 import { getSedeById } from '../../api/sedes.api';
-import { createTurno, getTurnosPaciente, confirmarTurno, cancelarTurno } from '../../api/turnos.api';
+import {
+  createTurno,
+  getTurnosPaciente,
+  confirmarTurno,
+  cancelarTurno,
+} from '../../api/turnos.api';
 import { sendEmail } from '../../api/email.api';
 
 export const usePacientes = () => {
@@ -22,7 +35,6 @@ export const usePacientes = () => {
   }
   return context;
 };
-
 
 const PacientesProvider = ({ children }) => {
   //proveedor para acceder a los datos de los empleados desde cualquier componente
@@ -69,9 +81,9 @@ const PacientesProvider = ({ children }) => {
   }
 
   async function ObtenerDoctores({ idSede, idEspecialidad }) {
-    console.log({idSede, idEspecialidad});
+    console.log({ idSede, idEspecialidad });
     const response = await getDoctors({ idSede, idEspecialidad });
-    console.log('mis doctores',response.data);
+    console.log('mis doctores', response.data);
     setDoctores(response.data);
   }
   async function ObtenerFechas({
@@ -85,8 +97,10 @@ const PacientesProvider = ({ children }) => {
       idSede: selectedSede.value,
     });
     const fechasFormateadas = response.data.map((item) => {
-      return new Date(item.fecha);
+      const [year, month, day] = item.fecha.split('-'); // Descomponer la fecha
+      return new Date(Number(year), Number(month) - 1, Number(day)); // Crear la fecha (mes empieza en 0)
     });
+
     setFechas(fechasFormateadas);
   }
   async function ObtenerHorarios({
@@ -107,16 +121,13 @@ const PacientesProvider = ({ children }) => {
   async function login({ dni, fechaNacimiento }) {
     try {
       const response = await getUserDniFecha({ dni, fechaNacimiento });
-      //console.log(response);
       const token = response.data;
-      //console.log(token);
       localStorage.setItem('token', token);
       const decoded = jwtDecode(token);
       setDni(decoded.dni);
-      /*window.location.reload();*/
     } catch (error) {
       setDni(null);
-      // Handle error here
+      throw error;
     }
   }
 
@@ -124,7 +135,7 @@ const PacientesProvider = ({ children }) => {
     if (dni) {
       ObtenerPacienteDni();
     }
-  }, [dni]); 
+  }, [dni]);
 
   function comprobarToken() {
     if (localStorage.getItem('token')) {
@@ -278,7 +289,7 @@ const PacientesProvider = ({ children }) => {
         usuarioDni,
         ActualizarUsuario,
         MandarMail,
-        mailUsuario
+        mailUsuario,
       }}
     >
       {children}

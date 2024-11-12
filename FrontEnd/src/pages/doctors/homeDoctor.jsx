@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useDoctores } from '../../context/doctores/DoctoresProvider.jsx';
-
+import { toast } from 'react-toastify';  // Importar react-toastify
+import 'react-toastify/dist/ReactToastify.css'; // Importar los estilos de react-toastify
 
 function HomeDoctor() {
   const { idDoctor, login, comprobarToken } = useDoctores();
@@ -9,9 +10,25 @@ function HomeDoctor() {
   const [contra, setContra] = useState('');
   const navigate = useNavigate();
 
-
+  // Manejo del login con toast de éxito
   const handleLogin = async () => {
-    await login({ dni, contra });
+    try {
+      await login({ dni, contra });
+
+      // Si el login es exitoso, mostrar el toast de éxito
+      toast.success('¡Login exitoso!', {
+        position: 'top-center',
+        autoClose: 3000,
+        hideProgressBar: true,
+        pauseOnHover: false,
+        draggable: true,
+        theme: 'colored',
+      });
+
+    } catch (error) {
+      console.error('Error al iniciar sesión', error);
+      // Puedes agregar un toast de error aquí si lo deseas
+    }
   };
 
   const handleDniChange = (event) => {
@@ -27,15 +44,14 @@ function HomeDoctor() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-
   return (
     <div className="min-h-screen bg-gradient-to-b from-blue-100 to-white flex items-center justify-center p-4">
       <div className="bg-white rounded-lg shadow-md w-full max-w-md p-6 space-y-4">
         {!idDoctor ? (
           <div className="space-y-4">
-            <p className="text-center text-gray-600">Ingrese sus credenciales</p>
+            <p className="text-center text-gray-600 text-lg font-bold">Ingrese sus datos</p>
             <div className="space-y-4">
-              <p className='text'>Ingrese su DNI</p>
+              <p className="text-center text-gray-600 text-lg">Ingrese su DNI</p>
               <input
                 type="text"
                 value={dni}
@@ -43,7 +59,7 @@ function HomeDoctor() {
                 placeholder="DNI"
                 className="w-full border border-gray-300 rounded-lg p-2"
               />
-              <p className='text'>Ingrese su Contraseña</p>
+              <p className="text-center text-gray-600 text-lg">Ingrese su Contraseña</p>
               <input
                 type="password"
                 value={contra}
@@ -62,12 +78,7 @@ function HomeDoctor() {
           </div>
         ) : (
           <div className="space-y-4">
-            <button
-              onClick={() => navigate('/')}
-              className="w-full bg-gray-200 text-gray-700 py-2 rounded-lg hover:bg-gray-300 transition-colors"
-            >
-              Volver
-            </button>
+
             <div className="flex flex-col space-y-2">
               <button
                 onClick={() => navigate('turnoshoy')}
@@ -88,6 +99,15 @@ function HomeDoctor() {
                 Historial Turnos
               </button>
             </div>
+            <button
+              onClick={() => {
+                localStorage.clear();
+                navigate('/');
+              }}
+              className="w-full bg-gray-200 text-gray-700 py-2 rounded-lg hover:bg-gray-300 transition-colors"
+            >
+              Volver
+            </button>
           </div>
         )}
       </div>

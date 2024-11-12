@@ -131,10 +131,11 @@ export const getDoctorByDniContra = async (req, res) => {
 
 export const createDoctor = async (req, res) => {
   const { dni, duracionTurno, contra } = req.body;
+  const estado = 'Habilitado';
   try {
     const [result] = await pool.query(
-      'INSERT INTO doctores (dni, duracionTurno, contra) VALUES (?, ?, ?)',
-      [dni, duracionTurno, contra]
+      'INSERT INTO doctores (dni, duracionTurno, contra, estado) VALUES (?, ?, ?,?)',
+      [dni, duracionTurno, contra, estado]
     );
 
     const idDoctor = result.insertId;
@@ -143,7 +144,8 @@ export const createDoctor = async (req, res) => {
       idDoctor,
       dni,
       duracionTurno,
-      contra
+      contra,
+      estado
     });
   } catch (error) {
     return res.status(500).json({ message: error.message });
@@ -154,18 +156,44 @@ export const createDoctor = async (req, res) => {
 export const deleteDoctor = async (req, res) => {
   try {
     const { idDoctor } = req.params;
-    const [result] = await pool.query(
+
+    // Iniciar una transacción para asegurar consistencia en las actualizaciones
+    await pool.query('START TRANSACTION');
+
+    // Actualizar el estado del doctor a "Deshabilitado"
+    const [resultDoctor] = await pool.query(
       'UPDATE doctores SET estado = "Deshabilitado" WHERE idDoctor = ?',
       [idDoctor]
     );
-    if (result.affectedRows === 0) {
+
+    // Si no se encontró el doctor, devolver un error
+    if (resultDoctor.affectedRows === 0) {
+      // Si el doctor no existe, hacer un rollback de la transacción
+      await pool.query('ROLLBACK');
       return res.status(404).json({ message: 'Doctor no encontrado' });
     }
-    return res.sendStatus(204); // 204 significa "No Content", que indica que la solicitud fue exitosa, pero no hay contenido para devolver.
+
+    // Actualizar el estado de las combinaciones en la tabla sededoctoresp a "Deshabilitado"
+    const [resultCombinacion] = await pool.query(
+      'UPDATE sededoctoresp SET estado = "Deshabilitado" WHERE idDoctor = ?',
+      [idDoctor]
+    );
+    const [resultHorario] = await pool.query(
+      'UPDATE horarios_disponibles SET estado = "Deshabilitado" WHERE idDoctor = ?',
+      [idDoctor]
+    );
+    // Confirmar la transacción si todo salió bien
+    await pool.query('COMMIT');
+
+    // Si la transacción fue exitosa, devolver 204 No Content
+    return res.sendStatus(204); // No hay contenido que devolver, pero la operación fue exitosa
   } catch (error) {
+    // Si ocurre un error, hacer rollback de la transacción
+    await pool.query('ROLLBACK');
     return res.status(500).json({ message: error.message });
   }
 };
+
 
 
 export const updateDoctor = async (req, res) => {

@@ -16,6 +16,7 @@ import {
   getCombinaciones,
   createHorarios,
   getHorariosXDoctor,
+  updateHorarios,
 } from '../../api/admin.api.js'; // Asegúrate de tener una función para crear la sede en la API
 import { useContext, useEffect, useState } from 'react';
 import { getSedes } from '../../api/sedes.api.js';
@@ -90,15 +91,29 @@ const AdministracionProvider = ({ children }) => {
     }
   }
 
-  //Sede
-  async function crearNuevaSede({ nombre, direccion }) {
-    try {
-      const response = await createSede({ nombre, direccion }); // Llamada a la API
-      console.log('Sede creada:', response.data);
-    } catch (error) {
-      console.error('Error al crear la sede:', error);
+async function crearNuevaSede({ nombre, direccion }) {
+  try {
+    const response = await createSede({ nombre, direccion }); // Llamada a la API
+    console.log("Sede creada:", response.data);
+  } catch (error) {
+    if (error.response) {
+      // Error del servidor o del cliente
+      if (error.response.status === 400) {
+        console.error("La sede ya está habilitada.");
+      } else if (error.response.status === 500) {
+        console.error("Error en el servidor. Inténtalo de nuevo más tarde.");
+      } else {
+        console.error("Ocurrió un error inesperado:", error.response.data);
+      }
+      throw error;
+    } else {
+      // Error que no es de respuesta, como problemas de red
+      console.error("Error de red o de conexión:", error);
     }
+    throw error;
   }
+}
+
   async function ObtenerSedes() {
     const response = await getSedes();
     setSedes(response.data);
@@ -125,6 +140,7 @@ const AdministracionProvider = ({ children }) => {
       console.log('Especialidad creada:', response.data);
     } catch (error) {
       console.error('Error al obtener las sedes:', error);
+      throw error;
     }
   }
   async function borrarEspecialidad(idEspecialidad) {
@@ -236,12 +252,12 @@ const AdministracionProvider = ({ children }) => {
     }
   }
 
-  async function borrarSedEspDoc({ idSede, idEspecialidad, idDoctor }) {
+  async function borrarSedEspDoc({ idSede, idDoctor, idEspecialidad }) {
     try {
       const response = await deleteSeEspDoc({
         idSede,
-        idEspecialidad,
         idDoctor,
+        idEspecialidad,
       });
       console.log('Sede, especialidad y doctor borrados:', response.data);
     } catch (error) {
@@ -273,24 +289,60 @@ const AdministracionProvider = ({ children }) => {
     idDoctor,
     idEspecialidad,
     dia,
-    horaInicio,
-    horaFin,
+    hora_inicio,
+    hora_fin,
+    estado,
   }) {
     try {
+      console.log(
+        'data:',
+        idSede,
+        idDoctor,
+        idEspecialidad,
+        dia,
+        hora_inicio,
+        hora_fin,
+        estado
+      );
       const response = await createHorarios({
         idSede,
         idDoctor,
         idEspecialidad,
         dia,
-        horaInicio,
-        horaFin,
+        hora_inicio,
+        hora_fin,
+        estado,
       });
       console.log('Horario creado:', response.data);
     } catch (error) {
       console.error('Error al crear el horario:', error);
     }
   }
-
+  async function actualizarHorarios({
+    idSede,
+    idDoctor,
+    idEspecialidad,
+    dia,
+    hora_inicio,
+    hora_fin,
+    estado,
+  }) {
+    try {
+      console.log('actualizarHorarios en provider');
+      const response = await updateHorarios({
+        idSede,
+        idDoctor,
+        idEspecialidad,
+        dia,
+        hora_inicio,
+        hora_fin,
+        estado,
+      });
+      console.log('Horario actualizado:', response.data);
+    } catch (error) {
+      console.error('Error al actualizar el horario:', error);
+    }
+  }
   async function obtenerHorariosXDoctor({ idSede, idEspecialidad, idDoctor }) {
     try {
       const response = await getHorariosXDoctor({
@@ -299,10 +351,14 @@ const AdministracionProvider = ({ children }) => {
         idDoctor,
       });
       console.log('Respuesta de horarios:', response.data); // Log para depurar
-      setHorariosDoctor(response.data); // Actualizar el estado
-      return response.data; // Retornar los datos
+      setHorariosDoctor(response.data); // Actualizar el estado con los horarios obtenidos
     } catch (error) {
       console.error('Error al obtener los horarios del doctor:', error);
+      if (error.response && error.response.status === 404) {
+        setHorariosDoctor([]); // Establecer horarios a vacío
+      }
+
+      // Si hay otro tipo de error, lo lanzamos para que se maneje más arriba
       throw error;
     }
   }
@@ -381,6 +437,7 @@ const AdministracionProvider = ({ children }) => {
         crearHorarios,
         obtenerHorariosXDoctor,
         horariosDoctor,
+        actualizarHorarios,
       }}
     >
       {children}

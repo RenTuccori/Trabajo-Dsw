@@ -3,15 +3,11 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { usePacientes } from "../../context/paciente/PacientesProvider";
 import Select from "react-select";
-
+import Swal from "sweetalert2"; // Importa SweetAlert2
+import { toast } from "react-toastify"; // Importa toast
 
 export function DatosPersonales() {
-  const {
-    login,
-    obraSociales,
-    ObtenerObraSociales,
-    CrearUsuario,
-  } = usePacientes();
+  const { login, obraSociales, ObtenerObraSociales, CrearUsuario } = usePacientes();
   const [selectedObraSociales, setSelectedObraSociales] = useState(null);
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
@@ -33,11 +29,25 @@ export function DatosPersonales() {
     }));
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault(); // Previene el comportamiento por defecto del formulario
-    CrearUsuario(formData);
-    login({ dni: formData.dni, fechaNacimiento: formData.fechaNacimiento });
-    navigate("/paciente");
+    try {
+      await CrearUsuario(formData); // Asegura que la creación del usuario sea asíncrona
+      login({ dni: formData.dni, fechaNacimiento: formData.fechaNacimiento });
+
+      // Muestra el mensaje de éxito con SweetAlert2
+      Swal.fire({
+        icon: "success",
+        title: "¡Registro exitoso!",
+        text: "El usuario ha sido registrado correctamente.",
+        confirmButtonColor: "#3085d6",
+        confirmButtonText: "Aceptar",
+      }).then(() => {
+        navigate("/paciente"); // Navega después de confirmar
+      });
+    } catch (error) {
+      toast.error("Hubo un error al registrar el usuario. Intente nuevamente.");
+    }
   };
 
   useEffect(() => {
@@ -136,9 +146,9 @@ export function DatosPersonales() {
           <div>
             <p className="text-center text-gray-600 text-lg">Obra Social</p>
             <Select
-              options={obraSociales.map(obrasociales => ({
-                value: obrasociales.idObraSocial,
-                label: obrasociales.nombre
+              options={obraSociales.map((obrasocial) => ({
+                value: obrasocial.idObraSocial,
+                label: obrasocial.nombre,
               }))}
               onChange={handleObraSocialChange}
               value={selectedObraSociales}

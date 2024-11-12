@@ -57,12 +57,12 @@ export const createSeEspDoc = async (req, res) => {
 
 export const deleteSeEspDoc = async (req, res) => {
   try {
-    const { idSede, idEspecialidad, idDoctor } = req.body;
-
+    const { idSede, idDoctor, idEspecialidad } = req.body;
+    console.log(req.body);
     // Realizar el update para cambiar el estado a 'Deshabilitado'
     const [result] = await pool.query(
-      'UPDATE sededoctoresp SET estado = ? WHERE idSede = ? AND idEspecialidad = ? AND idDoctor = ?',
-      ['Deshabilitado', idSede, idEspecialidad, idDoctor]
+      'UPDATE sededoctoresp SET estado = "Deshabilitado" WHERE idSede = ? AND idDoctor = ? AND idEspecialidad = ?',
+      [ idSede, idDoctor, idEspecialidad]
     );
 
     // Verificar si la combinación de sede, especialidad y doctor existe
@@ -113,45 +113,41 @@ SELECT
     return res.status(500).json({ message: error.message });
   }
 };
-
 export const createHorarios = async (req, res) => {
-  try {
-    const { idSede, idDoctor, idEspecialidad, dia, horaInicio, horaFin } = req.body;
-
-    // Agregar el estado habilitado como último parámetro
-    const estado = 'Habilitado';
-
-    // Primero, validar si la combinación ya existe
-    const result = await pool.query(
-      'SELECT * FROM horarios WHERE idSede = ? AND idDoctor = ? AND idEspecialidad = ? AND dia = ? AND horaInicio = ? AND horaFin = ?',
-      [idSede, idDoctor, idEspecialidad, dia, horaInicio, horaFin]
+    const { idSede, idDoctor, idEspecialidad, dia, hora_inicio, hora_fin, estado } = req.body;
+    try {
+    await pool.query(
+      'INSERT INTO horarios_disponibles (idSede, idDoctor, idEspecialidad, dia, hora_inicio, hora_fin, estado) VALUES (?, ?, ?, ?, ?, ?, ?)',
+      [idSede, idDoctor, idEspecialidad, dia, hora_inicio, hora_fin, estado] // Asegúrate de que los nombres de las columnas sean correctos
     );
+    return res.status(201).json({ message: 'Horario creado exitosamente.' });
+  } catch (error) {
+    console.error(error); // Agregar un log para ver errores en el servidor
+    return res.status(500).json({ message: 'Error al crear el horario.' });
+  }
+};
 
-    if (result[0].length > 0) {
-      return res.status(400).json({ message: 'Ya existe un horario con esta combinación.' });
+export const updateHorarios = async (req, res) => {
+  try {
+    const { idSede, idDoctor, idEspecialidad, dia, hora_inicio, hora_fin, estado } = req.body;
+    console.log(req.body);
+    // La consulta SQL para actualizar el horario
+    const [result] = await pool.query(
+      'UPDATE horarios_disponibles SET hora_inicio = ?, hora_fin = ?, estado = ? WHERE idSede = ? AND idDoctor = ? AND idEspecialidad = ? AND dia = ?',
+      [hora_inicio, hora_fin, estado, idSede, idDoctor, idEspecialidad, dia]
+    );
+    // Los valores que se van a insertar en la consulta
+    if (result.affectedRows > 0) {
+      return res.status(200).json({ message: 'Horario actualizado exitosamente' });
+    } else {
+      return res.status(404).json({ message: 'No se encontró un horario con esos datos' });
     }
 
-    // Si no existe, proceder a insertar
-    await pool.query(
-      'INSERT INTO horarios (idSede, idDoctor, idEspecialidad, dia, horaInicio, horaFin, estado) VALUES (?, ?, ?, ?, ?, ?, ?)',
-      [idSede, idDoctor, idEspecialidad, dia, horaInicio, horaFin, estado] // Agregar el estado aquí
-    );
-
-    res.json({
-      message: 'Horario creado con éxito.',
-      idSede,
-      idDoctor,
-      idEspecialidad,
-      dia,
-      horaInicio,
-      horaFin,
-      estado // Incluir el estado en la respuesta
-    });
   } catch (error) {
-    return res.status(500).json({ message: error.message });
+    console.error('Error al actualizar el horario:', error);
+    return res.status(500).json({ message: 'Error en el servidor al actualizar el horario' });
   }
-}
-
+};
 
 export const getHorariosXDoctor = async (req, res) => {
   try {

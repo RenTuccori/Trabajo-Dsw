@@ -12,7 +12,7 @@ export const getTurnoByDni = async (req, res) => {
       inner join doctores doc on tur.idDoctor = doc.idDoctor 
       inner join especialidades esp on esp.idEspecialidad = tur.idEspecialidad 
       inner join usuarios usudoc on doc.dni = usudoc.dni WHERE usu.dni = ?
-      and date(tur.fechaYHora) > current_date() 
+      and date(tur.fechaYHora) > current_date() and tur.estado != 'Cancelado'
       order by tur.fechaYHora`,
       [dni]);
     if (result.length === 0) {
@@ -37,7 +37,8 @@ export const getTurnoByDoctorHistorico = async (req, res) => {
       on sed.idSede = tur.idSede
       inner join especialidades esp
       on esp.idEspecialidad = tur.idEspecialidad
-      where tur.idDoctor = ? and tur.fechaYHora >= current_date()
+      where tur.idDoctor = ? and tur.fechaYHora >= current_date() 
+      and tur.estado != 'Cancelado'
       order by tur.fechaYHora`,
       [idDoctor]);
     if (result.length === 0) {
@@ -64,6 +65,7 @@ export const getTurnoByDoctorHoy = async (req, res) => {
       inner join especialidades esp
       on esp.idEspecialidad = tur.idEspecialidad
       where tur.idDoctor = ? and date(tur.fechaYHora) = current_date()
+      and tur.estado = 'Confirmado'
       order by tur.fechaYHora`,
       [idDoctor]);
     if (result.length === 0) {
@@ -144,6 +146,7 @@ export const cancelarTurno = async (req, res) => {
 
 
 export const createTurno = async (req, res) => {
+  const mail = null;
   const {
     idPaciente,
     fechaYHora,
@@ -156,8 +159,8 @@ export const createTurno = async (req, res) => {
   } = req.body;
   try {
     const [result] = await pool.query(
-      `INSERT INTO turnos (idPaciente, fechaYHora, fechaCancelacion, fechaConfirmacion, estado, idEspecialidad, idDoctor, idSede) 
-      VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
+      `INSERT INTO turnos (idPaciente, fechaYHora, fechaCancelacion, fechaConfirmacion, estado, idEspecialidad, idDoctor, idSede, mail) 
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
       [
         idPaciente,
         fechaYHora,
@@ -167,6 +170,7 @@ export const createTurno = async (req, res) => {
         idEspecialidad,
         idDoctor,
         idSede,
+        mail
       ]
     );
     res.json({
@@ -179,6 +183,7 @@ export const createTurno = async (req, res) => {
       idEspecialidad,
       idDoctor,
       idSede,
+      mail
     });
   } catch (error) {
     return res.status(500).json({ message: error.message });
@@ -199,4 +204,3 @@ export const deleteTurno = async (req, res) => {
     return res.status(500).json({ message: error.message });
   }
 };
-
