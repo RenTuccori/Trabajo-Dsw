@@ -28,29 +28,38 @@ export const getTurnoByDni = async (req, res) => {
 export const getTurnoByDoctorHistorico = async (req, res) => {
   try {
     const { idDoctor } = req.body;
-    const [result] = await pool.query(`select sed.nombre sede,esp.nombre especialidad,tur.fechaYHora,tur.estado,usu.dni,concat(usu.apellido,' ',usu.nombre) nomyapel from  turnos tur
-      inner join pacientes pac
-      on pac.idPaciente = tur.idPaciente
-      inner join usuarios usu 
-      on usu.dni = pac.dni
-      inner join sedes sed
-      on sed.idSede = tur.idSede
-      inner join especialidades esp
-      on esp.idEspecialidad = tur.idEspecialidad
-      where tur.idDoctor = ? and tur.fechaYHora >= current_date() 
-      and tur.estado != 'Cancelado'
-      order by tur.fechaYHora`,
-      [idDoctor]);
+    const [result] = await pool.query(`
+      SELECT 
+        sed.nombre AS sede, 
+        esp.nombre AS especialidad, 
+        tur.fechaYHora, 
+        tur.estado, 
+        usu.dni, 
+        CONCAT(usu.apellido, ' ', usu.nombre) AS nomyapel 
+      FROM turnos tur
+      INNER JOIN pacientes pac ON pac.idPaciente = tur.idPaciente
+      INNER JOIN usuarios usu ON usu.dni = pac.dni
+      INNER JOIN sedes sed ON sed.idSede = tur.idSede
+      INNER JOIN especialidades esp ON esp.idEspecialidad = tur.idEspecialidad
+      WHERE tur.idDoctor = ? 
+      AND tur.fechaYHora >= current_date() 
+      AND tur.estado != 'Cancelado'
+      ORDER BY tur.fechaYHora`, 
+      [idDoctor]
+    );
+
+    // Si no hay resultados, se devuelve un 200 con un arreglo vacío
     if (result.length === 0) {
-      return res.status(404).json({ message: 'No hay turnos' });
-    } else {
-      res.json(result);
+      return res.status(200).json({ message: 'No hay turnos históricos', data: [] });
     }
+
+    // Si hay resultados, se devuelve la lista de turnos
+    return res.json({ data: result });
   } catch (error) {
+    // En caso de error, se devuelve un 500
     return res.status(500).json({ message: error.message });
   }
 };
-
 
 export const getTurnoByDoctorHoy = async (req, res) => {
   try {

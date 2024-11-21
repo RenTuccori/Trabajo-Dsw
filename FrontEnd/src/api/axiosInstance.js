@@ -2,7 +2,7 @@ import axios from "axios";
 const dbUrl = import.meta.env.VITE_DB_URL
 
 const axiosInstance = axios.create({
-  baseURL: `http://${dbUrl}/api/`, //coloar la ip de la maquina donde se esta ejecutando el backend
+  baseURL: `http://${dbUrl}/api/`, //colocar la ip de la maquina donde se esta ejecutando el backend
 });
 
 axiosInstance.interceptors.request.use(
