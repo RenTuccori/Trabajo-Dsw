@@ -1,14 +1,33 @@
 import axios from 'axios';
+import axiosInstance from './axiosInstance';
 const dbUrl = import.meta.env.VITE_DB_URL
+
+
 export const getTurnosHistoricoDoctor = async ({idDoctor}) => {
-    return await axios.post(`http://${dbUrl}/api/turnosdoc`,{idDoctor});
-}
-export const getTurnosDoctorHoy = async ({idDoctor}) => {
-    return await axios.post(`http://${dbUrl}/api/turnosdochoy`,{idDoctor});
+    try {
+        const response = await axiosInstance.post(`turnosdoc`,{idDoctor});
+        return response
+    } catch (error) {
+        return (error.response.data.message);
+    }
 }
 
-export const getTurnosDoctorFecha = async ({idDoctor,fechaYHora}) => {
-    return await axios.post(`http://${dbUrl}/api/turnosdocfecha`,{idDoctor,fechaYHora});
+export const getTurnosDoctorHoy = async ({idDoctor}) => {
+    try {
+        const response = await axiosInstance.post(`turnosdochoy`, {idDoctor});
+        return response;
+    } catch (error) {
+        return (error.response.data.message);
+    }
+}
+
+export const getTurnosDoctorFecha = async ({idDoctor, fechaYHora}) => {
+    try {
+        const response = await axiosInstance.post(`turnosdocfecha`, {idDoctor, fechaYHora});
+        return response;
+    } catch (error) {
+        return (error.response.data.message);
+    }
 }
 
 export const createTurno = async ({idPaciente,fechaYHora,fechaCancelacion,fechaConfirmacion,estado,idEspecialidad,idDoctor,idSede}) => {

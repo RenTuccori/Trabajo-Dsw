@@ -9,16 +9,17 @@ import {
   confirmarTurno,
   cancelarTurno
 } from '../controllers/turnos.controllers.js';
+import {Doctor} from '../middleware/authorizeRole.js';
 
 const router = Router();
 
 router.post('/api/turnospac', getTurnoByDni);
 
-router.post('/api/turnosdochoy', getTurnoByDoctorHoy);
+router.post('/api/turnosdochoy',Doctor, getTurnoByDoctorHoy);
 
-router.post('/api/turnosdoc', getTurnoByDoctorHistorico);
+router.post('/api/turnosdoc',Doctor, getTurnoByDoctorHistorico);
 
-router.post('/api/turnosdocfecha', getTurnoByDoctorFecha);
+router.post('/api/turnosdocfecha',Doctor, getTurnoByDoctorFecha);
 
 router.post('/api/turnos', createTurno);
 

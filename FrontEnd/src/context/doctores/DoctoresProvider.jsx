@@ -65,6 +65,7 @@ export const useDoctores = () => {
     
 
     async function Historico(){
+      console.log(idDoctor);
       const response = await getTurnosHistoricoDoctor({idDoctor});
       setTurnosHist(response.data);
       const fechasDisponibles = response.data.map(turno => new Date(turno.fechaYHora.split('T')[0]));
