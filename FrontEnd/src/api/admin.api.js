@@ -1,68 +1,168 @@
 import axios from 'axios';
-
+import axiosInstance from './axiosInstance';
 const dbUrl = import.meta.env.VITE_DB_URL
 
 export const getAdmin = async ({ usuario, contra }) => {
     return await axios.post(`http://${dbUrl}/api/admin`, { usuario, contra });
 }
-//Doctor
 
+
+
+//Doctor
 export const createDoctor = async ({ dni, duracionTurno, contra }) => {
-    return await axios.post(`http://${dbUrl}/api/adminCreateDr`, { dni, duracionTurno, contra });
+    try {
+        const response = await axiosInstance.post(`adminCreateDr`, { dni, duracionTurno, contra });
+        return response;
+    } catch (error) {
+        return error.response.data.message;
+    }
 }
+
 export const deleteDoctor = async (idDoctor) => {
-    return await axios.put(`http://${dbUrl}/api/adminDeleteDr/${idDoctor}`, idDoctor);
+    try {
+        const response = await axiosInstance.put(`adminDeleteDr/${idDoctor}`, idDoctor);
+        return response;
+    } catch (error) {
+        return error.response.data.message;
+    }
 }
+
 export const updateDoctor = async ({ idDoctor, duracionTurno, contra }) => {
-    return await axios.put(`http://${dbUrl}/api/adminUpdateDr/${idDoctor}`, { idDoctor, duracionTurno, contra });
+    try {
+        const response = await axiosInstance.put(`adminUpdateDr/${idDoctor}`, { idDoctor, duracionTurno, contra });
+        return response;
+    } catch (error) {
+        return error.response.data.message;
+    }
 }
 
 //Sede
 export const createSede = async ({ nombre, direccion }) => {
-    return await axios.post(`http://${dbUrl}/api/adminCreateSede`, { nombre, direccion });
+    try {
+        const response = await axiosInstance.post(`adminCreateSede`, { nombre, direccion });
+        return response;
+    } catch (error) {
+        return error.response.data.message;
+    }
 }
+
 export const updateSede = async ({ idSede, nombre, direccion }) => {
-    return await axios.put(`http://${dbUrl}/api/adminUpdateSede/${idSede}`, { nombre, direccion });
+    try {
+        const response = await axiosInstance.put(`adminUpdateSede/${idSede}`, { nombre, direccion });
+        return response;
+    } catch (error) {
+        return error.response.data.message;
+    }
 }
+
 export const deleteSede = async (idSede) => {
-    return await axios.put(`http://${dbUrl}/api/adminDeleteSede/${idSede}`, idSede);
+    try {
+        const response = await axiosInstance.put(`adminDeleteSede/${idSede}`, idSede);
+        return response;
+    } catch (error) {
+        return error.response.data.message;
+    }
 }
+
 //ObraSocial
 export const createObraSocial = async ({ nombre }) => {
-    return await axios.post(`http://${dbUrl}/api/adminCreateObraSocial`, { nombre });
+    try {
+        const response = await axiosInstance.post(`adminCreateObraSocial`, { nombre });
+        return response;
+    } catch (error) {
+        return error.response.data.message;
+    }
 }
+
 export const updateObraSocial = async ({ idObraSocial, nombre }) => {
-    return await axios.put(`http://${dbUrl}/api/adminUpdateOS/${idObraSocial}`, { nombre });
+    try {
+        const response = await axiosInstance.put(`adminUpdateOS/${idObraSocial}`, { nombre });
+        return response;
+    } catch (error) {
+        return error.response.data.message;
+    }
 }
+
 export const deleteObraSocial = async (idObraSocial) => {
-    return await axios.put(`http://${dbUrl}/api/adminDeleteOS/${idObraSocial}`, idObraSocial);
+    try {
+        const response = await axiosInstance.put(`adminDeleteOS/${idObraSocial}`, idObraSocial);
+        return response;
+    } catch (error) {
+        return error.response.data.message;
+    }
 }
+
 //Especialidad
 export const createSpecialty = async ({ nombre }) => {
-    return await axios.post(`http://${dbUrl}/api/adminCreateEsp`, { nombre });
+    try {
+        const response = await axiosInstance.post(`adminCreateEsp`, { nombre });
+        return response;
+    } catch (error) {
+        return error.response.data.message;
+    }
 }
+
 export const deleteSpecialty = async (idEspecialidad) => {
-    return await axios.put(`http://${dbUrl}/api/deleteSpecialties/${idEspecialidad}`, idEspecialidad);
+    try {
+        const response = await axiosInstance.put(`deleteSpecialties/${idEspecialidad}`, idEspecialidad);
+        return response;
+    } catch (error) {
+        return error.response.data.message;
+    }
 }
 
 //combinaciones
 export const createSeEspDoc = async ({ idSede, idEspecialidad, idDoctor }) => {
-    return await axios.post(`http://${dbUrl}/api/adminCreateSeEspDoc`, { idSede, idEspecialidad, idDoctor });
+    try {
+        const response = await axiosInstance.post(`adminCreateSeEspDoc`, { idSede, idEspecialidad, idDoctor });
+        return response;
+    } catch (error) {
+        return error.response.data.message;
+    }
 }
+
 export const deleteSeEspDoc = async ({ idSede, idDoctor, idEspecialidad }) => {
-    return await axios.put(`http://${dbUrl}/api/adminDeleteSeEspDoc`, { idSede, idDoctor, idEspecialidad });
+    try {
+        const response = await axiosInstance.put(`adminDeleteSeEspDoc`, { idSede, idDoctor, idEspecialidad });
+        return response;
+    } catch (error) {
+        return error.response.data.message;
+    }
 }
+
 export const getCombinaciones = async () => {
-    return await axios.get(`http://${dbUrl}/api/adminGetCombinaciones`);
+    try {
+        const response = await axiosInstance.get(`adminGetCombinaciones`);
+        return response;
+    } catch (error) {
+        return error.response.data.message;
+    }
 }
+
 //Horarios
-export const createHorarios = async ({ idSede, idDoctor, idEspecialidad, dia, hora_inicio, hora_fin, estado}) => {
-    return await axios.post(`http://${dbUrl}/api/adminCreateHorario`, { idSede, idDoctor, idEspecialidad, dia, hora_inicio, hora_fin, estado });
+export const createHorarios = async ({ idSede, idDoctor, idEspecialidad, dia, hora_inicio, hora_fin, estado }) => {
+    try {
+        const response = await axiosInstance.post(`adminCreateHorario`, { idSede, idDoctor, idEspecialidad, dia, hora_inicio, hora_fin, estado });
+        return response;
+    } catch (error) {
+        return error.response.data.message;
+    }
 }
+
 export const getHorariosXDoctor = async ({ idSede, idEspecialidad, idDoctor }) => {
-    return await axios.post(`http://${dbUrl}/api/adminGetHorariosXDoctor`, { idSede, idEspecialidad, idDoctor });
+    try {
+        const response = await axiosInstance.post(`adminGetHorariosXDoctor`, { idSede, idEspecialidad, idDoctor });
+        return response;
+    } catch (error) {
+        return error.response.data.message;
+    }
 }
 
 export const updateHorarios = async ({ idSede, idDoctor, idEspecialidad, dia, hora_inicio, hora_fin, estado }) => {
-    return await axios.put(`http://${dbUrl}/api/adminUpdateHorario`, { idSede, idDoctor, idEspecialidad, dia, hora_inicio, hora_fin, estado });
+    try {
+        const response = await axiosInstance.put(`adminUpdateHorario`, { idSede, idDoctor, idEspecialidad, dia, hora_inicio, hora_fin, estado });
+        return response;
+    } catch (error) {
+        return error.response.data.message;
+    }
 }

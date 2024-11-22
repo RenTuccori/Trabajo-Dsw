@@ -42,6 +42,7 @@ export function CrearHorarios() {
     };
 
     if (idSede && idEspecialidad && idDoctor) {
+      console.log("cargando horarios")
       cargarHorarios();
     } else {
       toast.error('Faltan datos para cargar horarios');

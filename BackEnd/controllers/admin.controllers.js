@@ -14,7 +14,7 @@ export const getAdmin = async (req, res) => {
     if (result.length === 0) {
       return res.status(404).json({ message: 'Usuario no encontrado' });
     } else {
-      const token = jwt.sign({ idAdmin: result[0].idAdmin }, "CLAVE_SUPER_SEGURISIMA", { expiresIn: "30m" });
+      const token = jwt.sign({ idAdmin: result[0].idAdmin , rol : "A" }, "CLAVE_SUPER_SEGURISIMA", { expiresIn: "30m" });
       res.json(token);
     }
   } catch (error) {
@@ -25,35 +25,49 @@ export const getAdmin = async (req, res) => {
 export const createSeEspDoc = async (req, res) => {
   try {
     const { idSede, idEspecialidad, idDoctor } = req.body;
-    const estado = 'Habilitado';
+    const estadoHabilitado = 'Habilitado';
 
-    // Primero, validar si la combinación ya existe
+    // Validar si la combinación ya existe
     const result = await pool.query(
       'SELECT * FROM sededoctoresp WHERE idSede = ? AND idEspecialidad = ? AND idDoctor = ?',
       [idSede, idEspecialidad, idDoctor]
     );
 
     if (result[0].length > 0) {
-      return res.status(400).json({ message: 'Ya existe una asignación con esta combinación de sede, especialidad y doctor.' });
+      const currentRecord = result[0][0];
+
+      if (currentRecord.estado === estadoHabilitado) {
+        // Si está habilitado, no hacer nada
+        return res.status(200).json({ message: 'La combinación ya está habilitada.' });
+      } else {
+        // Si está deshabilitado, habilitarlo
+        await pool.query(
+          'UPDATE sededoctoresp SET estado = ? WHERE idSede = ? AND idEspecialidad = ? AND idDoctor = ?',
+          [estadoHabilitado, idSede, idEspecialidad, idDoctor]
+        );
+
+        return res.status(200).json({ message: 'La combinación se habilitó exitosamente.' });
+      }
     }
 
-    // Si no existe, proceder a insertar
+    // Si no existe, crear la combinación
     await pool.query(
       'INSERT INTO sededoctoresp (idSede, idEspecialidad, idDoctor, estado) VALUES (?, ?, ?, ?)',
-      [idSede, idEspecialidad, idDoctor, estado]
+      [idSede, idEspecialidad, idDoctor, estadoHabilitado]
     );
 
-    res.json({
+    res.status(201).json({
       message: 'Asignación creada con éxito.',
       idSede,
       idEspecialidad,
       idDoctor,
-      estado
+      estado: estadoHabilitado
     });
   } catch (error) {
     return res.status(500).json({ message: error.message });
   }
 };
+
 
 export const deleteSeEspDoc = async (req, res) => {
   try {
@@ -152,7 +166,6 @@ export const updateHorarios = async (req, res) => {
 export const getHorariosXDoctor = async (req, res) => {
   try {
     const { idSede, idEspecialidad, idDoctor } = req.body;
-
     // Consulta para obtener los horarios del doctor especificado
     const query = `
     SELECT
@@ -171,7 +184,7 @@ export const getHorariosXDoctor = async (req, res) => {
     INNER JOIN
       usuarios usu on usu.dni = doc.dni
     WHERE
-        hd.idDoctor = ? and hd.idEspecialidad = ? and hd.idSede = ? AND hd.estado = 'Habilitado'
+        hd.idSede = ? and hd.idEspecialidad = ? and hd.idDoctor = ? AND hd.estado = 'Habilitado'
     ORDER BY
         hd.dia`;
 

@@ -239,6 +239,7 @@ async function crearNuevaSede({ nombre, direccion }) {
 
   //Combinaciones de sede, especialidad y doctor
   async function crearSedEspDoc({ idSede, idEspecialidad, idDoctor }) {
+    console.log(idDoctor, idEspecialidad, idSede);
     try {
       const response = await createSeEspDoc({
         idSede,
@@ -292,7 +293,8 @@ async function crearNuevaSede({ nombre, direccion }) {
     hora_inicio,
     hora_fin,
     estado,
-  }) {
+  })  {
+    console.log('crearHorarios en provider');
     try {
       console.log(
         'data:',

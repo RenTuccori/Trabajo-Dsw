@@ -1,7 +1,4 @@
-import axios from 'axios';
 import axiosInstance from './axiosInstance';
-const dbUrl = import.meta.env.VITE_DB_URL
-
 
 export const getTurnosHistoricoDoctor = async ({idDoctor}) => {
     try {
@@ -30,18 +27,39 @@ export const getTurnosDoctorFecha = async ({idDoctor, fechaYHora}) => {
     }
 }
 
-export const createTurno = async ({idPaciente,fechaYHora,fechaCancelacion,fechaConfirmacion,estado,idEspecialidad,idDoctor,idSede}) => {
-    return await axios.post(`http://${dbUrl}/api/turnos`,{idPaciente,fechaYHora,fechaCancelacion,fechaConfirmacion,estado,idEspecialidad,idDoctor,idSede});
+
+export const createTurno = async ({ idPaciente, fechaYHora, fechaCancelacion, fechaConfirmacion, estado, idEspecialidad, idDoctor, idSede }) => {
+    try {
+        const response = await axiosInstance.post(`turnos`, { idPaciente, fechaYHora, fechaCancelacion, fechaConfirmacion, estado, idEspecialidad, idDoctor, idSede });
+        return response;
+    } catch (error) {
+        return error.response.data.message;
+    }
 }
 
-export const getTurnosPaciente = async ({dni}) => {
-    return await axios.post(`http://${dbUrl}/api/turnospac`,{dni});
+export const getTurnosPaciente = async ({ dni }) => {
+    try {
+        const response = await axiosInstance.post(`turnospac`, { dni });
+        return response;
+    } catch (error) {
+        return error.response.data.message;
+    }
 }
 
-export const confirmarTurno = async ({idTurno}) => {
-    return await axios.put(`http://${dbUrl}/api/turnos`,{idTurno});
+export const confirmarTurno = async ({ idTurno }) => {
+    try {
+        const response = await axiosInstance.put(`turnos`, { idTurno });
+        return response;
+    } catch (error) {
+        return error.response.data.message;
+    }
 }
 
-export const cancelarTurno = async ({idTurno}) => {
-    return await axios.put(`http://${dbUrl}/api/turnoscancel`,{idTurno});
+export const cancelarTurno = async ({ idTurno }) => {
+    try {
+        const response = await axiosInstance.put(`turnoscancel`, { idTurno });
+        return response;
+    } catch (error) {
+        return error.response.data.message;
+    }
 }

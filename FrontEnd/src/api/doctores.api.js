@@ -1,17 +1,44 @@
 import axios from 'axios';
+import axiosInstance from './axiosInstance';
 const dbUrl = import.meta.env.VITE_DB_URL
-export const getDoctors = async ({ idSede, idEspecialidad }) => {
-    return await axios.post(`http://${dbUrl}/api/doctors`, { idSede, idEspecialidad });
-}
+
 export const verifyDoctor = async ({ dni, contra }) => {
     return await axios.post(`http://${dbUrl}/api/doctorscontra`, { dni, contra });
 }
+
+export const getDoctors = async ({ idSede, idEspecialidad }) => {
+    try {
+        const response = await axiosInstance.post(`doctors`, { idSede, idEspecialidad });
+        return response;
+    } catch (error) {
+        return error.response.data.message;
+    }
+}
+
 export const getDoctorById = async (idDoctor) => {
-    return await axios.get(`http://${dbUrl}/api/doctorsId/${idDoctor}`);
+    try {
+        const response = await axiosInstance.get(`doctorsId/${idDoctor}`);
+        return response;
+    } catch (error) {
+        return error.response.data.message;
+    }
 }
+
 export const getDoctores = async () => {
-    return await axios.post(`http://${dbUrl}/api/alldoctors`);
+    try {
+        const response = await axiosInstance.post(`alldoctors`);
+        return response;
+    } catch (error) {
+        return error.response.data.message;
+    }
 }
+
 export const getAvailableDoctors = async ({ idSede }) => {
-    return await axios.post(`http://${dbUrl}/api/availabledoctors`, { idSede });
-};
+    try {
+        const response = await axiosInstance.post(`availabledoctors`, { idSede });
+        return response;
+    } catch (error) {
+        return error.response.data.message;
+    }
+}
+
