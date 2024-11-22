@@ -91,28 +91,27 @@ const AdministracionProvider = ({ children }) => {
     }
   }
 
-async function crearNuevaSede({ nombre, direccion }) {
-  try {
-    const response = await createSede({ nombre, direccion }); // Llamada a la API
-    console.log("Sede creada:", response.data);
-  } catch (error) {
-    if (error.response) {
-      // Error del servidor o del cliente
-      if (error.response.status === 400) {
-        console.error("La sede ya está habilitada.");
-      } else if (error.response.status === 500) {
-        console.error("Error en el servidor. Inténtalo de nuevo más tarde.");
+  async function crearNuevaSede({ nombre, direccion }) {
+    try {
+      await createSede({ nombre, direccion }); // Llamada a la API
+    } catch (error) {
+      if (error.response) {
+        // Error del servidor o del cliente
+        if (error.response.status === 400) {
+          console.error('La sede ya está habilitada.');
+        } else if (error.response.status === 500) {
+          console.error('Error en el servidor. Inténtalo de nuevo más tarde.');
+        } else {
+          console.error('Ocurrió un error inesperado:', error.response.data);
+        }
+        throw error;
       } else {
-        console.error("Ocurrió un error inesperado:", error.response.data);
+        // Error que no es de respuesta, como problemas de red
+        console.error('Error de red o de conexión:', error);
       }
       throw error;
-    } else {
-      // Error que no es de respuesta, como problemas de red
-      console.error("Error de red o de conexión:", error);
     }
-    throw error;
   }
-}
 
   async function ObtenerSedes() {
     const response = await getSedes();
@@ -121,8 +120,7 @@ async function crearNuevaSede({ nombre, direccion }) {
 
   async function borrarSede(idSede) {
     try {
-      const response = await deleteSede(idSede); // Llamada a la API
-      console.log('Sede borrada:', response.data);
+      await deleteSede(idSede); // Llamada a la API
     } catch (error) {
       console.error('Error al borrar la sede:', error);
       throw error;
@@ -136,8 +134,7 @@ async function crearNuevaSede({ nombre, direccion }) {
   }
   async function crearEspecialidad({ nombre }) {
     try {
-      const response = await createSpecialty({ nombre });
-      console.log('Especialidad creada:', response.data);
+      await createSpecialty({ nombre });
     } catch (error) {
       console.error('Error al obtener las sedes:', error);
       throw error;
@@ -145,8 +142,7 @@ async function crearNuevaSede({ nombre, direccion }) {
   }
   async function borrarEspecialidad(idEspecialidad) {
     try {
-      const response = await deleteSpecialty(idEspecialidad); // Llamada a la API
-      console.log('Especialidad borrada:', response.data);
+      await deleteSpecialty(idEspecialidad); // Llamada a la API
     } catch (error) {
       console.error('Error al borrar la especialidad:', error);
       throw error;
@@ -174,16 +170,14 @@ async function crearNuevaSede({ nombre, direccion }) {
 
   async function CreaDoctor({ dni, duracionTurno, contra }) {
     try {
-      const response = await createDoctor({ dni, duracionTurno, contra });
-      console.log('Doctor creado:', response.data);
+      await createDoctor({ dni, duracionTurno, contra });
     } catch (error) {
       console.error('Error al obtener las sedes:', error);
     }
   }
   async function borrarDoctor(idDoctor) {
     try {
-      const response = await deleteDoctor(idDoctor);
-      console.log('Doctor borrado:', response.data);
+      await deleteDoctor(idDoctor);
     } catch (error) {
       console.error('Error al borrar el doctor:', error);
       throw error;
@@ -201,8 +195,7 @@ async function crearNuevaSede({ nombre, direccion }) {
   //Obra Social
   async function crearObraSocial({ nombre }) {
     try {
-      const response = await createObraSocial({ nombre });
-      console.log('Obra Social creada:', response.data);
+      await createObraSocial({ nombre });
     } catch (error) {
       console.error('Error al obtener las sedes:', error);
     }
@@ -219,8 +212,7 @@ async function crearNuevaSede({ nombre, direccion }) {
 
   async function borrarObraSocial(idObraSocial) {
     try {
-      const response = await deleteObraSocial(idObraSocial);
-      console.log('Obra Social borrada:', response.data);
+      await deleteObraSocial(idObraSocial);
     } catch (error) {
       console.error('Error al borrar la obra social:', error);
       throw error;
@@ -230,8 +222,7 @@ async function crearNuevaSede({ nombre, direccion }) {
   async function actualizarObraSocial({ idObraSocial, nombre }) {
     try {
       console.log('idObraSocial:', idObraSocial, 'nombre:', nombre);
-      const response = await updateObraSocial({ idObraSocial, nombre });
-      console.log('Obra Social actualizada:', response.data);
+      await updateObraSocial({ idObraSocial, nombre });
     } catch (error) {
       console.error('Error al actualizar la obra social:', error);
     }
@@ -239,14 +230,12 @@ async function crearNuevaSede({ nombre, direccion }) {
 
   //Combinaciones de sede, especialidad y doctor
   async function crearSedEspDoc({ idSede, idEspecialidad, idDoctor }) {
-    console.log(idDoctor, idEspecialidad, idSede);
     try {
-      const response = await createSeEspDoc({
+      await createSeEspDoc({
         idSede,
         idEspecialidad,
         idDoctor,
       });
-      console.log('Sede, especialidad y doctor creados:', response.data);
     } catch (error) {
       console.error('Error al obtener las sedes:', error);
       throw error;
@@ -255,12 +244,11 @@ async function crearNuevaSede({ nombre, direccion }) {
 
   async function borrarSedEspDoc({ idSede, idDoctor, idEspecialidad }) {
     try {
-      const response = await deleteSeEspDoc({
+      await deleteSeEspDoc({
         idSede,
         idDoctor,
         idEspecialidad,
       });
-      console.log('Sede, especialidad y doctor borrados:', response.data);
     } catch (error) {
       console.error(
         'Error al borrar la combinación de sede, especialidad y doctor:',
@@ -274,7 +262,6 @@ async function crearNuevaSede({ nombre, direccion }) {
     try {
       const response = await getCombinaciones();
       setCombinaciones(response.data);
-      console.log('Combinaciones:', response.data);
     } catch (error) {
       console.error(
         'Error al obtener las combinaciones de sede, especialidad y doctor:',
@@ -293,8 +280,7 @@ async function crearNuevaSede({ nombre, direccion }) {
     hora_inicio,
     hora_fin,
     estado,
-  })  {
-    console.log('crearHorarios en provider');
+  }) {
     try {
       console.log(
         'data:',
@@ -306,7 +292,7 @@ async function crearNuevaSede({ nombre, direccion }) {
         hora_fin,
         estado
       );
-      const response = await createHorarios({
+      await createHorarios({
         idSede,
         idDoctor,
         idEspecialidad,
@@ -315,7 +301,6 @@ async function crearNuevaSede({ nombre, direccion }) {
         hora_fin,
         estado,
       });
-      console.log('Horario creado:', response.data);
     } catch (error) {
       console.error('Error al crear el horario:', error);
     }
@@ -330,8 +315,7 @@ async function crearNuevaSede({ nombre, direccion }) {
     estado,
   }) {
     try {
-      console.log('actualizarHorarios en provider');
-      const response = await updateHorarios({
+      await updateHorarios({
         idSede,
         idDoctor,
         idEspecialidad,
@@ -340,7 +324,6 @@ async function crearNuevaSede({ nombre, direccion }) {
         hora_fin,
         estado,
       });
-      console.log('Horario actualizado:', response.data);
     } catch (error) {
       console.error('Error al actualizar el horario:', error);
     }
@@ -352,7 +335,6 @@ async function crearNuevaSede({ nombre, direccion }) {
         idEspecialidad,
         idDoctor,
       });
-      console.log('Respuesta de horarios:', response.data); // Log para depurar
       setHorariosDoctor(response.data); // Actualizar el estado con los horarios obtenidos
     } catch (error) {
       console.error('Error al obtener los horarios del doctor:', error);
@@ -369,7 +351,6 @@ async function crearNuevaSede({ nombre, direccion }) {
 
   async function ObtenerUsuarioDni(dni) {
     try {
-      console.log('dni:', dni);
       const response = await getUserDni({ dni });
       setUsuario(response.data);
       console.log('Paciente encontrado:', response.data);
