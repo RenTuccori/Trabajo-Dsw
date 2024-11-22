@@ -63,39 +63,27 @@ export const createSpecialty = async (req, res) => {
     const { nombre } = req.body;
     const estado = 'Habilitado';
 
-    // Verificar si ya existe una especialidad con el mismo nombre
+    // Verificar si ya existe una especialidad con el mismo nombre y estado habilitado
     const [existingSpecialty] = await pool.query(
-      'SELECT * FROM especialidades WHERE nombre = ?',
-      [nombre]
+      'SELECT * FROM especialidades WHERE nombre = ? AND estado = ?',
+      [nombre, estado]
     );
 
     if (existingSpecialty.length > 0) {
-      // Si existe y está deshabilitada, actualizar su estado a "Habilitado"
-      if (existingSpecialty[0].estado === 'Deshabilitado') {
-        await pool.query(
-          'UPDATE especialidades SET estado = ? WHERE nombre = ?',
-          [estado, nombre]
-        );
-        return res.json({
-          message: 'La especialidad ha sido habilitada.',
-          nombre,
-          estado
-        });
-      }
-      // Si ya está habilitada, retornar un mensaje de error
-      return res.status(400).json({ message: 'La especialidad ya está habilitada.' });
+      // Si ya existe una especialidad habilitada con el mismo nombre
+      return res.status(400).json({ message: 'Ya existe una especialidad habilitada con este nombre.' });
     }
 
-    // Si no existe, procede a crear la nueva especialidad
+    // Insertar nueva especialidad con estado habilitado
     const [result] = await pool.query(
-      'INSERT INTO especialidades(nombre, estado) VALUES (?, ?)',
+      'INSERT INTO especialidades (nombre, estado) VALUES (?, ?)',
       [nombre, estado]
     );
 
     res.json({
       idEspecialidad: result.insertId,
       nombre,
-      estado
+      estado,
     });
   } catch (error) {
     return res.status(500).json({ message: error.message });

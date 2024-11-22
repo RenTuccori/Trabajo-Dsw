@@ -32,35 +32,22 @@ export const getSedeById = async (req, res) => {
 };
 
 export const createSede = async (req, res) => {
-  const { nombre, direccion } = req.body;
-  const estado = 'Habilitado';
-
   try {
-    // Verificar si ya existe una sede con el mismo nombre
+    const { nombre, direccion } = req.body;
+    const estado = 'Habilitado';
+
+    // Verificar si ya existe una sede con el mismo nombre y estado habilitado
     const [existingSede] = await pool.query(
-      'SELECT * FROM sedes WHERE nombre = ?',
-      [nombre]
+      'SELECT * FROM sedes WHERE nombre = ? AND estado = ?',
+      [nombre, estado]
     );
 
     if (existingSede.length > 0) {
-      // Si existe y está deshabilitada, actualizar su estado a "Habilitado"
-      if (existingSede[0].estado === 'Deshabilitado') {
-        await pool.query(
-          'UPDATE sedes SET estado = ? WHERE nombre = ?',
-          [estado, nombre]
-        );
-        return res.json({
-          message: 'La sede ha sido habilitada.',
-          nombre,
-          direccion,
-          estado
-        });
-      }
-      // Si ya está habilitada, retornar un mensaje de error
-      return res.status(400).json({ message: 'La sede ya está habilitada.' });
+      // Si ya existe una sede habilitada con el mismo nombre
+      return res.status(400).json({ message: 'Ya existe una sede habilitada con este nombre.' });
     }
 
-    // Si no existe, procede a crear la nueva sede
+    // Insertar nueva sede con estado habilitado
     const [result] = await pool.query(
       'INSERT INTO sedes (nombre, direccion, estado) VALUES (?, ?, ?)',
       [nombre, direccion, estado]
@@ -70,12 +57,13 @@ export const createSede = async (req, res) => {
       idSede: result.insertId,
       nombre,
       direccion,
-      estado
+      estado,
     });
   } catch (error) {
     return res.status(500).json({ message: error.message });
   }
 };
+
 
 
 

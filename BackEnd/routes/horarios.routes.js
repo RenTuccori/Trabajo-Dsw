@@ -4,11 +4,11 @@ import {
   getFechasDispEspSed,
   getHorariosDispDocEspSed
 } from '../controllers/horarios.controllers.js';
-
+import { AdminOrPaciente, Paciente } from '../middleware/authorizeRole.js';
 const router = Router();
 
-router.post('/api/DispDocEspSed', getFechasDispDocEspSed);
-router.get('/api/DispEspSed', getFechasDispEspSed);
-router.post('/api/HorariosDispDocEspSed', getHorariosDispDocEspSed);
+router.post('/api/DispDocEspSed', AdminOrPaciente, getFechasDispDocEspSed);
+router.get('/api/DispEspSed', AdminOrPaciente, getFechasDispEspSed);
+router.post('/api/HorariosDispDocEspSed', AdminOrPaciente, getHorariosDispDocEspSed);
 
 export default router;

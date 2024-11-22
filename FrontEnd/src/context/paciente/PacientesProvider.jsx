@@ -1,37 +1,37 @@
-import { useState, useContext, useEffect } from 'react';
-import PropTypes from 'prop-types';
-import { useNavigate } from 'react-router-dom';
-import { jwtDecode } from 'jwt-decode';
+import { useState, useContext, useEffect } from "react";
+import PropTypes from "prop-types";
+import { useNavigate } from "react-router-dom";
+import { jwtDecode } from "jwt-decode";
 
-import { PacientesContext } from './PacientesContext';
-import { getSedes } from '../../api/sedes.api';
+import { PacientesContext } from "./PacientesContext";
+import { getSedes } from "../../api/sedes.api";
 import {
   getEspecialidades,
   getEspecialidadById,
-} from '../../api/especialidades.api';
-import { getDoctors, getDoctorById } from '../../api/doctores.api';
-import { getFechasDispTodos, getHorariosDisp } from '../../api/horarios.api';
+} from "../../api/especialidades.api";
+import { getDoctors, getDoctorById } from "../../api/doctores.api";
+import { getFechasDispTodos, getHorariosDisp } from "../../api/horarios.api";
 import {
   getUserDniFecha,
   createUser,
   getUserDni,
   updateUser,
-} from '../../api/usuarios.api';
-import { getObrasSociales } from '../../api/obrasociales.api';
-import { createPaciente, getPacienteDni } from '../../api/pacientes.api';
-import { getSedeById } from '../../api/sedes.api';
+} from "../../api/usuarios.api";
+import { getObrasSociales } from "../../api/obrasociales.api";
+import { createPaciente, getPacienteDni } from "../../api/pacientes.api";
+import { getSedeById } from "../../api/sedes.api";
 import {
   createTurno,
   getTurnosPaciente,
   confirmarTurno,
   cancelarTurno,
-} from '../../api/turnos.api';
-import { sendEmail } from '../../api/email.api';
+} from "../../api/turnos.api";
+import { sendEmail } from "../../api/email.api";
 
 export const usePacientes = () => {
   const context = useContext(PacientesContext);
   if (!context) {
-    throw new Error('usePacientes must be used within an PacientesProvider');
+    throw new Error("usePacientes must be used within an PacientesProvider");
   }
   return context;
 };
@@ -44,26 +44,26 @@ const PacientesProvider = ({ children }) => {
   const [doctores, setDoctores] = useState([]);
   const [fechas, setFechas] = useState([]);
   const [horarios, setHorarios] = useState([]);
-  const [dni, setDni] = useState('');
+  const [dni, setDni] = useState("");
   const [obraSociales, setObraSociales] = useState([]);
   const [usuario, setUsuario] = useState({});
-  const [idPacienteCreado, setidPacienteCreado] = useState('');
-  const [nombreEspecialidad, setNombreEspecialidad] = useState('');
-  const [nombreDoctor, setNombreDoctor] = useState('');
-  const [apellidoDoctor, setApellidoDoctor] = useState('');
-  const [nombreSede, setNombreSede] = useState('');
-  const [direccionSede, setDireccionSede] = useState('');
-  const [fechaYHora, setFechaYHora] = useState('');
-  const [idDoctor, setIdDoctor] = useState('');
-  const [idEspecialidad, setIdEspecialidad] = useState('');
-  const [idSede, setIdSede] = useState('');
-  const [idPaciente, setIdPaciente] = useState('');
-  const [estado, setEstado] = useState('');
-  const [fechaCancelacion, setFechaCancelacion] = useState('');
-  const [fechaConfirmacion, setFechaConfirmacion] = useState('');
+  const [idPacienteCreado, setidPacienteCreado] = useState("");
+  const [nombreEspecialidad, setNombreEspecialidad] = useState("");
+  const [nombreDoctor, setNombreDoctor] = useState("");
+  const [apellidoDoctor, setApellidoDoctor] = useState("");
+  const [nombreSede, setNombreSede] = useState("");
+  const [direccionSede, setDireccionSede] = useState("");
+  const [fechaYHora, setFechaYHora] = useState("");
+  const [idDoctor, setIdDoctor] = useState("");
+  const [idEspecialidad, setIdEspecialidad] = useState("");
+  const [idSede, setIdSede] = useState("");
+  const [idPaciente, setIdPaciente] = useState("");
+  const [estado, setEstado] = useState("");
+  const [fechaCancelacion, setFechaCancelacion] = useState("");
+  const [fechaConfirmacion, setFechaConfirmacion] = useState("");
   const [turnos, setTurnos] = useState([]);
   const [usuarioDni, setUsuarioDni] = useState({});
-  const [mailUsuario, setMailUsuario] = useState('');
+  const [mailUsuario, setMailUsuario] = useState("");
 
   async function ActualizarUsuario(data) {
     const response = await updateUser(data);
@@ -83,7 +83,7 @@ const PacientesProvider = ({ children }) => {
   async function ObtenerDoctores({ idSede, idEspecialidad }) {
     console.log({ idSede, idEspecialidad });
     const response = await getDoctors({ idSede, idEspecialidad });
-    console.log('mis doctores', response.data);
+    console.log("mis doctores", response.data);
     setDoctores(response.data);
   }
   async function ObtenerFechas({
@@ -97,7 +97,7 @@ const PacientesProvider = ({ children }) => {
       idSede: selectedSede.value,
     });
     const fechasFormateadas = response.data.map((item) => {
-      const [year, month, day] = item.fecha.split('-'); // Descomponer la fecha
+      const [year, month, day] = item.fecha.split("-"); // Descomponer la fecha
       return new Date(Number(year), Number(month) - 1, Number(day)); // Crear la fecha (mes empieza en 0)
     });
 
@@ -122,7 +122,7 @@ const PacientesProvider = ({ children }) => {
     try {
       const response = await getUserDniFecha({ dni, fechaNacimiento });
       const token = response.data;
-      localStorage.setItem('token', token);
+      localStorage.setItem("token", token);
       const decoded = jwtDecode(token);
       setDni(decoded.dni);
     } catch (error) {
@@ -138,23 +138,23 @@ const PacientesProvider = ({ children }) => {
   }, [dni]);
 
   function comprobarToken() {
-    if (localStorage.getItem('token')) {
+    if (localStorage.getItem("token")) {
       try {
-        const decoded = jwtDecode(localStorage.getItem('token'));
+        const decoded = jwtDecode(localStorage.getItem("token"));
         if (decoded.exp < Date.now() / 1000) {
-          console.error('Token expired');
-          localStorage.removeItem('token');
-          navigate('/');
+          console.error("Token expired");
+          localStorage.removeItem("token");
+          navigate("/");
         } else {
           setDni(decoded.dni);
         }
       } catch (error) {
-        console.error('Error decoding token:', error);
-        localStorage.removeItem('token');
-        navigate('/');
+        console.error("Error decoding token:", error);
+        localStorage.removeItem("token");
+        navigate("/");
       }
     } else {
-      setDni('');
+      setDni("");
     }
   }
 
@@ -219,7 +219,7 @@ const PacientesProvider = ({ children }) => {
     await confirmarTurno({ idTurno });
     setTurnos((prevTurnos) =>
       prevTurnos.map((turno) =>
-        turno.idTurno === idTurno ? { ...turno, estado: 'Confirmado' } : turno
+        turno.idTurno === idTurno ? { ...turno, estado: "Confirmado" } : turno
       )
     );
   }
@@ -234,7 +234,7 @@ const PacientesProvider = ({ children }) => {
     await cancelarTurno({ idTurno });
     setTurnos((prevTurnos) =>
       prevTurnos.map((turno) =>
-        turno.idTurno === idTurno ? { ...turno, estado: 'Cancelado' } : turno
+        turno.idTurno === idTurno ? { ...turno, estado: "Cancelado" } : turno
       )
     );
   }

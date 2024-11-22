@@ -1,8 +1,19 @@
-import axios from 'axios';
-const dbUrl = import.meta.env.VITE_DB_URL
-export const getFechasDispTodos = async ({idDoctor,idEspecialidad,idSede}) => {
-    return await axios.post(`http://${dbUrl}/api/DispDocEspSed`,{idDoctor,idEspecialidad,idSede});
+import axiosInstance from "./axiosInstance";
+
+export const getFechasDispTodos = async ({ idDoctor, idEspecialidad, idSede }) => {
+    try {
+        const response = await axiosInstance.post(`DispDocEspSed`, { idDoctor, idEspecialidad, idSede });
+        return response;
+    } catch (error) {
+        return error.response.data.message;
+    }
 }
-export const getHorariosDisp = async ({idDoctor, idEspecialidad, idSede, fecha}) => {
-    return await axios.post(`http://${dbUrl}/api/HorariosDispDocEspSed`,{idDoctor, idEspecialidad, idSede, fecha});
+
+export const getHorariosDisp = async ({ idDoctor, idEspecialidad, idSede, fecha }) => {
+    try {
+        const response = await axiosInstance.post(`HorariosDispDocEspSed`, { idDoctor, idEspecialidad, idSede, fecha });
+        return response;
+    } catch (error) {
+        return error.response.data.message;
+    }
 }

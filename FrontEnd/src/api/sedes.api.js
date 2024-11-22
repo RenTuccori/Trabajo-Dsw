@@ -1,12 +1,28 @@
-import axios from 'axios';
-const dbUrl = import.meta.env.VITE_DB_URL
+import axiosInstance from './axiosInstance';
+
 export const getSedes = async () => {
-    return await axios.get(`http://${dbUrl}/api/sedes`);
+    try {
+        const response = await axiosInstance.get(`sedes`);
+        return response;
+    } catch (error) {
+        return error.response.data.message;
+    }
 }
 
 export const getSedeById = async (idSede) => {
-    return await axios.get(`http://${dbUrl}/api/sedes/${idSede}`);
+    try {
+        const response = await axiosInstance.get(`sedes/${idSede}`);
+        return response;
+    } catch (error) {
+        return error.response.data.message;
+    }
 }
+
 export const getDoctorById = async (idDoctor) => {
-    return await axios.get(`http://${dbUrl}/api/doctorsId/${idDoctor}`);
+    try {
+        const response = await axiosInstance.get(`doctorsId/${idDoctor}`);
+        return response;
+    } catch (error) {
+        return error.response.data.message;
+    }
 }

@@ -1,15 +1,39 @@
-import axios from 'axios';
-const dbUrl = import.meta.env.VITE_DB_URL
+import axiosInstance from './axiosInstance';
+
 export const getEspecialidades = async ({ idSede }) => {
-    return await axios.post(`http://${dbUrl}/api/allspecialties`, { idSede });
+    try {
+        const response = await axiosInstance.post(`allspecialties`, { idSede });
+        return response;
+    } catch (error) {
+        return error.response.data.message;
+    }
 };
 
 export const getEspecialidadById = async (idEspecialidad) => {
-    return await axios.get(`http://${dbUrl}/api/idspecialties/${idEspecialidad}`);
+    try {
+        const response = await axiosInstance.get(`idspecialties/${idEspecialidad}`);
+        return response;
+    } catch (error) {
+        return error.response.data.message;
+    }
 };
+
 export const getAvailableSpecialties = async ({ idSede }) => {
-    return await axios.post(`http://${dbUrl}/api/availablespecialties`, { idSede });
+    try {
+        const response = await axiosInstance.post(`availablespecialties`, { idSede });
+        return response;
+    } catch (error) {
+        return error.response.data.message;
+    }
 };
+
 export const getAllSpecialities = async () => {
-    return await axios.post(`http://${dbUrl}/api/allespecialties`);
+    try {
+        const response = await axiosInstance.post(`allespecialties`);
+        return response;
+    } catch (error) {
+        return error.response.data.message;
+    }
 };
+
+

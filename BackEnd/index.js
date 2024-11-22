@@ -10,6 +10,7 @@ import sedesRouter from './routes/sedes.routes.js';
 import adminRouter from './routes/admin.routes.js';
 import emailRoutes from './routes/email.routes.js';
 import cors from 'cors';
+import jwt from 'jsonwebtoken';
 
 // Importar las funciones de auto cancelación y auto recordatorio
 import { startAutoCancelTurnos } from './autoCancelTurnos.js'; // Cancelación de turnos cada 30 minutos
@@ -20,6 +21,26 @@ const PORT = 3000;
 
 app.use(cors());
 app.use(express.json()); // Para usar JSON en el body
+
+app.use((req, res, next) => {
+  let data = null;
+  let token = null;
+  const authHeader = req.headers.authorization;
+  if (authHeader) {
+    token = authHeader.split(" ")[1];
+  }
+  
+  req.session = { rol: null };
+  
+  try {
+    data = jwt.verify(token, "CLAVE_SUPER_SEGURISIMA");
+    req.session.rol = data.rol;
+  } catch (e) {
+    req.session.rol = null;
+  }
+  next();
+});
+
 app.use(usersRouter);
 app.use(doctorsRouter);
 app.use(specialtiesRouter);

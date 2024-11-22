@@ -1,4 +1,5 @@
 import { Router } from 'express';
+import { Paciente } from '../middleware/authorizeRole.js';
 import {
   getUsers,
   getUserByDniFecha,
@@ -10,15 +11,15 @@ import {
 
 const router = Router();
 
-router.post('/api/usersdni', getUserByDni);
+router.post('/api/usersdni', Paciente, getUserByDni);
 
 router.post('/api/usersdnifecha', getUserByDniFecha);
 
-router.get('/api/userstodos', getUsers);
+router.get('/api/userstodos', Paciente, getUsers);
 
 router.post('/api/users', createUser);
 
-router.put('/api/users/', updateUser);
+router.put('/api/users/', Paciente, updateUser);
 
 router.delete('/api/users/', deleteUser);
 
