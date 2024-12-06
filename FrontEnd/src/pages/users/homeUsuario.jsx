@@ -2,7 +2,7 @@
 import { useNavigate } from 'react-router-dom';
 import { usePacientes } from '../../context/paciente/PacientesProvider.jsx';
 import { useState, useEffect } from 'react';
-import { toast } from 'react-toastify'; // Importa toastify
+import { notifySuccess, notifyError } from '../../components/ToastConfig';
 import 'react-toastify/dist/ReactToastify.css'; // Importa los estilos de toastify
 
 function HomeUsuario() {
@@ -14,9 +14,9 @@ function HomeUsuario() {
   const handleLogin = async () => {
     try {
       await login({ dni: dniform, fechaNacimiento: fecha });
-      toast.success('¡Login exitoso!'); // Muestra mensaje de éxito
+      notifySuccess('¡Login exitoso!'); // Muestra mensaje de éxito
     } catch (error) {
-      toast.error('Error en el login, verifica tus datos.'); // Muestra mensaje de error si hay fallo
+      notifyError('Error en el login, verifica tus datos.'); // Muestra mensaje de error si hay fallo
       console.error('Error de login:', error);
     }
   };
@@ -45,7 +45,9 @@ function HomeUsuario() {
 
       {/* Contenido */}
       <div className="relative z-10 bg-white rounded-lg shadow-md w-full max-w-md p-6 space-y-4">
-        <h1 className="text-center text-2xl font-semibold text-gray-800">Bienvenido al sistema de turnos</h1>
+        <h1 className="text-center text-2xl font-semibold text-gray-800">
+          Bienvenido al sistema de turnos
+        </h1>
 
         {!dni ? (
           <div className="space-y-4">

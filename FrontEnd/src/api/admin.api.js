@@ -6,8 +6,6 @@ export const getAdmin = async ({ usuario, contra }) => {
     return await axios.post(`http://${dbUrl}/api/admin`, { usuario, contra });
 }
 
-
-
 //Doctor
 export const createDoctor = async ({ dni, duracionTurno, contra }) => {
     try {

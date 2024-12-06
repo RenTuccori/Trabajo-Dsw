@@ -1,8 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAdministracion } from '../../context/administracion/AdministracionProvider.jsx';
-import { toast } from 'react-toastify';
-import 'react-toastify/dist/ReactToastify.css';
+import { notifySuccess, notifyError } from '../../components/ToastConfig';
 
 function HomeAdmin() {
   const { idAdmin, login, comprobarToken } = useAdministracion();
@@ -17,9 +16,9 @@ function HomeAdmin() {
   const handleLogin = async () => {
     try {
       await login({ usuario, contra });
-      toast.success('¡Login exitoso!');
+      notifySuccess('¡Login exitoso!');
     } catch (error) {
-      toast.error('Error: Usuario o contraseña incorrectos');
+      notifyError('Error: Usuario o contraseña incorrectos');
     }
   };
 
@@ -29,7 +28,9 @@ function HomeAdmin() {
   const renderLoginForm = () => (
     <div className="space-y-4">
       <div className="space-y-2">
-        <p className="text-lg font-semibold text-blue-800">Ingrese su usuario</p>
+        <p className="text-lg font-semibold text-blue-800">
+          Ingrese su usuario
+        </p>
         <input
           type="text"
           value={usuario}
@@ -37,7 +38,9 @@ function HomeAdmin() {
           placeholder="Usuario"
           className="w-full border border-gray-300 rounded-lg py-2 px-4"
         />
-        <p className="text-lg font-semibold text-blue-800">Ingrese su Contraseña</p>
+        <p className="text-lg font-semibold text-blue-800">
+          Ingrese su Contraseña
+        </p>
         <input
           type="password"
           value={contra}
@@ -58,7 +61,9 @@ function HomeAdmin() {
 
   const renderMenu = () => (
     <div className="space-y-4">
-      <h2 className="text-2xl font-semibold mb-4 text-center">Menú Principal</h2>
+      <h2 className="text-2xl font-semibold mb-4 text-center">
+        Menú Principal
+      </h2>
       <button
         onClick={() => navigate('/admin/crearSede')}
         className="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition-colors"

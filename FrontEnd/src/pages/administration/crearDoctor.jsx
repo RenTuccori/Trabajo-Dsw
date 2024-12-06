@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import Select from 'react-select';
 import { useNavigate } from 'react-router-dom';
 import { useAdministracion } from '../../context/administracion/AdministracionProvider.jsx';
-import { toast } from 'react-toastify';
+import { notifySuccess, notifyError } from '../../components/ToastConfig';
 import 'react-toastify/dist/ReactToastify.css';
 
 export function CrearDoctor() {
@@ -16,7 +16,7 @@ export function CrearDoctor() {
     ObtenerOS,
     usuario,
     obrasSociales,
-    borrarDoctor
+    borrarDoctor,
   } = useAdministracion();
 
   const [dni, setDni] = useState('');
@@ -63,12 +63,12 @@ export function CrearDoctor() {
         await ObtenerUsuarioDni(dni);
         if (usuario.length !== 0) {
           setUsuarioExistente(true);
-          toast.success(
+          notifySuccess(
             'Usuario encontrado, continúe con los siguientes pasos.'
           );
         } else {
           setUsuarioExistente(false);
-          toast.info(
+          notifyError(
             'Usuario no encontrado, complete los datos para crear uno nuevo.'
           );
         }
@@ -77,17 +77,17 @@ export function CrearDoctor() {
         if (error.response && error.response.status === 404) {
           // Si es un error 404, significa que no existe el usuario, continuar como nuevo
           setUsuarioExistente(false);
-          toast.info(
+          notifyError(
             'Usuario no encontrado, complete los datos para crear uno nuevo.'
           );
           setFormularioVisible(true);
         } else {
-          toast.error('Error al buscar el usuario');
+          notifyError('Error al buscar el usuario');
           console.error('Error al buscar usuario:', error);
         }
       }
     } else {
-      toast.error('Ingrese un DNI válido');
+      notifyError('Ingrese un DNI válido');
     }
   };
 
@@ -102,25 +102,25 @@ export function CrearDoctor() {
           });
         }
         await CreaDoctor({ dni, duracionTurno, contra });
-        toast.success('¡Doctor creado con éxito!');
+        notifySuccess('¡Doctor creado con éxito!');
         navigate('/admin');
       } catch (error) {
-        toast.error('Error al crear el doctor');
+        notifyError('Error al crear el doctor');
         console.error('Error al crear doctor:', error);
       }
     } else {
-      toast.error('Complete todos los campos');
+      notifyError('Complete todos los campos');
     }
   };
 
   const handleDelete = async (idDoctor) => {
     try {
       await borrarDoctor(idDoctor);
-      toast.success(`Doctor con ID ${idDoctor} borrado.`);
+      notifySuccess(`Doctor con ID ${idDoctor} borrado.`);
       // Actualiza la lista de doctores
       await ObtenerDoctores();
     } catch (error) {
-      toast.error(`Error al borrar el doctor con ID ${idDoctor}`);
+      notifyError(`Error al borrar el doctor con ID ${idDoctor}`);
       console.error(`Error al borrar el doctor con ID ${idDoctor}:`, error);
     }
   };
@@ -132,7 +132,7 @@ export function CrearDoctor() {
       // Después de actualizar, recargar la lista de doctores
       await ObtenerDoctores();
     } catch (error) {
-      toast.error(`Error al actualizar el doctor con ID ${idDoctor}`);
+      notifyError(`Error al actualizar el doctor con ID ${idDoctor}`);
       console.error(`Error al actualizar el doctor con ID ${idDoctor}:`, error);
     }
   };
@@ -167,7 +167,9 @@ export function CrearDoctor() {
             {!usuarioExistente && (
               <form onSubmit={handleCrearDoctor} className="space-y-4">
                 <div>
-                  <p className="text-center text-gray-600 text-lg">Fecha de Nacimiento</p>
+                  <p className="text-center text-gray-600 text-lg">
+                    Fecha de Nacimiento
+                  </p>
                   <input
                     type="date"
                     name="fechaNacimiento"
@@ -233,7 +235,9 @@ export function CrearDoctor() {
                   />
                 </div>
                 <div>
-                  <p className="text-center text-gray-600 text-lg">Obra Social</p>
+                  <p className="text-center text-gray-600 text-lg">
+                    Obra Social
+                  </p>
                   <Select
                     options={obrasSociales.map((obrasocial) => ({
                       value: obrasocial.idObraSocial,
@@ -245,7 +249,9 @@ export function CrearDoctor() {
                   />
                 </div>
                 <div>
-                  <p className="text-center text-gray-600 text-lg">Duración del turno (en minutos)</p>
+                  <p className="text-center text-gray-600 text-lg">
+                    Duración del turno (en minutos)
+                  </p>
                   <input
                     type="text"
                     value={duracionTurno}
@@ -255,7 +261,9 @@ export function CrearDoctor() {
                   />
                 </div>
                 <div>
-                  <p className="text-center text-gray-600 text-lg">Contraseña</p>
+                  <p className="text-center text-gray-600 text-lg">
+                    Contraseña
+                  </p>
                   <input
                     type="password"
                     value={contra}
@@ -310,11 +318,16 @@ export function CrearDoctor() {
           Volver
         </button>
 
-        <h3 className="text-lg font-medium text-gray-800 mt-6">Doctores Creados</h3>
+        <h3 className="text-lg font-medium text-gray-800 mt-6">
+          Doctores Creados
+        </h3>
         <ul className="space-y-2">
           {doctores.length > 0 ? (
             doctores.map((doctor) => (
-              <li key={doctor.idDoctor} className="bg-gray-100 p-4 rounded-lg flex justify-between items-center">
+              <li
+                key={doctor.idDoctor}
+                className="bg-gray-100 p-4 rounded-lg flex justify-between items-center"
+              >
                 <span>
                   <strong>{doctor.nombreyapellido}</strong>
                 </span>
@@ -335,7 +348,9 @@ export function CrearDoctor() {
               </li>
             ))
           ) : (
-            <p className="text-center text-gray-600">No hay doctores creados aún.</p>
+            <p className="text-center text-gray-600">
+              No hay doctores creados aún.
+            </p>
           )}
         </ul>
       </div>

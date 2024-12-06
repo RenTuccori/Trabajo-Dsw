@@ -1,24 +1,25 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { usePacientes } from "../../context/paciente/PacientesProvider";
-import Select from "react-select";
-import Swal from "sweetalert2"; // Importa SweetAlert2
-import { toast } from "react-toastify"; // Importa toast
+import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { usePacientes } from '../../context/paciente/PacientesProvider';
+import Select from 'react-select';
+import { notifyError } from '../../components/ToastConfig';
+import { confirmDialog } from '../../components/SwalConfig';
 
 export function DatosPersonales() {
-  const { login, obraSociales, ObtenerObraSociales, CrearUsuario } = usePacientes();
+  const { login, obraSociales, ObtenerObraSociales, CrearUsuario } =
+    usePacientes();
   const [selectedObraSociales, setSelectedObraSociales] = useState(null);
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
-    dni: "",
-    fechaNacimiento: "",
-    nombre: "",
-    apellido: "",
-    telefono: "",
-    email: "",
-    direccion: "",
-    idObraSocial: "",
+    dni: '',
+    fechaNacimiento: '',
+    nombre: '',
+    apellido: '',
+    telefono: '',
+    email: '',
+    direccion: '',
+    idObraSocial: '',
   });
 
   const handleInputChange = (e) => {
@@ -36,17 +37,11 @@ export function DatosPersonales() {
       login({ dni: formData.dni, fechaNacimiento: formData.fechaNacimiento });
 
       // Muestra el mensaje de éxito con SweetAlert2
-      Swal.fire({
-        icon: "success",
-        title: "¡Registro exitoso!",
-        text: "El usuario ha sido registrado correctamente.",
-        confirmButtonColor: "#3085d6",
-        confirmButtonText: "Aceptar",
-      }).then(() => {
-        navigate("/paciente"); // Navega después de confirmar
+      confirmDialog().then(() => {
+        navigate('/paciente'); // Navega después de confirmar
       });
     } catch (error) {
-      toast.error("Hubo un error al registrar el usuario. Intente nuevamente.");
+      notifyError('Hubo un error al registrar el usuario. Intente nuevamente.');
     }
   };
 
@@ -78,7 +73,9 @@ export function DatosPersonales() {
             />
           </div>
           <div>
-            <p className="text-center text-gray-600 text-lg">Fecha de Nacimiento</p>
+            <p className="text-center text-gray-600 text-lg">
+              Fecha de Nacimiento
+            </p>
             <input
               type="date"
               name="fechaNacimiento"

@@ -1,8 +1,8 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useDoctores } from '../../context/doctores/DoctoresProvider.jsx';
-import { toast } from 'react-toastify';  // Importar react-toastify
 import 'react-toastify/dist/ReactToastify.css'; // Importar los estilos de react-toastify
+import { notifySuccess, notifyError } from '../../components/ToastConfig';
 
 function HomeDoctor() {
   const { idDoctor, login, comprobarToken } = useDoctores();
@@ -14,20 +14,12 @@ function HomeDoctor() {
   const handleLogin = async () => {
     try {
       await login({ dni, contra });
-
-      // Si el login es exitoso, mostrar el toast de éxito
-      toast.success('¡Login exitoso!', {
-        position: 'top-center',
-        autoClose: 3000,
-        hideProgressBar: true,
-        pauseOnHover: false,
-        draggable: true,
-        theme: 'colored',
-      });
-
+      notifySuccess('¡Login exitoso!');
     } catch (error) {
       console.error('Error al iniciar sesión', error);
-      // Puedes agregar un toast de error aquí si lo deseas
+
+      // Usar el toast de error importado
+      notifyError('Error al iniciar sesión');
     }
   };
 
@@ -49,9 +41,13 @@ function HomeDoctor() {
       <div className="bg-white rounded-lg shadow-md w-full max-w-md p-6 space-y-4">
         {!idDoctor ? (
           <div className="space-y-4">
-            <p className="text-center text-gray-600 text-lg font-bold">Ingrese sus datos</p>
+            <p className="text-center text-gray-600 text-lg font-bold">
+              Ingrese sus datos
+            </p>
             <div className="space-y-4">
-              <p className="text-center text-gray-600 text-lg">Ingrese su DNI</p>
+              <p className="text-center text-gray-600 text-lg">
+                Ingrese su DNI
+              </p>
               <input
                 type="text"
                 value={dni}
@@ -59,7 +55,9 @@ function HomeDoctor() {
                 placeholder="DNI"
                 className="w-full border border-gray-300 rounded-lg p-2"
               />
-              <p className="text-center text-gray-600 text-lg">Ingrese su Contraseña</p>
+              <p className="text-center text-gray-600 text-lg">
+                Ingrese su Contraseña
+              </p>
               <input
                 type="password"
                 value={contra}
@@ -78,7 +76,6 @@ function HomeDoctor() {
           </div>
         ) : (
           <div className="space-y-4">
-
             <div className="flex flex-col space-y-2">
               <button
                 onClick={() => navigate('turnoshoy')}

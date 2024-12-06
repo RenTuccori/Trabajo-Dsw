@@ -2,8 +2,8 @@ import Select from 'react-select';
 import { useAdministracion } from '../../context/administracion/AdministracionProvider.jsx';
 import { useNavigate } from 'react-router-dom';
 import { useEffect, useState } from 'react';
-import { toast } from 'react-toastify';
-import Swal from 'sweetalert2';
+import { notifySuccess, notifyError } from '../../components/ToastConfig';
+import { confirmDialog } from '../../components/SwalConfig';
 
 export function AsignarCombinacion() {
   const navigate = useNavigate();
@@ -17,7 +17,7 @@ export function AsignarCombinacion() {
     crearSedEspDoc,
     borrarSedEspDoc,
     combinaciones, // Asume que tienes una lista de combinaciones en tu contexto
-    obtenerCombinaciones // Asume que tienes una función para obtener combinaciones
+    obtenerCombinaciones, // Asume que tienes una función para obtener combinaciones
   } = useAdministracion();
 
   const [selectedSede, setSelectedSede] = useState(null);
@@ -80,16 +80,10 @@ export function AsignarCombinacion() {
 
   const confirmarCombinacion = async () => {
     if (selectedSede && selectedEspecialidad && selectedDoctor) {
-      const result = await Swal.fire({
-        title: '¿Estás seguro?',
-        text: '¿Deseas confirmar la asignación?',
-        icon: 'warning',
-        showCancelButton: true,
-        confirmButtonColor: '#3085d6',
-        cancelButtonColor: '#d33',
-        confirmButtonText: 'Sí, confirmar',
-        cancelButtonText: 'Cancelar',
-      });
+      const result = await confirmDialog(
+        '¿Está seguro?',
+        'Esta acción no se puede deshacer.'
+      );
 
       if (result.isConfirmed) {
         try {
@@ -99,40 +93,34 @@ export function AsignarCombinacion() {
             idDoctor: selectedDoctor.value,
           });
 
-          toast.success('¡Combinación creada con éxito!');
+          notifySuccess('¡Combinación creada con éxito!');
           // Refresca las combinaciones después de la creación
           obtenerCombinaciones();
         } catch (error) {
           if (error.response && error.response.status === 400) {
-            toast.error(error.response.data.message);
+            notifyError(error.response.data.message);
           } else {
-            toast.error('Error al crear la combinación');
+            notifyError('Error al crear la combinación');
           }
         }
       }
     }
   };
 
-  const handleDeleteCombinacion = async (idSede,idDoctor,idEspecialidad) => {
-    const result = await Swal.fire({
-      title: '¿Estás seguro?',
-      text: '¿Deseas eliminar esta combinación?',
-      icon: 'warning',
-      showCancelButton: true,
-      confirmButtonColor: '#3085d6',
-      cancelButtonColor: '#d33',
-      confirmButtonText: 'Sí, eliminar',
-      cancelButtonText: 'Cancelar',
-    });
+  const handleDeleteCombinacion = async (idSede, idDoctor, idEspecialidad) => {
+    const result = await confirmDialog(
+      '¿Estás seguro?',
+      '¿Deseas eliminar esta combinación?'
+    );
 
     if (result.isConfirmed) {
       try {
-        await borrarSedEspDoc({idSede,idDoctor,idEspecialidad});
-        toast.success('¡Combinación eliminada con éxito!');
+        await borrarSedEspDoc({ idSede, idDoctor, idEspecialidad });
+        notifySuccess('¡Combinación eliminada con éxito!');
         // Refresca las combinaciones después de la eliminación
         obtenerCombinaciones();
       } catch (error) {
-        toast.error('Error al eliminar la combinación');
+        notifySuccess('Error al eliminar la combinación');
       }
     }
   };
@@ -149,10 +137,14 @@ export function AsignarCombinacion() {
             <label className="text-gray-700">Sede</label>
             <Select
               className="select"
-              options={Array.isArray(sedes) ? sedes.map((sede) => ({
-                value: sede.idSede,
-                label: sede.nombre,
-              })) : []}
+              options={
+                Array.isArray(sedes)
+                  ? sedes.map((sede) => ({
+                      value: sede.idSede,
+                      label: sede.nombre,
+                    }))
+                  : []
+              }
               onChange={handleSedeChange}
               value={selectedSede}
               styles={customStyles}
@@ -164,10 +156,14 @@ export function AsignarCombinacion() {
             <label className="text-gray-700">Especialidad</label>
             <Select
               className="select"
-              options={Array.isArray(especialidades) ? especialidades.map((especialidad) => ({
-                value: especialidad.idEspecialidad,
-                label: especialidad.nombre,
-              })) : []}
+              options={
+                Array.isArray(especialidades)
+                  ? especialidades.map((especialidad) => ({
+                      value: especialidad.idEspecialidad,
+                      label: especialidad.nombre,
+                    }))
+                  : []
+              }
               onChange={handleEspecilidadChange}
               value={selectedEspecialidad}
               isDisabled={!selectedSede}
@@ -180,10 +176,14 @@ export function AsignarCombinacion() {
             <label className="text-gray-700">Doctor</label>
             <Select
               className="select"
-              options={Array.isArray(doctores) ? doctores.map((doctor) => ({
-                value: doctor.idDoctor,
-                label: doctor.nombreyapellido,
-              })) : []}
+              options={
+                Array.isArray(doctores)
+                  ? doctores.map((doctor) => ({
+                      value: doctor.idDoctor,
+                      label: doctor.nombreyapellido,
+                    }))
+                  : []
+              }
               onChange={handleDoctorChange}
               value={selectedDoctor}
               isDisabled={!selectedEspecialidad}
@@ -214,38 +214,53 @@ export function AsignarCombinacion() {
 
         {/* Lista de combinaciones */}
         <div>
-          <h2 className="text-lg font-semibold mb-4">Combinaciones Asignadas</h2>
+          <h2 className="text-lg font-semibold mb-4">
+            Combinaciones Asignadas
+          </h2>
           <ul className="space-y-2 bg-white rounded-lg shadow-md p-4">
-            {combinaciones && combinaciones.map((combinacion, index) => (
-              <li key={index} className="flex justify-between items-center bg-gray-100 p-2 rounded-md">
-                <span>{`Sede: ${combinacion.nombreSede}, Especialidad: ${combinacion.nombreEspecialidad}, Doctor: ${combinacion.nombreDoctor} ${combinacion.apellidoDoctor}`}</span>
-                <div className="flex space-x-4">
-                  {/* Botón de Eliminar */}
-                  <button
-                    className="text-red-600 hover:text-red-800"
-                    onClick={() => handleDeleteCombinacion(combinacion.idSede, combinacion.idDoctor, combinacion.idEspecialidad)}
-                  >
-                    Eliminar
-                  </button>
+            {combinaciones &&
+              combinaciones.map((combinacion, index) => (
+                <li
+                  key={index}
+                  className="flex justify-between items-center bg-gray-100 p-2 rounded-md"
+                >
+                  <span>{`Sede: ${combinacion.nombreSede}, Especialidad: ${combinacion.nombreEspecialidad}, Doctor: ${combinacion.nombreDoctor} ${combinacion.apellidoDoctor}`}</span>
+                  <div className="flex space-x-4">
+                    {/* Botón de Eliminar */}
+                    <button
+                      className="text-red-600 hover:text-red-800"
+                      onClick={() =>
+                        handleDeleteCombinacion(
+                          combinacion.idSede,
+                          combinacion.idDoctor,
+                          combinacion.idEspecialidad
+                        )
+                      }
+                    >
+                      Eliminar
+                    </button>
 
-                  {/* Botón de Agregar Horarios */}
-                  <button
-                    className="text-blue-600 hover:text-blue-800"
-                    onClick={() => {
-                      const data = {
-                        idSede: combinacion.idSede,
-                        idEspecialidad: combinacion.idEspecialidad,
-                        idDoctor: combinacion.idDoctor
-                      };
-                      console.log('Datos a enviar para agregar horarios:', data); // Log de los datos que se envían
-                      navigate(`/admin/horarios`, { state: data });
-                    }}
-                  >
-                    Agregar horarios
-                  </button>
-                </div>
-              </li>
-            ))}
+                    {/* Botón de Agregar Horarios */}
+                    <button
+                      className="text-blue-600 hover:text-blue-800"
+                      onClick={() => {
+                        const data = {
+                          idSede: combinacion.idSede,
+                          idEspecialidad: combinacion.idEspecialidad,
+                          idDoctor: combinacion.idDoctor,
+                        };
+                        console.log(
+                          'Datos a enviar para agregar horarios:',
+                          data
+                        ); // Log de los datos que se envían
+                        navigate(`/admin/horarios`, { state: data });
+                      }}
+                    >
+                      Agregar horarios
+                    </button>
+                  </div>
+                </li>
+              ))}
           </ul>
         </div>
       </div>

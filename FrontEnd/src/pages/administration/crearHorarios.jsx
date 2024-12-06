@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { toast } from 'react-toastify';
-import Swal from 'sweetalert2';
+import { notifySuccess, notifyError } from '../../components/ToastConfig';
+import { confirmDialog } from '../../components/SwalConfig';
 import { useAdministracion } from '../../context/administracion/AdministracionProvider.jsx';
 
 export function CrearHorarios() {
@@ -31,21 +31,21 @@ export function CrearHorarios() {
       } catch (error) {
         if (error.response && error.response.status === 404) {
           // Manejo específico para el error 404
-          toast.info(
+          notifyError(
             'No se encontraron horarios para este doctor. Puedes crear nuevos horarios.'
           );
         } else {
           // Manejo para otros tipos de errores
-          toast.error('Error al cargar los horarios');
+          notifyError('Error al cargar los horarios');
         }
       }
     };
 
     if (idSede && idEspecialidad && idDoctor) {
-      console.log("cargando horarios")
+      console.log('cargando horarios');
       cargarHorarios();
     } else {
-      toast.error('Faltan datos para cargar horarios');
+      notifyError('Faltan datos para cargar horarios');
     }
   }, [idSede, idEspecialidad, idDoctor]);
 
@@ -80,20 +80,14 @@ export function CrearHorarios() {
     );
 
     if (horariosValidos.length === 0) {
-      toast.error('Debes ingresar al menos un horario válido.');
+      notifyError('Debes ingresar al menos un horario válido.');
       return;
     }
 
-    const result = await Swal.fire({
-      title: '¿Estás seguro?',
-      text: '¿Deseas confirmar los horarios ingresados?',
-      icon: 'warning',
-      showCancelButton: true,
-      confirmButtonColor: '#3085d6',
-      cancelButtonColor: '#d33',
-      confirmButtonText: 'Sí, confirmar',
-      cancelButtonText: 'Cancelar',
-    });
+    const result = await confirmDialog(
+      '¿Estás seguro?',
+      '¿Deseas confirmar los horarios ingresados?'
+    );
 
     if (result.isConfirmed) {
       try {
@@ -134,10 +128,10 @@ export function CrearHorarios() {
             });
           }
         }
-        toast.success('Horarios guardados exitosamente');
+        notifySuccess('Horarios guardados exitosamente');
         navigate('/admin/combinacion');
       } catch (error) {
-        toast.error('Error al guardar los horarios.');
+        notifyError('Error al guardar los horarios.');
       }
     }
   };

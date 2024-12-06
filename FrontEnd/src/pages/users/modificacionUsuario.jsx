@@ -2,8 +2,8 @@ import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Select from 'react-select';
 import { usePacientes } from '../../context/paciente/PacientesProvider';
-import Swal from 'sweetalert2'; // Importa SweetAlert2
-import { toast } from 'react-toastify'; // Importa toast
+import { confirmDialog } from '../../components/SwalConfig.jsx';
+import { notifySuccess } from '../../components/ToastConfig';
 
 export function EditarDatosPersonales() {
   const {
@@ -39,27 +39,21 @@ export function EditarDatosPersonales() {
     e.preventDefault();
 
     // Alerta de confirmación
-    const result = await Swal.fire({
-      title: 'Guardar Cambios',
-      text: '¿Estás seguro que deseas guardar los cambios?',
-      icon: 'warning',
-      showCancelButton: true,
-      confirmButtonColor: '#3085d6',
-      cancelButtonColor: '#d33',
-      confirmButtonText: 'Sí, guardar',
-      cancelButtonText: 'Cancelar',
-    });
+    const result = await confirmDialog(
+      'Guardar Cambios',
+      '¿Estás seguro que deseas guardar los cambios?'
+    );
 
     if (result.isConfirmed) {
       const response = await ActualizarUsuario(formData);
 
       if (response.data) {
         console.log('Usuario actualizado con éxito');
-        toast.success('Usuario actualizado con éxito'); // Toast de éxito
+        notifySuccess('Usuario actualizado con éxito'); // Toast de éxito
         navigate('/paciente');
       } else {
         console.log('Error al actualizar usuario');
-        Swal.fire('Error', 'No se pudo actualizar el usuario', 'error'); // Mensaje de error
+        confirmDialog('Error', 'No se pudo actualizar el usuario', 'error'); // Mensaje de error
       }
     }
   };
@@ -161,9 +155,9 @@ export function EditarDatosPersonales() {
           <div>
             <p className="text-center text-gray-600 text-lg">Obra Social</p>
             <Select
-              options={obraSociales.map(obrasociales => ({
+              options={obraSociales.map((obrasociales) => ({
                 value: obrasociales.idObraSocial,
-                label: obrasociales.nombre
+                label: obrasociales.nombre,
               }))}
               onChange={handleObraSocialChange}
               value={selectedObraSociales}
