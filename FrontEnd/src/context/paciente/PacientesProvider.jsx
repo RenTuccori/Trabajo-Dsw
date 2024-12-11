@@ -1,7 +1,6 @@
 import { useState, useContext, useEffect } from "react";
 import PropTypes from "prop-types";
-import { useNavigate } from "react-router-dom";
-import { jwtDecode } from "jwt-decode";
+import { useAuth } from "../global/AuthProvider";
 
 import { PacientesContext } from "./PacientesContext";
 import { getSedes } from "../../api/sedes.api";
@@ -11,12 +10,7 @@ import {
 } from "../../api/especialidades.api";
 import { getDoctors, getDoctorById } from "../../api/doctores.api";
 import { getFechasDispTodos, getHorariosDisp } from "../../api/horarios.api";
-import {
-  getUserDniFecha,
-  createUser,
-  getUserDni,
-  updateUser,
-} from "../../api/usuarios.api";
+import { createUser, getUserDni, updateUser } from "../../api/usuarios.api";
 import { getObrasSociales } from "../../api/obrasociales.api";
 import { createPaciente, getPacienteDni } from "../../api/pacientes.api";
 import { getSedeById } from "../../api/sedes.api";
@@ -38,13 +32,11 @@ export const usePacientes = () => {
 
 const PacientesProvider = ({ children }) => {
   //proveedor para acceder a los datos de los empleados desde cualquier componente
-  const navigate = useNavigate();
   const [sedes, setSedes] = useState([]);
   const [especialidades, setEspecialidades] = useState([]);
   const [doctores, setDoctores] = useState([]);
   const [fechas, setFechas] = useState([]);
   const [horarios, setHorarios] = useState([]);
-  const [dni, setDni] = useState("");
   const [obraSociales, setObraSociales] = useState([]);
   const [usuario, setUsuario] = useState({});
   const [idPacienteCreado, setidPacienteCreado] = useState("");
@@ -64,6 +56,8 @@ const PacientesProvider = ({ children }) => {
   const [turnos, setTurnos] = useState([]);
   const [usuarioDni, setUsuarioDni] = useState({});
   const [mailUsuario, setMailUsuario] = useState("");
+
+  const { dni } = useAuth();
 
   async function ActualizarUsuario(data) {
     const response = await updateUser(data);
@@ -118,45 +112,11 @@ const PacientesProvider = ({ children }) => {
     setHorarios(response.data);
   }
 
-  async function login({ dni, fechaNacimiento }) {
-    try {
-      const response = await getUserDniFecha({ dni, fechaNacimiento });
-      const token = response.data;
-      localStorage.setItem("token", token);
-      const decoded = jwtDecode(token);
-      setDni(decoded.dni);
-    } catch (error) {
-      setDni(null);
-      throw error;
-    }
-  }
-
   useEffect(() => {
     if (dni) {
       ObtenerPacienteDni();
     }
   }, [dni]);
-
-  function comprobarToken() {
-    if (localStorage.getItem("token")) {
-      try {
-        const decoded = jwtDecode(localStorage.getItem("token"));
-        if (decoded.exp < Date.now() / 1000) {
-          console.error("Token expired");
-          localStorage.removeItem("token");
-          navigate("/");
-        } else {
-          setDni(decoded.dni);
-        }
-      } catch (error) {
-        console.error("Error decoding token:", error);
-        localStorage.removeItem("token");
-        navigate("/");
-      }
-    } else {
-      setDni("");
-    }
-  }
 
   async function ObtenerObraSociales() {
     const response = await getObrasSociales();
@@ -254,8 +214,6 @@ const PacientesProvider = ({ children }) => {
         ObtenerFechas,
         horarios,
         ObtenerHorarios,
-        login,
-        dni,
         obraSociales,
         ObtenerObraSociales,
         idPacienteCreado,
@@ -263,7 +221,6 @@ const PacientesProvider = ({ children }) => {
         usuario,
         CrearPaciente,
         CrearUsuario,
-        comprobarToken,
         ObtenerDoctorId,
         ObtenerEspecialidadId,
         ObtenerSedeId,

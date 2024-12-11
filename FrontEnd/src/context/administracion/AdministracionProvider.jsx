@@ -1,6 +1,5 @@
 import { AdministracionContext } from './AdministracionContext';
 import {
-  getAdmin,
   createSede,
   deleteSede,
   createSpecialty,
@@ -18,7 +17,7 @@ import {
   getHorariosXDoctor,
   updateHorarios,
 } from '../../api/admin.api.js'; // Asegúrate de tener una función para crear la sede en la API
-import { useContext, useEffect, useState } from 'react';
+import { useContext, useState } from 'react';
 import { getSedes } from '../../api/sedes.api.js';
 import {
   getEspecialidades,
@@ -27,9 +26,7 @@ import {
 import { getDoctores, getDoctorById } from '../../api/doctores.api';
 import { getObrasSociales } from '../../api/obrasociales.api.js';
 import { getUserDni, createUser, updateUser } from '../../api/usuarios.api.js';
-import { jwtDecode } from 'jwt-decode';
 import PropTypes from 'prop-types';
-import { useNavigate } from 'react-router-dom';
 // eslint-disable-next-line react-refresh/only-export-components
 export const useAdministracion = () => {
   const context = useContext(AdministracionContext);
@@ -42,7 +39,6 @@ export const useAdministracion = () => {
 };
 
 const AdministracionProvider = ({ children }) => {
-  const [idAdmin, setIdAdmin] = useState('');
   const [sedes, setSedes] = useState([]); // Estado para almacenar las sedes
   const [especialidades, setEspecialidades] = useState('');
   const [obrasSociales, setObrasSociales] = useState('');
@@ -54,42 +50,8 @@ const AdministracionProvider = ({ children }) => {
   const [selectedSede, setSelectedSede] = useState(null);
   const [combinaciones, setCombinaciones] = useState([]);
   const [horariosDoctor, setHorariosDoctor] = useState([]);
-  const navigate = useNavigate(); // Hook de React Router para navegar entre rutas
 
-  useEffect(() => {
-    comprobarToken();
-    // Podrías llamar a una función para obtener las sedes al cargar el componente
-  }, []);
 
-  async function login({ usuario, contra }) {
-    const response = await getAdmin({ usuario, contra });
-    const token = response.data;
-    localStorage.setItem('token', token);
-    const decoded = jwtDecode(token);
-    setIdAdmin(decoded.idAdmin);
-    //window.location.reload(); // Recarga la página para que se actualice el rol globalmente en los componentes hijos
-  }
-
-  function comprobarToken() {
-    if (localStorage.getItem('token')) {
-      try {
-        const decoded = jwtDecode(localStorage.getItem('token'));
-        if (decoded.exp < Date.now() / 1000) {
-          console.error('Token expired');
-          localStorage.removeItem('token');
-          navigate('/');
-        } else {
-          setIdAdmin(decoded.idAdmin);
-        }
-      } catch (error) {
-        console.error('Error decoding token:', error);
-        localStorage.removeItem('token');
-        navigate('/');
-      }
-    } else {
-      setIdAdmin('');
-    }
-  }
 
   async function crearNuevaSede({ nombre, direccion }) {
     try {
@@ -378,9 +340,6 @@ const AdministracionProvider = ({ children }) => {
     <AdministracionContext.Provider
       value={{
         actualizarUsuario,
-        login,
-        comprobarToken,
-        idAdmin,
         sedes,
         crearNuevaSede,
         ObtenerSedes,

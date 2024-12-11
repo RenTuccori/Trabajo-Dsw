@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useDoctores } from '../../context/doctores/DoctoresProvider.jsx';
+import { useAuth } from '../../context/global/AuthProvider';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import { useNavigate } from 'react-router-dom';
@@ -9,11 +10,14 @@ import { useNavigate } from 'react-router-dom';
 export function VerTurnosDoctorFecha() {
     const navigate = useNavigate();
     const [selectedFecha, setSelectedFecha] = useState(null);
-    const { fechas, Historico, turnosFecha, Fecha, comprobarToken } = useDoctores();
+    const { fechas, Historico, turnosFecha, Fecha} = useDoctores();
+      const {
+    comprobarToken
+  } = useAuth();
 
     // Llamar a obtenerTurnos cuando se monta el componente
     useEffect(() => {
-        comprobarToken();
+        comprobarToken('D');
         Historico();
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);

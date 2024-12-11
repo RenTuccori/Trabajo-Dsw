@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Select from 'react-select';
 import { usePacientes } from '../../context/paciente/PacientesProvider';
+import { useAuth } from '../../context/global/AuthProvider';
 import { confirmDialog } from '../../components/SwalConfig.jsx';
 import { notifySuccess } from '../../components/ToastConfig';
 
@@ -9,11 +10,13 @@ export function EditarDatosPersonales() {
   const {
     usuarioDni,
     ObtenerUsuarioDni,
-    comprobarToken,
     ObtenerObraSociales,
     obraSociales,
     ActualizarUsuario,
   } = usePacientes();
+    const {
+    comprobarToken
+  } = useAuth();
   const [selectedObraSociales, setSelectedObraSociales] = useState(null);
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
@@ -59,10 +62,10 @@ export function EditarDatosPersonales() {
   };
 
   useEffect(() => {
-    comprobarToken();
+    comprobarToken('P');
     ObtenerObraSociales();
     ObtenerUsuarioDni();
-  }, []);
+  }, []); 
 
   useEffect(() => {
     if (usuarioDni && obraSociales.length > 0) {

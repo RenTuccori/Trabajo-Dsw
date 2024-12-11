@@ -3,6 +3,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { notifySuccess, notifyError } from '../../components/ToastConfig';
 import { confirmDialog } from '../../components/SwalConfig';
 import { useAdministracion } from '../../context/administracion/AdministracionProvider.jsx';
+import { useAuth } from '../../context/global/AuthProvider';
 
 export function CrearHorarios() {
   const navigate = useNavigate();
@@ -10,12 +11,13 @@ export function CrearHorarios() {
   const { idSede, idEspecialidad, idDoctor } = location.state || {};
 
   const diasSemana = ['lunes', 'martes', 'miércoles', 'jueves', 'viernes'];
-
+  const {
+    comprobarToken
+  } = useAuth();
   const {
     obtenerHorariosXDoctor,
     crearHorarios,
     horariosDoctor,
-    comprobarToken,
     actualizarHorarios,
   } = useAdministracion();
   const [horarios, setHorarios] = useState(
@@ -26,7 +28,7 @@ export function CrearHorarios() {
   useEffect(() => {
     const cargarHorarios = async () => {
       try {
-        await comprobarToken();
+        await comprobarToken('A');
         await obtenerHorariosXDoctor({ idSede, idEspecialidad, idDoctor });
       } catch (error) {
         if (error.response && error.response.status === 404) {

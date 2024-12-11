@@ -1,25 +1,30 @@
 // src/pages/home.jsx
 import { useNavigate } from 'react-router-dom';
-import { usePacientes } from '../../context/paciente/PacientesProvider.jsx';
-import { useState, useEffect } from 'react';
+import { useAuth } from '../../context/global/AuthProvider';
+import { useState, useEffect} from 'react';
 import { notifySuccess, notifyError } from '../../components/ToastConfig';
 import 'react-toastify/dist/ReactToastify.css'; // Importa los estilos de toastify
 
 function HomeUsuario() {
   const navigate = useNavigate();
-  const { dni, login, comprobarToken } = usePacientes();
+  const { dni, login, comprobarToken} = useAuth();
   const [dniform, setDni] = useState('');
   const [fecha, setFecha] = useState('');
 
   const handleLogin = async () => {
     try {
-      await login({ dni: dniform, fechaNacimiento: fecha });
+      await login({ identifier: dniform, credential: fecha, userType : 'P'});
       notifySuccess('¡Login exitoso!'); // Muestra mensaje de éxito
     } catch (error) {
       notifyError('Error en el login, verifica tus datos.'); // Muestra mensaje de error si hay fallo
       console.error('Error de login:', error);
     }
   };
+  useEffect(() => {
+    comprobarToken('P');
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
 
   const handleDniChange = (event) => {
     setDni(event.target.value);
@@ -28,11 +33,6 @@ function HomeUsuario() {
   const handleFechaChange = (event) => {
     setFecha(event.target.value);
   };
-
-  useEffect(() => {
-    comprobarToken();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
 
   return (
     <div className="relative min-h-screen bg-gradient-to-b from-blue-100 to-white flex items-center justify-center p-4">

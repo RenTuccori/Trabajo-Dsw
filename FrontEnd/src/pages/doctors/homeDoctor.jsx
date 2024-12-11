@@ -1,25 +1,25 @@
-import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { useDoctores } from '../../context/doctores/DoctoresProvider.jsx';
-import 'react-toastify/dist/ReactToastify.css'; // Importar los estilos de react-toastify
-import { notifySuccess, notifyError } from '../../components/ToastConfig';
+import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import "react-toastify/dist/ReactToastify.css"; // Importar los estilos de react-toastify
+import { notifySuccess, notifyError } from "../../components/ToastConfig";
+import { useAuth } from "../../context/global/AuthProvider";
 
 function HomeDoctor() {
-  const { idDoctor, login, comprobarToken } = useDoctores();
-  const [dni, setDni] = useState('');
-  const [contra, setContra] = useState('');
+  const { idDoctor, login, comprobarToken } = useAuth();
+  const [dni, setDni] = useState("");
+  const [contra, setContra] = useState("");
   const navigate = useNavigate();
 
   // Manejo del login con toast de éxito
   const handleLogin = async () => {
     try {
-      await login({ dni, contra });
-      notifySuccess('¡Login exitoso!');
+      await login({ identifier: dni, credential: contra, userType: "D" });
+      notifySuccess("¡Login exitoso!");
     } catch (error) {
-      console.error('Error al iniciar sesión', error);
+      console.error("Error al iniciar sesión", error);
 
       // Usar el toast de error importado
-      notifyError('Error al iniciar sesión');
+      notifyError("Error al iniciar sesión");
     }
   };
 
@@ -32,7 +32,7 @@ function HomeDoctor() {
   };
 
   useEffect(() => {
-    comprobarToken();
+    comprobarToken("D");
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -78,19 +78,19 @@ function HomeDoctor() {
           <div className="space-y-4">
             <div className="flex flex-col space-y-2">
               <button
-                onClick={() => navigate('turnoshoy')}
+                onClick={() => navigate("turnoshoy")}
                 className="bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition-colors"
               >
                 Turnos de hoy
               </button>
               <button
-                onClick={() => navigate('turnosfecha')}
+                onClick={() => navigate("turnosfecha")}
                 className="bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition-colors"
               >
                 Turnos por Fecha
               </button>
               <button
-                onClick={() => navigate('turnoshist')}
+                onClick={() => navigate("turnoshist")}
                 className="bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition-colors"
               >
                 Historial Turnos
@@ -99,7 +99,7 @@ function HomeDoctor() {
             <button
               onClick={() => {
                 localStorage.clear();
-                navigate('/');
+                navigate("/");
               }}
               className="w-full bg-gray-200 text-gray-700 py-2 rounded-lg hover:bg-gray-300 transition-colors"
             >

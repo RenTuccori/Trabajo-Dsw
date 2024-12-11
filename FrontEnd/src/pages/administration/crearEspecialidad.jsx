@@ -1,9 +1,9 @@
-import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { useAdministracion } from '../../context/administracion/AdministracionProvider.jsx';
-import { notifySuccess, notifyError } from '../../components/ToastConfig';
-import 'react-toastify/dist/ReactToastify.css'; // Importé los estilos de toastify
-import { confirmDialog } from '../../components/SwalConfig';
+import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import { useAdministracion } from "../../context/administracion/AdministracionProvider.jsx";
+import { notifySuccess, notifyError } from "../../components/ToastConfig";
+import "react-toastify/dist/ReactToastify.css"; // Importé los estilos de toastify
+import { confirmDialog } from "../../components/SwalConfig";
 
 export function CrearEspecialidad() {
   const navigate = useNavigate();
@@ -13,7 +13,7 @@ export function CrearEspecialidad() {
     ObtenerEspecialidadesDisponibles,
     borrarEspecialidad,
   } = useAdministracion();
-  const [nombreEspecialidad, setNombreEspecialidad] = useState('');
+  const [nombreEspecialidad, setNombreEspecialidad] = useState("");
 
   // Obtener especialidades al cargar el componente
   useEffect(() => {
@@ -24,33 +24,33 @@ export function CrearEspecialidad() {
   // Manejar la creación de una nueva especialidad
   const handleCrearEspecialidad = async (e) => {
     e.preventDefault();
-    if (nombreEspecialidad.trim() !== '') {
+    if (nombreEspecialidad.trim() !== "") {
       try {
         await crearEspecialidad({ nombre: nombreEspecialidad });
-        setNombreEspecialidad(''); // Reiniciar el campo de texto
-        notifySuccess('¡Especialidad creada con éxito!');
+        setNombreEspecialidad(""); // Reiniciar el campo de texto
+        notifySuccess("¡Especialidad creada con éxito!");
         ObtenerEspecialidadesDisponibles(); // Actualizar la lista después de crear una especialidad
       } catch (error) {
-        notifyError('Error al crear la especialidad');
-        console.error('Error al crear especialidad:', error);
+        notifyError("Error al crear la especialidad");
+        console.error("Error al crear especialidad:", error);
       }
     }
   };
 
   const handleBorrarEspecialidad = async (idEspecialidad) => {
     const result = await confirmDialog(
-      '¿Está seguro?',
-      'Esta acción no se puede deshacer.'
+      "¿Está seguro?",
+      "Esta acción no se puede deshacer."
     );
 
     if (result.isConfirmed) {
       try {
         await borrarEspecialidad(idEspecialidad);
-        notifySuccess('¡Especialidad eliminada con éxito!');
+        notifySuccess("¡Especialidad eliminada con éxito!");
         ObtenerEspecialidadesDisponibles(); // Actualizar la lista después de borrar una especialidad
       } catch (error) {
-        notifyError('Error al eliminar la especialidad');
-        console.error('Error al borrar especialidad:', error);
+        notifyError("Error al eliminar la especialidad");
+        console.error("Error al borrar especialidad:", error);
       }
     }
   };
@@ -80,7 +80,7 @@ export function CrearEspecialidad() {
 
         <button
           type="button"
-          onClick={() => navigate('/admin')}
+          onClick={() => navigate("/admin")}
           className="w-full bg-gray-200 text-gray-700 py-2 rounded-lg hover:bg-gray-300 transition-colors mt-4"
         >
           Volver

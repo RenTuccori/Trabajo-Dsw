@@ -6,18 +6,26 @@ import { DatosPersonales } from "../pages/users/datospersonales.jsx";
 import { EditarDatosPersonales } from "../pages/users/modificacionUsuario.jsx";
 import { TurnosPersonales } from "../pages/users/verTurnosPaciente.jsx";
 import { ConfirmacionTurno } from "../pages/users/confirmacionTurno";
+import { Validacion } from './validacion.jsx';
+import { useAuth } from '../context/global/AuthProvider.jsx';
+
 
 export function PacientesRoutes() {
+  const {rol} = useAuth();
   return (
     <PacientesProvider>
       <Routes>
         <Route path="/" element={<HomeUsuario/>} />
-        <Route path="/sacarturno" element={<SacarTurno />} />
         <Route path="/datospersonales" element={<DatosPersonales />} />
-        <Route path="/editardatospersonales" element={<EditarDatosPersonales />} />
-        <Route path="/confirmacionturno" element={<ConfirmacionTurno />} />
-        <Route path="/verturnos" element={<TurnosPersonales />} />
       </Routes>
+      <Validacion rol={rol} esperado={'P'}>
+        <Routes>
+          <Route path="/sacarturno" element={<SacarTurno />} />
+          <Route path="/editardatospersonales" element={<EditarDatosPersonales />} />
+          <Route path="/confirmacionturno" element={<ConfirmacionTurno />} />
+          <Route path="/verturnos" element={<TurnosPersonales />} />
+        </Routes>
+      </Validacion>
     </PacientesProvider>
   );
 }

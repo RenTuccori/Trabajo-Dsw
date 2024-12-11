@@ -1,14 +1,11 @@
 import { DoctoresContext } from './DoctoresContext';
-import { verifyDoctor } from '../../api/doctores.api.js';
 import {
   getTurnosHistoricoDoctor,
   getTurnosDoctorFecha,
   getTurnosDoctorHoy,
 } from '../../api/turnos.api.js';
-import { useContext, useEffect, useState } from 'react';
-import { jwtDecode } from 'jwt-decode';
+import { useContext,  useState } from 'react';
 import PropTypes from 'prop-types';
-import { useNavigate } from 'react-router-dom';
 // eslint-disable-next-line react-refresh/only-export-components
 export const useDoctores = () => {
   const context = useContext(DoctoresContext);
@@ -17,63 +14,37 @@ export const useDoctores = () => {
   }
   return context;
 };
+import {useAuth} from '../global/AuthProvider';
 
 const DoctoresProvider = ({ children }) => {
   //proveedor para acceder a los datos de los empleados desde cualquier componente
-  const navigate = useNavigate();
-  const [idDoctor, setidDoctor] = useState('');
   const [turnosHist, setTurnosHist] = useState([]);
   const [turnosFecha, setTurnosFecha] = useState([]);
   const [turnosHoy, setTurnosHoy] = useState([]);
   const [fechas, setFechas] = useState([]);
 
-  useEffect(() => {
-    comprobarToken();
-  }, []);
+  const {idDoctor} = useAuth();
 
-  async function login({ dni, contra }) {
-    const response = await verifyDoctor({ dni, contra });
-    const token = response.data;
-    localStorage.setItem('token', token);
-    const decoded = jwtDecode(token);
-    setidDoctor(decoded.idDoctor);
-  }
-
-  function comprobarToken() {
-    if (localStorage.getItem('token')) {
-      try {
-        const decoded = jwtDecode(localStorage.getItem('token'));
-        if (decoded.exp < Date.now() / 1000) {
-          console.error('Token expired');
-          localStorage.removeItem('token');
-          navigate('/');
-        } else {
-          setidDoctor(decoded.idDoctor);
-        }
-      } catch (error) {
-        console.error('Error decoding token:', error);
-        localStorage.removeItem('token');
-        navigate('/');
-      }
-    } else {
-      setidDoctor('');
-    }
-  }
 
   async function Historico() {
     try {
-      const response = await getTurnosHistoricoDoctor({ idDoctor });
-      if (response.data && response.data.length > 0) {
-        setTurnosHist(response.data);
-        const fechasDisponibles = response.data.map(
+      const response = await getTurnosHistoricoDoctor({ idDoctor : idDoctor });
+      console.log(response.data.data)
+      console.log('length', response.data.data.length)
+      if (response.data && response.data.data.length > 0) {
+        setTurnosHist(response.data.data);
+        console.log('entre')
+        const fechasDisponibles = response.data.data.map(
           (turno) => new Date(turno.fechaYHora.split('T')[0])
         );
         setFechas(fechasDisponibles);
       } else {
+        console.log('sali por else')
         setTurnosHist([]);
         setFechas([]);
       }
     } catch (error) {
+      console.log('sali por catch')
       console.error('Error al obtener turnos históricos:', error);
       setTurnosHist([]);
       setFechas([]);
@@ -104,11 +75,8 @@ const DoctoresProvider = ({ children }) => {
   return (
     <DoctoresContext.Provider
       value={{
-        login,
-        comprobarToken,
         Historico,
         turnosHist,
-        idDoctor,
         fechas,
         turnosFecha,
         Fecha,

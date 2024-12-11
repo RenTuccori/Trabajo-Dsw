@@ -2,13 +2,17 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { usePacientes } from '../../context/paciente/PacientesProvider';
+import { useAuth } from '../../context/global/AuthProvider';
 import Select from 'react-select';
 import { notifyError } from '../../components/ToastConfig';
 import { confirmDialog } from '../../components/SwalConfig';
 
 export function DatosPersonales() {
-  const { login, obraSociales, ObtenerObraSociales, CrearUsuario } =
+  const { obraSociales, ObtenerObraSociales, CrearUsuario } =
     usePacientes();
+    const {
+    login
+  } = useAuth();
   const [selectedObraSociales, setSelectedObraSociales] = useState(null);
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
@@ -34,7 +38,7 @@ export function DatosPersonales() {
     e.preventDefault(); // Previene el comportamiento por defecto del formulario
     try {
       await CrearUsuario(formData); // Asegura que la creación del usuario sea asíncrona
-      login({ dni: formData.dni, fechaNacimiento: formData.fechaNacimiento });
+      login({ dni: formData.dni, fechaNacimiento: formData.fechaNacimiento, userType : 'P' });
 
       // Muestra el mensaje de éxito con SweetAlert2
       confirmDialog().then(() => {
