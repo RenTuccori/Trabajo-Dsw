@@ -6,7 +6,7 @@ import { useAuth } from "../../context/global/AuthProvider";
 import "../../estilos/home.css";
 import "../../estilos/sacarturno.css";
 
-export function VerTurnosDoctorHistorico() {
+export function TurnosDoctorHistorico() {
   const { turnosHist, Historico } = useDoctores();
   const { comprobarToken } = useAuth();
   const navigate = useNavigate();

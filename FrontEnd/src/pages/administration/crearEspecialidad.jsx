@@ -2,7 +2,6 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAdministracion } from "../../context/administracion/AdministracionProvider.jsx";
 import { notifySuccess, notifyError } from "../../components/ToastConfig";
-import "react-toastify/dist/ReactToastify.css"; // Importé los estilos de toastify
 import { confirmDialog } from "../../components/SwalConfig";
 
 export function CrearEspecialidad() {

@@ -3,7 +3,7 @@ import { useNavigate } from "react-router-dom";
 import { useAuth } from "../../context/global/AuthProvider";
 import { notifySuccess, notifyError } from "../../components/ToastConfig";
 
-function HomeAdmin() {
+function HomeAdministracion() {
   const { login, idAdmin, comprobarToken } = useAuth();
   const [usuario, setUsuario] = useState("");
   const [contra, setContra] = useState("");
@@ -115,4 +115,4 @@ function HomeAdmin() {
   );
 }
 
-export default HomeAdmin;
+export default HomeAdministracion ;

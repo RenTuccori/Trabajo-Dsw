@@ -4,9 +4,8 @@ import { useNavigate } from 'react-router-dom';
 import Select from 'react-select';
 import { useAdministracion } from '../../context/administracion/AdministracionProvider.jsx';
 import { notifySuccess, notifyError } from '../../components/ToastConfig';
-import 'react-toastify/dist/ReactToastify.css'; // Estilos de toastify
 
-export function DatosPersonales() {
+export function DatosDoctor() {
   const { obraSociales, ObtenerObraSociales, CrearUsuario, createDoctor } =
     useAdministracion();
   const [selectedObraSociales, setSelectedObraSociales] = useState(null);

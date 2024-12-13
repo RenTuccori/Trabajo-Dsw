@@ -2,9 +2,9 @@ import Select from "react-select";
 import { usePacientes } from "../../context/paciente/PacientesProvider";
 import { useAuth } from "../../context/global/AuthProvider";
 import DatePicker from "react-datepicker";
-import "react-datepicker/dist/react-datepicker.css";
 import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
+import "react-datepicker/dist/react-datepicker.css";
 
 export function SacarTurno() {
   const navigate = useNavigate();

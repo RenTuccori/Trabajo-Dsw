@@ -1,12 +1,11 @@
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { usePacientes } from "../../context/paciente/PacientesProvider";
-import "react-toastify/dist/ReactToastify.css"; // Importa los estilos de toastify
+import { usePacientes } from "../../context/paciente/PacientesProvider.jsx";
 import { confirmDialog } from "../../components/SwalConfig.jsx";
-import { notifyError, notifySuccess } from "../../components/ToastConfig";
+import { notifyError, notifySuccess } from "../../components/ToastConfig.jsx";
 import { useAuth } from "../../context/global/AuthProvider.jsx";
 
-export function TurnosPersonales() {
+export function TurnosPaciente() {
   const navigate = useNavigate();
   const {
     ObtenerTurnosPaciente,

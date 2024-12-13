@@ -7,7 +7,7 @@ import { useNavigate } from 'react-router-dom';
 
 
 
-export function VerTurnosDoctorFecha() {
+export function TurnosDoctorFecha() {
     const navigate = useNavigate();
     const [selectedFecha, setSelectedFecha] = useState(null);
     const { fechas, Historico, turnosFecha, Fecha} = useDoctores();

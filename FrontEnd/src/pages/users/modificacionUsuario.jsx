@@ -6,7 +6,7 @@ import { useAuth } from '../../context/global/AuthProvider';
 import { confirmDialog } from '../../components/SwalConfig.jsx';
 import { notifySuccess } from '../../components/ToastConfig';
 
-export function EditarDatosPersonales() {
+export function ModificacionUsuario() {
   const {
     usuarioDni,
     ObtenerUsuarioDni,

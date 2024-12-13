@@ -1,6 +1,5 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import "react-toastify/dist/ReactToastify.css"; // Importar los estilos de react-toastify
 import { notifySuccess, notifyError } from "../../components/ToastConfig";
 import { useAuth } from "../../context/global/AuthProvider";
 

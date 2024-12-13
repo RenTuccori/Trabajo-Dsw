@@ -3,7 +3,6 @@ import Select from "react-select";
 import { useNavigate } from "react-router-dom";
 import { useAdministracion } from "../../context/administracion/AdministracionProvider.jsx";
 import { notifySuccess, notifyError } from "../../components/ToastConfig";
-import "react-toastify/dist/ReactToastify.css";
 
 export function CrearDoctor() {
   const navigate = useNavigate();

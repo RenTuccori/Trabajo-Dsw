@@ -5,7 +5,7 @@ import { useEffect, useState } from "react";
 import { notifySuccess, notifyError } from "../../components/ToastConfig";
 import { confirmDialog } from "../../components/SwalConfig";
 
-export function AsignarCombinacion() {
+export function CrearCombinacion() {
   const navigate = useNavigate();
   const {
     sedes,

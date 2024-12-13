@@ -7,7 +7,7 @@ import "../../estilos/home.css";
 import "../../estilos/sacarturno.css";
 import "../../estilos/verTurnos.css";
 
-export function VerTurnosDoctorHoy() {
+export function TurnosDoctorHoy() {
   const { turnosHoy, TurnosHoy } = useDoctores();
   const { comprobarToken } = useAuth();
   const navigate = useNavigate();

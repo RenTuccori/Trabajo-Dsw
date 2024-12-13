@@ -3,7 +3,6 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/global/AuthProvider';
 import { useState, useEffect} from 'react';
 import { notifySuccess, notifyError } from '../../components/ToastConfig';
-import 'react-toastify/dist/ReactToastify.css'; // Importa los estilos de toastify
 
 function HomeUsuario() {
   const navigate = useNavigate();
