@@ -2,7 +2,7 @@ import { Router } from 'express';
 import {
     getObrasSociales,
     getObraSocialById
-} from '../src/controllers/obrassociales.controller.js';
+} from '../controllers/obrassociales.controller.js';
 
 const router = Router();
 

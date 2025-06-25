@@ -3,7 +3,7 @@ import {
     getPacientes,
     getPacienteByDni,
     createPaciente
-} from '../src/controllers/pacientes.controllers.js';
+} from '../controllers/pacientes.controllers.js';
 import { Paciente } from '../middleware/authorizeRole.js';
 
 const router = Router();

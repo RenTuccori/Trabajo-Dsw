@@ -6,7 +6,7 @@ import {
   createSpecialty,
   updateSpecialty,
   getAllSpecialities
-} from '../src/controllers/especialidades.controllers.js';
+} from '../controllers/especialidades.controllers.js';
 import { Paciente } from '../middleware/authorizeRole.js';
 
 const router = Router();

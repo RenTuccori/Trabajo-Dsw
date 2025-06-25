@@ -3,7 +3,7 @@ import {
   getFechasDispDocEspSed,
   getFechasDispEspSed,
   getHorariosDispDocEspSed
-} from '../src/controllers/horarios.controllers.js';
+} from '../controllers/horarios.controllers.js';
 import { AdminOrPaciente, Paciente } from '../middleware/authorizeRole.js';
 const router = Router();
 

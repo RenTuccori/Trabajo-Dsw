@@ -1,5 +1,5 @@
 import { pool } from './db.js'; // Asegúrate de que esté correctamente importada la conexión a tu base de datos
-import { sendEmail } from './src/controllers/email.controllers.js'; // Importa el controlador para enviar correos
+import { sendEmail } from './controllers/email.controllers.js'; // Importa el controlador para enviar correos
 
 let isSendingEmails = false; // Variable para evitar ejecución simultánea
 
@@ -37,7 +37,7 @@ export const sendReminderEmails = async () => {
         };
 
         // Llamar a la función sendEmail para enviar el correo
-        await sendEmail({ body: mailBody }, { json: () => { } });
+        await sendEmail({ body: mailBody }, { json: () => {} });
 
         // Actualizar el campo `email` a 1 después de enviar el correo
         await pool.query(`

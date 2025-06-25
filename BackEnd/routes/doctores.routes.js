@@ -6,7 +6,7 @@ import {
   getDoctorById,
   getDoctores,
   getAvailableDoctors
-} from '../src/controllers/doctores.controllers.js';
+} from '../controllers/doctores.controllers.js';
 import { AdminOrPaciente, Paciente } from '../middleware/authorizeRole.js';
 const router = Router();
 
@@ -19,7 +19,7 @@ router.post('/api/alldoctors', getDoctores);
 
 router.post('/api/doctorscontra', getDoctorByDniContra);
 
-router.get('/api/doctorsId/:idDoctor', AdminOrPaciente, getDoctorById);
+router.get('/api/doctorsId/:idDoctor', AdminOrPaciente , getDoctorById);
 
 router.get('/api/doctorsdni', getDoctorByDni);
 
