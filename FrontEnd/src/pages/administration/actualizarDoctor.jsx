@@ -16,10 +16,10 @@ export function ActualizarDoctor() {
     actualizarDoctor,
   } = useAdministracion();
 
-  const {
-    comprobarToken
-  } = useAuth();
+  const { comprobarToken } = useAuth();
   const [selectedObraSociales, setSelectedObraSociales] = useState(null);
+  const [hasChanges, setHasChanges] = useState(false); // Estado para rastrear cambios
+  const [, setOriginalData] = useState({}); // Datos originales para comparar
   const navigate = useNavigate();
   const { idDoctor } = useParams(); // Usa useParams para obtener el idDoctor desde la URL
 
@@ -43,6 +43,7 @@ export function ActualizarDoctor() {
       ...prevFormData,
       [name]: value,
     }));
+    setHasChanges(true); // Marca como cambiado al modificar un campo
   };
 
   const handleSubmit = async (e) => {
@@ -50,21 +51,81 @@ export function ActualizarDoctor() {
 
     // Alerta de confirmación
     const result = await confirmDialog(
-      'Guardar Cambios',
+      'Guardar cambios',
       '¿Estás seguro que deseas guardar los cambios?'
     );
 
     if (result.isConfirmed) {
-      const response = await actualizarUsuario(formData);
-      const responseDoctor = await actualizarDoctor(formData);
-      console.log(response.data, responseDoctor.data);
-      if (response.data && responseDoctor.data) {
-        console.log('Usuario actualizado con éxito');
-        notifySuccess('Usuario actualizado con éxito'); // Toast de éxito
-        navigate('/admin/crearDoc'); // Redirige a la lista de doctores
-      } else {
-        console.log('Error al actualizar usuario');
-        notifyError('Error', 'No se pudo actualizar el usuario', 'error'); // Mensaje de error
+      try {
+        console.log('Datos a enviar:', formData);
+
+        // Verificar que el token existe
+        const token = localStorage.getItem('token');
+        if (!token) {
+          notifyError(
+            'Error de autenticación. Por favor, inicia sesión nuevamente.'
+          );
+          navigate('/login');
+          return;
+        }
+
+        // Preparar datos para actualizar usuario (solo los campos que espera el backend)
+        const usuarioData = {
+          dni: formData.dni,
+          nombre: formData.nombre,
+          apellido: formData.apellido,
+          telefono: formData.telefono,
+          email: formData.email,
+          direccion: formData.direccion,
+          idObraSocial: formData.idObraSocial,
+        };
+
+        // Preparar datos para actualizar doctor
+        const doctorData = {
+          idDoctor: formData.idDoctor,
+          duracionTurno: formData.duracionTurno,
+          contra: formData.contra,
+        };
+
+        console.log('Datos usuario:', usuarioData);
+        console.log('Datos doctor:', doctorData);
+
+        const response = await actualizarUsuario(usuarioData);
+        console.log('Respuesta de actualización usuario:', response);
+
+        const responseDoctor = await actualizarDoctor(doctorData);
+        console.log('Respuesta de actualización doctor:', responseDoctor);
+
+        if (
+          response &&
+          response.data &&
+          responseDoctor &&
+          responseDoctor.data
+        ) {
+          console.log('Usuario y doctor actualizados con éxito');
+          notifySuccess('Usuario actualizado con éxito');
+          setHasChanges(false);
+          navigate('/admin/crearDoc');
+        } else {
+          console.log('Error: respuesta incompleta', {
+            response,
+            responseDoctor,
+          });
+          notifyError('Error al actualizar el usuario o doctor');
+        }
+      } catch (error) {
+        console.error('Error completo al actualizar:', error);
+        if (error.response?.status === 403) {
+          notifyError('No tienes permisos para realizar esta acción');
+        } else if (error.response?.status === 401) {
+          notifyError('Sesión expirada. Por favor, inicia sesión nuevamente.');
+          navigate('/login');
+        } else {
+          notifyError(
+            'Error al actualizar el usuario: ' +
+              (error.message || 'Error desconocido')
+          );
+        }
       }
     }
   };
@@ -99,6 +160,20 @@ export function ActualizarDoctor() {
           obrasSociales.find((os) => os.idObraSocial === doctor.idObraSocial)
             ?.nombre || 'No asignada',
       });
+
+      // Guardar datos originales
+      setOriginalData({
+        idDoctor: idDoctor,
+        dni: doctor.dni,
+        nombre: doctor.nombre,
+        apellido: doctor.apellido,
+        telefono: doctor.telefono,
+        email: doctor.email,
+        direccion: doctor.direccion,
+        idObraSocial: doctor.idObraSocial,
+        duracionTurno: doctor.duracionTurno,
+        contra: doctor.contra,
+      });
     }
   }, [obrasSociales, doctor]);
   const handleObraSocialChange = (selectedOption) => {
@@ -107,6 +182,25 @@ export function ActualizarDoctor() {
       ...prevFormData,
       idObraSocial: selectedOption.value,
     }));
+    setHasChanges(true); // Marca como cambiado al modificar la obra social
+  };
+
+  // Función para manejar el regreso a la lista de doctores
+  const handleRegresar = async () => {
+    if (hasChanges) {
+      // Si hay cambios, muestra advertencia
+      const result = await confirmDialog(
+        'Cambios sin guardar',
+        'Tienes cambios sin guardar. ¿Estás seguro de que quieres volver? Los cambios se perderán.'
+      );
+
+      if (result.isConfirmed) {
+        navigate('/admin/crearDoc');
+      }
+    } else {
+      // Si no hay cambios, navega de regreso directamente
+      navigate('/admin/crearDoc');
+    }
   };
 
   return (
@@ -167,9 +261,9 @@ export function ActualizarDoctor() {
               required
               className="w-full border border-gray-300 rounded-lg p-2 focus:outline-none focus:border-blue-500"
             />
-          </div>
+          </div>{' '}
           <div>
-            <p className="text-center text-gray-600 text-lg">Obra Social</p>
+            <p className="text-center text-gray-600 text-lg">Obra social</p>
             <Select
               options={obrasSociales.map((obrasociales) => ({
                 value: obrasociales.idObraSocial,
@@ -182,7 +276,7 @@ export function ActualizarDoctor() {
           </div>
           <div>
             <p className="text-center text-gray-600 text-lg">
-              Duración del Turno (minutos)
+              Duración del turno (minutos)
             </p>
             <input
               type="number"
@@ -208,9 +302,17 @@ export function ActualizarDoctor() {
             type="submit"
             className="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition-colors"
           >
-            Guardar Cambios
+            Guardar cambios
           </button>
         </form>
+
+        <button
+          type="button"
+          onClick={handleRegresar}
+          className="w-full bg-gray-200 text-gray-700 py-2 rounded-lg hover:bg-gray-300 transition-colors mt-4"
+        >
+          Volver
+        </button>
       </div>
     </div>
   );

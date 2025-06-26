@@ -101,7 +101,7 @@ export function DatosDoctor() {
             </div>
             <div>
               <p className="text-center text-gray-600 text-lg">
-                Fecha de Nacimiento
+                Fecha de nacimiento
               </p>
               <input
                 type="date"
@@ -183,7 +183,7 @@ export function DatosDoctor() {
               type="submit"
               className="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition-colors"
             >
-              Crear Usuario
+              Crear usuario
             </button>
           </form>
         )}
@@ -193,7 +193,7 @@ export function DatosDoctor() {
           <form onSubmit={handleSubmitDoctor} className="space-y-4">
             <div>
               <p className="text-center text-gray-600 text-lg">
-                Duración del Turno (minutos)
+                Duración del turno (minutos)
               </p>
               <input
                 type="text"
@@ -219,7 +219,7 @@ export function DatosDoctor() {
               type="submit"
               className="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition-colors"
             >
-              Crear Doctor
+              Crear doctor
             </button>
           </form>
         )}

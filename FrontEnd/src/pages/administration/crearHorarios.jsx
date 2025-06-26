@@ -11,9 +11,7 @@ export function CrearHorarios() {
   const { idSede, idEspecialidad, idDoctor } = location.state || {};
 
   const diasSemana = ['lunes', 'martes', 'miércoles', 'jueves', 'viernes'];
-  const {
-    comprobarToken
-  } = useAuth();
+  const { comprobarToken } = useAuth();
   const {
     obtenerHorariosXDoctor,
     crearHorarios,
@@ -141,7 +139,7 @@ export function CrearHorarios() {
   return (
     <div className="min-h-screen bg-gradient-to-b from-blue-100 to-white flex items-center justify-center p-4">
       <div className="w-full max-w-lg space-y-6">
-        <h2 className="text-xl font-semibold mb-4">Crear Horarios</h2>
+        <h2 className="text-xl font-semibold mb-4">Crear horarios</h2>
 
         <div className="bg-white rounded-lg shadow-md p-6 space-y-4">
           <h3 className="text-lg font-medium">

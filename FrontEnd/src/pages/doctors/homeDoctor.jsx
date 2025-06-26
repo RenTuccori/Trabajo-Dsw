@@ -4,7 +4,8 @@ import { notifySuccess, notifyError } from '../../components/ToastConfig';
 import { useAuth } from '../../context/global/AuthProvider';
 
 function HomeDoctor() {
-  const { idDoctor, login, comprobarToken } = useAuth();
+  const { idDoctor, login, comprobarToken, nombreUsuario, apellidoUsuario } =
+    useAuth();
   const [dni, setDni] = useState('');
   const [contra, setContra] = useState('');
   const navigate = useNavigate();
@@ -75,6 +76,11 @@ function HomeDoctor() {
           </div>
         ) : (
           <div className="space-y-4">
+            <div className="text-center mb-4">
+              <h2 className="text-xl font-semibold text-gray-800">
+                Bienvenido Dr/Dra {nombreUsuario} {apellidoUsuario}
+              </h2>
+            </div>
             <div className="flex flex-col space-y-2">
               <button
                 onClick={() => navigate('turnoshoy')}
@@ -86,19 +92,19 @@ function HomeDoctor() {
                 onClick={() => navigate('turnosfecha')}
                 className="bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition-colors"
               >
-                Turnos por Fecha
+                Turnos por fecha
               </button>
               <button
                 onClick={() => navigate('turnoshist')}
                 className="bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition-colors"
               >
-                Historial Turnos
+                Historial turnos
               </button>
               <button
                 onClick={() => navigate('estudios')}
                 className="bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition-colors"
               >
-                Gestión de Estudios
+                Gestión de estudios
               </button>
             </div>
             <button

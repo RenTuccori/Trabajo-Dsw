@@ -25,7 +25,7 @@ export const getPacienteByDni = async (req, res) => {
   try {
     const { dni } = req.body;
     const [result] = await pool.query(
-      `SELECT pac.idPaciente 
+      `SELECT pac.idPaciente, usu.nombre, usu.apellido, usu.dni
        FROM pacientes pac
        INNER JOIN usuarios usu ON usu.dni = pac.dni
        WHERE usu.dni = ? AND pac.estado = 'Habilitado'`,

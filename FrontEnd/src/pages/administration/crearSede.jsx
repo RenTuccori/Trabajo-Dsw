@@ -56,7 +56,7 @@ export function CrearSede() {
     <div className="min-h-screen bg-gradient-to-b from-blue-100 to-white flex items-center justify-center p-4">
       <div className="bg-white rounded-lg shadow-md w-full max-w-md p-6 space-y-4">
         <h2 className="text-xl font-semibold text-center text-gray-800">
-          Crear Nueva Sede
+          Crear nueva sede
         </h2>
 
         <form onSubmit={handleCrearSede} className="space-y-4">
@@ -78,7 +78,7 @@ export function CrearSede() {
             type="submit"
             className="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition-colors"
           >
-            Crear Sede
+            Crear sede
           </button>
         </form>
 
@@ -91,7 +91,7 @@ export function CrearSede() {
         </button>
 
         <h3 className="text-lg font-medium text-gray-800 mt-6">
-          Sedes Creadas
+          Sedes creadas
         </h3>
         <ul className="space-y-2">
           {sedes.length > 0 ? (
@@ -107,7 +107,7 @@ export function CrearSede() {
                   onClick={() => handleBorrarSede(sede.idSede)}
                   className="text-red-600 hover:text-red-800"
                 >
-                  Delete
+                  Eliminar
                 </button>
               </li>
             ))

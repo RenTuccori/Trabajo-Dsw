@@ -78,7 +78,7 @@ export function CrearObraSocial() {
     <div className="min-h-screen bg-gradient-to-b from-blue-100 to-white flex items-center justify-center p-4">
       <div className="bg-white rounded-lg shadow-md w-full max-w-md p-6 space-y-4">
         <h2 className="text-xl font-semibold text-center text-gray-800">
-          Crear Nueva Obra Social
+          Crear nueva obra social
         </h2>
 
         {/* Formulario para crear una nueva obra social */}
@@ -95,7 +95,7 @@ export function CrearObraSocial() {
               type="submit"
               className="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition-colors"
             >
-              Crear Obra Social
+              Crear obra social
             </button>
           </form>
         )}
@@ -137,7 +137,7 @@ export function CrearObraSocial() {
         </button>
 
         <h3 className="text-lg font-medium text-gray-800 mt-6">
-          Obras Sociales Creadas
+          Obras sociales creadas
         </h3>
         <ul className="space-y-2">
           {obrasSociales.length > 0 ? (
@@ -156,7 +156,7 @@ export function CrearObraSocial() {
                     }
                     className="text-red-600 hover:text-red-800"
                   >
-                    Delete
+                    Eliminar
                   </button>
                   <button
                     onClick={() => {

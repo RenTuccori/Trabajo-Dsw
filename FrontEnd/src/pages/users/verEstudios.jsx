@@ -104,15 +104,17 @@ function VerEstudios() {
     <div className="min-h-screen bg-gradient-to-b from-blue-100 to-white p-4">
       <div className="max-w-4xl mx-auto">
         <h1 className="text-3xl font-bold text-center text-gray-800 mb-8">
-          Mis Estudios Médicos
+          Mis estudios médicos
         </h1>
 
         {pacienteData && (
           <div className="bg-white rounded-lg shadow-md p-4 mb-6">
             <h2 className="text-lg font-semibold text-gray-800 mb-2">
-              Información del Paciente
+              Información del paciente
             </h2>
             <p className="text-gray-600">DNI: {dni}</p>
+            <p className="text-gray-600">Nombre: {pacienteData.nombre}</p>
+            <p className="text-gray-600">Apellido: {pacienteData.apellido}</p>
           </div>
         )}
 

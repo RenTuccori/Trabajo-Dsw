@@ -17,6 +17,8 @@ export const useAuth = () => {
 
 const AuthProvider = ({ children }) => {
   const [dni, setDni] = useState('');
+  const [nombreUsuario, setNombreUsuario] = useState('');
+  const [apellidoUsuario, setApellidoUsuario] = useState('');
   const [idDoctor, setIdDoctor] = useState('');
   const [idAdmin, setIdAdmin] = useState('');
   const [rol, setRol] = useState('');
@@ -32,9 +34,13 @@ const AuthProvider = ({ children }) => {
           // Token válido, restaurar estado según el rol del token
           if (decoded.rol === 'P') {
             setDni(decoded.dni);
+            setNombreUsuario(decoded.nombre || '');
+            setApellidoUsuario(decoded.apellido || '');
             setRol('P');
           } else if (decoded.rol === 'D') {
             setIdDoctor(decoded.idDoctor);
+            setNombreUsuario(decoded.nombre || '');
+            setApellidoUsuario(decoded.apellido || '');
             setRol('D');
           } else if (decoded.rol === 'A') {
             setIdAdmin(decoded.idAdmin);
@@ -67,6 +73,8 @@ const AuthProvider = ({ children }) => {
           localStorage.setItem('token', token);
           const decodedPatient = jwtDecode(token);
           setDni(decodedPatient.dni);
+          setNombreUsuario(decodedPatient.nombre || '');
+          setApellidoUsuario(decodedPatient.apellido || '');
           setRol('P');
           break;
         }
@@ -80,6 +88,8 @@ const AuthProvider = ({ children }) => {
           localStorage.setItem('token', token);
           const decodedDoctor = jwtDecode(token);
           setIdDoctor(decodedDoctor.idDoctor);
+          setNombreUsuario(decodedDoctor.nombre || '');
+          setApellidoUsuario(decodedDoctor.apellido || '');
           setRol('D');
           break;
         }
@@ -102,9 +112,15 @@ const AuthProvider = ({ children }) => {
     } catch (error) {
       // Manejar errores de inicio de sesión
       console.error('Error en el inicio de sesión:', error);
-      if (userType === 'P') setDni(null);
-      else if (userType === 'D') setIdDoctor(null);
-      else if (userType === 'A') setIdAdmin(null);
+      if (userType === 'P') {
+        setDni(null);
+        setNombreUsuario('');
+        setApellidoUsuario('');
+      } else if (userType === 'D') {
+        setIdDoctor(null);
+        setNombreUsuario('');
+        setApellidoUsuario('');
+      } else if (userType === 'A') setIdAdmin(null);
       throw error;
     }
   }
@@ -120,16 +136,22 @@ const AuthProvider = ({ children }) => {
           setDni('');
           setIdDoctor('');
           setIdAdmin('');
+          setNombreUsuario('');
+          setApellidoUsuario('');
           setRol('');
           navigate('/');
         } else {
           switch (userType) {
             case 'P': // Paciente
               setDni(decoded.dni);
+              setNombreUsuario(decoded.nombre || '');
+              setApellidoUsuario(decoded.apellido || '');
               setRol('P');
               break;
             case 'D': // Doctor
               setIdDoctor(decoded.idDoctor);
+              setNombreUsuario(decoded.nombre || '');
+              setApellidoUsuario(decoded.apellido || '');
               setRol('D');
               break;
             case 'A': // Admin
@@ -147,6 +169,8 @@ const AuthProvider = ({ children }) => {
         setDni('');
         setIdDoctor('');
         setIdAdmin('');
+        setNombreUsuario('');
+        setApellidoUsuario('');
         setRol('');
         navigate('/');
       }
@@ -155,6 +179,8 @@ const AuthProvider = ({ children }) => {
       setDni('');
       setIdDoctor('');
       setIdAdmin('');
+      setNombreUsuario('');
+      setApellidoUsuario('');
       setRol('');
     }
   }
@@ -168,6 +194,8 @@ const AuthProvider = ({ children }) => {
         idDoctor,
         idAdmin,
         rol,
+        nombreUsuario,
+        apellidoUsuario,
       }}
     >
       {children}

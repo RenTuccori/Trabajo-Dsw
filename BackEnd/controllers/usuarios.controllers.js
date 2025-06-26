@@ -1,5 +1,5 @@
 import { pool } from '../db.js';
-import jwt from "jsonwebtoken";
+import jwt from 'jsonwebtoken';
 
 export const getUsers = async (req, res) => {
   try {
@@ -25,7 +25,16 @@ export const getUserByDniFecha = async (req, res) => {
     if (result.length === 0) {
       return res.status(404).json({ message: 'Usuario no encontrado' });
     } else {
-      const token = jwt.sign({ dni: result[0].dni, rol : "P" }, "CLAVE_SUPER_SEGURISIMA", { expiresIn: "5m" });
+      const token = jwt.sign(
+        {
+          dni: result[0].dni,
+          nombre: result[0].nombre,
+          apellido: result[0].apellido,
+          rol: 'P',
+        },
+        'CLAVE_SUPER_SEGURISIMA',
+        { expiresIn: '5m' }
+      );
       res.json(token);
     }
   } catch (error) {
@@ -36,7 +45,9 @@ export const getUserByDniFecha = async (req, res) => {
 export const getUserByDni = async (req, res) => {
   try {
     const { dni } = req.body;
-    const [result] = await pool.query('SELECT * FROM usuarios WHERE dni = ?', [dni]);
+    const [result] = await pool.query('SELECT * FROM usuarios WHERE dni = ?', [
+      dni,
+    ]);
     if (result.length === 0) {
       return res.status(404).json({ message: 'Usuario no encontrado' });
     } else {
@@ -45,18 +56,18 @@ export const getUserByDni = async (req, res) => {
   } catch (error) {
     return res.status(500).json({ message: error.message });
   }
-}
+};
 
 export const createUser = async (req, res) => {
   const {
-        dni,
-        fechaNacimiento,
-        nombre,
-        apellido,
-        telefono,
-        email,
-        direccion,
-        idObraSocial
+    dni,
+    fechaNacimiento,
+    nombre,
+    apellido,
+    telefono,
+    email,
+    direccion,
+    idObraSocial,
   } = req.body;
   try {
     await pool.query(
@@ -69,18 +80,18 @@ export const createUser = async (req, res) => {
         telefono,
         email,
         direccion,
-        idObraSocial
+        idObraSocial,
       ]
     );
     res.json({
-        dni,
-        fechaNacimiento,
-        nombre,
-        apellido,
-        telefono,
-        email,
-        direccion,
-        idObraSocial
+      dni,
+      fechaNacimiento,
+      nombre,
+      apellido,
+      telefono,
+      email,
+      direccion,
+      idObraSocial,
     });
   } catch (error) {
     return res.status(500).json({ message: error.message });
@@ -89,7 +100,8 @@ export const createUser = async (req, res) => {
 
 export const updateUser = async (req, res) => {
   try {
-    const { dni, nombre, apellido, telefono, email, direccion, idObraSocial } = req.body;
+    const { dni, nombre, apellido, telefono, email, direccion, idObraSocial } =
+      req.body;
 
     const [result] = await pool.query(
       'UPDATE usuarios SET nombre = ?, apellido = ?, telefono = ?, email = ?, direccion = ?, idObraSocial = ? WHERE dni = ?',
@@ -106,7 +118,6 @@ export const updateUser = async (req, res) => {
   }
 };
 
-
 export const deleteUser = async (req, res) => {
   try {
     const [result] = await pool.query('DELETE FROM usuarios WHERE dni = ?', [
@@ -120,4 +131,3 @@ export const deleteUser = async (req, res) => {
     return res.status(500).json({ message: error.message });
   }
 };
-

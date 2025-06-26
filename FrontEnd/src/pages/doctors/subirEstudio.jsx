@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useAuth } from '../../context/global/AuthProvider';
+import { useNavigate } from 'react-router-dom';
 import {
   uploadEstudio,
   getEstudiosByDoctor,
@@ -10,6 +11,7 @@ import { notifySuccess, notifyError } from '../../components/ToastConfig';
 
 function SubirEstudio() {
   const { idDoctor } = useAuth();
+  const navigate = useNavigate();
   const [formData, setFormData] = useState({
     idPaciente: '',
     fechaRealizacion: '',
@@ -297,6 +299,15 @@ function SubirEstudio() {
                 }`}
               >
                 {loading ? 'Subiendo...' : 'Subir Estudio'}
+              </button>
+
+              {/* Botón de volver al menú */}
+              <button
+                type="button"
+                onClick={() => navigate('/doctor')}
+                className="w-full py-2 px-4 rounded-lg font-medium transition-colors bg-gray-200 text-gray-700 hover:bg-gray-300"
+              >
+                Volver al Menú
               </button>
             </form>
           </div>

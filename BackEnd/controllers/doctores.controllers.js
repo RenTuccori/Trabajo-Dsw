@@ -40,12 +40,10 @@ export const getAvailableDoctors = async (req, res) => {
     );
 
     if (result.length === 0) {
-      return res
-        .status(404)
-        .json({
-          message:
-            'No hay doctores disponibles para esta especialidad fuera de esta sede',
-        });
+      return res.status(404).json({
+        message:
+          'No hay doctores disponibles para esta especialidad fuera de esta sede',
+      });
     } else {
       res.json(result);
     }
@@ -118,8 +116,9 @@ export const getDoctorByDniContra = async (req, res) => {
   try {
     const { dni, contra } = req.body;
     const [result] = await pool.query(
-      `SELECT doc.idDoctor 
+      `SELECT doc.idDoctor, u.nombre, u.apellido
        FROM doctores doc 
+       INNER JOIN usuarios u ON doc.dni = u.dni
        WHERE doc.dni = ? AND doc.contra = ? AND doc.estado = 'Habilitado'`,
       [dni, contra]
     );
@@ -127,7 +126,12 @@ export const getDoctorByDniContra = async (req, res) => {
       return res.status(404).json({ message: 'Doctor no encontrado' });
     } else {
       const token = jwt.sign(
-        { idDoctor: result[0].idDoctor, rol: 'D' },
+        {
+          idDoctor: result[0].idDoctor,
+          nombre: result[0].nombre,
+          apellido: result[0].apellido,
+          rol: 'D',
+        },
         'CLAVE_SUPER_SEGURISIMA',
         { expiresIn: '5m' }
       );

@@ -51,8 +51,6 @@ const AdministracionProvider = ({ children }) => {
   const [combinaciones, setCombinaciones] = useState([]);
   const [horariosDoctor, setHorariosDoctor] = useState([]);
 
-
-
   async function crearNuevaSede({ nombre, direccion }) {
     try {
       await createSede({ nombre, direccion }); // Llamada a la API
@@ -329,11 +327,15 @@ const AdministracionProvider = ({ children }) => {
   }
   async function actualizarUsuario(data) {
     try {
+      console.log('Datos enviados para actualizar usuario:', data);
       const response = await updateUser(data);
-      console.log('Usuario actualizado:', response.data);
+      console.log('Usuario actualizado:', response?.data);
       return response;
     } catch (error) {
       console.error('Error al actualizar el usuario:', error);
+      console.error('Error status:', error.response?.status);
+      console.error('Error data:', error.response?.data);
+      throw error; // Re-lanzar el error para que pueda ser manejado en el componente
     }
   }
   return (

@@ -6,7 +6,8 @@ import { notifySuccess, notifyError } from '../../components/ToastConfig';
 
 function HomeUsuario() {
   const navigate = useNavigate();
-  const { dni, login, comprobarToken } = useAuth();
+  const { dni, login, comprobarToken, nombreUsuario, apellidoUsuario } =
+    useAuth();
   const [dniform, setDni] = useState('');
   const [fecha, setFecha] = useState('');
 
@@ -44,7 +45,9 @@ function HomeUsuario() {
       {/* Contenido */}
       <div className="relative z-10 bg-white rounded-lg shadow-md w-full max-w-md p-6 space-y-4">
         <h1 className="text-center text-2xl font-semibold text-gray-800">
-          Bienvenido al sistema de turnos
+          {dni && nombreUsuario && apellidoUsuario
+            ? `Bienvenido/a ${nombreUsuario}`
+            : 'Bienvenido al sistema de turnos'}
         </h1>
 
         {!dni ? (

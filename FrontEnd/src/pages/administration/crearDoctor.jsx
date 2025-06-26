@@ -1,8 +1,8 @@
-import { useState, useEffect } from "react";
-import Select from "react-select";
-import { useNavigate } from "react-router-dom";
-import { useAdministracion } from "../../context/administracion/AdministracionProvider.jsx";
-import { notifySuccess, notifyError } from "../../components/ToastConfig";
+import { useState, useEffect } from 'react';
+import Select from 'react-select';
+import { useNavigate } from 'react-router-dom';
+import { useAdministracion } from '../../context/administracion/AdministracionProvider.jsx';
+import { notifySuccess, notifyError } from '../../components/ToastConfig';
 
 export function CrearDoctor() {
   const navigate = useNavigate();
@@ -18,22 +18,22 @@ export function CrearDoctor() {
     borrarDoctor,
   } = useAdministracion();
 
-  const [dni, setDni] = useState("");
-  const [duracionTurno, setDuracionTurno] = useState("");
-  const [contra, setContra] = useState("");
+  const [dni, setDni] = useState('');
+  const [duracionTurno, setDuracionTurno] = useState('');
+  const [contra, setContra] = useState('');
   const [usuarioExistente, setUsuarioExistente] = useState(false);
   const [formularioVisible, setFormularioVisible] = useState(false);
   const [selectedObraSociales, setSelectedObraSociales] = useState(null);
 
   const [formData, setFormData] = useState({
-    dni: "",
-    fechaNacimiento: "",
-    nombre: "",
-    apellido: "",
-    telefono: "",
-    email: "",
-    direccion: "",
-    idObraSocial: "",
+    dni: '',
+    fechaNacimiento: '',
+    nombre: '',
+    apellido: '',
+    telefono: '',
+    email: '',
+    direccion: '',
+    idObraSocial: '',
   });
 
   useEffect(() => {
@@ -57,18 +57,18 @@ export function CrearDoctor() {
 
   const handleBuscarDNI = async (e) => {
     e.preventDefault();
-    if (dni.trim() !== "") {
+    if (dni.trim() !== '') {
       try {
         await ObtenerUsuarioDni(dni);
         if (usuario.length !== 0) {
           setUsuarioExistente(true);
           notifySuccess(
-            "Usuario encontrado, continúe con los siguientes pasos."
+            'Usuario encontrado, continúe con los siguientes pasos.'
           );
         } else {
           setUsuarioExistente(false);
           notifyError(
-            "Usuario no encontrado, complete los datos para crear uno nuevo."
+            'Usuario no encontrado, complete los datos para crear uno nuevo.'
           );
         }
         setFormularioVisible(true); // Muestra el formulario después de la búsqueda
@@ -77,22 +77,22 @@ export function CrearDoctor() {
           // Si es un error 404, significa que no existe el usuario, continuar como nuevo
           setUsuarioExistente(false);
           notifyError(
-            "Usuario no encontrado, complete los datos para crear uno nuevo."
+            'Usuario no encontrado, complete los datos para crear uno nuevo.'
           );
           setFormularioVisible(true);
         } else {
-          notifyError("Error al buscar el usuario");
-          console.error("Error al buscar usuario:", error);
+          notifyError('Error al buscar el usuario');
+          console.error('Error al buscar usuario:', error);
         }
       }
     } else {
-      notifyError("Ingrese un DNI válido");
+      notifyError('Ingrese un DNI válido');
     }
   };
 
   const handleCrearDoctor = async (e) => {
     e.preventDefault();
-    if (duracionTurno.trim() !== "" && contra.trim() !== "") {
+    if (duracionTurno.trim() !== '' && contra.trim() !== '') {
       try {
         if (!usuarioExistente) {
           await CrearUsuario({
@@ -101,14 +101,14 @@ export function CrearDoctor() {
           });
         }
         await CreaDoctor({ dni, duracionTurno, contra });
-        notifySuccess("¡Doctor creado con éxito!");
-        navigate("/admin");
+        notifySuccess('¡Doctor creado con éxito!');
+        navigate('/admin');
       } catch (error) {
-        notifyError("Error al crear el doctor");
-        console.error("Error al crear doctor:", error);
+        notifyError('Error al crear el doctor');
+        console.error('Error al crear doctor:', error);
       }
     } else {
-      notifyError("Complete todos los campos");
+      notifyError('Complete todos los campos');
     }
   };
 
@@ -157,7 +157,7 @@ export function CrearDoctor() {
               type="submit"
               className="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition-colors"
             >
-              Buscar Usuario
+              Buscar usuario
             </button>
           </form>
         )}
@@ -167,7 +167,7 @@ export function CrearDoctor() {
               <form onSubmit={handleCrearDoctor} className="space-y-4">
                 <div>
                   <p className="text-center text-gray-600 text-lg">
-                    Fecha de Nacimiento
+                    Fecha de nacimiento
                   </p>
                   <input
                     type="date"
@@ -235,7 +235,7 @@ export function CrearDoctor() {
                 </div>
                 <div>
                   <p className="text-center text-gray-600 text-lg">
-                    Obra Social
+                    Obra social
                   </p>
                   <Select
                     options={obrasSociales.map((obrasocial) => ({
@@ -275,7 +275,7 @@ export function CrearDoctor() {
                   type="submit"
                   className="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition-colors"
                 >
-                  Crear Doctor
+                  Crear doctor
                 </button>
               </form>
             )}
@@ -302,7 +302,7 @@ export function CrearDoctor() {
                   type="submit"
                   className="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition-colors"
                 >
-                  Crear Doctor
+                  Crear doctor
                 </button>
               </form>
             )}
@@ -311,14 +311,14 @@ export function CrearDoctor() {
 
         <button
           type="button"
-          onClick={() => navigate("/admin")}
+          onClick={() => navigate('/admin')}
           className="w-full bg-gray-200 text-gray-700 py-2 rounded-lg hover:bg-gray-300 transition-colors mt-4"
         >
           Volver
         </button>
 
         <h3 className="text-lg font-medium text-gray-800 mt-6">
-          Doctores Creados
+          Doctores creados
         </h3>
         <ul className="space-y-2">
           {doctores.length > 0 ? (
@@ -335,7 +335,7 @@ export function CrearDoctor() {
                     onClick={() => handleDelete(doctor.idDoctor)}
                     className="text-red-600 hover:text-red-800"
                   >
-                    Delete
+                    Eliminar
                   </button>
                   <button
                     onClick={() => handleUpdate(doctor.idDoctor)}
