@@ -33,6 +33,18 @@ function SubirEstudio() {
     initializeData();
   }, []);
 
+  const loadEstudios = useCallback(async () => {
+    try {
+      console.log('Cargando estudios para doctor:', idDoctor);
+      const response = await getEstudiosByDoctor(idDoctor);
+      console.log('Respuesta de estudios:', response);
+      setEstudios(response.data || []);
+    } catch (error) {
+      console.error('Error al cargar estudios:', error);
+      setEstudios([]); // Asegurar que estudios esté definido
+    }
+  }, [idDoctor]);
+
   // Cargar estudios cuando cambie el idDoctor
   useEffect(() => {
     console.log('ID Doctor:', idDoctor);
@@ -53,18 +65,6 @@ function SubirEstudio() {
       setPacientes([]); // Asegurar que pacientes esté definido
     }
   };
-
-  const loadEstudios = useCallback(async () => {
-    try {
-      console.log('Cargando estudios para doctor:', idDoctor);
-      const response = await getEstudiosByDoctor(idDoctor);
-      console.log('Respuesta de estudios:', response);
-      setEstudios(response.data || []);
-    } catch (error) {
-      console.error('Error al cargar estudios:', error);
-      setEstudios([]); // Asegurar que estudios esté definido
-    }
-  }, [idDoctor]);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -100,7 +100,6 @@ function SubirEstudio() {
       const data = new FormData();
       data.append('archivo', formData.archivo);
       data.append('idPaciente', formData.idPaciente);
-      data.append('idDoctor', idDoctor);
       data.append('fechaRealizacion', formData.fechaRealizacion);
       data.append('descripcion', formData.descripcion);
 

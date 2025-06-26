@@ -108,7 +108,7 @@ function HomeDoctor() {
               }}
               className="w-full bg-gray-200 text-gray-700 py-2 rounded-lg hover:bg-gray-300 transition-colors"
             >
-              Volver
+              Cerrar sesión
             </button>
           </div>
         )}
