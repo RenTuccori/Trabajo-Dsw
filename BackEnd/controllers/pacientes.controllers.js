@@ -3,14 +3,15 @@ import { pool } from '../db.js';
 export const getPacientes = async (req, res) => {
   try {
     const [result] = await pool.query(
-      `SELECT usu.dni, usu.nombre, usu.apellido, obra.nombre 
+      `SELECT pac.idPaciente, usu.dni, usu.nombre, usu.apellido, obra.nombre as nombreObraSocial
        FROM pacientes pac 
        INNER JOIN usuarios usu ON usu.dni = pac.dni 
        INNER JOIN obrasociales obra ON obra.idObraSocial = usu.idObraSocial
-       WHERE pac.estado = 'Habilitado'`
+       WHERE pac.estado = 'Habilitado'
+       ORDER BY usu.apellido, usu.nombre`
     );
     if (result.length === 0) {
-      return res.status(404).json({ message: 'No hay pacientes habilitados' });
+      return res.json([]); // Devolver array vacío en lugar de 404
     } else {
       res.json(result);
     }
@@ -27,11 +28,13 @@ export const getPacienteByDni = async (req, res) => {
       `SELECT pac.idPaciente 
        FROM pacientes pac
        INNER JOIN usuarios usu ON usu.dni = pac.dni
-       WHERE pac.dni = ? AND pac.estado = 'Habilitado'`,
+       WHERE usu.dni = ? AND pac.estado = 'Habilitado'`,
       [dni]
     );
     if (result.length === 0) {
-      return res.status(404).json({ message: 'Paciente no encontrado o no está habilitado' });
+      return res
+        .status(404)
+        .json({ message: 'Paciente no encontrado o no está habilitado' });
     } else {
       res.json(result[0]);
     }
@@ -39,7 +42,6 @@ export const getPacienteByDni = async (req, res) => {
     return res.status(500).json({ message: error.message });
   }
 };
-
 
 export const createPaciente = async (req, res) => {
   const { dni } = req.body;
@@ -50,9 +52,9 @@ export const createPaciente = async (req, res) => {
       [dni, estado]
     );
     res.json({
-      idPaciente: result.insertId,  // Devuelve el id autogenerado
+      idPaciente: result.insertId, // Devuelve el id autogenerado
       dni,
-      estado
+      estado,
     });
   } catch (error) {
     return res.status(500).json({ message: error.message });

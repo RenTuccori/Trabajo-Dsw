@@ -1,5 +1,5 @@
 import { pool } from '../db.js';
-import jwt from "jsonwebtoken";
+import jwt from 'jsonwebtoken';
 
 export const getDoctors = async (req, res) => {
   try {
@@ -13,7 +13,9 @@ export const getDoctors = async (req, res) => {
       [idSede, idEspecialidad]
     );
     if (result.length === 0) {
-      return res.status(404).json({ message: 'No hay doctores para esta especialidad' });
+      return res
+        .status(404)
+        .json({ message: 'No hay doctores para esta especialidad' });
     } else {
       res.json(result);
     }
@@ -38,7 +40,12 @@ export const getAvailableDoctors = async (req, res) => {
     );
 
     if (result.length === 0) {
-      return res.status(404).json({ message: 'No hay doctores disponibles para esta especialidad fuera de esta sede' });
+      return res
+        .status(404)
+        .json({
+          message:
+            'No hay doctores disponibles para esta especialidad fuera de esta sede',
+        });
     } else {
       res.json(result);
     }
@@ -119,15 +126,17 @@ export const getDoctorByDniContra = async (req, res) => {
     if (result.length === 0) {
       return res.status(404).json({ message: 'Doctor no encontrado' });
     } else {
-      const token = jwt.sign({ idDoctor: result[0].idDoctor, rol : "D" }, "CLAVE_SUPER_SEGURISIMA", { expiresIn: "5m" });
+      const token = jwt.sign(
+        { idDoctor: result[0].idDoctor, rol: 'D' },
+        'CLAVE_SUPER_SEGURISIMA',
+        { expiresIn: '5m' }
+      );
       res.json(token);
     }
   } catch (error) {
     return res.status(500).json({ message: error.message });
   }
 };
-
-
 
 export const createDoctor = async (req, res) => {
   const { dni, duracionTurno, contra } = req.body;
@@ -145,13 +154,12 @@ export const createDoctor = async (req, res) => {
       dni,
       duracionTurno,
       contra,
-      estado
+      estado,
     });
   } catch (error) {
     return res.status(500).json({ message: error.message });
   }
 };
-
 
 export const deleteDoctor = async (req, res) => {
   try {
@@ -193,8 +201,6 @@ export const deleteDoctor = async (req, res) => {
     return res.status(500).json({ message: error.message });
   }
 };
-
-
 
 export const updateDoctor = async (req, res) => {
   const { idDoctor } = req.params;

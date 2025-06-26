@@ -9,6 +9,7 @@ import obrassocialesRouter from './routes/obrassociales.routes.js';
 import sedesRouter from './routes/sedes.routes.js';
 import adminRouter from './routes/admin.routes.js';
 import emailRoutes from './routes/email.routes.js';
+import estudiosRouter from './routes/estudios.routes.js';
 import cors from 'cors';
 import jwt from 'jsonwebtoken';
 
@@ -27,13 +28,13 @@ app.use((req, res, next) => {
   let token = null;
   const authHeader = req.headers.authorization;
   if (authHeader) {
-    token = authHeader.split(" ")[1];
+    token = authHeader.split(' ')[1];
   }
-  
+
   req.session = { rol: null };
-  
+
   try {
-    data = jwt.verify(token, "CLAVE_SUPER_SEGURISIMA");
+    data = jwt.verify(token, 'CLAVE_SUPER_SEGURISIMA');
     req.session.rol = data.rol;
   } catch (e) {
     req.session.rol = null;
@@ -51,6 +52,7 @@ app.use(obrassocialesRouter);
 app.use(sedesRouter);
 app.use(adminRouter);
 app.use(emailRoutes);
+app.use(estudiosRouter);
 
 // Inicia la ejecución automática de la cancelación de turnos
 startAutoCancelTurnos();

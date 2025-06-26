@@ -1,18 +1,18 @@
 // src/pages/home.jsx
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/global/AuthProvider';
-import { useState, useEffect} from 'react';
+import { useState, useEffect } from 'react';
 import { notifySuccess, notifyError } from '../../components/ToastConfig';
 
 function HomeUsuario() {
   const navigate = useNavigate();
-  const { dni, login, comprobarToken} = useAuth();
+  const { dni, login, comprobarToken } = useAuth();
   const [dniform, setDni] = useState('');
   const [fecha, setFecha] = useState('');
 
   const handleLogin = async () => {
     try {
-      await login({ identifier: dniform, credential: fecha, userType : 'P'});
+      await login({ identifier: dniform, credential: fecha, userType: 'P' });
       notifySuccess('¡Login exitoso!'); // Muestra mensaje de éxito
     } catch (error) {
       notifyError('Error en el login, verifica tus datos.'); // Muestra mensaje de error si hay fallo
@@ -23,7 +23,6 @@ function HomeUsuario() {
     comprobarToken('P');
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-
 
   const handleDniChange = (event) => {
     setDni(event.target.value);
@@ -97,6 +96,12 @@ function HomeUsuario() {
               className="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition-colors"
             >
               Ver mis turnos
+            </button>
+            <button
+              onClick={() => navigate('/paciente/estudios')}
+              className="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition-colors"
+            >
+              Ver mis estudios
             </button>
             <button
               onClick={() => navigate('/paciente/editardatospersonales')}
