@@ -17,19 +17,47 @@ export function PacientesRoutes() {
       <Routes>
         <Route path="/" element={<HomeUsuario />} />
         <Route path="/datospersonales" element={<DatosPersonales />} />
+        <Route
+          path="/sacarturno"
+          element={
+            <Validacion rol={rol} esperado={'P'}>
+              <SacarTurno />
+            </Validacion>
+          }
+        />
+        <Route
+          path="/editardatospersonales"
+          element={
+            <Validacion rol={rol} esperado={'P'}>
+              <ModificacionUsuario />
+            </Validacion>
+          }
+        />
+        <Route
+          path="/confirmacionturno"
+          element={
+            <Validacion rol={rol} esperado={'P'}>
+              <ConfirmacionTurno />
+            </Validacion>
+          }
+        />
+        <Route
+          path="/verturnos"
+          element={
+            <Validacion rol={rol} esperado={'P'}>
+              <TurnosPaciente />
+            </Validacion>
+          }
+        />
+        <Route
+          path="/estudios"
+          element={
+            <Validacion rol={rol} esperado={'P'}>
+              <VerEstudios />
+            </Validacion>
+          }
+        />
       </Routes>
-      <Validacion rol={rol} esperado={'P'}>
-        <Routes>
-          <Route path="/sacarturno" element={<SacarTurno />} />
-          <Route
-            path="/editardatospersonales"
-            element={<ModificacionUsuario />}
-          />
-          <Route path="/confirmacionturno" element={<ConfirmacionTurno />} />
-          <Route path="/verturnos" element={<TurnosPaciente />} />
-          <Route path="/estudios" element={<VerEstudios />} />
-        </Routes>
-      </Validacion>
     </PacientesProvider>
   );
 }
