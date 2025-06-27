@@ -132,7 +132,7 @@ export function TurnosPaciente() {
         >
           Volver
         </button>
-        {turnos.length > 0 ? (
+        {turnos && turnos.length > 0 ? (
           turnos.map((turno, index) => (
             <div
               key={index}

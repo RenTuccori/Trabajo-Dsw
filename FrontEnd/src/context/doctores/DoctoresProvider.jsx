@@ -29,22 +29,34 @@ const DoctoresProvider = ({ children }) => {
   async function Historico() {
     try {
       const response = await getTurnosHistoricoDoctor({ idDoctor : idDoctor });
-      console.log(response.data.data)
-      console.log('length', response.data.data.length)
-      if (response.data && response.data.data.length > 0) {
-        setTurnosHist(response.data.data);
-        console.log('entre')
-        const fechasDisponibles = response.data.data.map(
-          (turno) => new Date(turno.fechaYHora.split('T')[0])
-        );
-        setFechas(fechasDisponibles);
+      console.log('Respuesta completa:', response);
+      console.log('response.data:', response.data);
+      
+      // El backend devuelve directamente el array en response.data
+      if (response && response.data) {
+        const data = response.data; // Los datos están directamente en response.data
+        console.log('data:', data);
+        console.log('length:', Array.isArray(data) ? data.length : 'no es array');
+        
+        if (Array.isArray(data) && data.length > 0) {
+          setTurnosHist(data);
+          console.log('entre - turnos encontrados');
+          const fechasDisponibles = data.map(
+            (turno) => new Date(turno.fechaYHora.split('T')[0])
+          );
+          setFechas(fechasDisponibles);
+        } else {
+          console.log('sali por else - no hay turnos');
+          setTurnosHist([]);
+          setFechas([]);
+        }
       } else {
-        console.log('sali por else')
+        console.log('respuesta sin data');
         setTurnosHist([]);
         setFechas([]);
       }
     } catch (error) {
-      console.log('sali por catch')
+      console.log('sali por catch');
       console.error('Error al obtener turnos históricos:', error);
       setTurnosHist([]);
       setFechas([]);
@@ -52,14 +64,20 @@ const DoctoresProvider = ({ children }) => {
   }
 
   async function Fecha(fecha) {
-    const formattedDate = `${fecha.getFullYear()}-${(fecha.getMonth() + 1)
-      .toString()
-      .padStart(2, '0')}-${fecha.getDate().toString().padStart(2, '0')}`;
-    const response = await getTurnosDoctorFecha({
-      idDoctor,
-      fechaYHora: formattedDate,
-    });
-    setTurnosFecha(response.data);
+    try {
+      const formattedDate = `${fecha.getFullYear()}-${(fecha.getMonth() + 1)
+        .toString()
+        .padStart(2, '0')}-${fecha.getDate().toString().padStart(2, '0')}`;
+      const response = await getTurnosDoctorFecha({
+        idDoctor,
+        fechaYHora: formattedDate,
+      });
+      console.log('Respuesta turnos por fecha:', response);
+      setTurnosFecha(response?.data || []);
+    } catch (error) {
+      console.error('Error al obtener turnos por fecha:', error);
+      setTurnosFecha([]);
+    }
   }
 
   async function TurnosHoy() {

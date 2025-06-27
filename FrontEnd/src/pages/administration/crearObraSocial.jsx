@@ -140,7 +140,7 @@ export function CrearObraSocial() {
           Obras sociales creadas
         </h3>
         <ul className="space-y-2">
-          {obrasSociales.length > 0 ? (
+          {obrasSociales && obrasSociales.length > 0 ? (
             obrasSociales.map((obraSocial) => (
               <li
                 key={obraSocial.idObraSocial}

@@ -11,6 +11,8 @@ function HomeUsuario() {
   const [dniform, setDni] = useState('');
   const [fecha, setFecha] = useState('');
 
+  console.log('HomeUsuario - Estado de autenticación:', { dni, nombreUsuario, apellidoUsuario });
+
   const handleLogin = async () => {
     try {
       await login({ identifier: dniform, credential: fecha, userType: 'P' });
@@ -34,16 +36,9 @@ function HomeUsuario() {
   };
 
   return (
-    <div className="relative min-h-screen bg-gradient-to-b from-blue-100 to-white flex items-center justify-center p-4">
-      {/* Fondo de imagen */}
-      <div
-        className="absolute inset-0 bg-cover bg-center z-0"
-        style={{ backgroundImage: "url('../src/components/fondo2.png')" }}
-      ></div>
-      <div className="absolute inset-0 bg-gradient-to-b from-transparent to-white z-0"></div>
-
-      {/* Contenido */}
-      <div className="relative z-10 bg-white rounded-lg shadow-md w-full max-w-md p-6 space-y-4">
+    <div className="min-h-screen bg-gray-100 flex items-center justify-center p-4">
+      {/* Contenido simplificado para debug */}
+      <div className="bg-white rounded-lg shadow-md w-full max-w-md p-6 space-y-4">
         <h1 className="text-center text-2xl font-semibold text-gray-800">
           {dni && nombreUsuario && apellidoUsuario
             ? `Bienvenido/a ${nombreUsuario}`

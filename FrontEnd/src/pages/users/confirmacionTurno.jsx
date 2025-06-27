@@ -30,9 +30,24 @@ export function ConfirmacionTurno() {
         // Asegurarse de que todas las funciones asincrónicas se completen antes de continuar
         await comprobarToken("P");
         await ObtenerUsuarioDni();
+        
+        console.log('🔍 Estado antes de obtener doctor, especialidad y sede:', {
+          nombreDoctor,
+          apellidoDoctor,
+          nombreEspecialidad,
+          nombreSede
+        });
+        
         await ObtenerDoctorId();
         await ObtenerEspecialidadId();
         await ObtenerSedeId();
+
+        console.log('🔍 Estado después de obtener doctor, especialidad y sede:', {
+          nombreDoctor,
+          apellidoDoctor,
+          nombreEspecialidad,
+          nombreSede
+        });
 
         // Crear turno
         await CrearTurno();

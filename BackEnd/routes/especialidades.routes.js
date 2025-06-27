@@ -1,26 +1,21 @@
 import { Router } from 'express';
 import {
-  getSpecialties,
-  getAvailableSpecialties,
-  getSpecialtyById,
-  createSpecialty,
-  updateSpecialty,
-  getAllSpecialities
+  getEspecialidades,
+  getEspecialidadById,
+  createEspecialidad,
+  updateEspecialidad,
+  deleteEspecialidad,
+  getDoctoresByEspecialidad
 } from '../controllers/especialidades.controllers.js';
-import { Paciente } from '../middleware/authorizeRole.js';
+import { Admin } from '../middleware/authorizeRole.js';
 
 const router = Router();
 
-router.post('/api/allspecialties', getSpecialties);
-
-router.post('/api/allespecialties', getAllSpecialities);
-
-router.post('/api/availablespecialties', getAvailableSpecialties);
-
-router.get('/api/idspecialties/:idEspecialidad', Paciente, getSpecialtyById);
-
-
-router.put('/api/specialties/', updateSpecialty);
-
+router.get('/api/especialidades', getEspecialidades);
+router.get('/api/especialidades/:id', getEspecialidadById);
+router.post('/api/especialidades', Admin, createEspecialidad);
+router.put('/api/especialidades/:id', Admin, updateEspecialidad);
+router.delete('/api/especialidades/:id', Admin, deleteEspecialidad);
+router.get('/api/especialidades/:id/doctores', getDoctoresByEspecialidad);
 
 export default router;

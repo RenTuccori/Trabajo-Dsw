@@ -1,10 +1,8 @@
-import axios from 'axios';
-
-const dbUrl = import.meta.env.VITE_DB_URL;
+import axiosInstance from './axiosInstance';
 
 export const sendEmail = async ({ to, subject, html }) => {
   try {
-    const response = await axios.post(`http://${dbUrl}/api/send-email`, {
+    const response = await axiosInstance.post(`/api/send-email`, {
       to, subject, html
     });
     return response.data;

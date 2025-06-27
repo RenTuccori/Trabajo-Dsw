@@ -37,17 +37,17 @@ export function TurnosDoctorHoy() {
           Turnos de Hoy
         </h1>
         <div className="space-y-4">
-          {turnosHoy.length > 0 ? (
+          {turnosHoy && turnosHoy.length > 0 ? (
             turnosHoy.map((turno, index) => (
               <div
                 key={index}
                 className="bg-gray-50 rounded-lg p-4 shadow-sm mb-4"
               >
                 <p>
-                  <strong>Sede:</strong> {turno.sede}
+                  <strong>Sede:</strong> {turno.sede?.nombre || 'N/A'}
                 </p>
                 <p>
-                  <strong>Especialidad:</strong> {turno.especialidad}
+                  <strong>Especialidad:</strong> {turno.especialidad?.nombre || 'N/A'}
                 </p>
                 <p>
                   <strong>Fecha y Hora:</strong>{" "}
@@ -57,10 +57,10 @@ export function TurnosDoctorHoy() {
                   <strong>Estado:</strong> {turno.estado}
                 </p>
                 <p>
-                  <strong>DNI Paciente:</strong> {turno.dni}
+                  <strong>DNI Paciente:</strong> {turno.paciente?.usuario?.dni || 'N/A'}
                 </p>
                 <p>
-                  <strong>Apellido y Nombre:</strong> {turno.nomyapel}
+                  <strong>Apellido y Nombre:</strong> {turno.paciente?.usuario ? `${turno.paciente.usuario.apellido} ${turno.paciente.usuario.nombre}` : 'N/A'}
                 </p>
               </div>
             ))

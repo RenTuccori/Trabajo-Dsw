@@ -1,144 +1,195 @@
-import { pool } from '../db.js';
+import { Especialidad, SedeDocEsp, Doctor, Usuario, Sede, Turno } from '../models/index.js';
 
-export const getSpecialties = async (req, res) => {
+export const getEspecialidades = async (req, res) => {
   try {
-    const { idSede } = req.body;
-    const [result] = await pool.query(
-      'SELECT DISTINCT sde.idEspecialidad, es.nombre FROM especialidades es INNER JOIN sededoctoresp sde ON es.idEspecialidad = sde.idEspecialidad WHERE sde.idSede = ? AND es.estado = \'Habilitado\'',
-      [idSede]
-    );
-    res.json(result);
+    const especialidades = await Especialidad.findAll({
+      where: { estado: 'Habilitado' }
+    });
+
+    if (especialidades.length === 0) {
+      return res.status(404).json({ message: 'No hay especialidades cargadas' });
+    }
+
+    res.json(especialidades);
   } catch (error) {
+    console.log(error);
     return res.status(500).json({ message: error.message });
   }
 };
 
-export const getAllSpecialities = async (req, res) => {
+export const getEspecialidadById = async (req, res) => {
   try {
-    const [result] = await pool.query('SELECT * FROM especialidades WHERE estado = \'Habilitado\'');
-    res.json(result);
-  } catch (error) {
-    return res.status(500).json({ message: error.message });
-  }
-};
+    const { id } = req.params;
 
-export const getAvailableSpecialties = async (req, res) => {
-  try {
-    const { idSede } = req.body;
-    const [result] = await pool.query(
-      `SELECT es.idEspecialidad, es.nombre 
-       FROM especialidades es 
-       WHERE es.idEspecialidad NOT IN (
-         SELECT sde.idEspecialidad 
-         FROM sededoctoresp sde 
-         WHERE sde.idSede = ?
-       ) AND es.estado = 'Habilitado'`,
-      [idSede]
-    );
-    res.json(result);
-  } catch (error) {
-    return res.status(500).json({ message: error.message });
-  }
-};
+    const especialidad = await Especialidad.findByPk(id, {
+      include: [{
+        model: Turno,
+        as: 'turnos',
+        include: [{
+          model: Doctor,
+          as: 'doctor',
+          include: [{
+            model: Usuario,
+            as: 'usuario'
+          }]
+        }, {
+          model: Sede,
+          as: 'sede'
+        }]
+      }]
+    });
 
-export const getSpecialtyById = async (req, res) => {
-  try {
-    const { idEspecialidad } = req.params;
-    const [result] = await pool.query(
-      'SELECT * FROM especialidades WHERE idEspecialidad = ? AND estado = \'Habilitado\'',
-      [idEspecialidad]
-    );
-    if (result.length === 0) {
+    if (!especialidad) {
       return res.status(404).json({ message: 'Especialidad no encontrada' });
     }
-    res.json(result[0]);
+
+    res.json(especialidad);
   } catch (error) {
     return res.status(500).json({ message: error.message });
   }
 };
 
-
-export const createSpecialty = async (req, res) => {
+export const createEspecialidad = async (req, res) => {
   try {
     const { nombre } = req.body;
-    const estado = 'Habilitado';
 
-    // Verificar si ya existe una especialidad con el mismo nombre y estado habilitado
-    const [existingSpecialty] = await pool.query(
-      'SELECT * FROM especialidades WHERE nombre = ? AND estado = ?',
-      [nombre, estado]
-    );
+    console.log('🔍 Creando especialidad:', nombre);
 
-    if (existingSpecialty.length > 0) {
-      // Si ya existe una especialidad habilitada con el mismo nombre
-      return res.status(400).json({ message: 'Ya existe una especialidad habilitada con este nombre.' });
+    // Verificar si ya existe una especialidad con el mismo nombre
+    const especialidadExistente = await Especialidad.findOne({
+      where: { nombre }
+    });
+
+    if (especialidadExistente) {
+      if (especialidadExistente.estado === 'Habilitado') {
+        return res.status(400).json({ 
+          message: 'La especialidad ya existe y está habilitada' 
+        });
+      } else {
+        // Si existe pero está deshabilitada, rehabilitarla
+        console.log('🔄 Rehabilitando especialidad existente:', nombre);
+        
+        await Especialidad.update({
+          estado: 'Habilitado'
+        }, {
+          where: { nombre }
+        });
+
+        const especialidadRehabilitada = await Especialidad.findOne({
+          where: { nombre }
+        });
+
+        console.log('✅ Especialidad rehabilitada exitosamente');
+        return res.json(especialidadRehabilitada);
+      }
     }
 
-    // Insertar nueva especialidad con estado habilitado
-    const [result] = await pool.query(
-      'INSERT INTO especialidades (nombre, estado) VALUES (?, ?)',
-      [nombre, estado]
-    );
-
-    res.json({
-      idEspecialidad: result.insertId,
+    const nuevaEspecialidad = await Especialidad.create({
       nombre,
-      estado,
+      estado: 'Habilitado'
     });
+
+    console.log('✅ Nueva especialidad creada exitosamente');
+    res.json(nuevaEspecialidad);
   } catch (error) {
+    console.error('❌ Error al crear especialidad:', error);
+    if (error.name === 'SequelizeValidationError') {
+      return res.status(400).json({
+        message: 'Error de validación',
+        errors: error.errors.map(e => e.message)
+      });
+    }
+    if (error.name === 'SequelizeUniqueConstraintError') {
+      return res.status(400).json({
+        message: 'Error de restricción única en la base de datos'
+      });
+    }
     return res.status(500).json({ message: error.message });
   }
 };
 
-
-export const updateSpecialty = async (req, res) => {
+export const updateEspecialidad = async (req, res) => {
   try {
-    const result = await pool.query(
-      'UPDATE especialidades SET ? WHERE idEspecialidad = ?',
-      [req.body, req.params.id]
+    const { id } = req.params;
+    const { nombre, estado } = req.body;
+
+    const [updatedRowsCount] = await Especialidad.update(
+      { nombre, estado },
+      { where: { idEspecialidad: id } }
     );
-    if (result.affectedRows === 0) {
+
+    if (updatedRowsCount === 0) {
       return res.status(404).json({ message: 'Especialidad no encontrada' });
     }
+
     res.json({ message: 'Especialidad actualizada' });
   } catch (error) {
+    if (error.name === 'SequelizeValidationError') {
+      return res.status(400).json({
+        message: 'Error de validación',
+        errors: error.errors.map(e => e.message)
+      });
+    }
     return res.status(500).json({ message: error.message });
   }
 };
 
-export const deleteSpecialty = async (req, res) => {
+export const deleteEspecialidad = async (req, res) => {
   try {
     const { idEspecialidad } = req.params;
+    console.log('Deleting especialidad with ID:', idEspecialidad);
 
-    // Iniciar una transacción para asegurar consistencia en las actualizaciones
-    await pool.query('START TRANSACTION');
-
-    // Actualizar el estado de la especialidad a "Deshabilitado"
-    const [resultEspecialidad] = await pool.query(
-      'UPDATE especialidades SET estado = "Deshabilitado" WHERE idEspecialidad = ?',
-      [idEspecialidad]
+    // Soft delete
+    const [updatedRowsCount] = await Especialidad.update(
+      { estado: 'Deshabilitado' },
+      { where: { idEspecialidad } }
     );
 
-    // Si no se encontró la especialidad, devolver un error
-    if (resultEspecialidad.affectedRows === 0) {
-      await pool.query('ROLLBACK');
+    if (updatedRowsCount === 0) {
       return res.status(404).json({ message: 'Especialidad no encontrada' });
     }
 
-    // Actualizar el estado de las combinaciones en la tabla sededoctoresp a "Deshabilitado"
-    const [resultCombinacion] = await pool.query(
-      'UPDATE sededoctoresp SET estado = "Deshabilitado" WHERE idEspecialidad = ?',
-      [idEspecialidad]
-    );
-
-    // Confirmar la transacción si todo salió bien
-    await pool.query('COMMIT');
-
-    // Si todo fue exitoso, devolver un mensaje de éxito
-    return res.json({ message: 'Especialidad deshabilitada exitosamente' });
+    res.json({ message: 'Especialidad deshabilitada' });
   } catch (error) {
-    // Si ocurre un error, hacer rollback de la transacción
-    await pool.query('ROLLBACK');
+    console.error('Error deleting especialidad:', error);
+    return res.status(500).json({ message: error.message });
+  }
+};
+
+export const getDoctoresByEspecialidad = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    // Buscar doctores que trabajen en esta especialidad
+    const sedeDocEsps = await SedeDocEsp.findAll({
+      where: { 
+        idEspecialidad: id,
+        estado: 'Habilitado'
+      },
+      include: [{
+        model: Doctor,
+        as: 'doctor',
+        include: [{
+          model: Usuario,
+          as: 'usuario'
+        }]
+      }, {
+        model: Sede,
+        as: 'sede'
+      }, {
+        model: Especialidad,
+        as: 'especialidad'
+      }]
+    });
+
+    const doctores = sedeDocEsps.map(sde => ({
+      ...sde.doctor.toJSON(),
+      sede: sde.sede,
+      especialidad: sde.especialidad
+    }));
+
+    res.json(doctores);
+  } catch (error) {
     return res.status(500).json({ message: error.message });
   }
 };

@@ -164,6 +164,9 @@ export function SacarTurno() {
     setSelectedHorario(selectedOption);
     setFechaYHora(`${formatedFecha} ${selectedOption.value}`);
     console.log(`${formatedFecha} ${selectedOption.value}`);
+    
+    console.log('🔍 Estableciendo idDoctor:', selectedDoctor.value, 'desde selectedDoctor:', selectedDoctor);
+    
     setIdDoctor(selectedDoctor.value);
     setIdEspecialidad(selectedEspecialidad.value);
     setIdSede(selectedSede.value);
@@ -179,7 +182,7 @@ export function SacarTurno() {
           <p className="text-center text-gray-600 text-lg">Sede</p>
           <Select
             className="react-select"
-            options={sedes.map((sede) => ({
+            options={(sedes || []).map((sede) => ({
               value: sede.idSede,
               label: sede.nombre,
             }))}
@@ -190,7 +193,7 @@ export function SacarTurno() {
           <p className="text-center text-gray-600 text-lg">Especialidad</p>
           <Select
             className="react-select"
-            options={especialidades.map((especialidad) => ({
+            options={(especialidades || []).map((especialidad) => ({
               value: especialidad.idEspecialidad,
               label: especialidad.nombre,
             }))}
@@ -202,7 +205,7 @@ export function SacarTurno() {
           <p className="text-center text-gray-600 text-lg">Doctores</p>
           <Select
             className="react-select"
-            options={doctores.map((doctor) => ({
+            options={(doctores || []).map((doctor) => ({
               value: doctor.idDoctor,
               label: doctor.nombreyapellido,
             }))}
@@ -224,7 +227,7 @@ export function SacarTurno() {
           <p className="text-center text-gray-600 text-lg">Horario</p>
           <Select
             className="react-select"
-            options={horarios.map((horario) => ({
+            options={(horarios || []).map((horario) => ({
               value: horario.hora_inicio,
               label: horario.hora_inicio,
             }))}

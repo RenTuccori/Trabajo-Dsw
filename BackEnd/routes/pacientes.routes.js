@@ -1,10 +1,13 @@
 import { Router } from 'express';
 import {
-  getPacientes,
-  getPacienteByDni,
-  createPaciente,
+  getPacientes,      // ✅ Función correcta
+  getPacienteByDni,  // ✅ Función correcta
+  createPaciente,    // ✅ Función correcta
+  updatePaciente,    // ✅ Función correcta
+  deletePaciente,    // ✅ Función correcta
+  getPacienteLogin   // ✅ Función correcta
 } from '../controllers/pacientes.controllers.js';
-import { Paciente } from '../middleware/authorizeRole.js';
+import { Admin, Paciente, DoctorOrAdmin } from '../middleware/authorizeRole.js';
 
 const router = Router();
 
@@ -24,10 +27,11 @@ router.get('/api/patient/debug', async (req, res) => {
   }
 });
 
-router.get('/api/patient', getPacientes);
-
-router.post('/api/patientdni', Paciente, getPacienteByDni);
-
-router.post('/api/patientcreate', createPaciente);
+router.get('/api/pacientes', DoctorOrAdmin, getPacientes);
+router.post('/api/paciente', getPacienteByDni);
+router.post('/api/pacientes', Admin, createPaciente);
+router.put('/api/pacientes/:id', Admin, updatePaciente);
+router.delete('/api/pacientes/:id', Admin, deletePaciente);
+router.post('/api/pacientelogin', getPacienteLogin);
 
 export default router;

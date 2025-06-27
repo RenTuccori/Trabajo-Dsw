@@ -30,7 +30,9 @@ export function CrearEspecialidad() {
         notifySuccess('¡Especialidad creada con éxito!');
         ObtenerEspecialidadesDisponibles(); // Actualizar la lista después de crear una especialidad
       } catch (error) {
-        notifyError('Error al crear la especialidad');
+        // Extraer el mensaje de error específico del backend
+        const errorMessage = error.response?.data?.message || 'Error al crear la especialidad';
+        notifyError(errorMessage);
         console.error('Error al crear especialidad:', error);
       }
     }
@@ -89,7 +91,7 @@ export function CrearEspecialidad() {
           Especialidades creadas
         </h3>
         <ul className="space-y-2">
-          {especialidades.length > 0 ? (
+          {especialidades && especialidades.length > 0 ? (
             especialidades.map((especialidad) => (
               <li
                 key={especialidad.idEspecialidad}

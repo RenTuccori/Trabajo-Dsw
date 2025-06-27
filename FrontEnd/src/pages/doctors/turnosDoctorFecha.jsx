@@ -38,7 +38,7 @@ export function TurnosDoctorFecha() {
         return fechas.some(f =>
             f.getFullYear() === date.getFullYear() &&
             f.getMonth() === date.getMonth() &&
-            f.getDate() === (date.getDate() - 1)
+            f.getDate() === date.getDate()
         );
     };
     const handleDateChange = (date) => {
@@ -65,16 +65,15 @@ export function TurnosDoctorFecha() {
                     </div>
                 )}
                 {selectedFecha && (
-                    <div className="space-y-4">
-                        {turnosFecha.length > 0 ? (
+                    <div className="space-y-4">                          {turnosFecha && turnosFecha.length > 0 ? (
                             turnosFecha.map((turno, index) => (
                                 <div key={index} className="bg-gray-50 rounded-lg p-4 shadow-sm mb-4">
-                                    <p><strong>Sede:</strong> {turno.sede}</p>
-                                    <p><strong>Especialidad:</strong> {turno.especialidad}</p>
+                                    <p><strong>Sede:</strong> {turno.sede?.nombre || 'N/A'}</p>
+                                    <p><strong>Especialidad:</strong> {turno.especialidad?.nombre || 'N/A'}</p>
                                     <p><strong>Hora:</strong> {formatHora(turno.fechaYHora)}</p>
                                     <p><strong>Estado:</strong> {turno.estado}</p>
-                                    <p><strong>DNI Paciente:</strong> {turno.dni}</p>
-                                    <p><strong>Apellido y Nombre:</strong> {turno.nomyapel}</p>
+                                    <p><strong>DNI Paciente:</strong> {turno.paciente?.usuario?.dni || 'N/A'}</p>
+                                    <p><strong>Apellido y Nombre:</strong> {turno.paciente?.usuario ? `${turno.paciente.usuario.apellido} ${turno.paciente.usuario.nombre}` : 'N/A'}</p>
                                 </div>
                             ))
                         ) : (

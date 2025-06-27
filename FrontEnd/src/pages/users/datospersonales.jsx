@@ -10,8 +10,9 @@ import { confirmDialog } from '../../components/SwalConfig';
 export function DatosPersonales() {
   const { obraSociales, ObtenerObraSociales, CrearUsuario } =
     usePacientes();
-    const {
-    login
+  const {
+    login,
+    userType
   } = useAuth();
   const [selectedObraSociales, setSelectedObraSociales] = useState(null);
   const navigate = useNavigate();
@@ -25,6 +26,16 @@ export function DatosPersonales() {
     direccion: '',
     idObraSocial: '',
   });
+
+  // Get home route based on user type  
+  const getHomeRoute = () => {
+    switch(userType) {
+      case 'D': return '/doctor';
+      case 'A': return '/admin'; 
+      case 'P': return '/paciente';
+      default: return '/paciente';
+    }
+  };
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -42,7 +53,7 @@ export function DatosPersonales() {
 
       // Muestra el mensaje de éxito con SweetAlert2
       confirmDialog().then(() => {
-        navigate('/paciente'); // Navega después de confirmar
+        navigate(getHomeRoute()); // Navigate to appropriate home based on user type
       });
     } catch (error) {
       notifyError('Hubo un error al registrar el usuario. Intente nuevamente.');
@@ -70,7 +81,7 @@ export function DatosPersonales() {
             <input
               type="text"
               name="dni"
-              value={formData.dni}
+              value={formData.dni || ''}
               onChange={handleInputChange}
               required
               className="w-full border border-gray-300 rounded-lg p-2 focus:outline-none focus:border-blue-500"
@@ -83,7 +94,7 @@ export function DatosPersonales() {
             <input
               type="date"
               name="fechaNacimiento"
-              value={formData.fechaNacimiento}
+              value={formData.fechaNacimiento || ''}
               onChange={handleInputChange}
               required
               className="w-full border border-gray-300 rounded-lg p-2 focus:outline-none focus:border-blue-500"
@@ -94,7 +105,7 @@ export function DatosPersonales() {
             <input
               type="text"
               name="nombre"
-              value={formData.nombre}
+              value={formData.nombre || ''}
               onChange={handleInputChange}
               required
               className="w-full border border-gray-300 rounded-lg p-2 focus:outline-none focus:border-blue-500"
@@ -105,7 +116,7 @@ export function DatosPersonales() {
             <input
               type="text"
               name="apellido"
-              value={formData.apellido}
+              value={formData.apellido || ''}
               onChange={handleInputChange}
               required
               className="w-full border border-gray-300 rounded-lg p-2 focus:outline-none focus:border-blue-500"
@@ -116,7 +127,7 @@ export function DatosPersonales() {
             <input
               type="text"
               name="direccion"
-              value={formData.direccion}
+              value={formData.direccion || ''}
               onChange={handleInputChange}
               required
               className="w-full border border-gray-300 rounded-lg p-2 focus:outline-none focus:border-blue-500"
@@ -127,7 +138,7 @@ export function DatosPersonales() {
             <input
               type="text"
               name="telefono"
-              value={formData.telefono}
+              value={formData.telefono || ''}
               onChange={handleInputChange}
               required
               className="w-full border border-gray-300 rounded-lg p-2 focus:outline-none focus:border-blue-500"
@@ -138,7 +149,7 @@ export function DatosPersonales() {
             <input
               type="email"
               name="email"
-              value={formData.email}
+              value={formData.email || ''}
               onChange={handleInputChange}
               required
               className="w-full border border-gray-300 rounded-lg p-2 focus:outline-none focus:border-blue-500"
@@ -147,7 +158,7 @@ export function DatosPersonales() {
           <div>
             <p className="text-center text-gray-600 text-lg">Obra Social</p>
             <Select
-              options={obraSociales.map((obrasocial) => ({
+              options={(obraSociales || []).map((obrasocial) => ({
                 value: obrasocial.idObraSocial,
                 label: obrasocial.nombre,
               }))}

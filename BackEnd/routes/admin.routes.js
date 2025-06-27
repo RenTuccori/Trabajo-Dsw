@@ -26,9 +26,14 @@ import {
   updateObraSocial,
 } from '../controllers/obrassociales.controllers.js';
 import {
-  createSpecialty,
-  deleteSpecialty,
+  createEspecialidad,
+  deleteEspecialidad,
 } from '../controllers/especialidades.controllers.js';
+import {
+  getUserByDni,
+  createUser,
+} from '../controllers/usuarios.controllers.js';
+
 const router = Router();
 
 router.post('/api/admin', getAdmin);
@@ -46,15 +51,18 @@ router.get('/api/os', getObrasSociales);
 router.put('/api/adminDeleteOS/:idObraSocial', Admin, deleteObraSocial);
 router.put('/api/adminUpdateOS/:idObraSocial', Admin, updateObraSocial);
 //Especialidad
-router.post('/api/adminCreateEsp', Admin, createSpecialty);
-router.put('/api/deleteSpecialties/:idEspecialidad', Admin, deleteSpecialty);
+router.post('/api/adminCreateEsp', Admin, createEspecialidad);
+router.put('/api/deleteSpecialties/:idEspecialidad', Admin, deleteEspecialidad);
 //Combinaciones
 router.post('/api/adminCreateSeEspDoc', Admin, createSeEspDoc);
-router.put('/api/adminDeleteSeEspDoc', Admin, deleteSeEspDoc); //Espera body de idSede, idEspecialidad, idDoctor
+router.put('/api/adminDeleteSeEspDoc', Admin, deleteSeEspDoc);
 router.get('/api/adminGetCombinaciones', Admin, getCombinaciones);
 //Horarios
 router.post('/api/adminCreateHorario', Admin, createHorarios);
 router.post('/api/adminGetHorariosXDoctor', Admin, getHorariosXDoctor);
 router.put('/api/adminUpdateHorario', Admin, updateHorarios);
+//Usuarios
+router.post('/api/adminGetUserByDni', Admin, getUserByDni);
+router.post('/api/adminCreateUser', Admin, createUser);
 
 export default router;

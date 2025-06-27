@@ -25,8 +25,23 @@ export function CrearCombinacion() {
   const [selectedDoctor, setSelectedDoctor] = useState(null);
 
   useEffect(() => {
-    ObtenerSedes();
-    obtenerCombinaciones(); // Carga las combinaciones al montar el componente
+    console.log('🔄 Inicializando página de combinaciones');
+    ObtenerSedes()
+      .then(() => console.log('✅ Sedes cargadas'))
+      .catch(err => console.error('❌ Error al cargar sedes:', err));
+    
+    ObtenerEspecialidadesDisponibles()
+      .then(() => console.log('✅ Especialidades cargadas'))
+      .catch(err => console.error('❌ Error al cargar especialidades:', err));
+    
+    ObtenerDoctores()
+      .then(() => console.log('✅ Doctores cargados'))
+      .catch(err => console.error('❌ Error al cargar doctores:', err));
+    
+    obtenerCombinaciones()
+      .then(() => console.log('✅ Combinaciones cargadas'))
+      .catch(err => console.error('❌ Error al cargar combinaciones:', err));
+    
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -217,51 +232,68 @@ export function CrearCombinacion() {
           <h2 className="text-lg font-semibold mb-4">
             Combinaciones Asignadas
           </h2>
-          <ul className="space-y-2 bg-white rounded-lg shadow-md p-4">
-            {combinaciones &&
-              combinaciones.map((combinacion, index) => (
-                <li
-                  key={index}
-                  className="flex justify-between items-center bg-gray-100 p-2 rounded-md"
-                >
-                  <span>{`Sede: ${combinacion.nombreSede}, Especialidad: ${combinacion.nombreEspecialidad}, Doctor: ${combinacion.nombreDoctor} ${combinacion.apellidoDoctor}`}</span>
-                  <div className="flex space-x-4">
-                    {/* Botón de Eliminar */}
-                    <button
-                      className="text-red-600 hover:text-red-800"
-                      onClick={() =>
-                        handleDeleteCombinacion(
-                          combinacion.idSede,
-                          combinacion.idDoctor,
-                          combinacion.idEspecialidad
-                        )
-                      }
-                    >
-                      Eliminar
-                    </button>
+          <div className="bg-white rounded-lg shadow-md p-4">
+            {combinaciones && combinaciones.length > 0 ? (
+              <ul className="space-y-2">
+                {combinaciones.map((combinacion, index) => (
+                  <li
+                    key={index}
+                    className="flex justify-between items-center bg-gray-100 p-3 rounded-md"
+                  >
+                    <div className="flex-1">
+                      <div className="text-sm font-medium text-gray-800">
+                        <span className="font-semibold">Sede:</span> {combinacion.nombreSede || 'N/A'}
+                      </div>
+                      <div className="text-sm text-gray-600">
+                        <span className="font-semibold">Especialidad:</span> {combinacion.nombreEspecialidad || 'N/A'}
+                      </div>
+                      <div className="text-sm text-gray-600">
+                        <span className="font-semibold">Doctor:</span> {`${combinacion.nombreDoctor || ''} ${combinacion.apellidoDoctor || ''}`.trim() || 'N/A'}
+                      </div>
+                    </div>
+                    <div className="flex space-x-2 ml-4">
+                      {/* Botón de Agregar Horarios */}
+                      <button
+                        className="text-blue-600 hover:text-blue-800 border border-blue-200 px-2 py-1 rounded hover:bg-blue-50"
+                        onClick={() => {
+                          const data = {
+                            idSede: combinacion.idSede,
+                            idEspecialidad: combinacion.idEspecialidad,
+                            idDoctor: combinacion.idDoctor,
+                          };
+                          console.log(
+                            "Datos a enviar para agregar horarios:",
+                            data
+                          );
+                          navigate(`/admin/horarios`, { state: data });
+                        }}
+                      >
+                        Horarios
+                      </button>
 
-                    {/* Botón de Agregar Horarios */}
-                    <button
-                      className="text-blue-600 hover:text-blue-800"
-                      onClick={() => {
-                        const data = {
-                          idSede: combinacion.idSede,
-                          idEspecialidad: combinacion.idEspecialidad,
-                          idDoctor: combinacion.idDoctor,
-                        };
-                        console.log(
-                          "Datos a enviar para agregar horarios:",
-                          data
-                        ); // Log de los datos que se envían
-                        navigate(`/admin/horarios`, { state: data });
-                      }}
-                    >
-                      Agregar horarios
-                    </button>
-                  </div>
-                </li>
-              ))}
-          </ul>
+                      {/* Botón de Eliminar */}
+                      <button
+                        className="text-red-600 hover:text-red-800 border border-red-200 px-2 py-1 rounded hover:bg-red-50"
+                        onClick={() =>
+                          handleDeleteCombinacion(
+                            combinacion.idSede,
+                            combinacion.idDoctor,
+                            combinacion.idEspecialidad
+                          )
+                        }
+                      >
+                        Eliminar
+                      </button>
+                    </div>
+                  </li>
+                ))}
+              </ul>
+            ) : (
+              <p className="text-center text-gray-600 py-4">
+                No hay combinaciones asignadas aún.
+              </p>
+            )}
+          </div>
         </div>
       </div>
     </div>
