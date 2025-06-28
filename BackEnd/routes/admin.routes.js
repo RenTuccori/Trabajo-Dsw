@@ -13,22 +13,22 @@ import {
   createDoctor,
   deleteDoctor,
   updateDoctor,
-} from '../controllers/doctores.controllers.js';
+} from '../controllers/doctors.controllers.js';
 import {
-  createSede,
-  updateSede,
-  deleteSede,
-} from '../controllers/sedes.controllers.js';
+  createVenue,
+  updateVenue,
+  deleteVenue,
+} from '../controllers/venues.controllers.js';
 import {
-  createObraSocial,
-  getObrasSociales,
-  deleteObraSocial,
-  updateObraSocial,
-} from '../controllers/obrassociales.controllers.js';
+  createInsurance,
+  getInsurances,
+  deleteInsurance,
+  updateInsurance,
+} from '../controllers/insurance.controllers.js';
 import {
   createSpecialty,
   deleteSpecialty,
-} from '../controllers/especialidades.controllers.js';
+} from '../controllers/specialties.controllers.js';
 const router = Router();
 
 router.post('/api/admin', getAdmin);
@@ -37,14 +37,14 @@ router.post('/api/adminCreateDr', Admin, createDoctor);
 router.put('/api/adminDeleteDr/:idDoctor', Admin, deleteDoctor);
 router.put('/api/adminUpdateDr/:idDoctor', Admin, updateDoctor);
 //Sede
-router.post('/api/adminCreateSede', Admin, createSede);
-router.put('/api/adminUpdateSede/:idSede', Admin, updateSede);
-router.put('/api/adminDeleteSede/:idSede', Admin, deleteSede);
+router.post('/api/adminCreateSede', Admin, createVenue);
+router.put('/api/adminUpdateSede/:idSede', Admin, updateVenue);
+router.put('/api/adminDeleteSede/:idSede', Admin, deleteVenue);
 //ObraSocial
-router.post('/api/adminCreateObraSocial', Admin, createObraSocial);
-router.get('/api/os', getObrasSociales);
-router.put('/api/adminDeleteOS/:idObraSocial', Admin, deleteObraSocial);
-router.put('/api/adminUpdateOS/:idObraSocial', Admin, updateObraSocial);
+router.post('/api/adminCreateObraSocial', Admin, createInsurance);
+router.get('/api/os', getInsurances);
+router.put('/api/adminDeleteOS/:idObraSocial', Admin, deleteInsurance);
+router.put('/api/adminUpdateOS/:idObraSocial', Admin, updateInsurance);
 //Especialidad
 router.post('/api/adminCreateEsp', Admin, createSpecialty);
 router.put('/api/deleteSpecialties/:idEspecialidad', Admin, deleteSpecialty);

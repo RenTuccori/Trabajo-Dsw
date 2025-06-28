@@ -5,9 +5,9 @@ import {
   Navigate,
 } from 'react-router-dom';
 import Navbar from './components/navbar';
-import { AdministracionRoutes } from './routes/administracion.routes.jsx';
-import { DoctoresRoutes } from './routes/doctores.routes.jsx';
-import { PacientesRoutes } from './routes/pacientes.routes.jsx';
+import { AdministracionRoutes } from './routes/administration.routes.jsx';
+import { DoctoresRoutes } from './routes/doctors.routes.jsx';
+import { PacientesRoutes } from './routes/patients.routes.jsx';
 import { ToastContainer } from 'react-toastify';
 import AuthProvider from './context/global/AuthProvider.jsx';
 import 'react-toastify/dist/ReactToastify.css';
@@ -21,9 +21,9 @@ function App() {
         <div>
           <Navbar />
           <Routes>
-            {/* Redirige desde "/" a "/paciente" */}
-            <Route path="/" element={<Navigate to="/paciente" />} />
-            <Route path="/paciente/*" element={<PacientesRoutes />} />
+            {/* Redirige desde "/" a "/patient" */}
+            <Route path="/" element={<Navigate to="/patient" />} />
+            <Route path="/patient/*" element={<PacientesRoutes />} />
             <Route path="/doctor/*" element={<DoctoresRoutes />} />
             <Route path="/admin/*" element={<AdministracionRoutes />} />
           </Routes>
@@ -59,3 +59,6 @@ function App() {
 }
 
 export default App;
+
+
+

@@ -1,20 +1,20 @@
 import express from 'express';
-import usersRouter from './routes/usuarios.routes.js';
-import doctorsRouter from './routes/doctores.routes.js';
-import specialtiesRouter from './routes/especialidades.routes.js';
-import turnosRouter from './routes/turnos.routes.js';
-import horariosRouter from './routes/horarios.routes.js';
-import pacienteRouter from './routes/pacientes.routes.js';
-import obrassocialesRouter from './routes/obrassociales.routes.js';
-import sedesRouter from './routes/sedes.routes.js';
+import usersRouter from './routes/users.routes.js';
+import doctorsRouter from './routes/doctors.routes.js';
+import specialtiesRouter from './routes/specialties.routes.js';
+import appointmentsRouter from './routes/appointments.routes.js';
+import schedulesRouter from './routes/schedules.routes.js';
+import patientsRouter from './routes/patients.routes.js';
+import insuranceRouter from './routes/insurance.routes.js';
+import venuesRouter from './routes/venues.routes.js';
 import adminRouter from './routes/admin.routes.js';
 import emailRoutes from './routes/email.routes.js';
-import estudiosRouter from './routes/estudios.routes.js';
+import studiesRouter from './routes/studies.routes.js';
 import cors from 'cors';
 import jwt from 'jsonwebtoken';
 
 // Importar las funciones de auto cancelación y auto recordatorio
-import { startAutoCancelTurnos } from './autoCancelTurnos.js'; // Cancelación de turnos cada 30 minutos
+import { startAutoCancelTurnos } from './autoCancelTurnos.js'; // Cancelación de appointments cada 30 minutos
 import { startAutoReminderEmails } from './autoreminderEmails.js'; // Envío de recordatorios de correos cada 30 minutos
 
 const app = express();
@@ -45,16 +45,16 @@ app.use((req, res, next) => {
 app.use(usersRouter);
 app.use(doctorsRouter);
 app.use(specialtiesRouter);
-app.use(turnosRouter);
-app.use(horariosRouter);
-app.use(pacienteRouter);
-app.use(obrassocialesRouter);
-app.use(sedesRouter);
+app.use(appointmentsRouter);
+app.use(schedulesRouter);
+app.use(patientsRouter);
+app.use(insuranceRouter);
+app.use(venuesRouter);
 app.use(adminRouter);
 app.use(emailRoutes);
-app.use(estudiosRouter);
+app.use(studiesRouter);
 
-// Inicia la ejecución automática de la cancelación de turnos
+// Inicia la ejecución automática de la cancelación de appointments
 startAutoCancelTurnos();
 
 // Inicia la ejecución automática de recordatorios por correo electrónico

@@ -1,24 +1,24 @@
 import { pool } from './db.js'; // Asegúrate de importar tu conexión a la base de datos
 
-// Función que cancela automáticamente los turnos con menos de 12 horas
+// Función que cancela automáticamente los appointments con menos de 12 horas
 export const autoCancelTurnos = async () => {
     try {
       const [result] = await pool.query(`
-        UPDATE turnos tur
+        UPDATE appointments tur
         SET tur.estado = 'Cancelado', 
             tur.fechaCancelacion = NOW()
         WHERE tur.fechaConfirmacion IS NULL 
           AND tur.fechaCancelacion IS NULL 
           AND TIMESTAMPDIFF(HOUR, NOW(), tur.fechaYHora) <= 12;
       `);
-      console.log(`Se han cancelado ${result.affectedRows} turnos.`);
+      console.log(`Se han cancelled ${result.affectedRows} appointments.`);
     } catch (error) {
-      console.error('Error al cancelar turnos:', error);
+      console.error('Error al cancelar appointments:', error);
     }
   };
   
   export const startAutoCancelTurnos = () => {
-    console.log('Iniciando cancelación automática de turnos...');
+    console.log('Iniciando cancelación automática de appointments...');
     
     // Ejecutar inmediatamente al inicio
     autoCancelTurnos();

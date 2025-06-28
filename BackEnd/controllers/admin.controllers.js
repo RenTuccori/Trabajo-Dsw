@@ -3,12 +3,12 @@ import jwt from 'jsonwebtoken';
 
 export const getAdmin = async (req, res) => {
   try {
-    const { usuario, contra } = req.body;
+    const { user, contra } = req.body;
     const [result] = await pool.query(
       `SELECT idAdmin FROM 
         admin ad
-        WHERE ad.usuario = ? and ad.contra = ?`,
-      [usuario, contra]
+        WHERE ad.user = ? and ad.contra = ?`,
+      [user, contra]
     );
 
     if (result.length === 0) {
@@ -86,7 +86,7 @@ export const deleteSeEspDoc = async (req, res) => {
       [idSede, idDoctor, idEspecialidad]
     );
 
-    // Verificar si la combinación de sede, especialidad y doctor existe
+    // Verificar si la combinación de venue, specialty y doctor existe
     if (result.affectedRows === 0) {
       return res.status(404).json({ message: 'Asignación no encontrada.' });
     }
@@ -102,25 +102,25 @@ export const getCombinaciones = async (req, res) => {
   try {
     const query = `
 SELECT
-        s.nombre AS nombreSede,
-        e.nombre AS nombreEspecialidad,
-        u.nombre AS nombreDoctor,
+        s.first_name AS nombreSede,
+        e.first_name AS nombreEspecialidad,
+        u.first_name AS nombreDoctor,
         sd.idSede,
         sd.idEspecialidad,
         sd.idDoctor,
-        u.apellido as apellidoDoctor
+        u.last_name as apellidoDoctor
       FROM
         sededoctoresp sd
       INNER JOIN
-        sedes s ON sd.idSede = s.idSede
+        venues s ON sd.idSede = s.idSede
       INNER JOIN
-        especialidades e ON sd.idEspecialidad = e.idEspecialidad
+        specialties e ON sd.idEspecialidad = e.idEspecialidad
       INNER JOIN
-        doctores d ON sd.idDoctor = d.idDoctor
+        doctors d ON sd.idDoctor = d.idDoctor
 	Inner join
-    usuarios u on d.dni = u.dni
+    users u on d.dni = u.dni
     where sd.estado = 'Habilitado'
-      order by s.nombre, e.nombre, u.apellido
+      order by s.first_name, e.first_name, u.last_name
     `;
 
     const [result] = await pool.query(query);
@@ -142,19 +142,19 @@ export const createHorarios = async (req, res) => {
     idDoctor,
     idEspecialidad,
     dia,
-    hora_inicio,
-    hora_fin,
+    start_time,
+    end_time,
     estado,
   } = req.body;
   try {
     await pool.query(
-      'INSERT INTO horarios_disponibles (idSede, idDoctor, idEspecialidad, dia, hora_inicio, hora_fin, estado) VALUES (?, ?, ?, ?, ?, ?, ?)',
-      [idSede, idDoctor, idEspecialidad, dia, hora_inicio, hora_fin, estado] // Asegúrate de que los nombres de las columnas sean correctos
+      'INSERT INTO horarios_disponibles (idSede, idDoctor, idEspecialidad, dia, start_time, end_time, estado) VALUES (?, ?, ?, ?, ?, ?, ?)',
+      [idSede, idDoctor, idEspecialidad, dia, start_time, end_time, estado] // Asegúrate de que los nombres de las columnas sean correctos
     );
     return res.status(201).json({ message: 'Horario creado exitosamente.' });
   } catch (error) {
     console.error(error); // Agregar un log para ver errores en el servidor
-    return res.status(500).json({ message: 'Error al crear el horario.' });
+    return res.status(500).json({ message: 'Error al crear el schedule.' });
   }
 };
 
@@ -165,15 +165,15 @@ export const updateHorarios = async (req, res) => {
       idDoctor,
       idEspecialidad,
       dia,
-      hora_inicio,
-      hora_fin,
+      start_time,
+      end_time,
       estado,
     } = req.body;
     console.log(req.body);
-    // La consulta SQL para actualizar el horario
+    // La consulta SQL para actualizar el schedule
     const [result] = await pool.query(
-      'UPDATE horarios_disponibles SET hora_inicio = ?, hora_fin = ?, estado = ? WHERE idSede = ? AND idDoctor = ? AND idEspecialidad = ? AND dia = ?',
-      [hora_inicio, hora_fin, estado, idSede, idDoctor, idEspecialidad, dia]
+      'UPDATE horarios_disponibles SET start_time = ?, end_time = ?, estado = ? WHERE idSede = ? AND idDoctor = ? AND idEspecialidad = ? AND dia = ?',
+      [start_time, end_time, estado, idSede, idDoctor, idEspecialidad, dia]
     );
     // Los valores que se van a insertar en la consulta
     if (result.affectedRows > 0) {
@@ -183,36 +183,36 @@ export const updateHorarios = async (req, res) => {
     } else {
       return res
         .status(404)
-        .json({ message: 'No se encontró un horario con esos datos' });
+        .json({ message: 'No se encontró un schedule con esos datos' });
     }
   } catch (error) {
-    console.error('Error al actualizar el horario:', error);
+    console.error('Error al actualizar el schedule:', error);
     return res
       .status(500)
-      .json({ message: 'Error en el servidor al actualizar el horario' });
+      .json({ message: 'Error en el servidor al actualizar el schedule' });
   }
 };
 
 export const getHorariosXDoctor = async (req, res) => {
   try {
     const { idSede, idEspecialidad, idDoctor } = req.body;
-    // Consulta para obtener los horarios del doctor especificado
+    // Consulta para obtener los schedules del doctor especificado
     const query = `
     SELECT
-        sed.nombre AS nombreSede,  -- Selecciona el nombre de la sede
-        usu.nombre AS nombreDoctor,  -- Selecciona el nombre del doctor
-        esp.nombre AS nombreEspecialidad,
-        dia, hora_inicio, hora_fin
+        sed.first_name AS nombreSede,  -- Selecciona el first_name de la venue
+        usu.first_name AS nombreDoctor,  -- Selecciona el first_name del doctor
+        esp.first_name AS nombreEspecialidad,
+        dia, start_time, end_time
     FROM
         horarios_disponibles hd
     INNER JOIN
-        sedes sed ON sed.idSede = hd.idSede
+        venues sed ON sed.idSede = hd.idSede
     INNER JOIN
-        doctores doc ON doc.idDoctor = hd.idDoctor  -- Asegúrate de que este es el nombre de la tabla de doctores
+        doctors doc ON doc.idDoctor = hd.idDoctor  -- Asegúrate de que este es el first_name de la tabla de doctors
     INNER JOIN
-        especialidades esp ON esp.idEspecialidad = hd.idEspecialidad -- Asegúrate de que este es el nombre de la tabla de especialidades
+        specialties esp ON esp.idEspecialidad = hd.idEspecialidad -- Asegúrate de que este es el first_name de la tabla de specialties
     INNER JOIN
-      usuarios usu on usu.dni = doc.dni
+      users usu on usu.dni = doc.dni
     WHERE
         hd.idSede = ? and hd.idEspecialidad = ? and hd.idDoctor = ? AND hd.estado = 'Habilitado'
     ORDER BY
@@ -220,14 +220,14 @@ export const getHorariosXDoctor = async (req, res) => {
 
     const result = await pool.query(query, [idSede, idEspecialidad, idDoctor]);
 
-    // Verificar si se encontraron horarios
+    // Verificar si se encontraron schedules
     if (result[0].length === 0) {
       return res
         .status(404)
-        .json({ message: 'No se encontraron horarios para este doctor.' });
+        .json({ message: 'No se encontraron schedules para este doctor.' });
     }
 
-    // Devolver los horarios encontrados
+    // Devolver los schedules encontrados
     res.json(result[0]);
   } catch (error) {
     return res.status(500).json({ message: error.message });

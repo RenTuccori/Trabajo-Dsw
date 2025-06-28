@@ -34,3 +34,5 @@ export const errorAlert = async (title, text) => {
     confirmButtonColor: '#d33',
   });
 };
+
+

@@ -26,7 +26,7 @@ export const Doctor = authorizeRole('Doctor');
 export const Admin = authorizeRole('Admin');
 export const Patient = authorizeRole('Patient');
 
-// Ejemplo: Para rutas que aceptan tanto doctores como administradores
+// Ejemplo: Para rutas que aceptan tanto doctors como administradores
 export const DoctorOrAdmin = authorizeRole('Doctor', 'Admin');
 export const DoctorOrPatient = authorizeRole('Doctor', 'Patient');
 export const AdminOrPatient = authorizeRole('Admin', 'Patient');

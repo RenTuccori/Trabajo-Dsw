@@ -65,3 +65,5 @@ if (typeof window !== 'undefined') {
   window.successAlert = successAlert;
   window.errorAlert = errorAlert;
 }
+
+

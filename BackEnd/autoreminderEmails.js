@@ -14,13 +14,13 @@ export const sendReminderEmails = async () => {
   try {
     const [rows] = await pool.query(`
       SELECT tur.idTurno, usu.email
-      FROM turnos tur
-      INNER JOIN pacientes pac ON pac.idPaciente = tur.idPaciente
-      INNER JOIN usuarios usu ON usu.dni = pac.dni
+      FROM appointments tur
+      INNER JOIN patients pac ON pac.idPaciente = tur.idPaciente
+      INNER JOIN users usu ON usu.dni = pac.dni
       WHERE tur.fechaConfirmacion IS NULL 
         AND tur.fechaCancelacion IS NULL 
         AND TIMESTAMPDIFF(HOUR, NOW(), tur.fechaYHora) BETWEEN 24 AND 36
-        AND tur.mail IS NULL; -- Solo selecciona turnos donde el campo email es NULL
+        AND tur.mail IS NULL; -- Solo selecciona appointments donde el campo email es NULL
     `);
 
     if (rows.length > 0) {
@@ -29,8 +29,8 @@ export const sendReminderEmails = async () => {
           to: email,
           subject: 'Recordatorio de Confirmación de Turno',
           html: `
-            <p>Estimado paciente,</p>
-            <p>Le recordamos que tiene un turno pendiente de confirmación. Por favor, confirme o cancele su turno dentro de las próximas horas. De lo contrario, el turno será cancelado automáticamente.</p>
+            <p>Estimado patient,</p>
+            <p>Le recordamos que tiene un appointment pending de confirmación. Por favor, confirme o cancele su appointment dentro de las próximas horas. De lo contrario, el appointment será cancelled automáticamente.</p>
             <p>Gracias,</p>
             <p>Sanatorio UTN</p>
           `,
@@ -41,17 +41,17 @@ export const sendReminderEmails = async () => {
 
         // Actualizar el campo `email` a 1 después de enviar el correo
         await pool.query(`
-          UPDATE turnos
+          UPDATE appointments
           SET mail = 1
           WHERE idTurno = ?;
         `, [idTurno]);
       }
-      console.log(`Se han enviado recordatorios a ${rows.length} pacientes.`);
+      console.log(`Se han enviado recordatorios a ${rows.length} patients.`);
     } else {
-      console.log('No hay turnos pendientes para recordar en este momento.');
+      console.log('No hay appointments pendientes para recordar en este momento.');
     }
   } catch (error) {
-    console.error('Error al enviar recordatorios de turnos:', error);
+    console.error('Error al enviar recordatorios de appointments:', error);
   } finally {
     isSendingEmails = false; // Indicar que ha terminado el proceso de envío
   }
