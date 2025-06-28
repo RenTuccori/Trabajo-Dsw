@@ -9,30 +9,87 @@ import { CrearDoctor } from '../pages/administration/crearDoctor.jsx';
 import { ActualizarDoctor } from '../pages/administration/actualizarDoctor.jsx';
 import { CrearHorarios } from '../pages/administration/crearHorarios.jsx';
 import { Validacion } from './validacion.jsx';
+import { ProtectedRoute } from '../components/ProtectedRoute.jsx';
 import { useAuth } from '../context/global/AuthProvider.jsx';
 
 export function AdministracionRoutes() {
-  const {rol} = useAuth();
+  const { rol } = useAuth();
 
   return (
     <AdministracionProvider>
       <Routes>
         <Route path="/" element={<HomeAdministracion />} />
+        <Route
+          path="/crearSede"
+          element={
+            <Validacion rol={rol} esperado={'A'}>
+              <ProtectedRoute requiredRole="A">
+                <CrearSede />
+              </ProtectedRoute>
+            </Validacion>
+          }
+        />
+        <Route
+          path="/crearEsp"
+          element={
+            <Validacion rol={rol} esperado={'A'}>
+              <ProtectedRoute requiredRole="A">
+                <CrearEspecialidad />
+              </ProtectedRoute>
+            </Validacion>
+          }
+        />
+        <Route
+          path="/crearOS"
+          element={
+            <Validacion rol={rol} esperado={'A'}>
+              <ProtectedRoute requiredRole="A">
+                <CrearObraSocial />
+              </ProtectedRoute>
+            </Validacion>
+          }
+        />
+        <Route
+          path="/combinacion"
+          element={
+            <Validacion rol={rol} esperado={'A'}>
+              <ProtectedRoute requiredRole="A">
+                <CrearCombinacion />
+              </ProtectedRoute>
+            </Validacion>
+          }
+        />
+        <Route
+          path="/horarios"
+          element={
+            <Validacion rol={rol} esperado={'A'}>
+              <ProtectedRoute requiredRole="A">
+                <CrearHorarios />
+              </ProtectedRoute>
+            </Validacion>
+          }
+        />
+        <Route
+          path="/crearDoc"
+          element={
+            <Validacion rol={rol} esperado={'A'}>
+              <ProtectedRoute requiredRole="A">
+                <CrearDoctor />
+              </ProtectedRoute>
+            </Validacion>
+          }
+        />
+        <Route
+          path="/actualizarDoc/:idDoctor"
+          element={
+            <Validacion rol={rol} esperado={'A'}>
+              <ProtectedRoute requiredRole="A">
+                <ActualizarDoctor />
+              </ProtectedRoute>
+            </Validacion>
+          }
+        />
       </Routes>
-      <Validacion rol={rol} esperado={'A'}>
-        <Routes>
-          <Route path="/crearSede" element={<CrearSede />} />
-          <Route path="/crearEsp" element={<CrearEspecialidad />} />
-          <Route path="/crearOS" element={<CrearObraSocial />} />
-          <Route path="/combinacion" element={<CrearCombinacion />} />
-          <Route path="/horarios" element={<CrearHorarios />} />
-          <Route path="/crearDoc" element={<CrearDoctor />} />
-          <Route
-            path="/actualizarDoc/:idDoctor"
-            element={<ActualizarDoctor />}
-          />
-        </Routes>
-      </Validacion>
     </AdministracionProvider>
   );
 }

@@ -1,10 +1,9 @@
-import Select from "react-select";
-import { usePacientes } from "../../context/paciente/PacientesProvider";
-import { useAuth } from "../../context/global/AuthProvider";
-import DatePicker from "react-datepicker";
-import { useNavigate } from "react-router-dom";
-import { useEffect, useState } from "react";
-import "react-datepicker/dist/react-datepicker.css";
+import Select from 'react-select';
+import { usePacientes } from '../../context/paciente/PacientesProvider';
+import DatePicker from 'react-datepicker';
+import { useNavigate } from 'react-router-dom';
+import { useEffect, useState } from 'react';
+import 'react-datepicker/dist/react-datepicker.css';
 
 export function SacarTurno() {
   const navigate = useNavigate();
@@ -27,7 +26,6 @@ export function SacarTurno() {
     setFechaCancelacion,
     setFechaConfirmacion,
   } = usePacientes();
-  const { comprobarToken } = useAuth();
   const [selectedSede, setSelectedSede] = useState(null);
   const [selectedEspecialidad, setSelectedEspecialidad] = useState(null);
   const [selectedDoctor, setSelectedDoctor] = useState(null);
@@ -37,34 +35,33 @@ export function SacarTurno() {
 
   useEffect(() => {
     ObtenerSedes();
-    comprobarToken("P");
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const customStyles = {
     option: (provided, state) => ({
       ...provided,
-      backgroundColor: state.isFocused ? "#1e40af" : "#374151", // Ajusta los colores para que se alineen con el estilo
-      color: "#ffffff", // Texto blanco
-      padding: "10px", // Espaciado
+      backgroundColor: state.isFocused ? '#1e40af' : '#374151', // Ajusta los colores para que se alineen con el estilo
+      color: '#ffffff', // Texto blanco
+      padding: '10px', // Espaciado
     }),
     control: (provided) => ({
       ...provided,
-      backgroundColor: "white", // Fondo blanco del select
-      borderColor: "#1e40af", // Color del borde
-      borderRadius: "0.375rem", // Bordes redondeados (Tailwind: rounded-md)
-      boxShadow: "0 0 0 1px rgba(29, 78, 216, 0.1)", // Sombra sutil
-      padding: "5px", // Espaciado
+      backgroundColor: 'white', // Fondo blanco del select
+      borderColor: '#1e40af', // Color del borde
+      borderRadius: '0.375rem', // Bordes redondeados (Tailwind: rounded-md)
+      boxShadow: '0 0 0 1px rgba(29, 78, 216, 0.1)', // Sombra sutil
+      padding: '5px', // Espaciado
     }),
     menu: (provided) => ({
       ...provided,
-      border: "0.1rem solid #1e40af", // Borde del menú
-      borderRadius: "0.375rem", // Bordes redondeados
-      marginTop: "4px", // Espaciado superior
+      border: '0.1rem solid #1e40af', // Borde del menú
+      borderRadius: '0.375rem', // Bordes redondeados
+      marginTop: '4px', // Espaciado superior
     }),
     singleValue: (provided) => ({
       ...provided,
-      color: "#1e40af", // Color del valor seleccionado
+      color: '#1e40af', // Color del valor seleccionado
     }),
   };
 
@@ -137,8 +134,8 @@ export function SacarTurno() {
     date.setHours(0, 0, 0, 0);
 
     const year = date.getFullYear();
-    const month = (date.getMonth() + 1).toString().padStart(2, "0"); // Meses empiezan desde 0
-    const day = date.getDate().toString().padStart(2, "0");
+    const month = (date.getMonth() + 1).toString().padStart(2, '0'); // Meses empiezan desde 0
+    const day = date.getDate().toString().padStart(2, '0');
 
     const formattedDate = `${year}-${month}-${day}`;
     setFormatedFecha(formattedDate);
@@ -167,7 +164,7 @@ export function SacarTurno() {
     setIdDoctor(selectedDoctor.value);
     setIdEspecialidad(selectedEspecialidad.value);
     setIdSede(selectedSede.value);
-    setEstado("Pendiente");
+    setEstado('Pendiente');
     setFechaCancelacion(null);
     setFechaConfirmacion(null);
   };
@@ -237,14 +234,14 @@ export function SacarTurno() {
         <button
           type="button"
           disabled={!selectedHorario}
-          onClick={() => navigate("/paciente/confirmacionturno")}
+          onClick={() => navigate('/paciente/confirmacionturno')}
           className="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50"
         >
           Continuar
         </button>
         <button
           type="button"
-          onClick={() => navigate("/paciente")}
+          onClick={() => navigate('/paciente')}
           className="w-full bg-gray-200 text-gray-700 py-2 rounded-lg hover:bg-gray-300 transition-colors"
         >
           Volver

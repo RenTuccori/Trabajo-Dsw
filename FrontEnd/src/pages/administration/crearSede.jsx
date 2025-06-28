@@ -1,8 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAdministracion } from '../../context/administracion/AdministracionProvider.jsx';
-import { notifySuccess, notifyError } from '../../components/ToastConfig';
-import { confirmDialog } from '../../components/SwalConfig';
 
 export function CrearSede() {
   const navigate = useNavigate();
@@ -25,17 +23,17 @@ export function CrearSede() {
         await crearNuevaSede({ nombre: nombreSede, direccion: direccionSede });
         setNombreSede(''); // Reiniciar el campo de texto
         setDireccionSede('');
-        notifySuccess('¡Sede creada con éxito!'); // Mostrar mensaje de éxito
+        window.notifySuccess('¡Sede creada con éxito!'); // Mostrar mensaje de éxito
         ObtenerSedes(); // Actualizar la lista después de crear una sede
       } catch (error) {
-        notifyError('Error al crear la sede'); // Mostrar mensaje de error
+        window.notifyError('Error al crear la sede'); // Mostrar mensaje de error
         console.error('Error al crear sede:', error);
       }
     }
   };
 
   const handleBorrarSede = async (idSede) => {
-    const result = await confirmDialog(
+    const result = await window.confirmDialog(
       '¿Estás seguro?',
       '¿Deseas eliminar esta sede?'
     );
@@ -43,10 +41,10 @@ export function CrearSede() {
     if (result.isConfirmed) {
       try {
         await borrarSede(idSede);
-        notifySuccess('¡Sede eliminada con éxito!'); // Mostrar mensaje de éxito
+        window.notifySuccess('¡Sede eliminada con éxito!'); // Mostrar mensaje de éxito
         ObtenerSedes(); // Actualizar la lista después de borrar una sede
       } catch (error) {
-        notifyError('Error al eliminar la sede'); // Mostrar mensaje de error
+        window.notifyError('Error al eliminar la sede'); // Mostrar mensaje de error
         console.error('Error al borrar sede:', error);
       }
     }

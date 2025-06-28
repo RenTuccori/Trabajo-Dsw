@@ -1,9 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { notifySuccess, notifyError } from '../../components/ToastConfig';
-import { confirmDialog } from '../../components/SwalConfig';
 import { useAdministracion } from '../../context/administracion/AdministracionProvider.jsx';
-import { useAuth } from '../../context/global/AuthProvider';
 
 export function CrearHorarios() {
   const navigate = useNavigate();
@@ -11,7 +8,6 @@ export function CrearHorarios() {
   const { idSede, idEspecialidad, idDoctor } = location.state || {};
 
   const diasSemana = ['lunes', 'martes', 'miércoles', 'jueves', 'viernes'];
-  const { comprobarToken } = useAuth();
   const {
     obtenerHorariosXDoctor,
     crearHorarios,
@@ -26,17 +22,16 @@ export function CrearHorarios() {
   useEffect(() => {
     const cargarHorarios = async () => {
       try {
-        await comprobarToken('A');
         await obtenerHorariosXDoctor({ idSede, idEspecialidad, idDoctor });
       } catch (error) {
         if (error.response && error.response.status === 404) {
           // Manejo específico para el error 404
-          notifyError(
+          window.notifyError(
             'No se encontraron horarios para este doctor. Puedes crear nuevos horarios.'
           );
         } else {
           // Manejo para otros tipos de errores
-          notifyError('Error al cargar los horarios');
+          window.notifyError('Error al cargar los horarios');
         }
       }
     };
@@ -45,7 +40,7 @@ export function CrearHorarios() {
       console.log('cargando horarios');
       cargarHorarios();
     } else {
-      notifyError('Faltan datos para cargar horarios');
+      window.notifyError('Faltan datos para cargar horarios');
     }
   }, [idSede, idEspecialidad, idDoctor]);
 
@@ -80,11 +75,11 @@ export function CrearHorarios() {
     );
 
     if (horariosValidos.length === 0) {
-      notifyError('Debes ingresar al menos un horario válido.');
+      window.notifyError('Debes ingresar al menos un horario válido.');
       return;
     }
 
-    const result = await confirmDialog(
+    const result = await window.confirmDialog(
       '¿Estás seguro?',
       '¿Deseas confirmar los horarios ingresados?'
     );
@@ -128,10 +123,10 @@ export function CrearHorarios() {
             });
           }
         }
-        notifySuccess('Horarios guardados exitosamente');
+        window.notifySuccess('Horarios guardados exitosamente');
         navigate('/admin/combinacion');
       } catch (error) {
-        notifyError('Error al guardar los horarios.');
+        window.notifyError('Error al guardar los horarios.');
       }
     }
   };

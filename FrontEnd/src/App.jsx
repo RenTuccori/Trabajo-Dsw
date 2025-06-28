@@ -11,6 +11,8 @@ import { PacientesRoutes } from './routes/pacientes.routes.jsx';
 import { ToastContainer } from 'react-toastify';
 import AuthProvider from './context/global/AuthProvider.jsx';
 import 'react-toastify/dist/ReactToastify.css';
+// Configuración global de notificaciones
+import './utils/notifications';
 
 function App() {
   return (

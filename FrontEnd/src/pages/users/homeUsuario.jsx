@@ -2,7 +2,6 @@
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/global/AuthProvider';
 import { useState, useEffect } from 'react';
-import { notifySuccess, notifyError } from '../../components/ToastConfig';
 
 function HomeUsuario() {
   const navigate = useNavigate();
@@ -14,9 +13,9 @@ function HomeUsuario() {
   const handleLogin = async () => {
     try {
       await login({ identifier: dniform, credential: fecha, userType: 'P' });
-      notifySuccess('¡Login exitoso!'); // Muestra mensaje de éxito
+      window.notifySuccess('¡Login exitoso!'); // Muestra mensaje de éxito
     } catch (error) {
-      notifyError('Error en el login, verifica tus datos.'); // Muestra mensaje de error si hay fallo
+      window.notifyError('Error en el login, verifica tus datos.'); // Muestra mensaje de error si hay fallo
       console.error('Error de login:', error);
     }
   };

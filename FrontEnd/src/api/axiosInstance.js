@@ -1,5 +1,5 @@
-import axios from "axios";
-const dbUrl = import.meta.env.VITE_DB_URL
+import axios from 'axios';
+const dbUrl = import.meta.env.VITE_DB_URL;
 
 const axiosInstance = axios.create({
   baseURL: `http://${dbUrl}/api/`, //colocar la ip de la maquina donde se esta ejecutando el backend
@@ -7,7 +7,7 @@ const axiosInstance = axios.create({
 
 axiosInstance.interceptors.request.use(
   (config) => {
-    const token = localStorage.getItem("token");
+    const token = localStorage.getItem('token');
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
@@ -24,7 +24,11 @@ axiosInstance.interceptors.response.use(
   },
   (error) => {
     if (error.response && error.response.status === 401) {
-      console.log("Token no válido o expirado");
+      console.log('Token no válido o expirado');
+      // Limpiar el token inválido
+      localStorage.removeItem('token');
+      // Redirigir al home
+      window.location.href = '/';
     }
     return Promise.reject(error);
   }

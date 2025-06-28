@@ -8,6 +8,7 @@ import { TurnosPaciente } from '../pages/users/turnosPaciente.jsx';
 import { ConfirmacionTurno } from '../pages/users/confirmacionTurno';
 import VerEstudios from '../pages/users/verEstudios.jsx';
 import { Validacion } from './validacion.jsx';
+import { ProtectedRoute } from '../components/ProtectedRoute.jsx';
 import { useAuth } from '../context/global/AuthProvider.jsx';
 
 export function PacientesRoutes() {
@@ -21,7 +22,9 @@ export function PacientesRoutes() {
           path="/sacarturno"
           element={
             <Validacion rol={rol} esperado={'P'}>
-              <SacarTurno />
+              <ProtectedRoute requiredRole="P">
+                <SacarTurno />
+              </ProtectedRoute>
             </Validacion>
           }
         />
@@ -29,7 +32,9 @@ export function PacientesRoutes() {
           path="/editardatospersonales"
           element={
             <Validacion rol={rol} esperado={'P'}>
-              <ModificacionUsuario />
+              <ProtectedRoute requiredRole="P">
+                <ModificacionUsuario />
+              </ProtectedRoute>
             </Validacion>
           }
         />
@@ -37,7 +42,9 @@ export function PacientesRoutes() {
           path="/confirmacionturno"
           element={
             <Validacion rol={rol} esperado={'P'}>
-              <ConfirmacionTurno />
+              <ProtectedRoute requiredRole="P">
+                <ConfirmacionTurno />
+              </ProtectedRoute>
             </Validacion>
           }
         />
@@ -45,7 +52,9 @@ export function PacientesRoutes() {
           path="/verturnos"
           element={
             <Validacion rol={rol} esperado={'P'}>
-              <TurnosPaciente />
+              <ProtectedRoute requiredRole="P">
+                <TurnosPaciente />
+              </ProtectedRoute>
             </Validacion>
           }
         />
@@ -53,7 +62,9 @@ export function PacientesRoutes() {
           path="/estudios"
           element={
             <Validacion rol={rol} esperado={'P'}>
-              <VerEstudios />
+              <ProtectedRoute requiredRole="P">
+                <VerEstudios />
+              </ProtectedRoute>
             </Validacion>
           }
         />

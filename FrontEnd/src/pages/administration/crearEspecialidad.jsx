@@ -1,8 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAdministracion } from '../../context/administracion/AdministracionProvider.jsx';
-import { notifySuccess, notifyError } from '../../components/ToastConfig';
-import { confirmDialog } from '../../components/SwalConfig';
 
 export function CrearEspecialidad() {
   const navigate = useNavigate();
@@ -27,17 +25,17 @@ export function CrearEspecialidad() {
       try {
         await crearEspecialidad({ nombre: nombreEspecialidad });
         setNombreEspecialidad(''); // Reiniciar el campo de texto
-        notifySuccess('¡Especialidad creada con éxito!');
+        window.notifySuccess('¡Especialidad creada con éxito!');
         ObtenerEspecialidadesDisponibles(); // Actualizar la lista después de crear una especialidad
       } catch (error) {
-        notifyError('Error al crear la especialidad');
+        window.notifyError('Error al crear la especialidad');
         console.error('Error al crear especialidad:', error);
       }
     }
   };
 
   const handleBorrarEspecialidad = async (idEspecialidad) => {
-    const result = await confirmDialog(
+    const result = await window.confirmDialog(
       '¿Está seguro?',
       'Esta acción no se puede deshacer.'
     );
@@ -45,10 +43,10 @@ export function CrearEspecialidad() {
     if (result.isConfirmed) {
       try {
         await borrarEspecialidad(idEspecialidad);
-        notifySuccess('¡Especialidad eliminada con éxito!');
+        window.notifySuccess('¡Especialidad eliminada con éxito!');
         ObtenerEspecialidadesDisponibles(); // Actualizar la lista después de borrar una especialidad
       } catch (error) {
-        notifyError('Error al eliminar la especialidad');
+        window.notifyError('Error al eliminar la especialidad');
         console.error('Error al borrar especialidad:', error);
       }
     }

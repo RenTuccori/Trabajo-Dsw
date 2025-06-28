@@ -2,9 +2,6 @@ import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom'; // Importa useParams
 import Select from 'react-select';
 import { useAdministracion } from '../../context/administracion/AdministracionProvider';
-import { useAuth } from '../../context/global/AuthProvider';
-import { confirmDialog } from '../../components/SwalConfig';
-import { notifySuccess, notifyError } from '../../components/ToastConfig';
 
 export function ActualizarDoctor() {
   const {
@@ -16,7 +13,6 @@ export function ActualizarDoctor() {
     actualizarDoctor,
   } = useAdministracion();
 
-  const { comprobarToken } = useAuth();
   const [selectedObraSociales, setSelectedObraSociales] = useState(null);
   const [hasChanges, setHasChanges] = useState(false); // Estado para rastrear cambios
   const [, setOriginalData] = useState({}); // Datos originales para comparar
@@ -50,7 +46,7 @@ export function ActualizarDoctor() {
     e.preventDefault();
 
     // Alerta de confirmación
-    const result = await confirmDialog(
+    const result = await window.confirmDialog(
       'Guardar cambios',
       '¿Estás seguro que deseas guardar los cambios?'
     );
@@ -62,7 +58,7 @@ export function ActualizarDoctor() {
         // Verificar que el token existe
         const token = localStorage.getItem('token');
         if (!token) {
-          notifyError(
+          window.notifyError(
             'Error de autenticación. Por favor, inicia sesión nuevamente.'
           );
           navigate('/login');
@@ -103,7 +99,7 @@ export function ActualizarDoctor() {
           responseDoctor.data
         ) {
           console.log('Usuario y doctor actualizados con éxito');
-          notifySuccess('Usuario actualizado con éxito');
+          window.notifySuccess('Usuario actualizado con éxito');
           setHasChanges(false);
           navigate('/admin/crearDoc');
         } else {
@@ -111,17 +107,19 @@ export function ActualizarDoctor() {
             response,
             responseDoctor,
           });
-          notifyError('Error al actualizar el usuario o doctor');
+          window.notifyError('Error al actualizar el usuario o doctor');
         }
       } catch (error) {
         console.error('Error completo al actualizar:', error);
         if (error.response?.status === 403) {
-          notifyError('No tienes permisos para realizar esta acción');
+          window.notifyError('No tienes permisos para realizar esta acción');
         } else if (error.response?.status === 401) {
-          notifyError('Sesión expirada. Por favor, inicia sesión nuevamente.');
+          window.notifyError(
+            'Sesión expirada. Por favor, inicia sesión nuevamente.'
+          );
           navigate('/login');
         } else {
-          notifyError(
+          window.notifyError(
             'Error al actualizar el usuario: ' +
               (error.message || 'Error desconocido')
           );
@@ -131,9 +129,9 @@ export function ActualizarDoctor() {
   };
 
   useEffect(() => {
-    comprobarToken('A'); // Comprueba el token
     ObtenerOS();
     ObtenerDoctorPorId(idDoctor); // Llama a la función con el idDoctor obtenido de la URL
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [idDoctor]);
 
   // Set formData after all dependencies are loaded
@@ -189,7 +187,7 @@ export function ActualizarDoctor() {
   const handleRegresar = async () => {
     if (hasChanges) {
       // Si hay cambios, muestra advertencia
-      const result = await confirmDialog(
+      const result = await window.confirmDialog(
         'Cambios sin guardar',
         'Tienes cambios sin guardar. ¿Estás seguro de que quieres volver? Los cambios se perderán.'
       );

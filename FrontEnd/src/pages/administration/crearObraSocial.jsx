@@ -1,8 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAdministracion } from '../../context/administracion/AdministracionProvider.jsx';
-import { notifySuccess, notifyError } from '../../components/ToastConfig';
-import { confirmDialog } from '../../components/SwalConfig';
 
 export function CrearObraSocial() {
   const navigate = useNavigate();
@@ -28,17 +26,17 @@ export function CrearObraSocial() {
       try {
         await crearObraSocial({ nombre: nombreObraSocial });
         setNombreObraSocial('');
-        notifySuccess('¡Obra Social creada con éxito!');
+        window.notifySuccess('¡Obra Social creada con éxito!');
         ObtenerOS();
       } catch (error) {
-        notifyError('Error al crear la obra social');
+        window.notifyError('Error al crear la obra social');
         console.error('Error al crear obra social:', error);
       }
     }
   };
 
   const handleBorrarObraSocial = async (idObraSocial) => {
-    const result = await confirmDialog(
+    const result = await window.confirmDialog(
       '¿Estás seguro?',
       '¿Deseas eliminar esta obra social?'
     );
@@ -46,10 +44,10 @@ export function CrearObraSocial() {
     if (result.isConfirmed) {
       try {
         await borrarObraSocial(idObraSocial);
-        notifySuccess('¡Obra Social eliminada con éxito!');
+        window.notifySuccess('¡Obra Social eliminada con éxito!');
         ObtenerOS();
       } catch (error) {
-        notifyError('No se puede eliminar esta obra social');
+        window.notifyError('No se puede eliminar esta obra social');
         console.error('Error al borrar obra social:', error);
       }
     }
@@ -63,12 +61,12 @@ export function CrearObraSocial() {
           idObraSocial: obraSocialAEditar,
           nombre: nuevoNombreObraSocial,
         });
-        notifySuccess('¡Obra Social actualizada con éxito!');
+        window.notifySuccess('¡Obra Social actualizada con éxito!');
         setObraSocialAEditar(null);
         setNuevoNombreObraSocial('');
         ObtenerOS();
       } catch (error) {
-        notifyError('No se puede actualizar esta obra social');
+        window.notifyError('No se puede actualizar esta obra social');
         console.error('Error al actualizar obra social:', error);
       }
     }

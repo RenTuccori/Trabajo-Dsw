@@ -2,7 +2,6 @@ import { useState, useEffect } from 'react';
 import Select from 'react-select';
 import { useNavigate } from 'react-router-dom';
 import { useAdministracion } from '../../context/administracion/AdministracionProvider.jsx';
-import { notifySuccess, notifyError } from '../../components/ToastConfig';
 
 export function CrearDoctor() {
   const navigate = useNavigate();
@@ -62,12 +61,12 @@ export function CrearDoctor() {
         await ObtenerUsuarioDni(dni);
         if (usuario.length !== 0) {
           setUsuarioExistente(true);
-          notifySuccess(
+          window.notifySuccess(
             'Usuario encontrado, continúe con los siguientes pasos.'
           );
         } else {
           setUsuarioExistente(false);
-          notifyError(
+          window.notifyError(
             'Usuario no encontrado, complete los datos para crear uno nuevo.'
           );
         }
@@ -76,17 +75,17 @@ export function CrearDoctor() {
         if (error.response && error.response.status === 404) {
           // Si es un error 404, significa que no existe el usuario, continuar como nuevo
           setUsuarioExistente(false);
-          notifyError(
+          window.notifyError(
             'Usuario no encontrado, complete los datos para crear uno nuevo.'
           );
           setFormularioVisible(true);
         } else {
-          notifyError('Error al buscar el usuario');
+          window.notifyError('Error al buscar el usuario');
           console.error('Error al buscar usuario:', error);
         }
       }
     } else {
-      notifyError('Ingrese un DNI válido');
+      window.notifyError('Ingrese un DNI válido');
     }
   };
 
@@ -101,25 +100,25 @@ export function CrearDoctor() {
           });
         }
         await CreaDoctor({ dni, duracionTurno, contra });
-        notifySuccess('¡Doctor creado con éxito!');
+        window.notifySuccess('¡Doctor creado con éxito!');
         navigate('/admin');
       } catch (error) {
-        notifyError('Error al crear el doctor');
+        window.notifyError('Error al crear el doctor');
         console.error('Error al crear doctor:', error);
       }
     } else {
-      notifyError('Complete todos los campos');
+      window.notifyError('Complete todos los campos');
     }
   };
 
   const handleDelete = async (idDoctor) => {
     try {
       await borrarDoctor(idDoctor);
-      notifySuccess(`Doctor con ID ${idDoctor} borrado.`);
+      window.notifySuccess(`Doctor con ID ${idDoctor} borrado.`);
       // Actualiza la lista de doctores
       await ObtenerDoctores();
     } catch (error) {
-      notifyError(`Error al borrar el doctor con ID ${idDoctor}`);
+      window.notifyError(`Error al borrar el doctor con ID ${idDoctor}`);
       console.error(`Error al borrar el doctor con ID ${idDoctor}:`, error);
     }
   };
@@ -131,7 +130,7 @@ export function CrearDoctor() {
       // Después de actualizar, recargar la lista de doctores
       await ObtenerDoctores();
     } catch (error) {
-      notifyError(`Error al actualizar el doctor con ID ${idDoctor}`);
+      window.notifyError(`Error al actualizar el doctor con ID ${idDoctor}`);
       console.error(`Error al actualizar el doctor con ID ${idDoctor}:`, error);
     }
   };

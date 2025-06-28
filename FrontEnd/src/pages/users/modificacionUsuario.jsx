@@ -2,9 +2,6 @@ import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Select from 'react-select';
 import { usePacientes } from '../../context/paciente/PacientesProvider';
-import { useAuth } from '../../context/global/AuthProvider';
-import { confirmDialog } from '../../components/SwalConfig.jsx';
-import { notifySuccess } from '../../components/ToastConfig';
 
 export function ModificacionUsuario() {
   const {
@@ -14,9 +11,6 @@ export function ModificacionUsuario() {
     obraSociales,
     ActualizarUsuario,
   } = usePacientes();
-    const {
-    comprobarToken
-  } = useAuth();
   const [selectedObraSociales, setSelectedObraSociales] = useState(null);
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
@@ -42,7 +36,7 @@ export function ModificacionUsuario() {
     e.preventDefault();
 
     // Alerta de confirmación
-    const result = await confirmDialog(
+    const result = await window.confirmDialog(
       'Guardar Cambios',
       '¿Estás seguro que deseas guardar los cambios?'
     );
@@ -52,20 +46,24 @@ export function ModificacionUsuario() {
 
       if (response.data) {
         console.log('Usuario actualizado con éxito');
-        notifySuccess('Usuario actualizado con éxito'); // Toast de éxito
+        window.notifySuccess('Usuario actualizado con éxito'); // Toast de éxito
         navigate('/paciente');
       } else {
         console.log('Error al actualizar usuario');
-        confirmDialog('Error', 'No se pudo actualizar el usuario', 'error'); // Mensaje de error
+        window.confirmDialog(
+          'Error',
+          'No se pudo actualizar el usuario',
+          'error'
+        ); // Mensaje de error
       }
     }
   };
 
   useEffect(() => {
-    comprobarToken('P');
     ObtenerObraSociales();
     ObtenerUsuarioDni();
-  }, []); 
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   useEffect(() => {
     if (usuarioDni && obraSociales.length > 0) {
