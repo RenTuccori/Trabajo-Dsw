@@ -18,17 +18,33 @@ export function CrearSede() {
   // Manejar la creación de una nueva sede
   const handleCrearSede = async (e) => {
     e.preventDefault();
-    if (nombreSede.trim() !== '' && direccionSede.trim() !== '') {
-      try {
-        await crearNuevaSede({ nombre: nombreSede, direccion: direccionSede });
-        setNombreSede(''); // Reiniciar el campo de texto
-        setDireccionSede('');
-        window.notifySuccess('¡Sede creada con éxito!'); // Mostrar mensaje de éxito
-        ObtenerSedes(); // Actualizar la lista después de crear una sede
-      } catch (error) {
-        window.notifyError('Error al crear la sede'); // Mostrar mensaje de error
-        console.error('Error al crear sede:', error);
+   
+    // Validación mejorada
+    if (nombreSede.trim().length < 2 || nombreSede.trim().length > 100) {
+      notifyError('El nombre debe tener entre 2 y 100 caracteres');
+      return;
+    }
+    
+    if (direccionSede.trim().length < 5 || direccionSede.trim().length > 100) {
+      notifyError('La dirección debe tener entre 5 y 100 caracteres');
+      return;
+    }
+    
+    try {
+      await crearNuevaSede({ nombre: nombreSede.trim(), direccion: direccionSede.trim() });
+      setNombreSede(''); // Reiniciar el campo de texto
+      setDireccionSede('');
+      notifySuccess('¡Sede creada con éxito!'); // Mostrar mensaje de éxito
+      ObtenerSedes(); // Actualizar la lista después de crear una sede
+    } catch (error) {
+      if (error.response?.status === 401) {
+        notifyError('Sesión expirada, por favor inicie sesión nuevamente');
+        // Opcional: redirigir al login
+        // navigate('/admin');
+      } else {
+        notifyError('Error al crear la sede'); // Mostrar mensaje de error
       }
+      console.error('Error al crear sede:', error);
     }
   };
 
@@ -92,7 +108,7 @@ export function CrearSede() {
           Sedes creadas
         </h3>
         <ul className="space-y-2">
-          {sedes.length > 0 ? (
+          {sedes && sedes.length > 0 ? (
             sedes.map((sede) => (
               <li
                 key={sede.idSede}

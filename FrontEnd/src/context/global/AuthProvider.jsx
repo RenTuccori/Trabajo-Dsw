@@ -126,44 +126,29 @@ const AuthProvider = ({ children }) => {
   }
 
   function comprobarToken(userType) {
-    if (localStorage.getItem('token')) {
-      try {
-        const decoded = jwtDecode(localStorage.getItem('token'));
-        if (decoded.exp < Date.now() / 1000) {
-          console.error('Token expired');
-          localStorage.removeItem('token');
-          // Limpiar todos los estados
-          setDni('');
-          setIdDoctor('');
-          setIdAdmin('');
-          setNombreUsuario('');
-          setApellidoUsuario('');
-          setRol('');
-          navigate('/');
-        } else {
-          switch (userType) {
-            case 'Patient': // Paciente
-              setDni(decoded.dni);
-              setNombreUsuario(decoded.nombre || '');
-              setApellidoUsuario(decoded.apellido || '');
-              setRol('Patient');
-              break;
-            case 'Doctor': // Doctor
-              setIdDoctor(decoded.idDoctor);
-              setNombreUsuario(decoded.nombre || '');
-              setApellidoUsuario(decoded.apellido || '');
-              setRol('Doctor');
-              break;
-            case 'Admin': // Admin
-              setIdAdmin(decoded.idAdmin);
-              setRol('Admin');
-              break;
-            default:
-              throw new Error('Tipo de usuario no válido');
-          }
-        }
-      } catch (error) {
-        console.error('Error decoding token:', error);
+    const token = localStorage.getItem('token');
+    
+    // Verificar que el token existe y tiene el formato correcto
+    if (!token || typeof token !== 'string' || token.split('.').length !== 3) {
+      // Solo limpiar estados si hay algo que limpiar, no navegar si ya estamos en home
+      if (rol || dni || idDoctor || idAdmin) {
+        console.warn('Token inválido, limpiando sesión');
+        localStorage.removeItem('token');
+        setDni('');
+        setIdDoctor('');
+        setIdAdmin('');
+        setNombreUsuario('');
+        setApellidoUsuario('');
+        setRol('');
+        navigate('/');
+      }
+      return;
+    }
+
+    try {
+      const decoded = jwtDecode(token);
+      if (decoded.exp < Date.now() / 1000) {
+        console.error('Token expired');
         localStorage.removeItem('token');
         // Limpiar todos los estados
         setDni('');
@@ -173,17 +158,51 @@ const AuthProvider = ({ children }) => {
         setApellidoUsuario('');
         setRol('');
         navigate('/');
+      } else {
+        switch (userType) {
+          case 'P': // Paciente
+            setDni(decoded.dni);
+            setNombreUsuario(decoded.nombre || '');
+            setApellidoUsuario(decoded.apellido || '');
+            setRol('P');
+            break;
+          case 'D': // Doctor
+            setIdDoctor(decoded.idDoctor);
+            setNombreUsuario(decoded.nombre || '');
+            setApellidoUsuario(decoded.apellido || '');
+            setRol('D');
+            break;
+          case 'A': // Admin
+            setIdAdmin(decoded.idAdmin);
+            setRol('A');
+            break;
+          default:
+            throw new Error('Tipo de usuario no válido');
+        }
       }
-    } else {
-      // Limpiar todos los estados cuando no hay token
+    } catch (error) {
+      console.error('Error decoding token:', error);
+      localStorage.removeItem('token');
+      // Limpiar todos los estados
       setDni('');
       setIdDoctor('');
       setIdAdmin('');
       setNombreUsuario('');
       setApellidoUsuario('');
       setRol('');
+      navigate('/');
     }
   }
+
+  // Computed userType based on rol for backward compatibility
+  const userType = rol;
+  
+  // Solo logear cuando hay datos significativos (usuario logueado)
+  useEffect(() => {
+    if (rol && (dni || idDoctor || idAdmin)) {
+      console.log('AuthProvider - Usuario logueado:', { rol, userType, dni, idDoctor, idAdmin });
+    }
+  }, [rol, userType, dni, idDoctor, idAdmin]);
 
   return (
     <AuthContext.Provider
@@ -194,6 +213,7 @@ const AuthProvider = ({ children }) => {
         idDoctor,
         idAdmin,
         rol,
+        userType, // Add userType for backward compatibility
         nombreUsuario,
         apellidoUsuario,
       }}

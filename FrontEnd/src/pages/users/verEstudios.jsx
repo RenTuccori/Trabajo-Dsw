@@ -13,7 +13,7 @@ function VerEstudios() {
   const [pacienteData, setPacienteData] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  // Cargar paciente por DNI
+  // Cargar datos del paciente
   const loadPaciente = useCallback(async () => {
     try {
       const response = await getPacienteDni({ dni });
@@ -26,6 +26,7 @@ function VerEstudios() {
     }
   }, [dni]);
 
+  // Cargar paciente por DNI
   // Cargar estudios del paciente
   const loadEstudios = useCallback(async (idPaciente) => {
     try {
@@ -113,8 +114,8 @@ function VerEstudios() {
               Información del paciente
             </h2>
             <p className="text-gray-600">DNI: {dni}</p>
-            <p className="text-gray-600">Nombre: {pacienteData.nombre}</p>
-            <p className="text-gray-600">Apellido: {pacienteData.apellido}</p>
+            <p className="text-gray-600">Nombre: {pacienteData.usuario?.nombre || 'No disponible'}</p>
+            <p className="text-gray-600">Apellido: {pacienteData.usuario?.apellido || 'No disponible'}</p>
           </div>
         )}
 

@@ -4,15 +4,62 @@ import {
   Routes,
   Navigate,
 } from 'react-router-dom';
+import PropTypes from 'prop-types';
 import Navbar from './components/navbar';
 import { AdministracionRoutes } from './routes/administracion.routes.jsx';
 import { DoctoresRoutes } from './routes/doctores.routes.jsx';
 import { PacientesRoutes } from './routes/pacientes.routes.jsx';
 import { ToastContainer } from 'react-toastify';
 import AuthProvider from './context/global/AuthProvider.jsx';
+import { useAuth } from './context/global/AuthProvider.jsx';
 import 'react-toastify/dist/ReactToastify.css';
 // Configuración global de notificaciones
 import './utils/notifications';
+
+// Component to handle dynamic home redirect
+const HomeRedirect = () => {
+  const { userType } = useAuth();
+  
+  // If user is authenticated, redirect to their appropriate home
+  if (userType) {
+    switch(userType) {
+      case 'D': return <Navigate to="/doctor" replace />;
+      case 'A': return <Navigate to="/admin" replace />;
+      case 'P': return <Navigate to="/paciente" replace />;
+      default: return <Navigate to="/paciente" replace />;
+    }
+  }
+  
+  // If no user type, show patient login as default
+  return <Navigate to="/paciente" replace />;
+};
+
+// Component to protect routes based on user role
+const ProtectedRoute = ({ children, allowedRoles }) => {
+  const { userType } = useAuth();
+  
+  // If no userType (not authenticated), allow access to show login forms
+  if (!userType) {
+    return children;
+  }
+  
+  if (!allowedRoles.includes(userType)) {
+    // Redirect to their correct home if they try to access wrong route
+    switch(userType) {
+      case 'D': return <Navigate to="/doctor" replace />;
+      case 'A': return <Navigate to="/admin" replace />;
+      case 'P': return <Navigate to="/paciente" replace />;
+      default: return <Navigate to="/paciente" replace />;
+    }
+  }
+  
+  return children;
+};
+
+ProtectedRoute.propTypes = {
+  children: PropTypes.node.isRequired,
+  allowedRoles: PropTypes.arrayOf(PropTypes.string).isRequired,
+};
 
 function App() {
   return (
@@ -21,11 +68,32 @@ function App() {
         <div>
           <Navbar />
           <Routes>
-            {/* Redirige desde "/" a "/paciente" */}
-            <Route path="/" element={<Navigate to="/paciente" />} />
-            <Route path="/paciente/*" element={<PacientesRoutes />} />
-            <Route path="/doctor/*" element={<DoctoresRoutes />} />
-            <Route path="/admin/*" element={<AdministracionRoutes />} />
+            {/* Dynamic redirect based on user type */}
+            <Route path="/" element={<HomeRedirect />} />
+            <Route 
+              path="/paciente/*" 
+              element={
+                <ProtectedRoute allowedRoles={['P']}>
+                  <PacientesRoutes />
+                </ProtectedRoute>
+              } 
+            />
+            <Route 
+              path="/doctor/*" 
+              element={
+                <ProtectedRoute allowedRoles={['D']}>
+                  <DoctoresRoutes />
+                </ProtectedRoute>
+              } 
+            />
+            <Route 
+              path="/admin/*" 
+              element={
+                <ProtectedRoute allowedRoles={['A']}>
+                  <AdministracionRoutes />
+                </ProtectedRoute>
+              } 
+            />
           </Routes>
           <ToastContainer
             position="top-center" // Centrar el toast en la parte superior

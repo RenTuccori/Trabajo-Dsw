@@ -1,13 +1,16 @@
-import { pool } from '../db.js';
+import { Sede, HorarioDisponible, Doctor, Usuario, SedeDocEsp, Especialidad } from '../models/index.js';
 
 export const getSedes = async (req, res) => {
   try {
-    const [result] = await pool.query('SELECT * FROM sedes WHERE estado = \'Habilitado\'');
-    if (result.length === 0) {
-      return res.status(404).json({ message: 'No hay sedes habilitadas' });
-    } else {
-      res.json(result);
+    const sedes = await Sede.findAll({
+      where: { estado: 'Habilitado' }
+    });
+
+    if (sedes.length === 0) {
+      return res.status(404).json({ message: 'No hay sedes cargadas' });
     }
+
+    res.json(sedes);
   } catch (error) {
     console.log(error);
     return res.status(500).json({ message: error.message });
@@ -16,17 +19,17 @@ export const getSedes = async (req, res) => {
 
 export const getSedeById = async (req, res) => {
   try {
-    const { idSede } = req.params;
-    const [result] = await pool.query(
-      'SELECT * FROM sedes WHERE idSede = ? AND estado = \'Habilitado\'',
-      [idSede]
-    );
-    if (result.length === 0) {
-      return res.status(404).json({ message: 'Sede no encontrada o no está habilitada' });
-    } else {
-      res.json(result[0]);
+    const { id } = req.params;
+
+    const sede = await Sede.findByPk(id);
+
+    if (!sede) {
+      return res.status(404).json({ message: 'Sede no encontrada' });
     }
+
+    res.json(sede);
   } catch (error) {
+    console.error('Error en getSedeById:', error);
     return res.status(500).json({ message: error.message });
   }
 };
@@ -34,93 +37,127 @@ export const getSedeById = async (req, res) => {
 export const createSede = async (req, res) => {
   try {
     const { nombre, direccion } = req.body;
-    const estado = 'Habilitado';
 
-    // Verificar si ya existe una sede con el mismo nombre y estado habilitado
-    const [existingSede] = await pool.query(
-      'SELECT * FROM sedes WHERE nombre = ? AND estado = ?',
-      [nombre, estado]
-    );
+    console.log('🔍 Creando sede:', nombre, direccion);
 
-    if (existingSede.length > 0) {
-      // Si ya existe una sede habilitada con el mismo nombre
-      return res.status(400).json({ message: 'Ya existe una sede habilitada con este nombre.' });
+    // Verificar si ya existe una sede con el mismo nombre
+    const sedeExistente = await Sede.findOne({
+      where: { nombre }
+    });
+
+    if (sedeExistente) {
+      if (sedeExistente.estado === 'Habilitado') {
+        return res.status(400).json({ 
+          message: 'La sede ya existe y está habilitada' 
+        });
+      } else {
+        // Si existe pero está deshabilitada, rehabilitarla
+        console.log('🔄 Rehabilitando sede existente:', nombre);
+        
+        await Sede.update({
+          direccion, // Actualizar también la dirección por si cambió
+          estado: 'Habilitado'
+        }, {
+          where: { nombre }
+        });
+
+        const sedeRehabilitada = await Sede.findOne({
+          where: { nombre }
+        });
+
+        console.log('✅ Sede rehabilitada exitosamente');
+        return res.json(sedeRehabilitada);
+      }
     }
 
-    // Insertar nueva sede con estado habilitado
-    const [result] = await pool.query(
-      'INSERT INTO sedes (nombre, direccion, estado) VALUES (?, ?, ?)',
-      [nombre, direccion, estado]
-    );
-
-    res.json({
-      idSede: result.insertId,
+    const nuevaSede = await Sede.create({
       nombre,
       direccion,
-      estado,
+      estado: 'Habilitado'
     });
+
+    console.log('✅ Nueva sede creada exitosamente');
+    res.json(nuevaSede);
   } catch (error) {
+    console.error('❌ Error al crear sede:', error);
+    if (error.name === 'SequelizeValidationError') {
+      return res.status(400).json({
+        message: 'Error de validación',
+        errors: error.errors.map(e => e.message)
+      });
+    }
     return res.status(500).json({ message: error.message });
   }
 };
-
-
-
 
 export const updateSede = async (req, res) => {
-  const { idSede } = req.params;
-  const { nombre, direccion } = req.body;
-
   try {
-    const [result] = await pool.query(
-      'UPDATE sedes SET nombre = ?, direccion = ? WHERE idSede = ?',
-      [nombre, direccion, idSede]
+    const { id } = req.params;
+    const { nombre, direccion, estado } = req.body;
+
+    const [updatedRowsCount] = await Sede.update(
+      { nombre, direccion, estado },
+      { where: { idSede: id } }
     );
 
-    if (result.affectedRows === 0) {
+    if (updatedRowsCount === 0) {
       return res.status(404).json({ message: 'Sede no encontrada' });
     }
-    res.json({ idSede, nombre, direccion });
+
+    res.json({ message: 'Sede actualizada' });
   } catch (error) {
     return res.status(500).json({ message: error.message });
   }
 };
-
 
 export const deleteSede = async (req, res) => {
   try {
     const { idSede } = req.params;
 
-    // Iniciar una transacción para asegurar consistencia en las actualizaciones
-    await pool.query('START TRANSACTION');
-
-    // Actualizar el estado de la sede a "Deshabilitado"
-    const [resultSede] = await pool.query(
-      'UPDATE sedes SET estado = "Deshabilitado" WHERE idSede = ?',
-      [idSede]
+    // Soft delete
+    const [updatedRowsCount] = await Sede.update(
+      { estado: 'Deshabilitado' },
+      { where: { idSede: idSede } }
     );
 
-    // Si no se encontró la sede, devolver un error
-    if (resultSede.affectedRows === 0) {
-      // Si la sede no existe, hacer un rollback de la transacción
-      await pool.query('ROLLBACK');
+    if (updatedRowsCount === 0) {
       return res.status(404).json({ message: 'Sede no encontrada' });
     }
 
-    // Actualizar el estado de las combinaciones en la tabla sededoctoresp a "Deshabilitado"
-    const [resultCombinacion] = await pool.query(
-      'UPDATE sededoctoresp SET estado = "Deshabilitado" WHERE idSede = ?',
-      [idSede]
-    );
-
-    // Confirmar la transacción si todo salió bien
-    await pool.query('COMMIT');
-
-    // Si la transacción fue exitosa, devolver 204 No Content
-    return res.sendStatus(204); // No hay contenido que devolver, pero la operación fue exitosa
+    res.json({ message: 'Sede deshabilitada' });
   } catch (error) {
-    // Si ocurre un error, hacer rollback de la transacción
-    await pool.query('ROLLBACK');
+    return res.status(500).json({ message: error.message });
+  }
+};
+
+export const getDoctoresBySede = async (req, res) => {
+  try {
+    const { id } = req.params;
+
+    const sede = await Sede.findByPk(id, {
+      include: [{
+        model: SedeDocEsp,
+        as: 'sedeDocEsp',
+        include: [{
+          model: Doctor,
+          as: 'doctor',
+          include: [{
+            model: Usuario,
+            as: 'usuario'
+          }]
+        }, {
+          model: Especialidad,
+          as: 'especialidad'
+        }]
+      }]
+    });
+
+    if (!sede) {
+      return res.status(404).json({ message: 'Sede no encontrada' });
+    }
+
+    res.json(sede);
+  } catch (error) {
     return res.status(500).json({ message: error.message });
   }
 };

@@ -1,8 +1,8 @@
-import axios from 'axios';
-const dbUrl = import.meta.env.VITE_DB_URL;
+import axios from "axios";
+
 
 const axiosInstance = axios.create({
-  baseURL: `http://${dbUrl}/api/`, //colocar la ip de la maquina donde se esta ejecutando el backend
+  baseURL: import.meta.env.VITE_API_URL || 'http://localhost:3000',
 });
 
 axiosInstance.interceptors.request.use(
@@ -23,15 +23,14 @@ axiosInstance.interceptors.response.use(
     return response;
   },
   (error) => {
-    if (
-      error.response &&
-      (error.response.status === 401 || error.response.status === 403)
-    ) {
-      console.log('Token no válido, expirado o sin permisos');
-      // Limpiar el token inválido
+    if (error.response && error.response.status === 401) {
+      console.log("Token no válido o expirado");
+      // Limpiar token expirado
       localStorage.removeItem('token');
-      // Redirigir al home
-      window.location.href = '/';
+      // Opcional: recargar la página para que el AuthProvider maneje el estado
+      if (window.location.pathname !== '/') {
+        window.location.href = '/';
+      }
     }
     return Promise.reject(error);
   }

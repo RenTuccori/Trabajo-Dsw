@@ -87,7 +87,7 @@ export function CrearEspecialidad() {
           Especialidades creadas
         </h3>
         <ul className="space-y-2">
-          {especialidades.length > 0 ? (
+          {especialidades && especialidades.length > 0 ? (
             especialidades.map((especialidad) => (
               <li
                 key={especialidad.idEspecialidad}

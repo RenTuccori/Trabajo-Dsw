@@ -1,38 +1,35 @@
 import { Router } from 'express';
-import { Patient, AdminOrPatient } from '../middleware/authorizeRole.js';
 import {
   getUsers,
-  getUserByDniFecha,
+  getUserByDni,
   createUser,
   updateUser,
   deleteUser,
-  getUserByDni,
+  getUserByDniFecha
 } from '../controllers/usuarios.controllers.js';
+import { Admin, Paciente, AdminOrPaciente } from '../middleware/authorizeRole.js';
+import { Usuario } from '../models/index.js';
 
 const router = Router();
 
 // Ruta de debug para ver usuarios
 router.get('/api/users/debug', async (req, res) => {
   try {
-    const { pool } = await import('../db.js');
-    const [result] = await pool.query(
-      `SELECT dni, nombre, apellido, fechaNacimiento FROM usuarios ORDER BY dni`
-    );
-    res.json(result);
+    const usuarios = await Usuario.findAll({
+      attributes: ['dni', 'nombre', 'apellido', 'fechaNacimiento'],
+      order: [['dni', 'ASC']]
+    });
+    res.json(usuarios);
   } catch (error) {
     res.status(500).json({ error: error.message });
   }
 });
 
-router.post('/api/usersdni', Patient, getUserByDni);
-
+router.post('/api/usersdni', Paciente, getUserByDni);
 router.post('/api/usersdnifecha', getUserByDniFecha);
-
-router.get('/api/userstodos', Patient, getUsers);
-
+router.get('/api/userstodos', Paciente, getUsers);
 router.post('/api/users', createUser);
-
-router.put('/api/users/', AdminOrPatient, updateUser);
+router.put('/api/users', AdminOrPaciente, updateUser);
 
 router.delete('/api/users/', deleteUser);
 

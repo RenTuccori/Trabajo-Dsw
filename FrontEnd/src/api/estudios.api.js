@@ -3,7 +3,7 @@ import axiosInstance from './axiosInstance';
 // Subir un nuevo estudio
 export const uploadEstudio = async (formData) => {
   try {
-    const response = await axiosInstance.post('estudios/upload', formData, {
+    const response = await axiosInstance.post('/api/estudios/upload', formData, {
       headers: {
         'Content-Type': 'multipart/form-data',
       },
@@ -17,7 +17,7 @@ export const uploadEstudio = async (formData) => {
 // Obtener estudios por paciente
 export const getEstudiosByPaciente = async (idPaciente) => {
   try {
-    const response = await axiosInstance.get(`estudios/paciente/${idPaciente}`);
+    const response = await axiosInstance.get(`/api/estudios/paciente/${idPaciente}`);
     return response;
   } catch (error) {
     throw error.response?.data || error.message;
@@ -27,7 +27,7 @@ export const getEstudiosByPaciente = async (idPaciente) => {
 // Obtener estudios por doctor
 export const getEstudiosByDoctor = async (idDoctor) => {
   try {
-    const response = await axiosInstance.get(`estudios/doctor/${idDoctor}`);
+    const response = await axiosInstance.get(`/api/estudios/doctor/${idDoctor}`);
     return response;
   } catch (error) {
     throw error.response?.data || error.message;
@@ -37,7 +37,7 @@ export const getEstudiosByDoctor = async (idDoctor) => {
 // Descargar estudio
 export const downloadEstudio = async (idEstudio) => {
   try {
-    const response = await axiosInstance.get(`estudios/download/${idEstudio}`, {
+    const response = await axiosInstance.get(`/api/estudios/download/${idEstudio}`, {
       responseType: 'blob',
     });
     return response;
@@ -49,7 +49,7 @@ export const downloadEstudio = async (idEstudio) => {
 // Eliminar estudio
 export const deleteEstudio = async (idEstudio) => {
   try {
-    const response = await axiosInstance.delete(`estudios/${idEstudio}`);
+    const response = await axiosInstance.delete(`/api/estudios/${idEstudio}`);
     return response;
   } catch (error) {
     throw error.response?.data || error.message;

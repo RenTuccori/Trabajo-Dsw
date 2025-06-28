@@ -6,8 +6,9 @@ export function CrearHorarios() {
   const navigate = useNavigate();
   const location = useLocation();
   const { idSede, idEspecialidad, idDoctor } = location.state || {};
+  const diasSemana = ['Lunes', 'Martes', 'Miércoles', 'Jueves', 'Viernes'];
+  const { comprobarToken } = useAuth();
 
-  const diasSemana = ['lunes', 'martes', 'miércoles', 'jueves', 'viernes'];
   const {
     obtenerHorariosXDoctor,
     crearHorarios,
@@ -92,17 +93,28 @@ export function CrearHorarios() {
           );
 
           if (horarioExistente) {
-            // Usar PUT si el horario ya existe
-            console.log('Actualizando horario:', horario);
-            await actualizarHorarios({
-              idSede,
-              idDoctor,
-              idEspecialidad,
-              dia: horario.dia,
-              hora_inicio: horario.hora_inicio,
-              hora_fin: horario.hora_fin,
-              estado: 'Habilitado',
-            });
+            // Verificar si las horas realmente cambiaron
+            const horasChanged = horarioExistente.hora_inicio !== horario.hora_inicio || 
+                               horarioExistente.hora_fin !== horario.hora_fin;
+            
+            if (horasChanged) {
+              // Usar PUT si el horario ya existe y las horas cambiaron
+              console.log('Actualizando horario:', horario);
+              console.log('Horario existente:', horarioExistente);
+              await actualizarHorarios({
+                idSede,
+                idDoctor,
+                idEspecialidad,
+                dia: horario.dia,
+                hora_inicio: horario.hora_inicio,
+                hora_fin: horario.hora_fin,
+                hora_inicio_original: horarioExistente.hora_inicio,
+                hora_fin_original: horarioExistente.hora_fin,
+                estado: 'Habilitado',
+              });
+            } else {
+              console.log('Horario sin cambios, saltando actualización:', horario.dia);
+            }
           } else {
             // Usar POST si el horario no existe
             console.log('Creando horario:', horario);

@@ -16,6 +16,8 @@ import {
   createHorarios,
   getHorariosXDoctor,
   updateHorarios,
+  getUserByDni,
+  createUserAdmin,
 } from '../../api/admin.api.js'; // Asegúrate de tener una función para crear la sede en la API
 import { useContext, useState } from 'react';
 import { getSedes } from '../../api/sedes.api.js';
@@ -25,7 +27,7 @@ import {
 } from '../../api/especialidades.api';
 import { getDoctores, getDoctorById } from '../../api/doctores.api';
 import { getObrasSociales } from '../../api/obrasociales.api.js';
-import { getUserDni, createUser, updateUser } from '../../api/usuarios.api.js';
+import { updateUser } from '../../api/usuarios.api.js';
 import PropTypes from 'prop-types';
 // eslint-disable-next-line react-refresh/only-export-components
 export const useAdministracion = () => {
@@ -40,10 +42,10 @@ export const useAdministracion = () => {
 
 const AdministracionProvider = ({ children }) => {
   const [sedes, setSedes] = useState([]); // Estado para almacenar las sedes
-  const [especialidades, setEspecialidades] = useState('');
-  const [obrasSociales, setObrasSociales] = useState('');
-  const [doctores, setDoctores] = useState('');
-  const [doctor, setDoctor] = useState('');
+  const [especialidades, setEspecialidades] = useState([]);
+  const [obrasSociales, setObrasSociales] = useState([]);
+  const [doctores, setDoctores] = useState([]);
+  const [doctor, setDoctor] = useState({});
   const [usuario, setUsuario] = useState({});
   const [selectedDoctor, setSelectedDoctor] = useState(null);
   const [selectedEspecialidad, setSelectedEspecialidad] = useState(null);
@@ -53,36 +55,57 @@ const AdministracionProvider = ({ children }) => {
 
   async function crearNuevaSede({ nombre, direccion }) {
     try {
-      await createSede({ nombre, direccion }); // Llamada a la API
+      const response = await createSede({ nombre, direccion }); // Llamada a la API
+      return response;
     } catch (error) {
+      console.error('Error en crearNuevaSede:', error);
       if (error.response) {
         // Error del servidor o del cliente
         if (error.response.status === 400) {
-          console.error('La sede ya está habilitada.');
+          console.error('Error 400 - Datos inválidos:', error.response.data);
+        } else if (error.response.status === 401) {
+          console.error('Error 401 - No autorizado, token inválido o expirado');
         } else if (error.response.status === 500) {
-          console.error('Error en el servidor. Inténtalo de nuevo más tarde.');
+          console.error('Error 500 - Error en el servidor:', error.response.data);
         } else {
-          console.error('Ocurrió un error inesperado:', error.response.data);
+          console.error('Error inesperado:', error.response.status, error.response.data);
         }
-        throw error;
       } else {
         // Error que no es de respuesta, como problemas de red
-        console.error('Error de red o de conexión:', error);
+        console.error('Error de red o de conexión:', error.message);
       }
       throw error;
     }
   }
 
   async function ObtenerSedes() {
-    const response = await getSedes();
-    setSedes(response.data);
+    try {
+      const response = await getSedes();
+      
+      if (response.error) {
+        console.error('❌ Error al obtener sedes:', response.error);
+        setSedes([]);
+        return;
+      }
+      
+      const sedesData = response.data || [];
+      console.log('🏢 Sedes obtenidas (Admin):', sedesData);
+      setSedes(Array.isArray(sedesData) ? sedesData : []);
+    } catch (error) {
+      console.error('❌ Error inesperado al obtener sedes:', error);
+      setSedes([]);
+    }
   }
 
   async function borrarSede(idSede) {
     try {
-      await deleteSede(idSede); // Llamada a la API
+      const response = await deleteSede(idSede); // Llamada a la API
+      return response;
     } catch (error) {
       console.error('Error al borrar la sede:', error);
+      if (error.response?.status === 401) {
+        console.error('Token expirado o inválido');
+      }
       throw error;
     }
   }
@@ -96,15 +119,19 @@ const AdministracionProvider = ({ children }) => {
     try {
       await createSpecialty({ nombre });
     } catch (error) {
-      console.error('Error al obtener las sedes:', error);
-      throw error;
+      console.error('Error al crear especialidad:', error);
+      throw error; // Re-throw para que el componente pueda manejarlo
     }
   }
   async function borrarEspecialidad(idEspecialidad) {
     try {
-      await deleteSpecialty(idEspecialidad); // Llamada a la API
+      const response = await deleteSpecialty(idEspecialidad); // Llamada a la API
+      return response;
     } catch (error) {
       console.error('Error al borrar la especialidad:', error);
+      if (error.response?.status === 401) {
+        console.error('Token expirado o inválido');
+      }
       throw error;
     }
   }
@@ -115,8 +142,23 @@ const AdministracionProvider = ({ children }) => {
 
   //Doctor
   async function ObtenerDoctores() {
-    const response = await getDoctores();
-    setDoctores(response.data);
+    try {
+      console.log('🔍 Llamando a ObtenerDoctores en el Provider');
+      const response = await getDoctores();
+      
+      if (response.error) {
+        console.error('❌ Error al obtener doctores:', response.error);
+        setDoctores([]);
+        return;
+      }
+      
+      const doctoresData = response.data || [];
+      console.log('👨‍⚕️ Doctores obtenidos:', doctoresData);
+      setDoctores(Array.isArray(doctoresData) ? doctoresData : []);
+    } catch (error) {
+      console.error('❌ Error inesperado al obtener doctores:', error);
+      setDoctores([]);
+    }
   }
   async function ObtenerDoctorPorId(idDoctor) {
     try {
@@ -130,16 +172,24 @@ const AdministracionProvider = ({ children }) => {
 
   async function CreaDoctor({ dni, duracionTurno, contra }) {
     try {
-      await createDoctor({ dni, duracionTurno, contra });
+      console.log('🏥 Creando doctor en el provider:', { dni, duracionTurno, contra });
+      const response = await createDoctor({ dni, duracionTurno, contra });
+      console.log('✅ Doctor creado exitosamente:', response.data);
+      return response;
     } catch (error) {
-      console.error('Error al obtener las sedes:', error);
+      console.error('❌ Error al crear el doctor:', error);
+      throw error;
     }
   }
   async function borrarDoctor(idDoctor) {
     try {
-      await deleteDoctor(idDoctor);
+      const response = await deleteDoctor(idDoctor);
+      return response;
     } catch (error) {
       console.error('Error al borrar el doctor:', error);
+      if (error.response?.status === 401) {
+        console.error('Token expirado o inválido');
+      }
       throw error;
     }
   }
@@ -164,17 +214,31 @@ const AdministracionProvider = ({ children }) => {
   async function ObtenerOS() {
     try {
       const response = await getObrasSociales();
-      setObrasSociales(response.data);
+      
+      if (response.error) {
+        console.error('❌ Error al obtener obras sociales:', response.error);
+        setObrasSociales([]);
+        return;
+      }
+      
+      const obrasSocialesData = response.data || [];
+      console.log('💼 Obras sociales obtenidas (Admin):', obrasSocialesData);
+      setObrasSociales(Array.isArray(obrasSocialesData) ? obrasSocialesData : []);
     } catch (error) {
-      console.error('Error al obtener las sedes:', error);
+      console.error('❌ Error inesperado al obtener obras sociales:', error);
+      setObrasSociales([]);
     }
   }
 
   async function borrarObraSocial(idObraSocial) {
     try {
-      await deleteObraSocial(idObraSocial);
+      const response = await deleteObraSocial(idObraSocial);
+      return response;
     } catch (error) {
       console.error('Error al borrar la obra social:', error);
+      if (error.response?.status === 401) {
+        console.error('Token expirado o inválido');
+      }
       throw error;
     }
   }
@@ -204,16 +268,20 @@ const AdministracionProvider = ({ children }) => {
 
   async function borrarSedEspDoc({ idSede, idDoctor, idEspecialidad }) {
     try {
-      await deleteSeEspDoc({
+      const response = await deleteSeEspDoc({
         idSede,
         idDoctor,
         idEspecialidad,
       });
+      return response;
     } catch (error) {
       console.error(
         'Error al borrar la combinación de sede, especialidad y doctor:',
         error
       );
+      if (error.response?.status === 401) {
+        console.error('Token expirado o inválido');
+      }
       throw error;
     }
   }
@@ -272,6 +340,8 @@ const AdministracionProvider = ({ children }) => {
     dia,
     hora_inicio,
     hora_fin,
+    hora_inicio_original,
+    hora_fin_original,
     estado,
   }) {
     try {
@@ -282,6 +352,8 @@ const AdministracionProvider = ({ children }) => {
         dia,
         hora_inicio,
         hora_fin,
+        hora_inicio_original,
+        hora_fin_original,
         estado,
       });
     } catch (error) {
@@ -311,19 +383,29 @@ const AdministracionProvider = ({ children }) => {
 
   async function ObtenerUsuarioDni(dni) {
     try {
-      const response = await getUserDni({ dni });
-      setUsuario(response.data);
-      console.log('Paciente encontrado:', response.data);
+      console.log('🔍 Buscando usuario con DNI:', dni);
+      const response = await getUserByDni({ dni });
+      console.log('✅ Usuario encontrado:', response.data);
+      setUsuario(response.data || {});
+      return response.data;
     } catch (error) {
-      console.error('Error al obtener el paciente por DNI:', error);
+      console.error('❌ Error al obtener el usuario por DNI:', error);
+      setUsuario({});
       throw error;
     }
   }
 
   async function CrearUsuario(data) {
-    console.log('data:', data);
-    const response = await createUser(data);
-    setUsuario(response.data);
+    try {
+      console.log('📝 Creando usuario:', data);
+      const response = await createUserAdmin(data);
+      console.log('✅ Usuario creado:', response.data);
+      setUsuario(response.data || {});
+      return response;
+    } catch (error) {
+      console.error('❌ Error al crear usuario:', error);
+      throw error;
+    }
   }
   async function actualizarUsuario(data) {
     try {

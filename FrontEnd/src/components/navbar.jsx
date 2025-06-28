@@ -1,39 +1,34 @@
 import { Link } from 'react-router-dom';
-import { FaCog, FaUserMd } from 'react-icons/fa'; // Asegúrate de tener react-icons instalado
-import logo from '../assets/logo.png'; // Asegúrate de que la ruta al logo sea correcta
+import { useAuth } from '../context/global/AuthProvider'; // Import useAuth
+import logo from '../assets/logo.png';
 
 const Navbar = () => {
+  const { userType } = useAuth(); // Get user type from auth context
+
+  // Determine home route based on user type
+  const getHomeRoute = () => {
+    switch(userType) {
+      case 'D': return '/doctor';
+      case 'A': return '/admin'; 
+      case 'P': return '/paciente';
+      default: return '/';
+    }
+  };
+
   return (
     <nav className="py-4" style={{
-      background: 'linear - gradient(to right, #e0eafc, #cfdef3)', // W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+
+      background: 'linear-gradient(to right, #e0eafc, #cfdef3)',
     }}>
       <div className="container mx-auto flex items-center justify-between px-6">
         <div className="flex items-center space-x-6">
-          <Link to="/" className="flex items-center space-x-4">
-            <img src={logo} alt="Logo" className="h-14 w-14" />{' '}
-            {/* Tamaño del logo */}
+          <Link to={getHomeRoute()} className="flex items-center space-x-4">
+            <img src={logo} alt="Logo" className="h-14 w-14" />
             <span className="text-2xl font-bold text-blue-800">
               Sanatorio UTN
-            </span>{' '}
-            {/* Tamaño del texto */}
+            </span>
           </Link>
         </div>
-        <div className="flex items-center space-x-4 ml-auto">
-          {/* Ícono de doctor */}
-          <Link
-            to="/doctor"
-            className="text-blue-800 hover:text-blue-600 transition-colors"
-          >
-            <FaUserMd size={32} /> {/* Tamaño del ícono */}
-          </Link>
-          {/* Ícono de administración */}
-          <Link
-            to="/admin"
-            className="text-blue-800 hover:text-blue-600 transition-colors"
-          >
-            <FaCog size={32} /> {/* Tamaño del ícono */}
-          </Link>
-        </div>
+        {/* Navigation icons section removed - users should only access their assigned role */}
       </div>
     </nav>
   );

@@ -161,6 +161,9 @@ export function SacarTurno() {
     setSelectedHorario(selectedOption);
     setFechaYHora(`${formatedFecha} ${selectedOption.value}`);
     console.log(`${formatedFecha} ${selectedOption.value}`);
+    
+    console.log('🔍 Estableciendo idDoctor:', selectedDoctor.value, 'desde selectedDoctor:', selectedDoctor);
+    
     setIdDoctor(selectedDoctor.value);
     setIdEspecialidad(selectedEspecialidad.value);
     setIdSede(selectedSede.value);
