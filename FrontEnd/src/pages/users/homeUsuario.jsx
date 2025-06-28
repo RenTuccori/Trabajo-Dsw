@@ -1,12 +1,13 @@
 // src/pages/home.jsx
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/global/AuthProvider';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { notifySuccess, notifyError } from '../../components/ToastConfig';
 
 function HomeUsuario() {
   const navigate = useNavigate();
-  const { dni, login, nombreUsuario, apellidoUsuario } = useAuth();
+  const { dni, login, comprobarToken, nombreUsuario, apellidoUsuario } =
+    useAuth();
   const [dniform, setDni] = useState('');
   const [fecha, setFecha] = useState('');
 
@@ -19,8 +20,10 @@ function HomeUsuario() {
       console.error('Error de login:', error);
     }
   };
-
-  // El token se valida automáticamente en las rutas protegidas
+  useEffect(() => {
+    comprobarToken('P');
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const handleDniChange = (event) => {
     setDni(event.target.value);

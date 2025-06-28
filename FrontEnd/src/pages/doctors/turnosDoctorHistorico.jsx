@@ -1,30 +1,32 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import { useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { useDoctores } from '../../context/doctores/DoctoresProvider.jsx';
-import '../../estilos/home.css';
-import '../../estilos/sacarturno.css';
+import { useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import { useDoctores } from "../../context/doctores/DoctoresProvider.jsx";
+import { useAuth } from "../../context/global/AuthProvider";
+import "../../estilos/home.css";
+import "../../estilos/sacarturno.css";
 
 export function TurnosDoctorHistorico() {
   const { turnosHist, Historico } = useDoctores();
+  const { comprobarToken } = useAuth();
   const navigate = useNavigate();
 
   useEffect(() => {
+    comprobarToken("D");
     Historico();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const formatFechaHora = (fechaYHora) => {
     const opciones = {
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit',
-      second: '2-digit',
-      timeZoneName: 'short',
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
+      second: "2-digit",
+      timeZoneName: "short",
     };
-    return new Date(fechaYHora).toLocaleString('es-ES', opciones);
+    return new Date(fechaYHora).toLocaleString("es-ES", opciones);
   };
   return (
     <div className="min-h-screen bg-gradient-to-b from-blue-100 to-white flex items-center justify-center p-4">
@@ -34,7 +36,7 @@ export function TurnosDoctorHistorico() {
         </h1>
         <button
           className="w-full bg-gray-200 text-gray-700 py-2 rounded-lg hover:bg-gray-300 transition-colors"
-          onClick={() => navigate('/doctor')}
+          onClick={() => navigate("/doctor")}
         >
           Volver
         </button>
@@ -52,7 +54,7 @@ export function TurnosDoctorHistorico() {
                   <strong>Especialidad:</strong> {turno.especialidad}
                 </p>
                 <p>
-                  <strong>Fecha y Hora:</strong>{' '}
+                  <strong>Fecha y Hora:</strong>{" "}
                   {formatFechaHora(turno.fechaYHora)}
                 </p>
                 <p>

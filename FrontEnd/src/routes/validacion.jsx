@@ -1,16 +1,7 @@
 import { Link } from 'react-router-dom';
-import { useEffect } from 'react';
-import { useAuth } from '../context/global/AuthProvider';
 import PropTypes from 'prop-types';
 
 export function Validacion({ rol, children, esperado }) {
-  const { comprobarToken } = useAuth();
-
-  // Verificar token al montar el componente
-  useEffect(() => {
-    comprobarToken(esperado);
-  }, [comprobarToken, esperado]);
-
   // Manejar tanto strings como arrays
   const roles = Array.isArray(rol) ? rol : [rol];
 

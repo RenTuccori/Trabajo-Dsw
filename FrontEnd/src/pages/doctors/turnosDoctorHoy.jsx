@@ -1,30 +1,33 @@
-import { useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { useDoctores } from '../../context/doctores/DoctoresProvider.jsx';
-import '../../estilos/home.css';
-import '../../estilos/sacarturno.css';
-import '../../estilos/verTurnos.css';
+/* eslint-disable react-hooks/exhaustive-deps */
+import { useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import { useDoctores } from "../../context/doctores/DoctoresProvider.jsx";
+import { useAuth } from "../../context/global/AuthProvider";
+import "../../estilos/home.css";
+import "../../estilos/sacarturno.css";
+import "../../estilos/verTurnos.css";
 
 export function TurnosDoctorHoy() {
   const { turnosHoy, TurnosHoy } = useDoctores();
+  const { comprobarToken } = useAuth();
   const navigate = useNavigate();
 
   useEffect(() => {
+    comprobarToken("D");
     TurnosHoy();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const formatFechaHora = (fechaYHora) => {
     const opciones = {
-      year: 'numeric',
-      month: 'long',
-      day: 'numeric',
-      hour: '2-digit',
-      minute: '2-digit',
-      second: '2-digit',
-      timeZoneName: 'short',
+      year: "numeric",
+      month: "long",
+      day: "numeric",
+      hour: "2-digit",
+      minute: "2-digit",
+      second: "2-digit",
+      timeZoneName: "short",
     };
-    return new Date(fechaYHora).toLocaleString('es-ES', opciones);
+    return new Date(fechaYHora).toLocaleString("es-ES", opciones);
   };
 
   return (
@@ -47,7 +50,7 @@ export function TurnosDoctorHoy() {
                   <strong>Especialidad:</strong> {turno.especialidad}
                 </p>
                 <p>
-                  <strong>Fecha y Hora:</strong>{' '}
+                  <strong>Fecha y Hora:</strong>{" "}
                   {formatFechaHora(turno.fechaYHora)}
                 </p>
                 <p>
@@ -69,7 +72,7 @@ export function TurnosDoctorHoy() {
         </div>
         <button
           className="w-full bg-gray-200 text-gray-700 py-2 rounded-lg hover:bg-gray-300 transition-colors"
-          onClick={() => navigate('/doctor')}
+          onClick={() => navigate("/doctor")}
         >
           Volver
         </button>

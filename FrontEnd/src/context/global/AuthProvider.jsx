@@ -55,22 +55,6 @@ const AuthProvider = ({ children }) => {
         localStorage.removeItem('token');
       }
     }
-
-    // Escuchar eventos de token expirado desde axios interceptor
-    const handleTokenExpired = () => {
-      setDni('');
-      setIdDoctor('');
-      setIdAdmin('');
-      setNombreUsuario('');
-      setApellidoUsuario('');
-      setRol('');
-    };
-
-    window.addEventListener('tokenExpired', handleTokenExpired);
-
-    return () => {
-      window.removeEventListener('tokenExpired', handleTokenExpired);
-    };
   }, []);
 
   async function login({ identifier, credential, userType }) {
@@ -142,24 +126,46 @@ const AuthProvider = ({ children }) => {
   }
 
   function comprobarToken(userType) {
-    const token = localStorage.getItem('token');
-    if (!token) {
-      // No hay token, limpiar estados y redirigir
-      setDni('');
-      setIdDoctor('');
-      setIdAdmin('');
-      setNombreUsuario('');
-      setApellidoUsuario('');
-      setRol('');
-      navigate('/');
-      return;
-    }
-
-    try {
-      const decoded = jwtDecode(token);
-      if (decoded.exp < Date.now() / 1000) {
-        // Token expirado, limpiar y redirigir
+    if (localStorage.getItem('token')) {
+      try {
+        const decoded = jwtDecode(localStorage.getItem('token'));
+        if (decoded.exp < Date.now() / 1000) {
+          console.error('Token expired');
+          localStorage.removeItem('token');
+          // Limpiar todos los estados
+          setDni('');
+          setIdDoctor('');
+          setIdAdmin('');
+          setNombreUsuario('');
+          setApellidoUsuario('');
+          setRol('');
+          navigate('/');
+        } else {
+          switch (userType) {
+            case 'P': // Paciente
+              setDni(decoded.dni);
+              setNombreUsuario(decoded.nombre || '');
+              setApellidoUsuario(decoded.apellido || '');
+              setRol('P');
+              break;
+            case 'D': // Doctor
+              setIdDoctor(decoded.idDoctor);
+              setNombreUsuario(decoded.nombre || '');
+              setApellidoUsuario(decoded.apellido || '');
+              setRol('D');
+              break;
+            case 'A': // Admin
+              setIdAdmin(decoded.idAdmin);
+              setRol('A');
+              break;
+            default:
+              throw new Error('Tipo de usuario no válido');
+          }
+        }
+      } catch (error) {
+        console.error('Error decoding token:', error);
         localStorage.removeItem('token');
+        // Limpiar todos los estados
         setDni('');
         setIdDoctor('');
         setIdAdmin('');
@@ -167,27 +173,15 @@ const AuthProvider = ({ children }) => {
         setApellidoUsuario('');
         setRol('');
         navigate('/');
-        return;
       }
-
-      // Token válido, verificar que el tipo de usuario coincida
-      if (decoded.rol !== userType) {
-        console.error('Tipo de usuario no coincide con el token');
-        navigate('/');
-        return;
-      }
-
-      // El resto de la validación la maneja el interceptor de axios
-    } catch (error) {
-      console.error('Error decoding token:', error);
-      localStorage.removeItem('token');
+    } else {
+      // Limpiar todos los estados cuando no hay token
       setDni('');
       setIdDoctor('');
       setIdAdmin('');
       setNombreUsuario('');
       setApellidoUsuario('');
       setRol('');
-      navigate('/');
     }
   }
 
