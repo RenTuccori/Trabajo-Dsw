@@ -8,6 +8,7 @@ import { TurnosPaciente } from '../pages/users/turnosPaciente.jsx';
 import { ConfirmacionTurno } from '../pages/users/confirmacionTurno';
 import VerEstudios from '../pages/users/verEstudios.jsx';
 import { Validacion } from './validacion.jsx';
+import { ProtectedRoute } from '../components/ProtectedRoute.jsx';
 import { useAuth } from '../context/global/AuthProvider.jsx';
 
 export function PacientesRoutes() {
@@ -20,40 +21,50 @@ export function PacientesRoutes() {
         <Route
           path="/sacarturno"
           element={
-            <Validacion rol={rol} esperado={'P'}>
-              <SacarTurno />
+            <Validacion rol={rol} esperado={'Patient'}>
+              <ProtectedRoute requiredRole="Patient">
+                <SacarTurno />
+              </ProtectedRoute>
             </Validacion>
           }
         />
         <Route
           path="/editardatospersonales"
           element={
-            <Validacion rol={rol} esperado={'P'}>
-              <ModificacionUsuario />
+            <Validacion rol={rol} esperado={'Patient'}>
+              <ProtectedRoute requiredRole="Patient">
+                <ModificacionUsuario />
+              </ProtectedRoute>
             </Validacion>
           }
         />
         <Route
           path="/confirmacionturno"
           element={
-            <Validacion rol={rol} esperado={'P'}>
-              <ConfirmacionTurno />
+            <Validacion rol={rol} esperado={'Patient'}>
+              <ProtectedRoute requiredRole="Patient">
+                <ConfirmacionTurno />
+              </ProtectedRoute>
             </Validacion>
           }
         />
         <Route
           path="/verturnos"
           element={
-            <Validacion rol={rol} esperado={'P'}>
-              <TurnosPaciente />
+            <Validacion rol={rol} esperado={'Patient'}>
+              <ProtectedRoute requiredRole="Patient">
+                <TurnosPaciente />
+              </ProtectedRoute>
             </Validacion>
           }
         />
         <Route
           path="/estudios"
           element={
-            <Validacion rol={rol} esperado={'P'}>
-              <VerEstudios />
+            <Validacion rol={rol} esperado={'Patient'}>
+              <ProtectedRoute requiredRole="Patient">
+                <VerEstudios />
+              </ProtectedRoute>
             </Validacion>
           }
         />

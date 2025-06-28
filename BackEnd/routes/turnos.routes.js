@@ -7,7 +7,7 @@ import {
   createTurno,
   deleteTurno,
   confirmarTurno,
-  cancelarTurno
+  cancelarTurno,
 } from '../controllers/turnos.controllers.js';
 import { Doctor, Paciente } from '../middleware/authorizeRole.js';
 

@@ -6,6 +6,7 @@ import { TurnosDoctorHoy } from '../pages/doctors/turnosDoctorHoy.jsx';
 import { TurnosDoctorHistorico } from '../pages/doctors/turnosDoctorHistorico.jsx';
 import SubirEstudio from '../pages/doctors/subirEstudio.jsx';
 import { Validacion } from './validacion.jsx';
+import { ProtectedRoute } from '../components/ProtectedRoute.jsx';
 import { useAuth } from '../context/global/AuthProvider.jsx';
 
 export function DoctoresRoutes() {
@@ -14,15 +15,47 @@ export function DoctoresRoutes() {
     <DoctoresProvider>
       <Routes>
         <Route path="/" element={<HomeDoctor />} />
+        <Route
+          path="/turnoshist"
+          element={
+            <Validacion rol={rol} esperado={'Doctor'}>
+              <ProtectedRoute requiredRole="Doctor">
+                <TurnosDoctorHistorico />
+              </ProtectedRoute>
+            </Validacion>
+          }
+        />
+        <Route
+          path="/turnoshoy"
+          element={
+            <Validacion rol={rol} esperado={'Doctor'}>
+              <ProtectedRoute requiredRole="Doctor">
+                <TurnosDoctorHoy />
+              </ProtectedRoute>
+            </Validacion>
+          }
+        />
+        <Route
+          path="/turnosfecha"
+          element={
+            <Validacion rol={rol} esperado={'Doctor'}>
+              <ProtectedRoute requiredRole="Doctor">
+                <TurnosDoctorFecha />
+              </ProtectedRoute>
+            </Validacion>
+          }
+        />
+        <Route
+          path="/estudios"
+          element={
+            <Validacion rol={rol} esperado={'Doctor'}>
+              <ProtectedRoute requiredRole="Doctor">
+                <SubirEstudio />
+              </ProtectedRoute>
+            </Validacion>
+          }
+        />
       </Routes>
-      <Validacion rol={rol} esperado={'D'}>
-        <Routes>
-          <Route path="/turnoshist" element={<TurnosDoctorHistorico />} />
-          <Route path="/turnoshoy" element={<TurnosDoctorHoy />} />
-          <Route path="/turnosfecha" element={<TurnosDoctorFecha />} />
-          <Route path="/estudios" element={<SubirEstudio />} />
-        </Routes>
-      </Validacion>
     </DoctoresProvider>
   );
 }

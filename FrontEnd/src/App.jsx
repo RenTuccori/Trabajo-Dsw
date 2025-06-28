@@ -13,6 +13,8 @@ import { ToastContainer } from 'react-toastify';
 import AuthProvider from './context/global/AuthProvider.jsx';
 import { useAuth } from './context/global/AuthProvider.jsx';
 import 'react-toastify/dist/ReactToastify.css';
+// Configuración global de notificaciones
+import './utils/notifications';
 
 // Component to handle dynamic home redirect
 const HomeRedirect = () => {

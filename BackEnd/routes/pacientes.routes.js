@@ -9,6 +9,7 @@ import {
 } from '../controllers/pacientes.controllers.js';
 import { Admin, Paciente, DoctorOrAdmin } from '../middleware/authorizeRole.js';
 
+
 const router = Router();
 
 // Ruta de debug para ver pacientes
@@ -33,5 +34,6 @@ router.post('/api/pacientes', Admin, createPaciente);
 router.put('/api/pacientes/:id', Admin, updatePaciente);
 router.delete('/api/pacientes/:id', Admin, deletePaciente);
 router.post('/api/pacientelogin', getPacienteLogin);
+
 
 export default router;

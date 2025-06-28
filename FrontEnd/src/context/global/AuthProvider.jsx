@@ -32,19 +32,19 @@ const AuthProvider = ({ children }) => {
         const decoded = jwtDecode(token);
         if (decoded.exp > Date.now() / 1000) {
           // Token válido, restaurar estado según el rol del token
-          if (decoded.rol === 'P') {
+          if (decoded.rol === 'Patient') {
             setDni(decoded.dni);
             setNombreUsuario(decoded.nombre || '');
             setApellidoUsuario(decoded.apellido || '');
-            setRol('P');
-          } else if (decoded.rol === 'D') {
+            setRol('Patient');
+          } else if (decoded.rol === 'Doctor') {
             setIdDoctor(decoded.idDoctor);
             setNombreUsuario(decoded.nombre || '');
             setApellidoUsuario(decoded.apellido || '');
-            setRol('D');
-          } else if (decoded.rol === 'A') {
+            setRol('Doctor');
+          } else if (decoded.rol === 'Admin') {
             setIdAdmin(decoded.idAdmin);
-            setRol('A');
+            setRol('Admin');
           }
         } else {
           // Token expirado, limpiar
@@ -63,7 +63,7 @@ const AuthProvider = ({ children }) => {
       let token;
 
       switch (userType) {
-        case 'P': {
+        case 'Patient': {
           // Paciente
           response = await getUserDniFecha({
             dni: identifier,
@@ -75,10 +75,10 @@ const AuthProvider = ({ children }) => {
           setDni(decodedPatient.dni);
           setNombreUsuario(decodedPatient.nombre || '');
           setApellidoUsuario(decodedPatient.apellido || '');
-          setRol('P');
+          setRol('Patient');
           break;
         }
-        case 'D': {
+        case 'Doctor': {
           // Doctor
           response = await verifyDoctor({
             dni: identifier,
@@ -90,10 +90,10 @@ const AuthProvider = ({ children }) => {
           setIdDoctor(decodedDoctor.idDoctor);
           setNombreUsuario(decodedDoctor.nombre || '');
           setApellidoUsuario(decodedDoctor.apellido || '');
-          setRol('D');
+          setRol('Doctor');
           break;
         }
-        case 'A': {
+        case 'Admin': {
           // Admin
           response = await getAdmin({
             usuario: identifier,
@@ -103,7 +103,7 @@ const AuthProvider = ({ children }) => {
           localStorage.setItem('token', token);
           const decodedAdmin = jwtDecode(token);
           setIdAdmin(decodedAdmin.idAdmin);
-          setRol('A');
+          setRol('Admin');
           break;
         }
         default:
@@ -112,15 +112,15 @@ const AuthProvider = ({ children }) => {
     } catch (error) {
       // Manejar errores de inicio de sesión
       console.error('Error en el inicio de sesión:', error);
-      if (userType === 'P') {
+      if (userType === 'Patient') {
         setDni(null);
         setNombreUsuario('');
         setApellidoUsuario('');
-      } else if (userType === 'D') {
+      } else if (userType === 'Doctor') {
         setIdDoctor(null);
         setNombreUsuario('');
         setApellidoUsuario('');
-      } else if (userType === 'A') setIdAdmin(null);
+      } else if (userType === 'Admin') setIdAdmin(null);
       throw error;
     }
   }

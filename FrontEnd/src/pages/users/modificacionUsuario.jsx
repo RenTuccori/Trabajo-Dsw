@@ -53,7 +53,7 @@ export function ModificacionUsuario() {
     e.preventDefault();
 
     // Alerta de confirmación
-    const result = await confirmDialog(
+    const result = await window.confirmDialog(
       'Guardar Cambios',
       '¿Estás seguro que deseas guardar los cambios?'
     );
@@ -61,7 +61,6 @@ export function ModificacionUsuario() {
     if (result.isConfirmed) {
       try {
         const response = await ActualizarUsuario(formData);
-
         if (response && response.data) {
           console.log('Usuario actualizado con éxito');
           notifySuccess('Datos guardados exitosamente'); // Toast de éxito
@@ -78,7 +77,6 @@ export function ModificacionUsuario() {
   };
 
   useEffect(() => {
-    comprobarToken('P');
     ObtenerObraSociales();
     ObtenerUsuarioDni();
   // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -188,7 +186,14 @@ export function ModificacionUsuario() {
             type="submit"
             className="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition-colors"
           >
-            Guardar Cambios
+            Guardar cambios
+          </button>
+          <button
+            type="button"
+            onClick={() => navigate('/paciente')}
+            className="w-full bg-gray-200 text-gray-700 py-2 rounded-lg hover:bg-gray-300 transition-colors"
+          >
+            Volver
           </button>
         </form>
       </div>

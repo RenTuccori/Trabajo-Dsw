@@ -2,30 +2,31 @@ import { useState, useContext, useEffect, useCallback } from "react";
 import PropTypes from "prop-types";
 import { useAuth } from "../global/AuthProvider";
 
-import { PacientesContext } from "./PacientesContext";
-import { getSedes } from "../../api/sedes.api";
+
+import { PacientesContext } from './PacientesContext';
+import { getSedes } from '../../api/sedes.api';
 import {
   getEspecialidades,
   getEspecialidadById,
-} from "../../api/especialidades.api";
-import { getDoctors, getDoctorById } from "../../api/doctores.api";
-import { getFechasDispTodos, getHorariosDisp } from "../../api/horarios.api";
-import { createUser, getUserDni, updateUser } from "../../api/usuarios.api";
-import { getObrasSociales } from "../../api/obrasociales.api";
-import { createPaciente, getPacienteDni } from "../../api/pacientes.api";
-import { getSedeById } from "../../api/sedes.api";
+} from '../../api/especialidades.api';
+import { getDoctors, getDoctorById } from '../../api/doctores.api';
+import { getFechasDispTodos, getHorariosDisp } from '../../api/horarios.api';
+import { createUser, getUserDni, updateUser } from '../../api/usuarios.api';
+import { getObrasSociales } from '../../api/obrasociales.api';
+import { createPaciente, getPacienteDni } from '../../api/pacientes.api';
+import { getSedeById } from '../../api/sedes.api';
 import {
   createTurno,
   getTurnosPaciente,
   confirmarTurno,
   cancelarTurno,
-} from "../../api/turnos.api";
-import { sendEmail } from "../../api/email.api";
+} from '../../api/turnos.api';
+import { sendEmail } from '../../api/email.api';
 
 export const usePacientes = () => {
   const context = useContext(PacientesContext);
   if (!context) {
-    throw new Error("usePacientes must be used within an PacientesProvider");
+    throw new Error('usePacientes must be used within an PacientesProvider');
   }
   return context;
 };
@@ -39,23 +40,23 @@ const PacientesProvider = ({ children }) => {
   const [horarios, setHorarios] = useState([]);
   const [obraSociales, setObraSociales] = useState([]);
   const [usuario, setUsuario] = useState({});
-  const [idPacienteCreado, setidPacienteCreado] = useState("");
-  const [nombreEspecialidad, setNombreEspecialidad] = useState("");
-  const [nombreDoctor, setNombreDoctor] = useState("");
-  const [apellidoDoctor, setApellidoDoctor] = useState("");
-  const [nombreSede, setNombreSede] = useState("");
-  const [direccionSede, setDireccionSede] = useState("");
-  const [fechaYHora, setFechaYHora] = useState("");
-  const [idDoctor, setIdDoctor] = useState("");
-  const [idEspecialidad, setIdEspecialidad] = useState("");
-  const [idSede, setIdSede] = useState("");
-  const [idPaciente, setIdPaciente] = useState("");
-  const [estado, setEstado] = useState("");
-  const [fechaCancelacion, setFechaCancelacion] = useState("");
-  const [fechaConfirmacion, setFechaConfirmacion] = useState("");
+  const [idPacienteCreado, setidPacienteCreado] = useState('');
+  const [nombreEspecialidad, setNombreEspecialidad] = useState('');
+  const [nombreDoctor, setNombreDoctor] = useState('');
+  const [apellidoDoctor, setApellidoDoctor] = useState('');
+  const [nombreSede, setNombreSede] = useState('');
+  const [direccionSede, setDireccionSede] = useState('');
+  const [fechaYHora, setFechaYHora] = useState('');
+  const [idDoctor, setIdDoctor] = useState('');
+  const [idEspecialidad, setIdEspecialidad] = useState('');
+  const [idSede, setIdSede] = useState('');
+  const [idPaciente, setIdPaciente] = useState('');
+  const [estado, setEstado] = useState('');
+  const [fechaCancelacion, setFechaCancelacion] = useState('');
+  const [fechaConfirmacion, setFechaConfirmacion] = useState('');
   const [turnos, setTurnos] = useState([]);
   const [usuarioDni, setUsuarioDni] = useState({});
-  const [mailUsuario, setMailUsuario] = useState("");
+  const [mailUsuario, setMailUsuario] = useState('');
 
   const { dni, userType } = useAuth();
 
@@ -116,6 +117,7 @@ const PacientesProvider = ({ children }) => {
     } else {
       setDoctores([]); // Fallback para cualquier otro caso
     }
+
   }
   async function ObtenerFechas({
     selectedOption,
@@ -338,22 +340,32 @@ const PacientesProvider = ({ children }) => {
     await confirmarTurno({ idTurno });
     setTurnos((prevTurnos) =>
       prevTurnos.map((turno) =>
-        turno.idTurno === idTurno ? { ...turno, estado: "Confirmado" } : turno
+        turno.idTurno === idTurno ? { ...turno, estado: 'Confirmado' } : turno
       )
     );
   }
 
   async function ObtenerUsuarioDni() {
-    const response = await getUserDni({ dni });
-    setUsuarioDni(response.data);
-    setMailUsuario(response.data.email);
+    try {
+      const response = await getUserDni({ dni });
+      if (response && response.data) {
+        setUsuarioDni(response.data);
+        setMailUsuario(response.data.email);
+      } else {
+        console.error('No se pudo obtener los datos del usuario');
+        window.notifyError('Error al obtener los datos del usuario');
+      }
+    } catch (error) {
+      console.error('Error al obtener usuario por DNI:', error);
+      window.notifyError('Error al obtener los datos del usuario');
+    }
   }
 
   async function CancelarTurno({ idTurno }) {
     await cancelarTurno({ idTurno });
     setTurnos((prevTurnos) =>
       prevTurnos.map((turno) =>
-        turno.idTurno === idTurno ? { ...turno, estado: "Cancelado" } : turno
+        turno.idTurno === idTurno ? { ...turno, estado: 'Cancelado' } : turno
       )
     );
   }

@@ -1,8 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAdministracion } from '../../context/administracion/AdministracionProvider.jsx';
-import { notifySuccess, notifyError } from '../../components/ToastConfig';
-import { confirmDialog } from '../../components/SwalConfig';
 
 export function CrearSede() {
   const navigate = useNavigate();
@@ -20,7 +18,7 @@ export function CrearSede() {
   // Manejar la creación de una nueva sede
   const handleCrearSede = async (e) => {
     e.preventDefault();
-    
+   
     // Validación mejorada
     if (nombreSede.trim().length < 2 || nombreSede.trim().length > 100) {
       notifyError('El nombre debe tener entre 2 y 100 caracteres');
@@ -51,7 +49,7 @@ export function CrearSede() {
   };
 
   const handleBorrarSede = async (idSede) => {
-    const result = await confirmDialog(
+    const result = await window.confirmDialog(
       '¿Estás seguro?',
       '¿Deseas eliminar esta sede?'
     );
@@ -59,10 +57,10 @@ export function CrearSede() {
     if (result.isConfirmed) {
       try {
         await borrarSede(idSede);
-        notifySuccess('¡Sede eliminada con éxito!'); // Mostrar mensaje de éxito
+        window.notifySuccess('¡Sede eliminada con éxito!'); // Mostrar mensaje de éxito
         ObtenerSedes(); // Actualizar la lista después de borrar una sede
       } catch (error) {
-        notifyError('Error al eliminar la sede'); // Mostrar mensaje de error
+        window.notifyError('Error al eliminar la sede'); // Mostrar mensaje de error
         console.error('Error al borrar sede:', error);
       }
     }

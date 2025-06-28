@@ -49,7 +49,11 @@ export function DatosPersonales() {
     e.preventDefault(); // Previene el comportamiento por defecto del formulario
     try {
       await CrearUsuario(formData); // Asegura que la creación del usuario sea asíncrona
-      login({ dni: formData.dni, fechaNacimiento: formData.fechaNacimiento, userType : 'P' });
+      login({
+        dni: formData.dni,
+        fechaNacimiento: formData.fechaNacimiento,
+        userType: 'Patient',
+      });
 
       // Muestra el mensaje de éxito con SweetAlert2
       confirmDialog().then(() => {

@@ -7,7 +7,6 @@ import {
   downloadEstudio as downloadEstudioAPI,
 } from '../../api/estudios.api';
 import { getPacientes } from '../../api/pacientes.api';
-import { notifySuccess, notifyError } from '../../components/ToastConfig';
 
 function SubirEstudio() {
   const { idDoctor } = useAuth();
@@ -63,7 +62,7 @@ function SubirEstudio() {
       setPacientes(response.data || []);
     } catch (error) {
       console.error('Error al cargar pacientes:', error);
-      notifyError('Error al cargar la lista de pacientes');
+      window.notifyError('Error al cargar la lista de pacientes');
       setPacientes([]); // Asegurar que pacientes esté definido
     }
   };
@@ -87,12 +86,12 @@ function SubirEstudio() {
     e.preventDefault();
 
     if (!formData.archivo) {
-      notifyError('Por favor seleccione un archivo');
+      window.notifyError('Por favor seleccione un archivo');
       return;
     }
 
     if (!formData.idPaciente || !formData.fechaRealizacion) {
-      notifyError('Por favor complete todos los campos obligatorios');
+      window.notifyError('Por favor complete todos los campos obligatorios');
       return;
     }
 
@@ -107,7 +106,7 @@ function SubirEstudio() {
 
       await uploadEstudio(data);
 
-      notifySuccess('Estudio subido exitosamente');
+      window.notifySuccess('Estudio subido exitosamente');
 
       // Limpiar formulario
       setFormData({
@@ -125,7 +124,7 @@ function SubirEstudio() {
       loadEstudios();
     } catch (error) {
       console.error('Error al subir estudio:', error);
-      notifyError(error.message || 'Error al subir el estudio');
+      window.notifyError(error.message || 'Error al subir el estudio');
     } finally {
       setLoading(false);
     }
@@ -146,7 +145,7 @@ function SubirEstudio() {
       window.URL.revokeObjectURL(url);
     } catch (error) {
       console.error('Error al descargar estudio:', error);
-      notifyError('Error al descargar el archivo');
+      window.notifyError('Error al descargar el archivo');
     }
   };
 

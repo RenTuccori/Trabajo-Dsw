@@ -30,6 +30,7 @@ router.post('/api/usersdnifecha', getUserByDniFecha);
 router.get('/api/userstodos', Paciente, getUsers);
 router.post('/api/users', createUser);
 router.put('/api/users', AdminOrPaciente, updateUser);
+
 router.delete('/api/users/', deleteUser);
 
 export default router;

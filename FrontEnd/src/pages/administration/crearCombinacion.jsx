@@ -1,9 +1,7 @@
-import Select from "react-select";
-import { useAdministracion } from "../../context/administracion/AdministracionProvider.jsx";
-import { useNavigate } from "react-router-dom";
-import { useEffect, useState } from "react";
-import { notifySuccess, notifyError } from "../../components/ToastConfig";
-import { confirmDialog } from "../../components/SwalConfig";
+import Select from 'react-select';
+import { useAdministracion } from '../../context/administracion/AdministracionProvider.jsx';
+import { useNavigate } from 'react-router-dom';
+import { useEffect, useState } from 'react';
 
 export function CrearCombinacion() {
   const navigate = useNavigate();
@@ -48,25 +46,25 @@ export function CrearCombinacion() {
   const customStyles = {
     option: (provided, state) => ({
       ...provided,
-      backgroundColor: state.isFocused ? "#5368e0" : "#2a2e45",
-      color: "#ffffff",
+      backgroundColor: state.isFocused ? '#5368e0' : '#2a2e45',
+      color: '#ffffff',
     }),
     control: (provided) => ({
       ...provided,
-      backgroundColor: "white",
-      color: "#5368e0",
-      borderRadius: "5px",
-      border: "2px solid #5368e0",
-      padding: "5px",
+      backgroundColor: 'white',
+      color: '#5368e0',
+      borderRadius: '5px',
+      border: '2px solid #5368e0',
+      padding: '5px',
     }),
     menu: (provided) => ({
       ...provided,
-      border: "0.1rem solid white",
-      borderRadius: "5px",
+      border: '0.1rem solid white',
+      borderRadius: '5px',
     }),
     singleValue: (provided) => ({
       ...provided,
-      color: "#2a2e45",
+      color: '#2a2e45',
     }),
   };
 
@@ -95,9 +93,9 @@ export function CrearCombinacion() {
 
   const confirmarCombinacion = async () => {
     if (selectedSede && selectedEspecialidad && selectedDoctor) {
-      const result = await confirmDialog(
-        "¿Está seguro?",
-        "Esta acción no se puede deshacer."
+      const result = await window.confirmDialog(
+        '¿Está seguro?',
+        'Esta acción no se puede deshacer.'
       );
 
       if (result.isConfirmed) {
@@ -108,14 +106,14 @@ export function CrearCombinacion() {
             idDoctor: selectedDoctor.value,
           });
 
-          notifySuccess("¡Combinación creada con éxito!");
+          window.notifySuccess('¡Combinación creada con éxito!');
           // Refresca las combinaciones después de la creación
           obtenerCombinaciones();
         } catch (error) {
           if (error.response && error.response.status === 400) {
-            notifyError(error.response.data.message);
+            window.notifyError(error.response.data.message);
           } else {
-            notifyError("Error al crear la combinación");
+            window.notifyError('Error al crear la combinación');
           }
         }
       }
@@ -123,19 +121,19 @@ export function CrearCombinacion() {
   };
 
   const handleDeleteCombinacion = async (idSede, idDoctor, idEspecialidad) => {
-    const result = await confirmDialog(
-      "¿Estás seguro?",
-      "¿Deseas eliminar esta combinación?"
+    const result = await window.confirmDialog(
+      '¿Estás seguro?',
+      '¿Deseas eliminar esta combinación?'
     );
 
     if (result.isConfirmed) {
       try {
         await borrarSedEspDoc({ idSede, idDoctor, idEspecialidad });
-        notifySuccess("¡Combinación eliminada con éxito!");
+        window.notifySuccess('¡Combinación eliminada con éxito!');
         // Refresca las combinaciones después de la eliminación
         obtenerCombinaciones();
       } catch (error) {
-        notifySuccess("Error al eliminar la combinación");
+        window.notifySuccess('Error al eliminar la combinación');
       }
     }
   };
@@ -218,7 +216,7 @@ export function CrearCombinacion() {
 
           <button
             className="w-full bg-gray-200 text-gray-700 py-2 rounded-lg hover:bg-gray-300 transition-colors"
-            onClick={() => navigate("/admin")}
+            onClick={() => navigate('/admin')}
           >
             Volver
           </button>
@@ -270,7 +268,6 @@ export function CrearCombinacion() {
                       >
                         Horarios
                       </button>
-
                       {/* Botón de Eliminar */}
                       <button
                         className="text-red-600 hover:text-red-800 border border-red-200 px-2 py-1 rounded hover:bg-red-50"
@@ -294,6 +291,7 @@ export function CrearCombinacion() {
               </p>
             )}
           </div>
+
         </div>
       </div>
     </div>

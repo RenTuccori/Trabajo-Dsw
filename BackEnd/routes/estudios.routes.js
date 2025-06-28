@@ -28,7 +28,7 @@ router.post(
 // Obtener estudios por paciente (pacientes pueden ver sus estudios)
 router.get(
   '/api/estudios/paciente/:idPaciente',
-  Paciente,
+  Patient,
   getEstudiosByPaciente
 );
 

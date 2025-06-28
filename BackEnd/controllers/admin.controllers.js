@@ -15,7 +15,7 @@ import bcrypt from 'bcrypt';
 export const getAdmin = async (req, res) => {
   try {
     const { usuario, contra } = req.body;
-    
+
     // Buscar admin por usuario
     const admin = await Admin.findOne({
       where: { usuario: usuario }
@@ -55,7 +55,6 @@ export const createSeEspDoc = async (req, res) => {
     const existente = await SedeDocEsp.findOne({
       where: { idSede, idEspecialidad, idDoctor }
     });
-
     if (existente) {
       if (existente.estado === 'Habilitado') {
         return res.status(200).json({ message: 'La combinación ya está habilitada.' });
@@ -85,7 +84,6 @@ export const createSeEspDoc = async (req, res) => {
     return res.status(500).json({ message: error.message });
   }
 };
-
 
 export const deleteSeEspDoc = async (req, res) => {
   try {
@@ -359,7 +357,6 @@ export const getHorariosXDoctor = async (req, res) => {
   try {
     console.log('🔍 getHorariosXDoctor called with:', req.body);
     const { idSede, idEspecialidad, idDoctor } = req.body;
-
     if (!idSede || !idEspecialidad || !idDoctor) {
       return res.status(400).json({ 
         message: 'Faltan parámetros requeridos: idSede, idEspecialidad, idDoctor' 
@@ -578,6 +575,7 @@ export const deleteAdmin = async (req, res) => {
     }
 
     res.json({ message: 'Administrador deshabilitado' });
+
   } catch (error) {
     return res.status(500).json({ message: error.message });
   }

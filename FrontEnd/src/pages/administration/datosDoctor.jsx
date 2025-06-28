@@ -3,7 +3,6 @@ import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Select from 'react-select';
 import { useAdministracion } from '../../context/administracion/AdministracionProvider.jsx';
-import { notifySuccess, notifyError } from '../../components/ToastConfig';
 
 export function DatosDoctor() {
   const { obraSociales, ObtenerObraSociales, CrearUsuario, createDoctor } =
@@ -48,11 +47,11 @@ export function DatosDoctor() {
     try {
       await CrearUsuario(formData); // Crea el usuario
       setUsuarioCreado(true); // Marca que el usuario ha sido creado
-      notifySuccess(
+      window.notifySuccess(
         'Usuario creado con éxito. Ahora complete los datos del doctor.'
       );
     } catch (error) {
-      notifyError('Error al crear el usuario');
+      window.notifyError('Error al crear el usuario');
       console.error('Error al crear usuario:', error);
     }
   };
@@ -62,10 +61,10 @@ export function DatosDoctor() {
     try {
       const { dni } = formData;
       await createDoctor({ dni, ...doctorData }); // Crea el doctor utilizando el DNI del usuario creado
-      notifySuccess('¡Doctor creado con éxito!');
+      window.notifySuccess('¡Doctor creado con éxito!');
       navigate('/admin'); // Redirige después de crear el doctor
     } catch (error) {
-      notifyError('Error al crear el doctor');
+      window.notifyError('Error al crear el doctor');
       console.error('Error al crear doctor:', error);
     }
   };

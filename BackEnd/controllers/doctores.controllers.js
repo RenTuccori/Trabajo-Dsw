@@ -342,7 +342,7 @@ export const createDoctor = async (req, res) => {
         console.log('✅ Doctor rehabilitado exitosamente:', doctorRehabilitado.idDoctor);
         return res.json(doctorRehabilitado);
       }
-    }
+}
 
     // Encriptar contraseña
     const hashedPassword = await bcrypt.hash(contra, 10);

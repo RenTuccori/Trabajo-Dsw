@@ -1,7 +1,6 @@
-import { useEffect, useState } from "react";
-import { useNavigate } from "react-router-dom";
-import { usePacientes } from "../../context/paciente/PacientesProvider.jsx";
-import { useAuth } from "../../context/global/AuthProvider";
+import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { usePacientes } from '../../context/paciente/PacientesProvider.jsx';
 
 export function ConfirmacionTurno() {
   const navigate = useNavigate();
@@ -20,7 +19,6 @@ export function ConfirmacionTurno() {
     ObtenerUsuarioDni,
     MandarMail,
   } = usePacientes();
-  const { comprobarToken } = useAuth();
 
   const [turnoCreado, setTurnoCreado] = useState(false); // Estado para saber si el turno fue creado
 
@@ -28,7 +26,6 @@ export function ConfirmacionTurno() {
     const confirmarTurno = async () => {
       try {
         // Asegurarse de que todas las funciones asincrónicas se completen antes de continuar
-        await comprobarToken("P");
         await ObtenerUsuarioDni();
         
         console.log('🔍 Estado antes de obtener doctor, especialidad y sede:', {
@@ -53,7 +50,7 @@ export function ConfirmacionTurno() {
         await CrearTurno();
         setTurnoCreado(true);
       } catch (error) {
-        console.error("Error al crear el turno:", error);
+        console.error('Error al crear el turno:', error);
       }
     };
 
@@ -83,7 +80,7 @@ export function ConfirmacionTurno() {
       // Llamar a la función para mandar el correo
       MandarMail({
         to: mailUsuario, // Asegúrate de pasar el destinatario como tal
-        subject: "Turno Creado",
+        subject: 'Turno Creado',
         html: cuerpo,
       });
     }
@@ -114,14 +111,14 @@ export function ConfirmacionTurno() {
         {/* Aviso sobre el correo electrónico */}
         <p className="text-sm text-gray-600 text-center mt-4">
           Si no recibiste el correo de confirmación, por favor verifica tu
-          dirección de correo en la sección de <strong>Datos Personales</strong>{" "}
+          dirección de correo en la sección de <strong>Datos Personales</strong>{' '}
           y asegúrate de que sea correcta.
         </p>
       </div>
 
       <button
         className="mt-6 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
-        onClick={() => navigate("/paciente")}
+        onClick={() => navigate('/paciente')}
       >
         Volver
       </button>

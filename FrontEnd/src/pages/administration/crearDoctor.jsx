@@ -87,13 +87,13 @@ export function CrearDoctor() {
           }
           
           setUsuarioExistente(true);
-          notifySuccess(
+          window.notifySuccess(
             'Usuario encontrado, continúe con los siguientes pasos.'
           );
         } else {
           console.log('❌ Usuario no encontrado');
           setUsuarioExistente(false);
-          notifyError(
+          window.notifyError(
             'Usuario no encontrado, complete los datos para crear uno nuevo.'
           );
         }
@@ -103,7 +103,7 @@ export function CrearDoctor() {
         if (error.response && error.response.status === 404) {
           // Si es un error 404, significa que no existe el usuario, continuar como nuevo
           setUsuarioExistente(false);
-          notifyError(
+          window.notifyError(
             'Usuario no encontrado, complete los datos para crear uno nuevo.'
           );
           setFormularioVisible(true);
@@ -112,13 +112,12 @@ export function CrearDoctor() {
         }
       }
     } else {
-      notifyError('Ingrese un DNI válido');
+      window.notifyError('Ingrese un DNI válido');
     }
   };
 
   const handleCrearDoctor = async (e) => {
     e.preventDefault();
-    
     // Validaciones
     if (!duracionTurno.trim() || !contra.trim()) {
       notifyError('Complete todos los campos');
@@ -205,7 +204,7 @@ export function CrearDoctor() {
       // Después de actualizar, recargar la lista de doctores
       await ObtenerDoctores();
     } catch (error) {
-      notifyError(`Error al actualizar el doctor con ID ${idDoctor}`);
+      window.notifyError(`Error al actualizar el doctor con ID ${idDoctor}`);
       console.error(`Error al actualizar el doctor con ID ${idDoctor}:`, error);
     }
   };
