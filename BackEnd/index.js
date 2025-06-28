@@ -1,5 +1,4 @@
 import express from 'express';
-import sequelize from './db.js'; // ← AGREGAR ESTA LÍNEA
 import usersRouter from './routes/usuarios.routes.js';
 import doctorsRouter from './routes/doctores.routes.js';
 import specialtiesRouter from './routes/especialidades.routes.js';
@@ -21,20 +20,7 @@ import { startAutoReminderEmails } from './autoreminderEmails.js'; // Envío de 
 const app = express();
 const PORT = 3000;
 
-// ← AGREGAR ESTE BLOQUE ANTES DE LAS RUTAS
-// Conectar a la base de datos
-try {
-  await sequelize.authenticate();
-  console.log('✅ Conexión a la base de datos establecida correctamente.');
-} catch (error) {
-  console.error('❌ No se pudo conectar a la base de datos:', error.message);
-  process.exit(1);
-}
-
-app.use(cors({
-  origin: ['http://localhost:5173', 'http://localhost:5174'], // Puertos típicos de Vite
-  credentials: true
-}));
+app.use(cors());
 app.use(express.json()); // Para usar JSON en el body
 
 app.use((req, res, next) => {
@@ -46,15 +32,12 @@ app.use((req, res, next) => {
   }
 
   req.session = { rol: null };
-  req.user = null; // Inicializar req.user
 
   try {
     data = jwt.verify(token, 'CLAVE_SUPER_SEGURISIMA');
     req.session.rol = data.rol;
-    req.user = data;
   } catch (e) {
     req.session.rol = null;
-    req.user = null;
   }
   next();
 });

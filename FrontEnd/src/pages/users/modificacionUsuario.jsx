@@ -2,9 +2,6 @@ import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Select from 'react-select';
 import { usePacientes } from '../../context/paciente/PacientesProvider';
-import { useAuth } from '../../context/global/AuthProvider';
-import { confirmDialog } from '../../components/SwalConfig.jsx';
-import { notifySuccess, notifyError } from '../../components/ToastConfig';
 
 export function ModificacionUsuario() {
   const {
@@ -14,10 +11,6 @@ export function ModificacionUsuario() {
     obraSociales,
     ActualizarUsuario,
   } = usePacientes();
-  const {
-    comprobarToken,
-    userType
-  } = useAuth();
   const [selectedObraSociales, setSelectedObraSociales] = useState(null);
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
@@ -30,16 +23,6 @@ export function ModificacionUsuario() {
     direccion: '',
     idObraSocial: '',
   });
-
-  // Get home route based on user type
-  const getHomeRoute = () => {
-    switch(userType) {
-      case 'D': return '/doctor';
-      case 'A': return '/admin'; 
-      case 'P': return '/paciente';
-      default: return '/paciente';
-    }
-  };
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -59,19 +42,19 @@ export function ModificacionUsuario() {
     );
 
     if (result.isConfirmed) {
-      try {
-        const response = await ActualizarUsuario(formData);
-        if (response && response.data) {
-          console.log('Usuario actualizado con éxito');
-          notifySuccess('Datos guardados exitosamente'); // Toast de éxito
-          navigate(getHomeRoute());
-        } else {
-          console.log('Error al actualizar usuario');
-          notifyError('No se pudo actualizar el usuario'); // Mensaje de error
-        }
-      } catch (error) {
-        console.error('Error al actualizar usuario:', error);
-        notifyError('Error al guardar los datos. Intente nuevamente.'); // Mensaje de error más específico
+      const response = await ActualizarUsuario(formData);
+
+      if (response.data) {
+        console.log('Usuario actualizado con éxito');
+        window.notifySuccess('Usuario actualizado con éxito'); // Toast de éxito
+        navigate('/paciente');
+      } else {
+        console.log('Error al actualizar usuario');
+        window.confirmDialog(
+          'Error',
+          'No se pudo actualizar el usuario',
+          'error'
+        ); // Mensaje de error
       }
     }
   };
@@ -79,23 +62,23 @@ export function ModificacionUsuario() {
   useEffect(() => {
     ObtenerObraSociales();
     ObtenerUsuarioDni();
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []); 
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   useEffect(() => {
     if (usuarioDni && obraSociales.length > 0) {
       setFormData({
-        dni: usuarioDni.dni || '',
-        nombre: usuarioDni.nombre || '',
-        apellido: usuarioDni.apellido || '',
-        telefono: usuarioDni.telefono || '',
-        email: usuarioDni.email || '',
-        direccion: usuarioDni.direccion || '',
-        idObraSocial: usuarioDni.idObraSocial || '',
+        dni: usuarioDni.dni,
+        nombre: usuarioDni.nombre,
+        apellido: usuarioDni.apellido,
+        telefono: usuarioDni.telefono,
+        email: usuarioDni.email,
+        direccion: usuarioDni.direccion,
+        idObraSocial: usuarioDni.idObraSocial,
       });
 
       setSelectedObraSociales({
-        value: usuarioDni.idObraSocial || '',
+        value: usuarioDni.idObraSocial,
         label:
           obraSociales.find((os) => os.idObraSocial === usuarioDni.idObraSocial)
             ?.nombre || 'No asignada',
@@ -120,7 +103,7 @@ export function ModificacionUsuario() {
             <input
               type="text"
               name="nombre"
-              value={formData.nombre || ''}
+              value={formData.nombre}
               onChange={handleInputChange}
               required
               className="w-full border border-gray-300 rounded-lg p-2 focus:outline-none focus:border-blue-500"
@@ -131,7 +114,7 @@ export function ModificacionUsuario() {
             <input
               type="text"
               name="apellido"
-              value={formData.apellido || ''}
+              value={formData.apellido}
               onChange={handleInputChange}
               required
               className="w-full border border-gray-300 rounded-lg p-2 focus:outline-none focus:border-blue-500"
@@ -142,7 +125,7 @@ export function ModificacionUsuario() {
             <input
               type="text"
               name="direccion"
-              value={formData.direccion || ''}
+              value={formData.direccion}
               onChange={handleInputChange}
               required
               className="w-full border border-gray-300 rounded-lg p-2 focus:outline-none focus:border-blue-500"
@@ -153,7 +136,7 @@ export function ModificacionUsuario() {
             <input
               type="text"
               name="telefono"
-              value={formData.telefono || ''}
+              value={formData.telefono}
               onChange={handleInputChange}
               required
               className="w-full border border-gray-300 rounded-lg p-2 focus:outline-none focus:border-blue-500"
@@ -164,7 +147,7 @@ export function ModificacionUsuario() {
             <input
               type="email"
               name="email"
-              value={formData.email || ''}
+              value={formData.email}
               onChange={handleInputChange}
               required
               className="w-full border border-gray-300 rounded-lg p-2 focus:outline-none focus:border-blue-500"

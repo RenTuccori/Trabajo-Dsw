@@ -34,7 +34,7 @@ DROP TABLE IF EXISTS `admin`;
 CREATE TABLE `admin` (
   `idAdmin` int NOT NULL AUTO_INCREMENT,
   `usuario` varchar(50) NOT NULL,
-  `contra` varchar(255) NOT NULL,
+  `contra` varchar(45) NOT NULL,
   PRIMARY KEY (`idAdmin`)
 ) ENGINE = InnoDB AUTO_INCREMENT = 2 DEFAULT CHARSET = utf8mb4 COLLATE = utf8mb4_0900_ai_ci;
 /*!40101 SET character_set_client = @saved_cs_client */
@@ -62,7 +62,7 @@ CREATE TABLE `doctores` (
   `idDoctor` int NOT NULL AUTO_INCREMENT,
   `dni` int NOT NULL,
   `duracionTurno` int NOT NULL,
-  `contra` varchar(255) NOT NULL,
+  `contra` varchar(45) NOT NULL,
   `estado` varchar(45) NOT NULL,
   PRIMARY KEY (`idDoctor`),
   KEY `dni` (`dni`),
@@ -158,7 +158,8 @@ CREATE TABLE `fechas` (
 LOCK TABLES `fechas` WRITE;
 /*!40000 ALTER TABLE `fechas` DISABLE KEYS */
 ;
--- Los datos de fechas se cargan dinámicamente mediante el script load-data-direct.js
+INSERT INTO `fechas`
+VALUES ("");
 /*!40000 ALTER TABLE `fechas` ENABLE KEYS */
 ;
 UNLOCK TABLES;

@@ -169,7 +169,7 @@ export function DatosDoctor() {
             <div>
               <p className="text-center text-gray-600 text-lg">Obra Social</p>
               <Select
-                options={(obraSociales || []).map((obrasociales) => ({
+                options={obraSociales.map((obrasociales) => ({
                   value: obrasociales.idObraSocial,
                   label: obrasociales.nombre,
                 }))}

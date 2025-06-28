@@ -2,39 +2,25 @@ import axiosInstance from './axiosInstance';
 
 export const getSedes = async () => {
     try {
-        const response = await axiosInstance.get(`/api/sedes`);
-        return {
-            data: response.data || [],
-            error: null
-        };
+        const response = await axiosInstance.get(`sedes`);
+        return response;
     } catch (error) {
-        console.error('❌ Error en getSedes:', error);
-        return {
-            data: [],
-            error: error.response?.data?.message || 'Error al obtener sedes'
-        };
+        return error.response.data.message;
     }
 }
 
 export const getSedeById = async (idSede) => {
     try {
-        const response = await axiosInstance.get(`/api/sedes/${idSede}`);
-        return {
-            data: response.data || {},
-            error: null
-        };
+        const response = await axiosInstance.get(`sedes/${idSede}`);
+        return response;
     } catch (error) {
-        console.error('❌ Error en getSedeById:', error);
-        return {
-            data: {},
-            error: error.response?.data?.message || 'Error al obtener sede'
-        };
+        return error.response.data.message;
     }
 }
 
 export const getDoctorById = async (idDoctor) => {
     try {
-        const response = await axiosInstance.get(`/api/doctorsId/${idDoctor}`);
+        const response = await axiosInstance.get(`doctorsId/${idDoctor}`);
         return response;
     } catch (error) {
         return error.response.data.message;

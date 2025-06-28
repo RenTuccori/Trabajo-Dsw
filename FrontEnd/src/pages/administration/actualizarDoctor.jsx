@@ -45,19 +45,6 @@ export function ActualizarDoctor() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // Validar duracionTurno
-    const duracionNum = parseInt(formData.duracionTurno);
-    if (isNaN(duracionNum) || duracionNum < 15 || duracionNum > 180) {
-      notifyError('La duración del turno debe ser un número entre 15 y 180 minutos');
-      return;
-    }
-
-    // Validar contraseña si se proporciona
-    if (formData.contra && formData.contra.trim() !== '' && formData.contra.length < 6) {
-      notifyError('La contraseña debe tener al menos 6 caracteres');
-      return;
-    }
-
     // Alerta de confirmación
     const result = await window.confirmDialog(
       'Guardar cambios',
@@ -92,13 +79,9 @@ export function ActualizarDoctor() {
         // Preparar datos para actualizar doctor
         const doctorData = {
           idDoctor: formData.idDoctor,
-          duracionTurno: parseInt(formData.duracionTurno),
+          duracionTurno: formData.duracionTurno,
+          contra: formData.contra,
         };
-
-        // Solo incluir contraseña si se proporcionó una nueva
-        if (formData.contra && formData.contra.trim() !== '') {
-          doctorData.contra = formData.contra;
-        }
 
         console.log('Datos usuario:', usuarioData);
         console.log('Datos doctor:', doctorData);
@@ -147,54 +130,48 @@ export function ActualizarDoctor() {
 
   useEffect(() => {
     ObtenerOS();
-    if (idDoctor) {
-      ObtenerDoctorPorId(idDoctor); // Llama a la función con el idDoctor obtenido de la URL
-    }
-
+    ObtenerDoctorPorId(idDoctor); // Llama a la función con el idDoctor obtenido de la URL
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [idDoctor]);
 
   // Set formData after all dependencies are loaded
   useEffect(() => {
-    if (obrasSociales.length > 0 && doctor && doctor.idDoctor) {
-      console.log('🔍 Doctor data received:', doctor);
-      
-      // Extraer datos del usuario desde la estructura anidada
-      const usuarioData = doctor.usuario || {};
-      const obraSocialData = usuarioData.obraSocial || {};
-      
+    if (obrasSociales.length > 0 && doctor.dni) {
       // Ensure all necessary data is available before setting formData
-      const newFormData = {
-        idDoctor: doctor.idDoctor || '',
-        dni: doctor.dni || '',
-        fechaNacimiento: usuarioData.fechaNacimiento || '',
-        nombre: usuarioData.nombre || '',
-        apellido: usuarioData.apellido || '',
-        telefono: usuarioData.telefono || '',
-        email: usuarioData.email || '',
-        direccion: usuarioData.direccion || '',
-        idObraSocial: usuarioData.idObraSocial || '',
-        duracionTurno: doctor.duracionTurno || '',
-        contra: '', // No mostrar contraseña actual por seguridad
-      };
-      
-      console.log('📝 Setting form data:', newFormData);
-      setFormData(newFormData);
+      setFormData((prevFormData) => ({
+        ...prevFormData,
+        idDoctor: idDoctor,
+        dni: doctor.dni,
+        nombre: doctor.nombre,
+        apellido: doctor.apellido,
+        telefono: doctor.telefono,
+        email: doctor.email,
+        direccion: doctor.direccion,
+        idObraSocial: doctor.idObraSocial,
+        duracionTurno: doctor.duracionTurno,
+        contra: doctor.contra,
+      }));
 
-      // Set selected obra social
-      if (usuarioData.idObraSocial) {
-        const obraSocialEncontrada = obrasSociales.find(
-          (os) => os.idObraSocial === usuarioData.idObraSocial
-        );
-        setSelectedObraSociales({
-          value: usuarioData.idObraSocial,
-          label: obraSocialEncontrada?.nombre || obraSocialData.nombre || 'No asignada',
-        });
-      }
+      setSelectedObraSociales({
+        value: doctor.idObraSocial,
+        label:
+          obrasSociales.find((os) => os.idObraSocial === doctor.idObraSocial)
+            ?.nombre || 'No asignada',
+      });
 
       // Guardar datos originales
-      setOriginalData(newFormData);
-      setHasChanges(false); // Reset changes flag when loading new data
+      setOriginalData({
+        idDoctor: idDoctor,
+        dni: doctor.dni,
+        nombre: doctor.nombre,
+        apellido: doctor.apellido,
+        telefono: doctor.telefono,
+        email: doctor.email,
+        direccion: doctor.direccion,
+        idObraSocial: doctor.idObraSocial,
+        duracionTurno: doctor.duracionTurno,
+        contra: doctor.contra,
+      });
     }
   }, [obrasSociales, doctor]);
   const handleObraSocialChange = (selectedOption) => {
@@ -233,7 +210,7 @@ export function ActualizarDoctor() {
             <input
               type="text"
               name="nombre"
-              value={formData.nombre || ''}
+              value={formData.nombre}
               onChange={handleInputChange}
               required
               className="w-full border border-gray-300 rounded-lg p-2 focus:outline-none focus:border-blue-500"
@@ -244,7 +221,7 @@ export function ActualizarDoctor() {
             <input
               type="text"
               name="apellido"
-              value={formData.apellido || ''}
+              value={formData.apellido}
               onChange={handleInputChange}
               required
               className="w-full border border-gray-300 rounded-lg p-2 focus:outline-none focus:border-blue-500"
@@ -255,7 +232,7 @@ export function ActualizarDoctor() {
             <input
               type="text"
               name="direccion"
-              value={formData.direccion || ''}
+              value={formData.direccion}
               onChange={handleInputChange}
               required
               className="w-full border border-gray-300 rounded-lg p-2 focus:outline-none focus:border-blue-500"
@@ -266,7 +243,7 @@ export function ActualizarDoctor() {
             <input
               type="text"
               name="telefono"
-              value={formData.telefono || ''}
+              value={formData.telefono}
               onChange={handleInputChange}
               required
               className="w-full border border-gray-300 rounded-lg p-2 focus:outline-none focus:border-blue-500"
@@ -277,7 +254,7 @@ export function ActualizarDoctor() {
             <input
               type="email"
               name="email"
-              value={formData.email || ''}
+              value={formData.email}
               onChange={handleInputChange}
               required
               className="w-full border border-gray-300 rounded-lg p-2 focus:outline-none focus:border-blue-500"
@@ -301,32 +278,23 @@ export function ActualizarDoctor() {
             </p>
             <input
               type="number"
-              min="15"
-              max="180"
               name="duracionTurno"
-              value={formData.duracionTurno || ''}
+              value={formData.duracionTurno}
               onChange={handleInputChange}
               required
               className="w-full border border-gray-300 rounded-lg p-2 focus:outline-none focus:border-blue-500"
-              placeholder="Ej: 30"
             />
-            <p className="text-xs text-gray-500 mt-1">Entre 15 y 180 minutos</p>
           </div>
           <div>
-            <p className="text-center text-gray-600 text-lg">
-              Contraseña (dejar vacío para no cambiar)
-            </p>
+            <p className="text-center text-gray-600 text-lg">Contraseña</p>
             <input
               type="password"
               name="contra"
-              value={formData.contra || ''}
+              value={formData.contra}
               onChange={handleInputChange}
+              required
               className="w-full border border-gray-300 rounded-lg p-2 focus:outline-none focus:border-blue-500"
-              placeholder="Nueva contraseña (opcional)"
             />
-            <p className="text-xs text-gray-500 mt-1">
-              Mínimo 6 caracteres si desea cambiarla
-            </p>
           </div>
           <button
             type="submit"

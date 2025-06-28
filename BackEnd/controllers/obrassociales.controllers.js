@@ -1,166 +1,93 @@
-import { ObraSocial, Usuario } from '../models/index.js';
+import { pool } from '../db.js';
 
 export const getObrasSociales = async (req, res) => {
-  try {
-    const obrasSociales = await ObraSocial.findAll({
-      where: { estado: 'Habilitado' },
-      include: [{
-        model: Usuario,
-        as: 'usuarios',
-        required: false // LEFT JOIN - incluye obras sociales sin usuarios
-      }]
-    });
-
-    if (obrasSociales.length === 0) {
-      return res.status(404).json({ message: 'No hay obras sociales cargadas' });
+    try {
+        const [result] = await pool.query('SELECT * FROM obrasociales WHERE estado = \'Habilitado\'');
+        if (result.length === 0) {
+            return res.status(404).json({ message: 'No hay obras sociales habilitadas' });
+        } else {
+            res.json(result);
+        }
+    } catch (error) {
+        console.log(error);
+        return res.status(500).json({ message: error.message });
     }
-
-    res.json(obrasSociales);
-  } catch (error) {
-    console.log(error);
-    return res.status(500).json({ message: error.message });
-  }
 };
 
 export const getObraSocialById = async (req, res) => {
-  try {
-    const { id } = req.params;
-
-    const obraSocial = await ObraSocial.findByPk(id, {
-      include: [{
-        model: Usuario,
-        as: 'usuarios',
-        required: false
-      }]
-    });
-
-    if (!obraSocial) {
-      return res.status(404).json({ message: 'Obra social no encontrada' });
+    try {
+        const { idObraSocial } = req.body;
+        const [result] = await pool.query(
+            'SELECT * FROM obrasociales WHERE idObraSocial = ? AND estado = \'Habilitado\'',
+            [idObraSocial]
+        );
+        if (result.length === 0) {
+            return res.status(404).json({ message: 'Obra social no encontrada o no habilitada' });
+        } else {
+            res.json(result[0]);
+        }
+    } catch (error) {
+        return res.status(500).json({ message: error.message });
     }
-
-    res.json(obraSocial);
-  } catch (error) {
-    return res.status(500).json({ message: error.message });
-  }
 };
+
 
 export const createObraSocial = async (req, res) => {
-  try {
     const { nombre } = req.body;
+    const estado = 'Habilitado'; // Definir el estado directamente
 
-    console.log('🔍 Creando obra social:', nombre);
+    try {
+        const [result] = await pool.query(
+            'INSERT INTO obrasociales (nombre, estado) VALUES (?, ?)',
+            [nombre, estado]
+        );
 
-    // Verificar si ya existe una obra social con el mismo nombre
-    const obraSocialExistente = await ObraSocial.findOne({
-      where: { nombre }
-    });
-
-    if (obraSocialExistente) {
-      if (obraSocialExistente.estado === 'Habilitado') {
-        return res.status(400).json({ 
-          message: 'La obra social ya existe y está habilitada' 
+        res.json({
+            idObraSocial: result.insertId,
+            nombre,
+            estado
         });
-      } else {
-        // Si existe pero está deshabilitada, rehabilitarla
-        console.log('🔄 Rehabilitando obra social existente:', nombre);
-        
-        await ObraSocial.update({
-          estado: 'Habilitado'
-        }, {
-          where: { nombre }
-        });
-
-        const obraSocialRehabilitada = await ObraSocial.findOne({
-          where: { nombre }
-        });
-
-        console.log('✅ Obra social rehabilitada exitosamente');
-        return res.json(obraSocialRehabilitada);
-      }
+    } catch (error) {
+        return res.status(500).json({ message: error.message });
     }
-
-    const nuevaObraSocial = await ObraSocial.create({
-      nombre,
-      estado: 'Habilitado'
-    });
-
-    console.log('✅ Nueva obra social creada exitosamente');
-    res.json(nuevaObraSocial);
-  } catch (error) {
-    console.error('❌ Error al crear obra social:', error);
-    if (error.name === 'SequelizeValidationError') {
-      return res.status(400).json({
-        message: 'Error de validación',
-        errors: error.errors.map(e => e.message)
-      });
-    }
-    if (error.name === 'SequelizeUniqueConstraintError') {
-      return res.status(400).json({
-        message: 'Error de restricción única en la base de datos'
-      });
-    }
-    return res.status(500).json({ message: error.message });
-  }
 };
 
-export const updateObraSocial = async (req, res) => {
-  try {
-    const { idObraSocial } = req.params;
-    const { nombre, estado } = req.body;
-
-    console.log('🔄 Actualizando obra social - ID:', idObraSocial, 'Nombre:', nombre);
-
-    if (!idObraSocial) {
-      return res.status(400).json({ message: 'ID de obra social requerido' });
-    }
-
-    const [updatedRowsCount] = await ObraSocial.update(
-      { nombre, estado },
-      { where: { idObraSocial: idObraSocial } }
-    );
-
-    if (updatedRowsCount === 0) {
-      return res.status(404).json({ message: 'Obra social no encontrada' });
-    }
-
-    console.log('✅ Obra social actualizada exitosamente');
-    res.json({ message: 'Obra social actualizada' });
-  } catch (error) {
-    console.error('❌ Error al actualizar obra social:', error);
-    if (error.name === 'SequelizeValidationError') {
-      return res.status(400).json({
-        message: 'Error de validación',
-        errors: error.errors.map(e => e.message)
-      });
-    }
-    return res.status(500).json({ message: error.message });
-  }
-};
 
 export const deleteObraSocial = async (req, res) => {
-  try {
-    const { idObraSocial } = req.params;
+    try {
+        const { idObraSocial } = req.params;
+        const [result] = await pool.query(
+            'UPDATE obrasociales SET estado = ? WHERE idObraSocial = ?',
+            ['Deshabilitado', idObraSocial]
+        );
 
-    console.log('🗑️ Eliminando obra social - ID:', idObraSocial);
+        if (result.affectedRows === 0) {
+            return res.status(404).json({ message: 'Obra social no encontrada' });
+        }
 
-    if (!idObraSocial) {
-      return res.status(400).json({ message: 'ID de obra social requerido' });
+        return res.sendStatus(204);  // Solo una respuesta
+    } catch (error) {
+        return res.status(500).json({ message: error.message });
     }
-
-    // Soft delete - cambiar estado en lugar de eliminar
-    const [updatedRowsCount] = await ObraSocial.update(
-      { estado: 'Deshabilitado' },
-      { where: { idObraSocial: idObraSocial } }
-    );
-
-    if (updatedRowsCount === 0) {
-      return res.status(404).json({ message: 'Obra social no encontrada' });
-    }
-
-    console.log('✅ Obra social deshabilitada exitosamente');
-    res.json({ message: 'Obra social deshabilitada' });
-  } catch (error) {
-    console.error('❌ Error al eliminar obra social:', error);
-    return res.status(500).json({ message: error.message });
-  }
 };
+
+
+export const updateObraSocial = async (req, res) => {
+    try {
+        const { idObraSocial } = req.params; // Obtener el idObraSocial desde los parámetros de la URL
+        const { nombre } = req.body; // Obtener el nuevo nombre desde el cuerpo de la solicitud
+
+        if (!nombre) {
+            return res.status(400).json({ message: 'El nombre es requerido' });
+        }
+
+        await pool.query(
+            'UPDATE obrasociales SET nombre = ? WHERE idObraSocial = ?',
+            [nombre, idObraSocial]
+        );
+
+        res.json({ message: 'Obra social actualizada con éxito' });
+    } catch (error) {
+        return res.status(500).json({ message: error.message });
+    }
+}
