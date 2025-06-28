@@ -22,8 +22,8 @@ export function AdministracionRoutes() {
         <Route
           path="/crearSede"
           element={
-            <Validacion rol={rol} esperado={'A'}>
-              <ProtectedRoute requiredRole="A">
+            <Validacion rol={rol} esperado={'Admin'}>
+              <ProtectedRoute requiredRole="Admin">
                 <CrearSede />
               </ProtectedRoute>
             </Validacion>
@@ -32,8 +32,8 @@ export function AdministracionRoutes() {
         <Route
           path="/crearEsp"
           element={
-            <Validacion rol={rol} esperado={'A'}>
-              <ProtectedRoute requiredRole="A">
+            <Validacion rol={rol} esperado={'Admin'}>
+              <ProtectedRoute requiredRole="Admin">
                 <CrearEspecialidad />
               </ProtectedRoute>
             </Validacion>
@@ -42,8 +42,8 @@ export function AdministracionRoutes() {
         <Route
           path="/crearOS"
           element={
-            <Validacion rol={rol} esperado={'A'}>
-              <ProtectedRoute requiredRole="A">
+            <Validacion rol={rol} esperado={'Admin'}>
+              <ProtectedRoute requiredRole="Admin">
                 <CrearObraSocial />
               </ProtectedRoute>
             </Validacion>
@@ -52,8 +52,8 @@ export function AdministracionRoutes() {
         <Route
           path="/combinacion"
           element={
-            <Validacion rol={rol} esperado={'A'}>
-              <ProtectedRoute requiredRole="A">
+            <Validacion rol={rol} esperado={'Admin'}>
+              <ProtectedRoute requiredRole="Admin">
                 <CrearCombinacion />
               </ProtectedRoute>
             </Validacion>
@@ -62,8 +62,8 @@ export function AdministracionRoutes() {
         <Route
           path="/horarios"
           element={
-            <Validacion rol={rol} esperado={'A'}>
-              <ProtectedRoute requiredRole="A">
+            <Validacion rol={rol} esperado={'Admin'}>
+              <ProtectedRoute requiredRole="Admin">
                 <CrearHorarios />
               </ProtectedRoute>
             </Validacion>
@@ -72,8 +72,8 @@ export function AdministracionRoutes() {
         <Route
           path="/crearDoc"
           element={
-            <Validacion rol={rol} esperado={'A'}>
-              <ProtectedRoute requiredRole="A">
+            <Validacion rol={rol} esperado={'Admin'}>
+              <ProtectedRoute requiredRole="Admin">
                 <CrearDoctor />
               </ProtectedRoute>
             </Validacion>
@@ -82,8 +82,8 @@ export function AdministracionRoutes() {
         <Route
           path="/actualizarDoc/:idDoctor"
           element={
-            <Validacion rol={rol} esperado={'A'}>
-              <ProtectedRoute requiredRole="A">
+            <Validacion rol={rol} esperado={'Admin'}>
+              <ProtectedRoute requiredRole="Admin">
                 <ActualizarDoctor />
               </ProtectedRoute>
             </Validacion>

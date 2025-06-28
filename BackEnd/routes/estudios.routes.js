@@ -7,7 +7,7 @@ import {
   deleteEstudio,
   upload,
 } from '../controllers/estudios.controllers.js';
-import { Doctor, Paciente } from '../middleware/authorizeRole.js';
+import { Doctor, Patient } from '../middleware/authorizeRole.js';
 
 const router = Router();
 
@@ -48,7 +48,7 @@ router.post(
 // Obtener estudios por paciente (pacientes pueden ver sus estudios)
 router.get(
   '/api/estudios/paciente/:idPaciente',
-  Paciente,
+  Patient,
   getEstudiosByPaciente
 );
 

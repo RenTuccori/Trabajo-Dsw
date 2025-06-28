@@ -34,7 +34,7 @@ export function TurnosDoctorHoy() {
           Turnos de Hoy
         </h1>
         <div className="space-y-4">
-          {turnosHoy.length > 0 ? (
+          {turnosHoy && turnosHoy.length > 0 ? (
             turnosHoy.map((turno, index) => (
               <div
                 key={index}

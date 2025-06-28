@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { Admin, AdminOrPaciente } from '../middleware/authorizeRole.js';
+import { Admin, AdminOrPatient } from '../middleware/authorizeRole.js';
 import {
   getAdmin,
   createSeEspDoc,

@@ -8,11 +8,8 @@ import { notifyError } from '../../components/ToastConfig';
 import { confirmDialog } from '../../components/SwalConfig';
 
 export function DatosPersonales() {
-  const { obraSociales, ObtenerObraSociales, CrearUsuario } =
-    usePacientes();
-    const {
-    login
-  } = useAuth();
+  const { obraSociales, ObtenerObraSociales, CrearUsuario } = usePacientes();
+  const { login } = useAuth();
   const [selectedObraSociales, setSelectedObraSociales] = useState(null);
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
@@ -38,7 +35,11 @@ export function DatosPersonales() {
     e.preventDefault(); // Previene el comportamiento por defecto del formulario
     try {
       await CrearUsuario(formData); // Asegura que la creación del usuario sea asíncrona
-      login({ dni: formData.dni, fechaNacimiento: formData.fechaNacimiento, userType : 'P' });
+      login({
+        dni: formData.dni,
+        fechaNacimiento: formData.fechaNacimiento,
+        userType: 'Patient',
+      });
 
       // Muestra el mensaje de éxito con SweetAlert2
       confirmDialog().then(() => {
@@ -147,7 +148,7 @@ export function DatosPersonales() {
           <div>
             <p className="text-center text-gray-600 text-lg">Obra Social</p>
             <Select
-              options={obraSociales.map((obrasocial) => ({
+              options={(obraSociales || []).map((obrasocial) => ({
                 value: obrasocial.idObraSocial,
                 label: obrasocial.nombre,
               }))}

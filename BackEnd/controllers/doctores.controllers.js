@@ -130,7 +130,7 @@ export const getDoctorByDniContra = async (req, res) => {
           idDoctor: result[0].idDoctor,
           nombre: result[0].nombre,
           apellido: result[0].apellido,
-          rol: 'D',
+          rol: 'Doctor',
         },
         'CLAVE_SUPER_SEGURISIMA',
         { expiresIn: '5m' }

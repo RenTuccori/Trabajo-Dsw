@@ -38,7 +38,7 @@ export function TurnosDoctorHistorico() {
           Volver
         </button>
         <div className="space-y-4">
-          {turnosHist.length > 0 ? (
+          {turnosHist && turnosHist.length > 0 ? (
             turnosHist.map((turno, index) => (
               <div
                 key={index}

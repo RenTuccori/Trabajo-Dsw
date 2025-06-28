@@ -12,7 +12,11 @@ function HomeUsuario() {
 
   const handleLogin = async () => {
     try {
-      await login({ identifier: dniform, credential: fecha, userType: 'P' });
+      await login({
+        identifier: dniform,
+        credential: fecha,
+        userType: 'Patient',
+      });
       window.notifySuccess('¡Login exitoso!'); // Muestra mensaje de éxito
     } catch (error) {
       window.notifyError('Error en el login, verifica tus datos.'); // Muestra mensaje de error si hay fallo
@@ -20,7 +24,7 @@ function HomeUsuario() {
     }
   };
   useEffect(() => {
-    comprobarToken('P');
+    comprobarToken('Patient');
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -91,7 +95,7 @@ function HomeUsuario() {
               onClick={() => navigate('/paciente/sacarturno')}
               className="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition-colors"
             >
-              Sacar un Turno
+              Sacar un turno
             </button>
             <button
               onClick={() => navigate('/paciente/verturnos')}
@@ -118,7 +122,7 @@ function HomeUsuario() {
               }}
               className="w-full bg-gray-200 text-gray-700 py-2 rounded-lg hover:bg-gray-300 transition-colors"
             >
-              Cerrar Sesión
+              Cerrar sesión
             </button>
           </div>
         )}

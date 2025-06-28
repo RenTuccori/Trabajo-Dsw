@@ -18,8 +18,8 @@ export function DoctoresRoutes() {
         <Route
           path="/turnoshist"
           element={
-            <Validacion rol={rol} esperado={'D'}>
-              <ProtectedRoute requiredRole="D">
+            <Validacion rol={rol} esperado={'Doctor'}>
+              <ProtectedRoute requiredRole="Doctor">
                 <TurnosDoctorHistorico />
               </ProtectedRoute>
             </Validacion>
@@ -28,8 +28,8 @@ export function DoctoresRoutes() {
         <Route
           path="/turnoshoy"
           element={
-            <Validacion rol={rol} esperado={'D'}>
-              <ProtectedRoute requiredRole="D">
+            <Validacion rol={rol} esperado={'Doctor'}>
+              <ProtectedRoute requiredRole="Doctor">
                 <TurnosDoctorHoy />
               </ProtectedRoute>
             </Validacion>
@@ -38,8 +38,8 @@ export function DoctoresRoutes() {
         <Route
           path="/turnosfecha"
           element={
-            <Validacion rol={rol} esperado={'D'}>
-              <ProtectedRoute requiredRole="D">
+            <Validacion rol={rol} esperado={'Doctor'}>
+              <ProtectedRoute requiredRole="Doctor">
                 <TurnosDoctorFecha />
               </ProtectedRoute>
             </Validacion>
@@ -48,8 +48,8 @@ export function DoctoresRoutes() {
         <Route
           path="/estudios"
           element={
-            <Validacion rol={rol} esperado={'D'}>
-              <ProtectedRoute requiredRole="D">
+            <Validacion rol={rol} esperado={'Doctor'}>
+              <ProtectedRoute requiredRole="Doctor">
                 <SubirEstudio />
               </ProtectedRoute>
             </Validacion>

@@ -12,7 +12,7 @@ function HomeDoctor() {
   // Manejo del login con toast de éxito
   const handleLogin = async () => {
     try {
-      await login({ identifier: dni, credential: contra, userType: 'D' });
+      await login({ identifier: dni, credential: contra, userType: 'Doctor' });
       window.notifySuccess('¡Login exitoso!');
     } catch (error) {
       console.error('Error al iniciar sesión', error);
@@ -31,7 +31,7 @@ function HomeDoctor() {
   };
 
   useEffect(() => {
-    comprobarToken('D');
+    comprobarToken('Doctor');
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -55,7 +55,7 @@ function HomeDoctor() {
                 className="w-full border border-gray-300 rounded-lg p-2"
               />
               <p className="text-center text-gray-600 text-lg">
-                Ingrese su Contraseña
+                Ingrese su contraseña
               </p>
               <input
                 type="password"

@@ -4,7 +4,7 @@ import {
   getPacienteByDni,
   createPaciente,
 } from '../controllers/pacientes.controllers.js';
-import { Paciente } from '../middleware/authorizeRole.js';
+import { Patient } from '../middleware/authorizeRole.js';
 
 const router = Router();
 
@@ -26,7 +26,7 @@ router.get('/api/patient/debug', async (req, res) => {
 
 router.get('/api/patient', getPacientes);
 
-router.post('/api/patientdni', Paciente, getPacienteByDni);
+router.post('/api/patientdni', Patient, getPacienteByDni);
 
 router.post('/api/patientcreate', createPaciente);
 

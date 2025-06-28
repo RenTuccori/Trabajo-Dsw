@@ -21,8 +21,8 @@ export function PacientesRoutes() {
         <Route
           path="/sacarturno"
           element={
-            <Validacion rol={rol} esperado={'P'}>
-              <ProtectedRoute requiredRole="P">
+            <Validacion rol={rol} esperado={'Patient'}>
+              <ProtectedRoute requiredRole="Patient">
                 <SacarTurno />
               </ProtectedRoute>
             </Validacion>
@@ -31,8 +31,8 @@ export function PacientesRoutes() {
         <Route
           path="/editardatospersonales"
           element={
-            <Validacion rol={rol} esperado={'P'}>
-              <ProtectedRoute requiredRole="P">
+            <Validacion rol={rol} esperado={'Patient'}>
+              <ProtectedRoute requiredRole="Patient">
                 <ModificacionUsuario />
               </ProtectedRoute>
             </Validacion>
@@ -41,8 +41,8 @@ export function PacientesRoutes() {
         <Route
           path="/confirmacionturno"
           element={
-            <Validacion rol={rol} esperado={'P'}>
-              <ProtectedRoute requiredRole="P">
+            <Validacion rol={rol} esperado={'Patient'}>
+              <ProtectedRoute requiredRole="Patient">
                 <ConfirmacionTurno />
               </ProtectedRoute>
             </Validacion>
@@ -51,8 +51,8 @@ export function PacientesRoutes() {
         <Route
           path="/verturnos"
           element={
-            <Validacion rol={rol} esperado={'P'}>
-              <ProtectedRoute requiredRole="P">
+            <Validacion rol={rol} esperado={'Patient'}>
+              <ProtectedRoute requiredRole="Patient">
                 <TurnosPaciente />
               </ProtectedRoute>
             </Validacion>
@@ -61,8 +61,8 @@ export function PacientesRoutes() {
         <Route
           path="/estudios"
           element={
-            <Validacion rol={rol} esperado={'P'}>
-              <ProtectedRoute requiredRole="P">
+            <Validacion rol={rol} esperado={'Patient'}>
+              <ProtectedRoute requiredRole="Patient">
                 <VerEstudios />
               </ProtectedRoute>
             </Validacion>

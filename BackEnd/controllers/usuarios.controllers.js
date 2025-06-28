@@ -30,7 +30,7 @@ export const getUserByDniFecha = async (req, res) => {
           dni: result[0].dni,
           nombre: result[0].nombre,
           apellido: result[0].apellido,
-          rol: 'P',
+          rol: 'Patient',
         },
         'CLAVE_SUPER_SEGURISIMA',
         { expiresIn: '5m' }

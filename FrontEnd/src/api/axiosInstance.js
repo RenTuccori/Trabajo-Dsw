@@ -23,8 +23,11 @@ axiosInstance.interceptors.response.use(
     return response;
   },
   (error) => {
-    if (error.response && error.response.status === 401) {
-      console.log('Token no válido o expirado');
+    if (
+      error.response &&
+      (error.response.status === 401 || error.response.status === 403)
+    ) {
+      console.log('Token no válido, expirado o sin permisos');
       // Limpiar el token inválido
       localStorage.removeItem('token');
       // Redirigir al home

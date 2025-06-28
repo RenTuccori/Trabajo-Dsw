@@ -158,7 +158,7 @@ function VerEstudios() {
                   </tr>
                 </thead>
                 <tbody>
-                  {estudios.map((estudio) => (
+                  {(estudios || []).map((estudio) => (
                     <tr
                       key={estudio.idEstudio}
                       className="border-t border-gray-200"

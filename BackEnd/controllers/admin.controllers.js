@@ -1,20 +1,24 @@
 import { pool } from '../db.js';
-import jwt from "jsonwebtoken";
+import jwt from 'jsonwebtoken';
 
 export const getAdmin = async (req, res) => {
   try {
     const { usuario, contra } = req.body;
-    const [result] = await pool.query(`SELECT idAdmin FROM 
+    const [result] = await pool.query(
+      `SELECT idAdmin FROM 
         admin ad
         WHERE ad.usuario = ? and ad.contra = ?`,
-      [
-        usuario, contra,
-      ]);
+      [usuario, contra]
+    );
 
     if (result.length === 0) {
       return res.status(404).json({ message: 'Usuario no encontrado' });
     } else {
-      const token = jwt.sign({ idAdmin: result[0].idAdmin , rol : "A" }, "CLAVE_SUPER_SEGURISIMA", { expiresIn: "30m" });
+      const token = jwt.sign(
+        { idAdmin: result[0].idAdmin, rol: 'Admin' },
+        'CLAVE_SUPER_SEGURISIMA',
+        { expiresIn: '30m' }
+      );
       res.json(token);
     }
   } catch (error) {
@@ -38,7 +42,9 @@ export const createSeEspDoc = async (req, res) => {
 
       if (currentRecord.estado === estadoHabilitado) {
         // Si está habilitado, no hacer nada
-        return res.status(200).json({ message: 'La combinación ya está habilitada.' });
+        return res
+          .status(200)
+          .json({ message: 'La combinación ya está habilitada.' });
       } else {
         // Si está deshabilitado, habilitarlo
         await pool.query(
@@ -46,7 +52,9 @@ export const createSeEspDoc = async (req, res) => {
           [estadoHabilitado, idSede, idEspecialidad, idDoctor]
         );
 
-        return res.status(200).json({ message: 'La combinación se habilitó exitosamente.' });
+        return res
+          .status(200)
+          .json({ message: 'La combinación se habilitó exitosamente.' });
       }
     }
 
@@ -61,13 +69,12 @@ export const createSeEspDoc = async (req, res) => {
       idSede,
       idEspecialidad,
       idDoctor,
-      estado: estadoHabilitado
+      estado: estadoHabilitado,
     });
   } catch (error) {
     return res.status(500).json({ message: error.message });
   }
 };
-
 
 export const deleteSeEspDoc = async (req, res) => {
   try {
@@ -76,7 +83,7 @@ export const deleteSeEspDoc = async (req, res) => {
     // Realizar el update para cambiar el estado a 'Deshabilitado'
     const [result] = await pool.query(
       'UPDATE sededoctoresp SET estado = "Deshabilitado" WHERE idSede = ? AND idDoctor = ? AND idEspecialidad = ?',
-      [ idSede, idDoctor, idEspecialidad]
+      [idSede, idDoctor, idEspecialidad]
     );
 
     // Verificar si la combinación de sede, especialidad y doctor existe
@@ -119,7 +126,9 @@ SELECT
     const [result] = await pool.query(query);
 
     if (result.length === 0) {
-      return res.status(404).json({ message: 'No se encontraron asignaciones.' });
+      return res
+        .status(404)
+        .json({ message: 'No se encontraron asignaciones.' });
     }
 
     res.json(result);
@@ -128,8 +137,16 @@ SELECT
   }
 };
 export const createHorarios = async (req, res) => {
-    const { idSede, idDoctor, idEspecialidad, dia, hora_inicio, hora_fin, estado } = req.body;
-    try {
+  const {
+    idSede,
+    idDoctor,
+    idEspecialidad,
+    dia,
+    hora_inicio,
+    hora_fin,
+    estado,
+  } = req.body;
+  try {
     await pool.query(
       'INSERT INTO horarios_disponibles (idSede, idDoctor, idEspecialidad, dia, hora_inicio, hora_fin, estado) VALUES (?, ?, ?, ?, ?, ?, ?)',
       [idSede, idDoctor, idEspecialidad, dia, hora_inicio, hora_fin, estado] // Asegúrate de que los nombres de las columnas sean correctos
@@ -143,7 +160,15 @@ export const createHorarios = async (req, res) => {
 
 export const updateHorarios = async (req, res) => {
   try {
-    const { idSede, idDoctor, idEspecialidad, dia, hora_inicio, hora_fin, estado } = req.body;
+    const {
+      idSede,
+      idDoctor,
+      idEspecialidad,
+      dia,
+      hora_inicio,
+      hora_fin,
+      estado,
+    } = req.body;
     console.log(req.body);
     // La consulta SQL para actualizar el horario
     const [result] = await pool.query(
@@ -152,14 +177,19 @@ export const updateHorarios = async (req, res) => {
     );
     // Los valores que se van a insertar en la consulta
     if (result.affectedRows > 0) {
-      return res.status(200).json({ message: 'Horario actualizado exitosamente' });
+      return res
+        .status(200)
+        .json({ message: 'Horario actualizado exitosamente' });
     } else {
-      return res.status(404).json({ message: 'No se encontró un horario con esos datos' });
+      return res
+        .status(404)
+        .json({ message: 'No se encontró un horario con esos datos' });
     }
-
   } catch (error) {
     console.error('Error al actualizar el horario:', error);
-    return res.status(500).json({ message: 'Error en el servidor al actualizar el horario' });
+    return res
+      .status(500)
+      .json({ message: 'Error en el servidor al actualizar el horario' });
   }
 };
 
@@ -192,7 +222,9 @@ export const getHorariosXDoctor = async (req, res) => {
 
     // Verificar si se encontraron horarios
     if (result[0].length === 0) {
-      return res.status(404).json({ message: 'No se encontraron horarios para este doctor.' });
+      return res
+        .status(404)
+        .json({ message: 'No se encontraron horarios para este doctor.' });
     }
 
     // Devolver los horarios encontrados

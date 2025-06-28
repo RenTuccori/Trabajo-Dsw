@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { Paciente, AdminOrPaciente } from '../middleware/authorizeRole.js';
+import { Patient, AdminOrPatient } from '../middleware/authorizeRole.js';
 import {
   getUsers,
   getUserByDniFecha,
@@ -24,15 +24,15 @@ router.get('/api/users/debug', async (req, res) => {
   }
 });
 
-router.post('/api/usersdni', Paciente, getUserByDni);
+router.post('/api/usersdni', Patient, getUserByDni);
 
 router.post('/api/usersdnifecha', getUserByDniFecha);
 
-router.get('/api/userstodos', Paciente, getUsers);
+router.get('/api/userstodos', Patient, getUsers);
 
 router.post('/api/users', createUser);
 
-router.put('/api/users/', AdminOrPaciente, updateUser);
+router.put('/api/users/', AdminOrPatient, updateUser);
 
 router.delete('/api/users/', deleteUser);
 

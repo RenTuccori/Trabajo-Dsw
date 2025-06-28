@@ -156,7 +156,7 @@ export function ModificacionUsuario() {
           <div>
             <p className="text-center text-gray-600 text-lg">Obra Social</p>
             <Select
-              options={obraSociales.map((obrasociales) => ({
+              options={(obraSociales || []).map((obrasociales) => ({
                 value: obrasociales.idObraSocial,
                 label: obrasociales.nombre,
               }))}
@@ -169,7 +169,14 @@ export function ModificacionUsuario() {
             type="submit"
             className="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition-colors"
           >
-            Guardar Cambios
+            Guardar cambios
+          </button>
+          <button
+            type="button"
+            onClick={() => navigate('/paciente')}
+            className="w-full bg-gray-200 text-gray-700 py-2 rounded-lg hover:bg-gray-300 transition-colors"
+          >
+            Volver
           </button>
         </form>
       </div>

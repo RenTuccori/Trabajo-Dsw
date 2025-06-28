@@ -9,12 +9,16 @@ function HomeAdministracion() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    comprobarToken('A');
+    comprobarToken('Admin');
   }, [comprobarToken]);
 
   const handleLogin = async () => {
     try {
-      await login({ identifier: usuario, credential: contra, userType: 'A' });
+      await login({
+        identifier: usuario,
+        credential: contra,
+        userType: 'Admin',
+      });
       window.notifySuccess('¡Login exitoso!');
     } catch (error) {
       window.notifyError('Error: Usuario o contraseña incorrectos');
