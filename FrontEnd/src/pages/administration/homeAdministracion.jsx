@@ -1,24 +1,22 @@
-import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
-import { useAuth } from "../../context/global/AuthProvider";
-import { notifySuccess, notifyError } from "../../components/ToastConfig";
+import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../../context/global/AuthProvider';
+import { notifySuccess, notifyError } from '../../components/ToastConfig';
 
 function HomeAdministracion() {
-  const { login, idAdmin, comprobarToken } = useAuth();
-  const [usuario, setUsuario] = useState("");
-  const [contra, setContra] = useState("");
+  const { login, idAdmin } = useAuth();
+  const [usuario, setUsuario] = useState('');
+  const [contra, setContra] = useState('');
   const navigate = useNavigate();
 
-  useEffect(() => {
-    comprobarToken('A');
-  }, [comprobarToken]);
+  // El token se valida automáticamente en las rutas protegidas
 
   const handleLogin = async () => {
     try {
-      await login({ identifier: usuario, credential: contra, userType: "A" });
-      notifySuccess("¡Login exitoso!");
+      await login({ identifier: usuario, credential: contra, userType: 'A' });
+      notifySuccess('¡Login exitoso!');
     } catch (error) {
-      notifyError("Error: Usuario o contraseña incorrectos");
+      notifyError('Error: Usuario o contraseña incorrectos');
     }
   };
 
@@ -65,39 +63,39 @@ function HomeAdministracion() {
         Menú Principal
       </h2>
       <button
-        onClick={() => navigate("/admin/crearSede")}
+        onClick={() => navigate('/admin/crearSede')}
         className="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition-colors"
       >
         Sedes
       </button>
       <button
-        onClick={() => navigate("/admin/crearEsp")}
+        onClick={() => navigate('/admin/crearEsp')}
         className="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition-colors"
       >
         Especialidades
       </button>
       <button
-        onClick={() => navigate("/admin/crearDoc")}
+        onClick={() => navigate('/admin/crearDoc')}
         className="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition-colors"
       >
         Doctores
       </button>
       <button
-        onClick={() => navigate("/admin/combinacion")}
+        onClick={() => navigate('/admin/combinacion')}
         className="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition-colors"
       >
         Asignar combinación
       </button>
       <button
-        onClick={() => navigate("/admin/crearOS")}
+        onClick={() => navigate('/admin/crearOS')}
         className="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition-colors"
       >
         Obras Sociales
       </button>
       <button
         onClick={() => {
-          navigate("/");
-          localStorage.removeItem("token");
+          navigate('/');
+          localStorage.removeItem('token');
         }}
         className="w-full bg-gray-200 text-gray-700 py-2 rounded-lg hover:bg-gray-300 transition-colors"
       >
@@ -115,4 +113,4 @@ function HomeAdministracion() {
   );
 }
 
-export default HomeAdministracion ;
+export default HomeAdministracion;

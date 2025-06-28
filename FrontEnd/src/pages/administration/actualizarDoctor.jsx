@@ -2,7 +2,6 @@ import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom'; // Importa useParams
 import Select from 'react-select';
 import { useAdministracion } from '../../context/administracion/AdministracionProvider';
-import { useAuth } from '../../context/global/AuthProvider';
 import { confirmDialog } from '../../components/SwalConfig';
 import { notifySuccess, notifyError } from '../../components/ToastConfig';
 
@@ -16,7 +15,6 @@ export function ActualizarDoctor() {
     actualizarDoctor,
   } = useAdministracion();
 
-  const { comprobarToken } = useAuth();
   const [selectedObraSociales, setSelectedObraSociales] = useState(null);
   const [hasChanges, setHasChanges] = useState(false); // Estado para rastrear cambios
   const [, setOriginalData] = useState({}); // Datos originales para comparar
@@ -131,9 +129,9 @@ export function ActualizarDoctor() {
   };
 
   useEffect(() => {
-    comprobarToken('A'); // Comprueba el token
     ObtenerOS();
     ObtenerDoctorPorId(idDoctor); // Llama a la función con el idDoctor obtenido de la URL
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [idDoctor]);
 
   // Set formData after all dependencies are loaded

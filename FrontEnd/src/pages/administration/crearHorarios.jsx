@@ -3,7 +3,6 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { notifySuccess, notifyError } from '../../components/ToastConfig';
 import { confirmDialog } from '../../components/SwalConfig';
 import { useAdministracion } from '../../context/administracion/AdministracionProvider.jsx';
-import { useAuth } from '../../context/global/AuthProvider';
 
 export function CrearHorarios() {
   const navigate = useNavigate();
@@ -11,7 +10,6 @@ export function CrearHorarios() {
   const { idSede, idEspecialidad, idDoctor } = location.state || {};
 
   const diasSemana = ['lunes', 'martes', 'miércoles', 'jueves', 'viernes'];
-  const { comprobarToken } = useAuth();
   const {
     obtenerHorariosXDoctor,
     crearHorarios,
@@ -22,11 +20,10 @@ export function CrearHorarios() {
     diasSemana.map((dia) => ({ dia, hora_inicio: '', hora_fin: '' })) // Inicializar con días de la semana
   );
 
-  // Comprobar token y cargar los horarios del doctor
+  // Cargar los horarios del doctor
   useEffect(() => {
     const cargarHorarios = async () => {
       try {
-        await comprobarToken('A');
         await obtenerHorariosXDoctor({ idSede, idEspecialidad, idDoctor });
       } catch (error) {
         if (error.response && error.response.status === 404) {

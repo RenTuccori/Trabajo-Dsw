@@ -1,11 +1,10 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { notifySuccess, notifyError } from '../../components/ToastConfig';
 import { useAuth } from '../../context/global/AuthProvider';
 
 function HomeDoctor() {
-  const { idDoctor, login, comprobarToken, nombreUsuario, apellidoUsuario } =
-    useAuth();
+  const { idDoctor, login, nombreUsuario, apellidoUsuario } = useAuth();
   const [dni, setDni] = useState('');
   const [contra, setContra] = useState('');
   const navigate = useNavigate();
@@ -31,10 +30,7 @@ function HomeDoctor() {
     setContra(event.target.value);
   };
 
-  useEffect(() => {
-    comprobarToken('D');
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  // El token se valida automáticamente en las rutas protegidas
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-blue-100 to-white flex items-center justify-center p-4">
