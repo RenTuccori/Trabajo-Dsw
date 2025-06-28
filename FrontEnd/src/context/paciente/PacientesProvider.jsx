@@ -1,7 +1,6 @@
-import { useState, useContext, useEffect, useCallback } from "react";
-import PropTypes from "prop-types";
-import { useAuth } from "../global/AuthProvider";
-
+import { useState, useContext, useEffect } from 'react';
+import PropTypes from 'prop-types';
+import { useAuth } from '../global/AuthProvider';
 
 import { PacientesContext } from './PacientesContext';
 import { getSedes } from '../../api/sedes.api';
@@ -58,7 +57,7 @@ const PacientesProvider = ({ children }) => {
   const [usuarioDni, setUsuarioDni] = useState({});
   const [mailUsuario, setMailUsuario] = useState('');
 
-  const { dni, userType } = useAuth();
+  const { dni } = useAuth();
 
   async function ActualizarUsuario(data) {
     const response = await updateUser(data);
@@ -66,105 +65,37 @@ const PacientesProvider = ({ children }) => {
   }
 
   async function ObtenerSedes() {
-    try {
-      const response = await getSedes();
-      
-      if (response.error) {
-        console.error('❌ Error al obtener sedes:', response.error);
-        setSedes([]);
-        return;
-      }
-      
-      const sedesData = response.data || [];
-      console.log('🏢 Sedes obtenidas:', sedesData);
-      setSedes(Array.isArray(sedesData) ? sedesData : []);
-    } catch (error) {
-      console.error('❌ Error inesperado al obtener sedes:', error);
-      setSedes([]);
-    }
+    const response = await getSedes();
+    setSedes(response.data);
   }
 
   async function ObtenerEspecialidades({ idSede }) {
-    try {
-      const response = await getEspecialidades({ idSede });
-      
-      if (response.error) {
-        console.error('❌ Error al obtener especialidades:', response.error);
-        setEspecialidades([]);
-        return;
-      }
-      
-      const especialidadesData = response.data || [];
-      console.log('🩺 Especialidades obtenidas:', especialidadesData);
-      setEspecialidades(Array.isArray(especialidadesData) ? especialidadesData : []);
-    } catch (error) {
-      console.error('❌ Error inesperado al obtener especialidades:', error);
-      setEspecialidades([]);
-    }
+    const response = await getEspecialidades({ idSede });
+    setEspecialidades(response.data);
   }
 
   async function ObtenerDoctores({ idSede, idEspecialidad }) {
     console.log({ idSede, idEspecialidad });
     const response = await getDoctors({ idSede, idEspecialidad });
-    console.log("mis doctores", response.data);
-    
-    // Verificar si hay datos o si es un error
-    if (response.data && Array.isArray(response.data)) {
-      setDoctores(response.data);
-    } else if (response.error) {
-      console.log("No hay doctores para esta combinación:", response.error);
-      setDoctores([]); // Array vacío cuando no hay doctores
-    } else {
-      setDoctores([]); // Fallback para cualquier otro caso
-    }
-
+    console.log('mis doctores', response.data);
+    setDoctores(response.data);
   }
   async function ObtenerFechas({
     selectedOption,
     selectedEspecialidad,
     selectedSede,
   }) {
-    try {
-      console.log('🔍 Obteniendo fechas para:', { 
-        idDoctor: selectedOption.value, 
-        idEspecialidad: selectedEspecialidad.value, 
-        idSede: selectedSede.value 
-      });
-      
-      const response = await getFechasDispTodos({
-        idDoctor: selectedOption.value,
-        idEspecialidad: selectedEspecialidad.value,
-        idSede: selectedSede.value,
-      });
+    const response = await getFechasDispTodos({
+      idDoctor: selectedOption.value,
+      idEspecialidad: selectedEspecialidad.value,
+      idSede: selectedSede.value,
+    });
+    const fechasFormateadas = response.data.map((item) => {
+      const [year, month, day] = item.fecha.split('-'); // Descomponer la fecha
+      return new Date(Number(year), Number(month) - 1, Number(day)); // Crear la fecha (mes empieza en 0)
+    });
 
-      // Verificar si hay error en la respuesta
-      if (response.error) {
-        console.error('❌ Error al obtener fechas:', response.error);
-        setFechas([]);
-        return;
-      }
-
-      // Verificar que response.data existe y es un array
-      const fechasData = response.data || [];
-      console.log('📅 Fechas obtenidas:', fechasData);
-
-      if (!Array.isArray(fechasData) || fechasData.length === 0) {
-        console.log('📅 No hay fechas disponibles');
-        setFechas([]);
-        return;
-      }
-
-      const fechasFormateadas = fechasData.map((item) => {
-        const [year, month, day] = item.fecha.split("-"); // Descomponer la fecha
-        return new Date(Number(year), Number(month) - 1, Number(day)); // Crear la fecha (mes empieza en 0)
-      });
-
-      setFechas(fechasFormateadas);
-      console.log('✅ Fechas formateadas:', fechasFormateadas);
-    } catch (error) {
-      console.error('❌ Error inesperado al obtener fechas:', error);
-      setFechas([]);
-    }
+    setFechas(fechasFormateadas);
   }
   async function ObtenerHorarios({
     selectedDoctor,
@@ -172,56 +103,24 @@ const PacientesProvider = ({ children }) => {
     selectedSede,
     date,
   }) {
-    try {
-      console.log('🔍 Obteniendo horarios para:', { 
-        idDoctor: selectedDoctor.value, 
-        idEspecialidad: selectedEspecialidad.value, 
-        idSede: selectedSede.value,
-        fecha: date
-      });
-      
-      const response = await getHorariosDisp({
-        idDoctor: selectedDoctor.value,
-        idEspecialidad: selectedEspecialidad.value,
-        idSede: selectedSede.value,
-        fecha: date,
-      });
-
-      // Verificar si hay error en la respuesta
-      if (response.error) {
-        console.error('❌ Error al obtener horarios:', response.error);
-        setHorarios([]);
-        return;
-      }
-
-      // Verificar que response.data existe y es un array
-      const horariosData = response.data || [];
-      console.log('⏰ Horarios obtenidos:', horariosData);
-
-      setHorarios(Array.isArray(horariosData) ? horariosData : []);
-    } catch (error) {
-      console.error('❌ Error inesperado al obtener horarios:', error);
-      setHorarios([]);
-    }
+    const response = await getHorariosDisp({
+      idDoctor: selectedDoctor.value,
+      idEspecialidad: selectedEspecialidad.value,
+      idSede: selectedSede.value,
+      fecha: date,
+    });
+    setHorarios(response.data);
   }
 
-  async function ObtenerObraSociales() {
-    try {
-      const response = await getObrasSociales();
-      
-      if (response.error) {
-        console.error('❌ Error al obtener obras sociales:', response.error);
-        setObraSociales([]);
-        return;
-      }
-      
-      const obrasSocialesData = response.data || [];
-      console.log('💼 Obras sociales obtenidas:', obrasSocialesData);
-      setObraSociales(Array.isArray(obrasSocialesData) ? obrasSocialesData : []);
-    } catch (error) {
-      console.error('❌ Error inesperado al obtener obras sociales:', error);
-      setObraSociales([]);
+  useEffect(() => {
+    if (dni) {
+      ObtenerPacienteDni();
     }
+  }, [dni]);
+
+  async function ObtenerObraSociales() {
+    const response = await getObrasSociales();
+    setObraSociales(response.data);
   }
 
   async function CrearUsuario(data) {
@@ -241,25 +140,9 @@ const PacientesProvider = ({ children }) => {
   }
 
   async function ObtenerDoctorId() {
-    try {
-      console.log('🔍 Intentando obtener doctor con ID:', idDoctor);
-      const response = await getDoctorById(idDoctor);
-      console.log('🔍 Datos del doctor obtenidos:', response.data);
-      
-      // Los datos del doctor están en la relación usuario
-      if (response.data.usuario) {
-        setNombreDoctor(response.data.usuario.nombre);
-        setApellidoDoctor(response.data.usuario.apellido);
-        console.log('✅ Datos del doctor establecidos:', {
-          nombre: response.data.usuario.nombre,
-          apellido: response.data.usuario.apellido
-        });
-      } else {
-        console.error('❌ No se encontraron datos de usuario para el doctor');
-      }
-    } catch (error) {
-      console.error('❌ Error al obtener datos del doctor:', error);
-    }
+    const response = await getDoctorById(idDoctor);
+    setNombreDoctor(response.data.nombre);
+    setApellidoDoctor(response.data.apellido);
   }
 
   async function ObtenerSedeId() {
@@ -281,58 +164,25 @@ const PacientesProvider = ({ children }) => {
     });
   }
 
-  const ObtenerPacienteDni = useCallback(async () => {
-    try {
-      const response = await getPacienteDni({ dni });
-      if (response && response.data && response.data.idPaciente) {
-        setIdPaciente(response.data.idPaciente);
-      } else {
-        console.log('No se encontró paciente para el DNI:', dni);
-        setIdPaciente(null);
-      }
-    } catch (error) {
-      console.error('Error al obtener paciente por DNI:', error);
-      setIdPaciente(null);
-    }
-  }, [dni]);
-
-  useEffect(() => {
-    if (dni && userType === 'P') {
-      ObtenerPacienteDni();
-    }
-  }, [dni, userType, ObtenerPacienteDni]);
+  async function ObtenerPacienteDni() {
+    const reponse = await getPacienteDni({ dni });
+    setIdPaciente(reponse.data.idPaciente);
+  }
 
   async function ObtenerTurnosPaciente() {
     try {
-      console.log('🔍 Obteniendo turnos para DNI:', dni);
       const response = await getTurnosPaciente({ dni });
-      console.log('🔍 Respuesta completa de turnos:', response);
-      console.log('🔍 Datos de turnos recibidos:', response.data);
-      
-      if (response.data && Array.isArray(response.data)) {
-        // Procesar los datos para que el frontend los entienda
-        const turnosFormateados = response.data.map(turno => ({
-          idTurno: turno.idTurno,
-          fecha_hora: turno.fechaYHora,
-          estado: turno.estado,
-          dni: dni,
-          Sede: turno.sede?.nombre || 'Sin sede',
-          Direccion: turno.sede?.direccion || 'Sin dirección',
-          Especialidad: turno.especialidad?.nombre || 'Sin especialidad',
-          Doctor: turno.doctor?.usuario ? 
-            `Dr. ${turno.doctor.usuario.nombre} ${turno.doctor.usuario.apellido}` : 
-            'Sin doctor'
-        }));
-        
-        console.log('🔍 Turnos formateados:', turnosFormateados);
-        setTurnos(turnosFormateados);
+      if (response && response.data) {
+        setTurnos(response.data);
       } else {
-        console.log('❌ No se recibieron datos válidos de turnos');
+        console.error('No se pudieron obtener los turnos');
         setTurnos([]);
+        window.notifyError('Error al obtener los turnos');
       }
     } catch (error) {
-      console.error('❌ Error al obtener turnos:', error);
+      console.error('Error al obtener turnos del paciente:', error);
       setTurnos([]);
+      window.notifyError('Error al obtener los turnos');
     }
   }
 

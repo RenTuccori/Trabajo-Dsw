@@ -227,10 +227,10 @@ function SubirEstudio() {
                   required
                 >
                   <option value="">Seleccione un paciente</option>
-                  {(pacientes || []).map((paciente) => (
-                    <option key={paciente.usuario?.dni || paciente.dni} value={paciente.idPaciente}>
-                      {paciente.usuario?.nombre || 'Sin nombre'} {paciente.usuario?.apellido || 'Sin apellido'} - DNI:{' '}
-                      {paciente.usuario?.dni || paciente.dni}
+                  {pacientes.map((paciente) => (
+                    <option key={paciente.dni} value={paciente.idPaciente}>
+                      {paciente.nombre} {paciente.apellido} - DNI:{' '}
+                      {paciente.dni}
                     </option>
                   ))}
                 </select>
@@ -347,7 +347,7 @@ function SubirEstudio() {
                     </tr>
                   </thead>
                   <tbody>
-                    {(estudios || []).map((estudio) => (
+                    {estudios.map((estudio) => (
                       <tr
                         key={estudio.idEstudio}
                         className="border-t border-gray-200"

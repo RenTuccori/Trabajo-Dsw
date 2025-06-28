@@ -3,18 +3,38 @@ import {
   createEstudio,
   getEstudiosByPaciente,
   getEstudiosByDoctor,
-  getEstudioById,
+  downloadEstudio,
   deleteEstudio,
-  upload, // ✅ Importar desde el controlador
+  upload,
 } from '../controllers/estudios.controllers.js';
-import { Doctor, Paciente } from '../middleware/authorizeRole.js';
-import { Estudio } from '../models/index.js';
+import { Doctor, Patient } from '../middleware/authorizeRole.js';
 
 const router = Router();
 
 // Ruta de prueba
 router.get('/api/estudios/test', (req, res) => {
   res.json({ message: 'Rutas de estudios funcionando correctamente' });
+});
+
+// Ruta de debug temporal para ver estudios
+router.get('/api/estudios/debug', async (req, res) => {
+  try {
+    const { pool } = await import('../db.js');
+    const [result] = await pool.query(
+      `SELECT e.*, 
+              p.dni as dniPaciente, up.nombre as nombrePaciente, up.apellido as apellidoPaciente,
+              d.dni as dniDoctor, ud.nombre as nombreDoctor, ud.apellido as apellidoDoctor
+       FROM estudios e
+       LEFT JOIN pacientes p ON e.idPaciente = p.idPaciente
+       LEFT JOIN usuarios up ON p.dni = up.dni
+       LEFT JOIN doctores d ON e.idDoctor = d.idDoctor
+       LEFT JOIN usuarios ud ON d.dni = ud.dni
+       ORDER BY e.idEstudio DESC`
+    );
+    res.json(result);
+  } catch (error) {
+    res.status(500).json({ error: error.message });
+  }
 });
 
 // Subir un nuevo estudio (solo doctores)
@@ -35,8 +55,8 @@ router.get(
 // Obtener estudios por doctor (doctores pueden ver sus estudios subidos)
 router.get('/api/estudios/doctor/:idDoctor', Doctor, getEstudiosByDoctor);
 
-// Obtener archivo de estudio para descarga
-router.get('/api/estudios/download/:idEstudio', getEstudioById);
+// Descargar archivo de estudio
+router.get('/api/estudios/download/:idEstudio', downloadEstudio);
 
 // Eliminar estudio (solo doctores)
 router.delete('/api/estudios/:idEstudio', Doctor, deleteEstudio);

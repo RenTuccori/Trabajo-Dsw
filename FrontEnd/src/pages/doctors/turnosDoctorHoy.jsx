@@ -41,10 +41,10 @@ export function TurnosDoctorHoy() {
                 className="bg-gray-50 rounded-lg p-4 shadow-sm mb-4"
               >
                 <p>
-                  <strong>Sede:</strong> {turno.sede?.nombre || 'N/A'}
+                  <strong>Sede:</strong> {turno.sede}
                 </p>
                 <p>
-                  <strong>Especialidad:</strong> {turno.especialidad?.nombre || 'N/A'}
+                  <strong>Especialidad:</strong> {turno.especialidad}
                 </p>
                 <p>
                   <strong>Fecha y Hora:</strong>{' '}
@@ -54,10 +54,10 @@ export function TurnosDoctorHoy() {
                   <strong>Estado:</strong> {turno.estado}
                 </p>
                 <p>
-                  <strong>DNI Paciente:</strong> {turno.paciente?.usuario?.dni || 'N/A'}
+                  <strong>DNI Paciente:</strong> {turno.dni}
                 </p>
                 <p>
-                  <strong>Apellido y Nombre:</strong> {turno.paciente?.usuario ? `${turno.paciente.usuario.apellido} ${turno.paciente.usuario.nombre}` : 'N/A'}
+                  <strong>Apellido y Nombre:</strong> {turno.nomyapel}
                 </p>
               </div>
             ))

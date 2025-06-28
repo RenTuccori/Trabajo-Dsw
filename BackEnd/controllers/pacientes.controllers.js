@@ -1,25 +1,20 @@
-import { Paciente, Usuario, ObraSocial, Turno, Doctor } from '../models/index.js';
-import jwt from 'jsonwebtoken';
+import { pool } from '../db.js';
 
 export const getPacientes = async (req, res) => {
   try {
-    const pacientes = await Paciente.findAll({
-      where: { estado: 'Habilitado' },
-      include: [{
-        model: Usuario,
-        as: 'usuario',
-        include: [{
-          model: ObraSocial,
-          as: 'obraSocial'
-        }]
-      }]
-    });
-
-    if (pacientes.length === 0) {
-      return res.status(404).json({ message: 'No hay pacientes cargados' });
+    const [result] = await pool.query(
+      `SELECT pac.idPaciente, usu.dni, usu.nombre, usu.apellido, obra.nombre as nombreObraSocial
+       FROM pacientes pac 
+       INNER JOIN usuarios usu ON usu.dni = pac.dni 
+       INNER JOIN obrasociales obra ON obra.idObraSocial = usu.idObraSocial
+       WHERE pac.estado = 'Habilitado'
+       ORDER BY usu.apellido, usu.nombre`
+    );
+    if (result.length === 0) {
+      return res.json([]); // Devolver array vacío en lugar de 404
+    } else {
+      res.json(result);
     }
-
-    res.json(pacientes);
   } catch (error) {
     console.log(error);
     return res.status(500).json({ message: error.message });
@@ -29,147 +24,38 @@ export const getPacientes = async (req, res) => {
 export const getPacienteByDni = async (req, res) => {
   try {
     const { dni } = req.body;
-
-    const paciente = await Paciente.findOne({
-      where: { dni },
-      include: [{
-        model: Usuario,
-        as: 'usuario',
-        include: [{
-          model: ObraSocial,
-          as: 'obraSocial'
-        }]
-      }, {
-        model: Turno,
-        as: 'turnos',
-        include: [{
-          model: Doctor,
-          as: 'doctor',
-          include: [{
-            model: Usuario,
-            as: 'usuario'
-          }]
-        }]
-      }]
-    });
-
-    if (!paciente) {
-      return res.status(404).json({ message: 'Paciente no encontrado' });
-    }
-
-    res.json(paciente);
-  } catch (error) {
-    return res.status(500).json({ message: error.message });
-  }
-};
-
-export const getPacienteLogin = async (req, res) => {
-  try {
-    const { dni, fechaNacimiento } = req.body;
-
-    const paciente = await Paciente.findOne({
-      include: [{
-        model: Usuario,
-        as: 'usuario',
-        where: { dni, fechaNacimiento }
-      }]
-    });
-
-    if (!paciente) {
-      return res.status(404).json({ message: 'Paciente no encontrado' });
-    }
-
-    const token = jwt.sign(
-      {
-        idPaciente: paciente.idPaciente,
-        dni: paciente.usuario.dni,
-        nombre: paciente.usuario.nombre,
-        apellido: paciente.usuario.apellido,
-        rol: 'P',
-      },
-      'CLAVE_SUPER_SEGURISIMA',
-      { expiresIn: '5m' }
+    const [result] = await pool.query(
+      `SELECT pac.idPaciente, usu.nombre, usu.apellido, usu.dni
+       FROM pacientes pac
+       INNER JOIN usuarios usu ON usu.dni = pac.dni
+       WHERE usu.dni = ? AND pac.estado = 'Habilitado'`,
+      [dni]
     );
-
-    res.json(token);
+    if (result.length === 0) {
+      return res
+        .status(404)
+        .json({ message: 'Paciente no encontrado o no está habilitado' });
+    } else {
+      res.json(result[0]);
+    }
   } catch (error) {
     return res.status(500).json({ message: error.message });
   }
 };
 
 export const createPaciente = async (req, res) => {
+  const { dni } = req.body;
+  const estado = 'Habilitado';
   try {
-    const { dni } = req.body;
-
-    // Verificar que el usuario existe
-    const usuario = await Usuario.findOne({ where: { dni } });
-    if (!usuario) {
-      return res.status(404).json({ message: 'Usuario no encontrado' });
-    }
-
-    const nuevoPaciente = await Paciente.create({
+    const [result] = await pool.query(
+      'INSERT INTO pacientes (dni, estado) VALUES (?, ?)',
+      [dni, estado]
+    );
+    res.json({
+      idPaciente: result.insertId, // Devuelve el id autogenerado
       dni,
-      estado: 'Habilitado'
+      estado,
     });
-
-    // Retornar con la información del usuario incluida
-    const pacienteCompleto = await Paciente.findByPk(nuevoPaciente.idPaciente, {
-      include: [{
-        model: Usuario,
-        as: 'usuario',
-        include: [{
-          model: ObraSocial,
-          as: 'obraSocial'
-        }]
-      }]
-    });
-
-    res.json(pacienteCompleto);
-  } catch (error) {
-    if (error.name === 'SequelizeUniqueConstraintError') {
-      return res.status(400).json({
-        message: 'El paciente ya existe'
-      });
-    }
-    return res.status(500).json({ message: error.message });
-  }
-};
-
-export const updatePaciente = async (req, res) => {
-  try {
-    const { id } = req.params;
-    const { estado } = req.body;
-
-    const [updatedRowsCount] = await Paciente.update(
-      { estado },
-      { where: { idPaciente: id } }
-    );
-
-    if (updatedRowsCount === 0) {
-      return res.status(404).json({ message: 'Paciente no encontrado' });
-    }
-
-    res.json({ message: 'Paciente actualizado' });
-  } catch (error) {
-    return res.status(500).json({ message: error.message });
-  }
-};
-
-export const deletePaciente = async (req, res) => {
-  try {
-    const { id } = req.params;
-
-    // Soft delete
-    const [updatedRowsCount] = await Paciente.update(
-      { estado: 'Deshabilitado' },
-      { where: { idPaciente: id } }
-    );
-
-    if (updatedRowsCount === 0) {
-      return res.status(404).json({ message: 'Paciente no encontrado' });
-    }
-
-    res.json({ message: 'Paciente deshabilitado' });
   } catch (error) {
     return res.status(500).json({ message: error.message });
   }
