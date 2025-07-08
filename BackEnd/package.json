@@ -4,7 +4,10 @@
   "main": "index.js",
   "type": "module",
   "scripts": {
-    "dev": "nodemon server/index.js"
+    "dev": "nodemon server/index.js",
+    "test": "cross-env NODE_OPTIONS=--experimental-vm-modules jest --verbose",
+    "test:watch": "cross-env NODE_OPTIONS=--experimental-vm-modules jest --watch",
+    "test:coverage": "cross-env NODE_OPTIONS=--experimental-vm-modules jest --coverage"
   },
   "author": "",
   "license": "ISC",
@@ -19,5 +22,10 @@
     "mysql2": "^3.9.7",
     "nodemailer": "^6.9.15",
     "nodemon": "^3.1.0"
+  },
+  "devDependencies": {
+    "cross-env": "^7.0.3",
+    "jest": "^30.0.4",
+    "supertest": "^7.1.3"
   }
 }
