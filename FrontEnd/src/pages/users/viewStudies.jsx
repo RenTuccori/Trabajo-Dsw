@@ -15,12 +15,19 @@ function ViewStudies() {
 
   // Cargar patient por DNI
   const loadPaciente = useCallback(async () => {
+    console.log('🔍 FRONTEND - loadPaciente: Cargando paciente con DNI:', dni);
     try {
       const response = await getPacienteDni({ dni });
+      console.log('✅ FRONTEND - loadPaciente: Respuesta recibida:', response);
+      console.log('📊 FRONTEND - loadPaciente: Datos del paciente:', response.data);
       setPacienteData(response.data);
-      return response.data.patientId;
+      
+      // Usar idPatient en lugar de patientId
+      const patientId = response.data.idPatient;
+      console.log('🆔 FRONTEND - loadPaciente: patientId obtenido:', patientId);
+      return patientId;
     } catch (error) {
-      console.error('Error al cargar datos del patient:', error);
+      console.error('❌ FRONTEND - Error al cargar datos del patient:', error);
       notifyError('Error al cargar datos del patient');
       return null;
     }
@@ -28,11 +35,14 @@ function ViewStudies() {
 
   // Cargar estudios del patient
   const loadEstudios = useCallback(async (patientId) => {
+    console.log('📚 FRONTEND - loadEstudios: Cargando estudios para patientId:', patientId);
     try {
       const response = await getEstudiosByPaciente(patientId);
+      console.log('✅ FRONTEND - loadEstudios: Respuesta recibida:', response);
+      console.log('📊 FRONTEND - loadEstudios: Estudios:', response.data);
       setEstudios(response.data || []);
     } catch (error) {
-      console.error('Error al cargar estudios:', error);
+      console.error('❌ FRONTEND - Error al cargar estudios:', error);
       if (error.response?.status !== 404) {
         notifyError('Error al cargar estudios');
       }
@@ -110,10 +120,10 @@ function ViewStudies() {
         {pacienteData && (
           <div className="bg-white rounded-lg shadow-md p-4 mb-6">
             <h2 className="text-lg font-semibold text-gray-800 mb-2">
-              Información del patient
+              Información del paciente
             </h2>
             <p className="text-gray-600">DNI: {dni}</p>
-            <p className="text-gray-600">Nombre: {pacienteData.name}</p>
+            <p className="text-gray-600">Nombre: {pacienteData.firstName}</p>
             <p className="text-gray-600">Apellido: {pacienteData.lastName}</p>
           </div>
         )}
@@ -160,32 +170,32 @@ function ViewStudies() {
                 <tbody>
                   {(estudios || []).map((estudio) => (
                     <tr
-                      key={estudio.idEstudio}
+                      key={estudio.idStudy}
                       className="border-t border-gray-200"
                     >
                       <td className="px-4 py-2 text-sm">
                         Dr. {estudio.doctorName}
                       </td>
                       <td className="px-4 py-2 text-sm">
-                        {formatDate(estudio.fechaRealizacion)}
+                        {formatDate(estudio.performanceDate)}
                       </td>
                       <td className="px-4 py-2 text-sm">
                         <span className="text-blue-600 font-medium">
-                          {estudio.nombreArchivo}
+                          {estudio.fileName}
                         </span>
                       </td>
                       <td className="px-4 py-2 text-sm">
-                        {estudio.descripcion || 'Sin descripción'}
+                        {estudio.description || 'Sin descripción'}
                       </td>
                       <td className="px-4 py-2 text-sm">
-                        {formatDate(estudio.fechaCarga)}
+                        {formatDate(estudio.uploadDate)}
                       </td>
                       <td className="px-4 py-2 text-sm">
                         <button
                           onClick={() =>
                             downloadEstudio(
-                              estudio.idEstudio,
-                              estudio.nombreArchivo
+                              estudio.idStudy,
+                              estudio.fileName
                             )
                           }
                           className="bg-blue-600 text-white px-3 py-1 rounded-md hover:bg-blue-700 transition-colors text-sm"

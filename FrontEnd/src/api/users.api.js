@@ -16,7 +16,18 @@ export const getUserDniFecha = async ({dni,birthDate}) => {
     }
 }
 export const createUser = async ({dni,birthDate,firstName,lastName,phone,email,address,insuranceCompanyId}) => {
-    return await axiosInstance.post(`users`,{dni,birthDate,firstName,lastName,phone,email,address,insuranceCompanyId});
+    console.log('🌐 FRONTEND - createUser: Enviando datos al backend');
+    console.log('📋 FRONTEND - Datos:', { dni, birthDate, firstName, lastName, phone, email, address, insuranceCompanyId });
+    
+    try {
+        const response = await axiosInstance.post(`users`,{dni,birthDate,firstName,lastName,phone,email,address,insuranceCompanyId});
+        console.log('✅ FRONTEND - createUser: Usuario creado exitosamente:', response);
+        return response;
+    } catch (error) {
+        console.error('❌ FRONTEND - createUser: Error:', error);
+        console.error('📄 FRONTEND - Detalles del error:', error.response?.data);
+        throw error;
+    }
 }
 
 

@@ -103,13 +103,13 @@ function UserHome() {
               onClick={() => navigate('/patient/bookAppointment')}
               className="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition-colors"
             >
-              Sacar un appointment
+              Sacar un turno
             </button>
             <button
               onClick={() => navigate('/patient/verturnos')}
               className="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition-colors"
             >
-              Ver mis appointments
+              Ver mis turnos
             </button>
             <button
               onClick={() => navigate('/patient/estudios')}

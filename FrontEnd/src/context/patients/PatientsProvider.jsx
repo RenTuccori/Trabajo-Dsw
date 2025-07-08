@@ -161,9 +161,35 @@ const PatientsProvider = ({ children }) => {
   }
 
   async function createUserFunction(data) {
-    const response = await createUser(data);
-    setUser(response.data);
-    createPaciente({ dni: data.dni });
+    console.log('🎯 FRONTEND - createUserFunction: Iniciando creación de usuario');
+    console.log('📋 FRONTEND - Datos recibidos:', data);
+    
+    // Mapear campos del frontend al backend
+    const backendData = {
+      dni: data.dni,
+      birthDate: data.birthDate,
+      firstName: data.name, // Mapear name a firstName
+      lastName: data.lastName,
+      phone: data.phone,
+      email: data.email,
+      address: data.address,
+      insuranceCompanyId: data.healthInsuranceId // Mapear healthInsuranceId a insuranceCompanyId
+    };
+    
+    console.log('🔄 FRONTEND - Datos mapeados para backend:', backendData);
+    
+    try {
+      const response = await createUser(backendData);
+      console.log('✅ FRONTEND - createUserFunction: Usuario creado en BD:', response);
+      setUser(response.data);
+      
+      console.log('📝 FRONTEND - createUserFunction: Creando paciente con DNI:', data.dni);
+      await createPaciente({ dni: data.dni });
+      console.log('✅ FRONTEND - createUserFunction: Paciente creado exitosamente');
+    } catch (error) {
+      console.error('❌ FRONTEND - createUserFunction: Error:', error);
+      throw error;
+    }
   }
 
   async function createPatient({ dni }) {
@@ -252,29 +278,48 @@ const PatientsProvider = ({ children }) => {
   }, [dni, getPatientByDni]);
 
   async function getPatientAppointments() {
+    console.log('🎯 FRONTEND - getPatientAppointments: Obteniendo citas para DNI:', dni);
     try {
       const response = await getpatientAppointments({ dni });
+      console.log('📋 FRONTEND - getPatientAppointments: Respuesta recibida:', response);
+      
       if (response && response.data) {
+        console.log('📊 FRONTEND - getPatientAppointments: Datos de citas:', response.data);
+        // Verificar si los appointment tienen appointmentId o idAppointment
+        if (response.data.length > 0) {
+          console.log('🔍 FRONTEND - getPatientAppointments: Estructura del primer appointment:', response.data[0]);
+        }
         setAppointments(response.data);
       } else {
-        console.error('No se pudieron obtener los appointments');
+        console.error('❌ FRONTEND - No se pudieron obtener los appointments');
         setAppointments([]);
         window.notifyError('Error al obtener los appointments');
       }
     } catch (error) {
-      console.error('Error al obtener appointments del patient:', error);
+      console.error('❌ FRONTEND - Error al obtener appointments del patient:', error);
       setAppointments([]);
       window.notifyError('Error al obtener los appointments');
     }
   }
 
   async function confirmAppointment({ appointmentId }) {
-    await confirmarTurno({ appointmentId });
-    setAppointments((prevTurnos) =>
-      prevTurnos.map((appointment) =>
-        appointment.appointmentId === appointmentId ? { ...appointment, status: 'Confirmado' } : appointment
-      )
-    );
+    console.log('🎯 FRONTEND - confirmAppointment: Confirmando turno con ID:', appointmentId);
+    try {
+      const result = await confirmarTurno({ appointmentId });
+      console.log('✅ FRONTEND - confirmAppointment: Resultado:', result);
+      
+      setAppointments((prevTurnos) =>
+        prevTurnos.map((appointment) =>
+          (appointment.appointmentId === appointmentId || appointment.idAppointment === appointmentId) 
+            ? { ...appointment, status: 'Confirmado' } 
+            : appointment
+        )
+      );
+      console.log('📝 FRONTEND - confirmAppointment: Estado actualizado en el contexto');
+    } catch (error) {
+      console.error('❌ FRONTEND - confirmAppointment: Error:', error);
+      throw error;
+    }
   }
 
   async function getUserByDniFunction() {
@@ -301,12 +346,23 @@ const PatientsProvider = ({ children }) => {
   }
 
   async function cancelAppointment({ appointmentId }) {
-    await cancelarTurno({ appointmentId });
-    setAppointments((prevTurnos) =>
-      prevTurnos.map((appointment) =>
-        appointment.appointmentId === appointmentId ? { ...appointment, status: 'Cancelado' } : appointment
-      )
-    );
+    console.log('🎯 FRONTEND - cancelAppointment: Cancelando turno con ID:', appointmentId);
+    try {
+      const result = await cancelarTurno({ appointmentId });
+      console.log('✅ FRONTEND - cancelAppointment: Resultado:', result);
+      
+      setAppointments((prevTurnos) =>
+        prevTurnos.map((appointment) =>
+          (appointment.appointmentId === appointmentId || appointment.idAppointment === appointmentId) 
+            ? { ...appointment, status: 'Cancelado' } 
+            : appointment
+        )
+      );
+      console.log('📝 FRONTEND - cancelAppointment: Estado actualizado en el contexto');
+    } catch (error) {
+      console.error('❌ FRONTEND - cancelAppointment: Error:', error);
+      throw error;
+    }
   }
   async function sendEmailFunction(data) {
     await sendEmail(data);

@@ -65,28 +65,41 @@ export const createTurno = async ({ patientId, dateAndTime, cancellationDate, co
 }
 
 export const getpatientAppointments = async ({ dni }) => {
+    console.log('🌐 FRONTEND - getpatientAppointments: Obteniendo citas para DNI:', dni);
     try {
         const response = await axiosInstance.post(`turnospac`, { dni });
+        console.log('✅ FRONTEND - getpatientAppointments: Respuesta recibida:', response);
+        console.log('📊 FRONTEND - getpatientAppointments: Datos:', response.data);
         return response;
     } catch (error) {
+        console.error('❌ FRONTEND - getpatientAppointments: Error:', error);
+        console.error('📄 FRONTEND - Detalles del error:', error.response?.data);
         return error.response.data.message;
     }
 }
 
 export const confirmarTurno = async ({ appointmentId }) => {
+    console.log('🌐 FRONTEND - confirmarTurno: Iniciando confirmación para appointmentId:', appointmentId);
     try {
         const response = await axiosInstance.put(`appointments`, { appointmentId });
+        console.log('✅ FRONTEND - confirmarTurno: Turno confirmado exitosamente:', response);
         return response;
     } catch (error) {
+        console.error('❌ FRONTEND - confirmarTurno: Error:', error);
+        console.error('📄 FRONTEND - Detalles del error:', error.response?.data);
         return error.response.data.message;
     }
 }
 
 export const cancelarTurno = async ({ appointmentId }) => {
+    console.log('🌐 FRONTEND - cancelarTurno: Iniciando cancelación para appointmentId:', appointmentId);
     try {
         const response = await axiosInstance.put(`turnoscancel`, { appointmentId });
+        console.log('✅ FRONTEND - cancelarTurno: Turno cancelado exitosamente:', response);
         return response;
     } catch (error) {
+        console.error('❌ FRONTEND - cancelarTurno: Error:', error);
+        console.error('📄 FRONTEND - Detalles del error:', error.response?.data);
         return error.response.data.message;
     }
 }

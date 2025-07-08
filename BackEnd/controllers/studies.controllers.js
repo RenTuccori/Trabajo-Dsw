@@ -117,6 +117,7 @@ export const createStudy = async (req, res) => {
 export const getStudiesByPatient = async (req, res) => {
   try {
     const { patientId } = req.params;
+    console.log('🔍 BACKEND - getStudiesByPatient: Obteniendo estudios para patientId:', patientId);
 
     const [result] = await pool.query(
       `SELECT s.idStudy, s.performanceDate, s.uploadDate, s.fileName, 
@@ -129,13 +130,18 @@ export const getStudiesByPatient = async (req, res) => {
       [patientId]
     );
 
+    console.log('📊 BACKEND - getStudiesByPatient: Resultado de la query:', result);
+    console.log('🔢 BACKEND - getStudiesByPatient: Cantidad de estudios encontrados:', result.length);
+
     if (result.length === 0) {
+      console.log('❌ BACKEND - getStudiesByPatient: No se encontraron estudios');
       return res.json([]); // Return empty array instead of 404
     }
 
+    console.log('✅ BACKEND - getStudiesByPatient: Estudios encontrados, enviando respuesta');
     res.json(result);
   } catch (error) {
-    console.error('Error getting studies:', error);
+    console.error('❌ BACKEND - Error getting studies:', error);
     return res.status(500).json({ message: error.message });
   }
 };

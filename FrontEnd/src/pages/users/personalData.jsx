@@ -8,7 +8,7 @@ import { notifyError } from '../../components/ToastConfig';
 import { confirmDialog } from '../../components/SwalConfig';
 
 export function PersonalData() {
-  const { healthInsurances, getHealthInsurances, createUser } = usePacientes();
+  const { healthInsurances, getHealthInsurances, createUserFunction } = usePacientes();
   const { login } = useAuth();
   const [selectedObraSociales, setSelectedObraSociales] = useState(null);
   const navigate = useNavigate();
@@ -33,11 +33,16 @@ export function PersonalData() {
 
   const handleSubmit = async (e) => {
     e.preventDefault(); // Previene el comportamiento por defecto del formulario
+    console.log('🎯 FRONTEND - handleSubmit: Iniciando registro de usuario');
+    console.log('📋 FRONTEND - Datos del formulario:', formData);
+    
     try {
-      await createUser(formData); // Asegura que la creación del user sea asíncrona
+      await createUserFunction(formData); // Asegura que la creación del user sea asíncrona
+      console.log('✅ FRONTEND - Usuario registrado exitosamente');
+      
       login({
-        dni: formData.dni,
-        birthDate: formData.birthDate,
+        identifier: formData.dni,
+        credential: formData.birthDate,
         userType: 'Patient',
       });
 
@@ -46,6 +51,7 @@ export function PersonalData() {
         navigate('/patient'); // Navega después de confirmar
       });
     } catch (error) {
+      console.error('❌ FRONTEND - Error al registrar usuario:', error);
       notifyError('Hubo un error al registrar el user. Intente nuevamente.');
     }
   };

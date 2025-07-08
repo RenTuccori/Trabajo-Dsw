@@ -9,7 +9,7 @@ export function PatientAppointments() {
     confirmAppointment,
     cancelAppointment,
     appointments,
-    sendEmail,
+    sendEmailFunction,
     userEmail,
     getUserByDniFunction,
   } = usePacientes();
@@ -21,6 +21,8 @@ export function PatientAppointments() {
   }, []);
 
   const handleConfirmarTurno = async (appointment) => {
+    console.log('🎯 FRONTEND - handleConfirmarTurno: Confirmando turno:', appointment);
+    
     const result = await window.confirmDialog(
       'Confirmar Turno',
       '¿Estás seguro que deseas confirmar este appointment?'
@@ -28,7 +30,11 @@ export function PatientAppointments() {
 
     if (result.isConfirmed) {
       try {
-        await confirmAppointment({ appointmentId: appointment.appointmentId });
+        // Usar idAppointment si appointmentId no existe
+        const appointmentId = appointment.appointmentId || appointment.idAppointment;
+        console.log('🆔 FRONTEND - appointmentId a usar:', appointmentId);
+        
+        await confirmAppointment({ appointmentId });
         window.notifySuccess('¡Turno confirmado con éxito!'); // Mensaje de éxito
         const cuerpo = `<div style="background-color: #f0f4f8; padding: 20px; border-radius: 10px; font-family: Arial, sans-serif; max-width: 600px; margin: auto;">
                     <h1 style="color: #1c4e80; text-align: center;">¡Tu appointment ha sido confirmado con éxito!</h1>
@@ -52,7 +58,7 @@ export function PatientAppointments() {
                     `;
 
         // Llamar a la función para mandar el correo
-        sendEmail({
+        sendEmailFunction({
           to: userEmail, // Asegúrate de pasar el destinatario como tal
           subject: 'Turno Confirmado',
           html: cuerpo,
@@ -65,6 +71,8 @@ export function PatientAppointments() {
   };
 
   const handleCancelarTurno = async (appointment) => {
+    console.log('🎯 FRONTEND - handleCancelarTurno: Cancelando turno:', appointment);
+    
     const result = await window.confirmDialog(
       'Cancelar Turno',
       '¿Estás seguro que deseas cancelar este appointment?'
@@ -72,7 +80,11 @@ export function PatientAppointments() {
 
     if (result.isConfirmed) {
       try {
-        await cancelAppointment({ appointmentId: appointment.appointmentId });
+        // Usar idAppointment si appointmentId no existe
+        const appointmentId = appointment.appointmentId || appointment.idAppointment;
+        console.log('🆔 FRONTEND - appointmentId a usar:', appointmentId);
+        
+        await cancelAppointment({ appointmentId });
         window.notifySuccess('¡Turno cancelado con éxito!'); // Mensaje de éxito
         const cuerpo = `<div style="background-color: #f0f4f8; padding: 20px; border-radius: 10px; font-family: Arial, sans-serif; max-width: 600px; margin: auto;">
                 <h1 style="color: #1c4e80; text-align: center;">¡Tu appointment ha sido cancelado con éxito!</h1>
@@ -94,7 +106,7 @@ export function PatientAppointments() {
                 `;
 
         // Llamar a la función para mandar el correo
-        sendEmail({
+        sendEmailFunction({
           to: userEmail, // Asegúrate de pasar el destinatario como tal
           subject: 'Turno Cancelado',
           html: cuerpo,

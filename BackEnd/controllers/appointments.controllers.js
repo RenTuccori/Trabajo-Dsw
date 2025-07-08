@@ -3,6 +3,8 @@ import { pool } from '../db.js';
 export const getTurnoByDni = async (req, res) => {
   try {
     const { dni } = req.body;
+    console.log('🎯 BACKEND - getTurnoByDni: Buscando turnos para DNI:', dni);
+    
     const [result] = await pool.query(`
       SELECT p.dni, DATE_FORMAT(a.dateTime, '%Y-%m-%d %H:%i:%s') AS dateTime, s.name AS venue, s.address AS address, sp.name AS specialty, usudoc.lastName AS doctor, a.status, a.idAppointment
       FROM users u
@@ -15,12 +17,18 @@ export const getTurnoByDni = async (req, res) => {
       and date(a.dateTime) > current_date() and a.status != 'Cancelado'
       order by a.dateTime`,
       [dni]);
+      
+    console.log('📊 BACKEND - getTurnoByDni: Resultados encontrados:', result.length);
+    
     if (result.length === 0) {
-      return res.status(404).json({ message: 'No upcoming appointments for this patient' });
+      console.log('✅ BACKEND - getTurnoByDni: No hay turnos futuros, devolviendo array vacío');
+      return res.status(200).json([]);
     } else {
+      console.log('✅ BACKEND - getTurnoByDni: Devolviendo', result.length, 'turnos');
       res.json(result);
     }
   } catch (error) {
+    console.error('❌ BACKEND - Error en getTurnoByDni:', error);
     return res.status(500).json({ message: error.message });
   }
 };
@@ -115,19 +123,28 @@ export const getTurnoByDoctorFecha = async (req, res) => {
 export const confirmAppointment = async (req, res) => {
   try {
     const { appointmentId } = req.body;
+    console.log('🎯 BACKEND - confirmAppointment: Confirmando appointment con ID:', appointmentId);
+    
     const currentDate = new Date().toISOString().slice(0, 19).replace('T', ' '); // Format 'YYYY-MM-DD HH:MM:SS'
+    console.log('📅 BACKEND - Fecha de confirmación:', currentDate);
 
     const [result] = await pool.query(
       'UPDATE appointments SET status = ?, confirmationDate = ? WHERE idAppointment = ?',
       ["Confirmado", currentDate, appointmentId]
     );
 
+    console.log('📊 BACKEND - Resultado de la query:', result);
+    console.log('🔄 BACKEND - Filas afectadas:', result.affectedRows);
+
     if (result.affectedRows === 0) {
+      console.log('❌ BACKEND - Appointment no encontrado');
       return res.status(404).json({ message: 'Appointment not found' });
     }
 
+    console.log('✅ BACKEND - Appointment confirmado exitosamente');
     res.json({ message: 'Appointment status updated to "Confirmado"' });
   } catch (error) {
+    console.error('❌ BACKEND - Error en confirmAppointment:', error);
     return res.status(500).json({ message: error.message });
   }
 };
@@ -136,19 +153,28 @@ export const confirmAppointment = async (req, res) => {
 export const cancelAppointment = async (req, res) => {
   try {
     const { appointmentId } = req.body;
+    console.log('🎯 BACKEND - cancelAppointment: Cancelando appointment con ID:', appointmentId);
+    
     const currentDate = new Date().toISOString().slice(0, 19).replace('T', ' '); // Format 'YYYY-MM-DD HH:MM:SS'
+    console.log('📅 BACKEND - Fecha de cancelación:', currentDate);
 
     const [result] = await pool.query(
       'UPDATE appointments SET status = ?, cancellationDate = ? WHERE idAppointment = ?',
       ["Cancelado", currentDate, appointmentId]
     );
 
+    console.log('📊 BACKEND - Resultado de la query:', result);
+    console.log('🔄 BACKEND - Filas afectadas:', result.affectedRows);
+
     if (result.affectedRows === 0) {
+      console.log('❌ BACKEND - Appointment no encontrado');
       return res.status(404).json({ message: 'Appointment not found' });
     }
 
+    console.log('✅ BACKEND - Appointment cancelado exitosamente');
     res.json({ message: 'Appointment status updated to "Cancelado"' });
   } catch (error) {
+    console.error('❌ BACKEND - Error en cancelAppointment:', error);
     return res.status(500).json({ message: error.message });
   }
 };

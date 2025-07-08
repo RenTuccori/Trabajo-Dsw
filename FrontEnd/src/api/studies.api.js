@@ -16,10 +16,15 @@ export const uploadEstudio = async (formData) => {
 
 // Get studies by patient
 export const getEstudiosByPaciente = async (patientId) => {
+  console.log('🌐 FRONTEND - getEstudiosByPaciente: Obteniendo estudios para patientId:', patientId);
   try {
     const response = await axiosInstance.get(`studies/patient/${patientId}`);
+    console.log('✅ FRONTEND - getEstudiosByPaciente: Respuesta recibida:', response);
+    console.log('📊 FRONTEND - getEstudiosByPaciente: Estudios:', response.data);
     return response;
   } catch (error) {
+    console.error('❌ FRONTEND - getEstudiosByPaciente: Error:', error);
+    console.error('📄 FRONTEND - Detalles del error:', error.response?.data);
     throw error.response?.data || error.message;
   }
 };
