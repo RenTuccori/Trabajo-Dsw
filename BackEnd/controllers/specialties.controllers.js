@@ -2,20 +2,27 @@ import { pool } from '../db.js';
 
 export const getSpecialties = async (req, res) => {
   try {
-    const { idSede } = req.body;
+    console.log('🩺 BACKEND - getSpecialties: Inicio de función');
+    const { venueId } = req.body;
+    console.log('🏢 BACKEND - venueId recibido:', venueId);
+    
     const [result] = await pool.query(
-      'SELECT DISTINCT sde.idEspecialidad, es.first_name FROM specialties es INNER JOIN sededoctoresp sde ON es.idEspecialidad = sde.idEspecialidad WHERE sde.idSede = ? AND es.estado = \'Habilitado\'',
-      [idSede]
+      'SELECT DISTINCT sds.idSpecialty, s.name FROM specialties s INNER JOIN sitedoctorspecialty sds ON s.idSpecialty = sds.idSpecialty WHERE sds.idSite = ? AND s.status = \'Habilitado\'',
+      [venueId]
     );
+    
+    console.log('🗄️ BACKEND - Especialidades encontradas:', result);
+    console.log('📊 BACKEND - Número de especialidades:', result.length);
     res.json(result);
   } catch (error) {
+    console.log('💥 BACKEND - Error en getSpecialties:', error);
     return res.status(500).json({ message: error.message });
   }
 };
 
 export const getAllSpecialities = async (req, res) => {
   try {
-    const [result] = await pool.query('SELECT * FROM specialties WHERE estado = \'Habilitado\'');
+    const [result] = await pool.query('SELECT * FROM specialties WHERE status = \'Habilitado\'');
     res.json(result);
   } catch (error) {
     return res.status(500).json({ message: error.message });
@@ -24,16 +31,16 @@ export const getAllSpecialities = async (req, res) => {
 
 export const getAvailableSpecialties = async (req, res) => {
   try {
-    const { idSede } = req.body;
+    const { venueId } = req.body;
     const [result] = await pool.query(
-      `SELECT es.idEspecialidad, es.first_name 
-       FROM specialties es 
-       WHERE es.idEspecialidad NOT IN (
-         SELECT sde.idEspecialidad 
-         FROM sededoctoresp sde 
-         WHERE sde.idSede = ?
-       ) AND es.estado = 'Habilitado'`,
-      [idSede]
+      `SELECT s.idSpecialty, s.name 
+       FROM specialties s 
+       WHERE s.idSpecialty NOT IN (
+         SELECT sds.idSpecialty 
+         FROM sitedoctorspecialty sds 
+         WHERE sds.idSite = ?
+       ) AND s.status = 'Habilitado'`,
+      [venueId]
     );
     res.json(result);
   } catch (error) {
@@ -43,13 +50,13 @@ export const getAvailableSpecialties = async (req, res) => {
 
 export const getSpecialtyById = async (req, res) => {
   try {
-    const { idEspecialidad } = req.params;
+    const { specialtyId } = req.params;
     const [result] = await pool.query(
-      'SELECT * FROM specialties WHERE idEspecialidad = ? AND estado = \'Habilitado\'',
-      [idEspecialidad]
+      'SELECT * FROM specialties WHERE idSpecialty = ? AND status = \'Habilitado\'',
+      [specialtyId]
     );
     if (result.length === 0) {
-      return res.status(404).json({ message: 'Especialidad no encontrada' });
+      return res.status(404).json({ message: 'Specialty not found' });
     }
     res.json(result[0]);
   } catch (error) {
@@ -60,30 +67,30 @@ export const getSpecialtyById = async (req, res) => {
 
 export const createSpecialty = async (req, res) => {
   try {
-    const { first_name } = req.body;
-    const estado = 'Habilitado';
+    const { name } = req.body;
+    const status = 'Habilitado';
 
-    // Verificar si ya existe una specialty con el mismo first_name y estado habilitado
+    // Check if a specialty with the same name and enabled status already exists
     const [existingSpecialty] = await pool.query(
-      'SELECT * FROM specialties WHERE first_name = ? AND estado = ?',
-      [first_name, estado]
+      'SELECT * FROM specialties WHERE name = ? AND status = ?',
+      [name, status]
     );
 
     if (existingSpecialty.length > 0) {
-      // Si ya existe una specialty habilitada con el mismo first_name
-      return res.status(400).json({ message: 'Ya existe una specialty habilitada con este first_name.' });
+      // If an enabled specialty with the same name already exists
+      return res.status(400).json({ message: 'An enabled specialty with this name already exists.' });
     }
 
-    // Insertar nueva specialty con estado habilitado
+    // Insert new specialty with enabled status
     const [result] = await pool.query(
-      'INSERT INTO specialties (first_name, estado) VALUES (?, ?)',
-      [first_name, estado]
+      'INSERT INTO specialties (name, status) VALUES (?, ?)',
+      [name, status]
     );
 
     res.json({
-      idEspecialidad: result.insertId,
-      first_name,
-      estado,
+      idSpecialty: result.insertId,
+      name: name,
+      status: status,
     });
   } catch (error) {
     return res.status(500).json({ message: error.message });
@@ -94,7 +101,7 @@ export const createSpecialty = async (req, res) => {
 export const updateSpecialty = async (req, res) => {
   try {
     const result = await pool.query(
-      'UPDATE specialties SET ? WHERE idEspecialidad = ?',
+      'UPDATE specialties SET ? WHERE idSpecialty = ?',
       [req.body, req.params.id]
     );
     if (result.affectedRows === 0) {
@@ -115,7 +122,7 @@ export const deleteSpecialty = async (req, res) => {
 
     // Actualizar el estado de la specialty a "Deshabilitado"
     const [resultEspecialidad] = await pool.query(
-      'UPDATE specialties SET estado = "Deshabilitado" WHERE idEspecialidad = ?',
+      'UPDATE specialties SET status = "Deshabilitado" WHERE idSpecialty = ?',
       [idEspecialidad]
     );
 
@@ -125,9 +132,9 @@ export const deleteSpecialty = async (req, res) => {
       return res.status(404).json({ message: 'Especialidad no encontrada' });
     }
 
-    // Actualizar el estado de las combinaciones en la tabla sededoctoresp a "Deshabilitado"
+    // Actualizar el estado de las combinaciones en la tabla sitedoctorspecialty a "Deshabilitado"
     const [resultCombinacion] = await pool.query(
-      'UPDATE sededoctoresp SET estado = "Deshabilitado" WHERE idEspecialidad = ?',
+      'UPDATE sitedoctorspecialty SET status = "Deshabilitado" WHERE idSpecialty = ?',
       [idEspecialidad]
     );
 

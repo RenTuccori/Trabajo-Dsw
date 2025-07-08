@@ -1,13 +1,13 @@
 import { Routes, Route } from 'react-router-dom';
 import AdministrationProvider from '../context/administration/AdministrationProvider.jsx';
-import administrationHome from '../pages/administration/administrationHome.jsx';
-import { createVenue } from '../pages/administration/createVenue.jsx';
-import { createSpecialty } from '../pages/administration/createSpecialty.jsx';
-import { createInsurance } from '../pages/administration/createInsurance.jsx';
-import { createCombination } from '../pages/administration/createCombination.jsx';
-import { createDoctor } from '../pages/administration/createDoctor.jsx';
-import { updateDoctor } from '../pages/administration/updateDoctor.jsx';
-import { createSchedules } from '../pages/administration/createSchedules.jsx';
+import AdministrationHome from '../pages/administration/administrationHome.jsx';
+import { CreateVenue } from '../pages/administration/createVenue.jsx';
+import { CreateSpecialty } from '../pages/administration/createSpecialty.jsx';
+import { CreateInsurance } from '../pages/administration/createInsurance.jsx';
+import { CreateCombination } from '../pages/administration/createCombination.jsx';
+import { CreateDoctor } from '../pages/administration/createDoctor.jsx';
+import { UpdateDoctor } from '../pages/administration/updateDoctor.jsx';
+import { CreateSchedules } from '../pages/administration/createSchedules.jsx';
 import { validation } from './validation.jsx';
 import { ProtectedRoute } from '../components/ProtectedRoute.jsx';
 import { useAuth } from '../context/global/AuthProvider.jsx';
@@ -18,13 +18,13 @@ export function AdministracionRoutes() {
   return (
     <AdministrationProvider>
       <Routes>
-        <Route path="/" element={<administrationHome />} />
+        <Route path="/" element={<AdministrationHome />} />
         <Route
           path="/createVenue"
           element={
             <validation rol={rol} esperado={'Admin'}>
               <ProtectedRoute requiredRole="Admin">
-                <createVenue />
+                <CreateVenue />
               </ProtectedRoute>
             </validation>
           }
@@ -34,7 +34,7 @@ export function AdministracionRoutes() {
           element={
             <validation rol={rol} esperado={'Admin'}>
               <ProtectedRoute requiredRole="Admin">
-                <createSpecialty />
+                <CreateSpecialty />
               </ProtectedRoute>
             </validation>
           }

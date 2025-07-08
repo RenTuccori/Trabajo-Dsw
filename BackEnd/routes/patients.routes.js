@@ -8,15 +8,15 @@ import { Patient } from '../middleware/authorizeRole.js';
 
 const router = Router();
 
-// Ruta de debug para ver patients
+// Debug route to view patients
 router.get('/api/patient/debug', async (req, res) => {
   try {
     const { pool } = await import('../db.js');
     const [result] = await pool.query(
-      `SELECT pac.idPaciente, pac.dni, pac.estado, usu.first_name, usu.last_name 
+      `SELECT pac.patientId, pac.dni, pac.status, usu.first_name, usu.last_name 
        FROM patients pac 
        LEFT JOIN users usu ON pac.dni = usu.dni 
-       ORDER BY pac.idPaciente`
+       ORDER BY pac.patientId`
     );
     res.json(result);
   } catch (error) {

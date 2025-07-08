@@ -1,18 +1,19 @@
 import { Router } from 'express';
 import {
-  getFechasDispDocEspSed,
-  getFechasDispEspSed,
-  getHorariosDispDocEspSed,
+  getAvailableDatesByDoctorSpecialtyVenue,
+  getAvailableDatesBySpecialtyVenue,
+  getAvailableSchedulesByDoctorSpecialtyVenue,
+  getAvailableSchedulesBySpecialtyVenue,
 } from '../controllers/schedules.controllers.js';
 import { AdminOrPatient } from '../middleware/authorizeRole.js';
 const router = Router();
 
-router.post('/api/DispDocEspSed', AdminOrPatient, getFechasDispDocEspSed);
-router.get('/api/DispEspSed', AdminOrPatient, getFechasDispEspSed);
+router.post('/api/DispDocEspSed', AdminOrPatient, getAvailableDatesByDoctorSpecialtyVenue);
+router.get('/api/DispEspSed', AdminOrPatient, getAvailableDatesBySpecialtyVenue);
 router.post(
   '/api/HorariosDispDocEspSed',
   AdminOrPatient,
-  getHorariosDispDocEspSed
+  getAvailableSchedulesByDoctorSpecialtyVenue
 );
 
 export default router;

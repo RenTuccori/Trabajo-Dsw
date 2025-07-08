@@ -7,7 +7,7 @@ import {
 import { getPacienteDni } from '../../api/patients.api';
 import { notifyError } from '../../components/ToastConfig';
 
-function viewStudies() {
+function ViewStudies() {
   const { dni } = useAuth();
   const [estudios, setEstudios] = useState([]);
   const [pacienteData, setPacienteData] = useState(null);
@@ -214,7 +214,7 @@ function viewStudies() {
   );
 }
 
-export default viewStudies;
+export default ViewStudies;
 
 
 

@@ -3,7 +3,7 @@ import { useAdministracion } from '../../context/administration/AdministrationPr
 import { useNavigate } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 
-export function createCombination() {
+export function CreateCombination() {
   const navigate = useNavigate();
   const {
     venues,

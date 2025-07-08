@@ -2,7 +2,7 @@ import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { usePacientes } from '../../context/patients/PatientsProvider.jsx';
 
-export function patientAppointments() {
+export function PatientAppointments() {
   const navigate = useNavigate();
   const {
     getPatientAppointments,
@@ -11,11 +11,11 @@ export function patientAppointments() {
     appointments,
     sendEmail,
     userEmail,
-    getUserByDni,
+    getUserByDniFunction,
   } = usePacientes();
 
   useEffect(() => {
-    getUserByDni();
+    getUserByDniFunction();
     getPatientAppointments();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -39,7 +39,7 @@ export function patientAppointments() {
                           appointment.Especialidad
                         }</p>
                         <p><strong>Fecha y Hora:</strong> ${formatFechaHora(
-                          appointment.fecha_hora
+                          appointment.dateAndTime
                         )}</p>
                         <p><strong>Doctor:</strong> ${appointment.Doctor}</p>
                         <p><strong>DNI Paciente:</strong> ${appointment.dni}</p>
@@ -81,7 +81,7 @@ export function patientAppointments() {
                     <p><strong>Dirección:</strong> ${appointment.Direccion}</p>
                     <p><strong>Especialidad:</strong> ${appointment.Especialidad}</p>
                     <p><strong>Fecha y Hora:</strong> ${formatFechaHora(
-                      appointment.fecha_hora
+                      appointment.dateAndTime
                     )}</p>
                     <p><strong>Doctor:</strong> ${appointment.Doctor}</p>
                     <p><strong>DNI Paciente:</strong> ${appointment.dni}</p>
@@ -143,7 +143,7 @@ export function patientAppointments() {
               </p>
               <p>
                 <strong>Fecha y Hora:</strong>{' '}
-                {formatFechaHora(appointment.fecha_hora)}
+                {formatFechaHora(appointment.dateAndTime)}
               </p>
               <p>
                 <strong>Doctor:</strong> {appointment.Doctor}

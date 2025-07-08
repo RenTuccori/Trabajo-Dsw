@@ -5,65 +5,65 @@ let isSendingEmails = false; // Variable para evitar ejecución simultánea
 
 export const sendReminderEmails = async () => {
   if (isSendingEmails) {
-    console.log('El envío de correos ya está en curso. Se omite esta ejecución.');
-    return; // Si ya está enviando correos, no continúa.
+    console.log('Email sending is already in progress. Skipping this execution.');
+    return; // If already sending emails, do not continue.
   }
 
-  isSendingEmails = true; // Indicar que está en proceso de envío
+  isSendingEmails = true; // Indicate that the sending process is in progress
 
   try {
     const [rows] = await pool.query(`
-      SELECT tur.idTurno, usu.email
+      SELECT tur.idAppointment, usu.email
       FROM appointments tur
-      INNER JOIN patients pac ON pac.idPaciente = tur.idPaciente
+      INNER JOIN patients pac ON pac.idPatient = tur.idPatient
       INNER JOIN users usu ON usu.dni = pac.dni
-      WHERE tur.fechaConfirmacion IS NULL 
-        AND tur.fechaCancelacion IS NULL 
-        AND TIMESTAMPDIFF(HOUR, NOW(), tur.fechaYHora) BETWEEN 24 AND 36
-        AND tur.mail IS NULL; -- Solo selecciona appointments donde el campo email es NULL
+      WHERE tur.confirmationDate IS NULL 
+        AND tur.cancellationDate IS NULL 
+        AND TIMESTAMPDIFF(HOUR, NOW(), tur.dateTime) BETWEEN 24 AND 36
+        AND tur.email IS NULL; -- Only select appointments where the email field is NULL
     `);
 
     if (rows.length > 0) {
-      for (const { idTurno, email } of rows) {
+      for (const { idAppointment, email } of rows) {
         const mailBody = {
           to: email,
-          subject: 'Recordatorio de Confirmación de Turno',
+          subject: 'Appointment Confirmation Reminder',
           html: `
-            <p>Estimado patient,</p>
-            <p>Le recordamos que tiene un appointment pending de confirmación. Por favor, confirme o cancele su appointment dentro de las próximas horas. De lo contrario, el appointment será cancelled automáticamente.</p>
-            <p>Gracias,</p>
-            <p>Sanatorio UTN</p>
+            <p>Dear patient,</p>
+            <p>We remind you that you have a pending appointment confirmation. Please confirm or cancel your appointment within the next few hours. Otherwise, the appointment will be automatically cancelled.</p>
+            <p>Thank you,</p>
+            <p>UTN Medical Center</p>
           `,
         };
 
-        // Llamar a la función sendEmail para enviar el correo
+        // Call the sendEmail function to send the email
         await sendEmail({ body: mailBody }, { json: () => {} });
 
-        // Actualizar el campo `email` a 1 después de enviar el correo
+        // Update the `email` field to 1 after sending the email
         await pool.query(`
           UPDATE appointments
-          SET mail = 1
-          WHERE idTurno = ?;
-        `, [idTurno]);
+          SET email = 1
+          WHERE idAppointment = ?;
+        `, [idAppointment]);
       }
-      console.log(`Se han enviado recordatorios a ${rows.length} patients.`);
+      console.log(`Reminder emails sent to ${rows.length} patients.`);
     } else {
-      console.log('No hay appointments pendientes para recordar en este momento.');
+      console.log('No pending appointments to remind at this time.');
     }
   } catch (error) {
-    console.error('Error al enviar recordatorios de appointments:', error);
+    console.error('Error sending appointment reminders:', error);
   } finally {
-    isSendingEmails = false; // Indicar que ha terminado el proceso de envío
+    isSendingEmails = false; // Indicate that the sending process has finished
   }
 };
 
 export const startAutoReminderEmails = () => {
-  console.log('Iniciando recordatorio automático de correos...');
+  console.log('Starting automatic email reminders...');
 
-  // Ejecutar inmediatamente al inicio
+  // Execute immediately on startup
   sendReminderEmails();
 
-  // Ejecutar cada 30 minutos
+  // Execute every 30 minutes
   setInterval(() => {
     sendReminderEmails();
   }, 30 * 30 * 1000);

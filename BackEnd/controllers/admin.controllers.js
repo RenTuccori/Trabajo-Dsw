@@ -3,19 +3,19 @@ import jwt from 'jsonwebtoken';
 
 export const getAdmin = async (req, res) => {
   try {
-    const { user, contra } = req.body;
+    const { user, password } = req.body;
     const [result] = await pool.query(
       `SELECT idAdmin FROM 
         admin ad
         WHERE ad.user = ? and ad.contra = ?`,
-      [user, contra]
+      [user, password]
     );
 
     if (result.length === 0) {
-      return res.status(404).json({ message: 'Usuario no encontrado' });
+      return res.status(404).json({ message: 'User not found' });
     } else {
       const token = jwt.sign(
-        { idAdmin: result[0].idAdmin, rol: 'Admin' },
+        { idAdmin: result[0].idAdmin, role: 'Admin' },
         'CLAVE_SUPER_SEGURISIMA',
         { expiresIn: '30m' }
       );
@@ -28,48 +28,48 @@ export const getAdmin = async (req, res) => {
 
 export const createSeEspDoc = async (req, res) => {
   try {
-    const { idSede, idEspecialidad, idDoctor } = req.body;
-    const estadoHabilitado = 'Habilitado';
+    const { venueId, specialtyId, doctorId } = req.body;
+    const enabledStatus = 'Habilitado';
 
-    // Validar si la combinación ya existe
+    // Validate if the combination already exists
     const result = await pool.query(
-      'SELECT * FROM sededoctoresp WHERE idSede = ? AND idEspecialidad = ? AND idDoctor = ?',
-      [idSede, idEspecialidad, idDoctor]
+      'SELECT * FROM sitedoctorspecialty WHERE idSite = ? AND idSpecialty = ? AND idDoctor = ?',
+      [venueId, specialtyId, doctorId]
     );
 
     if (result[0].length > 0) {
       const currentRecord = result[0][0];
 
-      if (currentRecord.estado === estadoHabilitado) {
-        // Si está habilitado, no hacer nada
+      if (currentRecord.status === enabledStatus) {
+        // If enabled, do nothing
         return res
           .status(200)
-          .json({ message: 'La combinación ya está habilitada.' });
+          .json({ message: 'The combination is already enabled.' });
       } else {
-        // Si está deshabilitado, habilitarlo
+        // If disabled, enable it
         await pool.query(
-          'UPDATE sededoctoresp SET estado = ? WHERE idSede = ? AND idEspecialidad = ? AND idDoctor = ?',
-          [estadoHabilitado, idSede, idEspecialidad, idDoctor]
+          'UPDATE sitedoctorspecialty SET status = ? WHERE idSite = ? AND idSpecialty = ? AND idDoctor = ?',
+          [enabledStatus, venueId, specialtyId, doctorId]
         );
 
         return res
           .status(200)
-          .json({ message: 'La combinación se habilitó exitosamente.' });
+          .json({ message: 'The combination was successfully enabled.' });
       }
     }
 
-    // Si no existe, crear la combinación
+    // If it doesn't exist, create the combination
     await pool.query(
-      'INSERT INTO sededoctoresp (idSede, idEspecialidad, idDoctor, estado) VALUES (?, ?, ?, ?)',
-      [idSede, idEspecialidad, idDoctor, estadoHabilitado]
+      'INSERT INTO sitedoctorspecialty (idSite, idSpecialty, idDoctor, status) VALUES (?, ?, ?, ?)',
+      [venueId, specialtyId, doctorId, enabledStatus]
     );
 
     res.status(201).json({
-      message: 'Asignación creada con éxito.',
-      idSede,
-      idEspecialidad,
-      idDoctor,
-      estado: estadoHabilitado,
+      message: 'Assignment created successfully.',
+      idSite: venueId,
+      idSpecialty: specialtyId,
+      idDoctor: doctorId,
+      status: enabledStatus,
     });
   } catch (error) {
     return res.status(500).json({ message: error.message });
@@ -78,21 +78,21 @@ export const createSeEspDoc = async (req, res) => {
 
 export const deleteSeEspDoc = async (req, res) => {
   try {
-    const { idSede, idDoctor, idEspecialidad } = req.body;
+    const { venueId, doctorId, specialtyId } = req.body;
     console.log(req.body);
-    // Realizar el update para cambiar el estado a 'Deshabilitado'
+    // Update the status to 'Deshabilitado'
     const [result] = await pool.query(
-      'UPDATE sededoctoresp SET estado = "Deshabilitado" WHERE idSede = ? AND idDoctor = ? AND idEspecialidad = ?',
-      [idSede, idDoctor, idEspecialidad]
+      'UPDATE sitedoctorspecialty SET status = "Deshabilitado" WHERE idSite = ? AND idDoctor = ? AND idSpecialty = ?',
+      [venueId, doctorId, specialtyId]
     );
 
-    // Verificar si la combinación de venue, specialty y doctor existe
+    // Check if the combination of venue, specialty and doctor exists
     if (result.affectedRows === 0) {
-      return res.status(404).json({ message: 'Asignación no encontrada.' });
+      return res.status(404).json({ message: 'Assignment not found.' });
     }
 
-    // Si se realizó el cambio de estado correctamente
-    res.json({ message: 'Asignación deshabilitada con éxito.' });
+    // If the status change was successful
+    res.json({ message: 'Assignment disabled successfully.' });
   } catch (error) {
     return res.status(500).json({ message: error.message });
   }
@@ -102,25 +102,25 @@ export const getCombinaciones = async (req, res) => {
   try {
     const query = `
 SELECT
-        s.first_name AS nombreSede,
-        e.first_name AS nombreEspecialidad,
-        u.first_name AS nombreDoctor,
-        sd.idSede,
-        sd.idEspecialidad,
-        sd.idDoctor,
-        u.last_name as apellidoDoctor
+        s.name AS venueName,
+        sp.name AS specialtyName,
+        u.firstName AS doctorFirstName,
+        sds.idSite,
+        sds.idSpecialty,
+        sds.idDoctor,
+        u.lastName as doctorLastName
       FROM
-        sededoctoresp sd
+        sitedoctorspecialty sds
       INNER JOIN
-        venues s ON sd.idSede = s.idSede
+        sites s ON sds.idSite = s.idSite
       INNER JOIN
-        specialties e ON sd.idEspecialidad = e.idEspecialidad
+        specialties sp ON sds.idSpecialty = sp.idSpecialty
       INNER JOIN
-        doctors d ON sd.idDoctor = d.idDoctor
+        doctors d ON sds.idDoctor = d.idDoctor
 	Inner join
     users u on d.dni = u.dni
-    where sd.estado = 'Habilitado'
-      order by s.first_name, e.first_name, u.last_name
+    where sds.status = 'Habilitado'
+      order by s.name, sp.name, u.lastName
     `;
 
     const [result] = await pool.query(query);
@@ -128,7 +128,7 @@ SELECT
     if (result.length === 0) {
       return res
         .status(404)
-        .json({ message: 'No se encontraron asignaciones.' });
+        .json({ message: 'No assignments found.' });
     }
 
     res.json(result);
@@ -138,96 +138,96 @@ SELECT
 };
 export const createHorarios = async (req, res) => {
   const {
-    idSede,
-    idDoctor,
-    idEspecialidad,
-    dia,
-    start_time,
-    end_time,
-    estado,
+    venueId,
+    doctorId,
+    specialtyId,
+    day,
+    startTime,
+    endTime,
+    status,
   } = req.body;
   try {
     await pool.query(
-      'INSERT INTO horarios_disponibles (idSede, idDoctor, idEspecialidad, dia, start_time, end_time, estado) VALUES (?, ?, ?, ?, ?, ?, ?)',
-      [idSede, idDoctor, idEspecialidad, dia, start_time, end_time, estado] // Asegúrate de que los nombres de las columnas sean correctos
+      'INSERT INTO available_schedules (idSite, idDoctor, idSpecialty, day, startTime, endTime, status) VALUES (?, ?, ?, ?, ?, ?, ?)',
+      [venueId, doctorId, specialtyId, day, startTime, endTime, status]
     );
-    return res.status(201).json({ message: 'Horario creado exitosamente.' });
+    return res.status(201).json({ message: 'Schedule created successfully.' });
   } catch (error) {
-    console.error(error); // Agregar un log para ver errores en el servidor
-    return res.status(500).json({ message: 'Error al crear el schedule.' });
+    console.error(error);
+    return res.status(500).json({ message: 'Error creating schedule.' });
   }
 };
 
 export const updateHorarios = async (req, res) => {
   try {
     const {
-      idSede,
-      idDoctor,
-      idEspecialidad,
-      dia,
-      start_time,
-      end_time,
-      estado,
+      venueId,
+      doctorId,
+      specialtyId,
+      day,
+      startTime,
+      endTime,
+      status,
     } = req.body;
     console.log(req.body);
-    // La consulta SQL para actualizar el schedule
+    // SQL query to update the schedule
     const [result] = await pool.query(
-      'UPDATE horarios_disponibles SET start_time = ?, end_time = ?, estado = ? WHERE idSede = ? AND idDoctor = ? AND idEspecialidad = ? AND dia = ?',
-      [start_time, end_time, estado, idSede, idDoctor, idEspecialidad, dia]
+      'UPDATE available_schedules SET startTime = ?, endTime = ?, status = ? WHERE idSite = ? AND idDoctor = ? AND idSpecialty = ? AND day = ?',
+      [startTime, endTime, status, venueId, doctorId, specialtyId, day]
     );
-    // Los valores que se van a insertar en la consulta
+    
     if (result.affectedRows > 0) {
       return res
         .status(200)
-        .json({ message: 'Horario actualizado exitosamente' });
+        .json({ message: 'Schedule updated successfully' });
     } else {
       return res
         .status(404)
-        .json({ message: 'No se encontró un schedule con esos datos' });
+        .json({ message: 'No schedule found with that data' });
     }
   } catch (error) {
-    console.error('Error al actualizar el schedule:', error);
+    console.error('Error updating schedule:', error);
     return res
       .status(500)
-      .json({ message: 'Error en el servidor al actualizar el schedule' });
+      .json({ message: 'Server error updating schedule' });
   }
 };
 
 export const getHorariosXDoctor = async (req, res) => {
   try {
-    const { idSede, idEspecialidad, idDoctor } = req.body;
-    // Consulta para obtener los schedules del doctor especificado
+    const { venueId, specialtyId, doctorId } = req.body;
+    // Query to get the doctor's schedules
     const query = `
     SELECT
-        sed.first_name AS nombreSede,  -- Selecciona el first_name de la venue
-        usu.first_name AS nombreDoctor,  -- Selecciona el first_name del doctor
-        esp.first_name AS nombreEspecialidad,
-        dia, start_time, end_time
+        s.name AS venueName,
+        u.firstName AS doctorFirstName,
+        sp.name AS specialtyName,
+        day, startTime, endTime
     FROM
-        horarios_disponibles hd
+        available_schedules sch
     INNER JOIN
-        venues sed ON sed.idSede = hd.idSede
+        sites s ON s.idSite = sch.idSite
     INNER JOIN
-        doctors doc ON doc.idDoctor = hd.idDoctor  -- Asegúrate de que este es el first_name de la tabla de doctors
+        doctors doc ON doc.idDoctor = sch.idDoctor
     INNER JOIN
-        specialties esp ON esp.idEspecialidad = hd.idEspecialidad -- Asegúrate de que este es el first_name de la tabla de specialties
+        specialties sp ON sp.idSpecialty = sch.idSpecialty
     INNER JOIN
-      users usu on usu.dni = doc.dni
+      users u on u.dni = doc.dni
     WHERE
-        hd.idSede = ? and hd.idEspecialidad = ? and hd.idDoctor = ? AND hd.estado = 'Habilitado'
+        sch.idSite = ? and sch.idSpecialty = ? and sch.idDoctor = ? AND sch.status = 'Disponible'
     ORDER BY
-        hd.dia`;
+        sch.day`;
 
-    const result = await pool.query(query, [idSede, idEspecialidad, idDoctor]);
+    const result = await pool.query(query, [venueId, specialtyId, doctorId]);
 
-    // Verificar si se encontraron schedules
+    // Check if schedules were found
     if (result[0].length === 0) {
       return res
         .status(404)
-        .json({ message: 'No se encontraron schedules para este doctor.' });
+        .json({ message: 'No schedules found for this doctor.' });
     }
 
-    // Devolver los schedules encontrados
+    // Return the found schedules
     res.json(result[0]);
   } catch (error) {
     return res.status(500).json({ message: error.message });

@@ -34,25 +34,25 @@ const router = Router();
 router.post('/api/admin', getAdmin);
 //Doctor
 router.post('/api/adminCreateDr', Admin, createDoctor);
-router.put('/api/adminDeleteDr/:idDoctor', Admin, deleteDoctor);
-router.put('/api/adminUpdateDr/:idDoctor', Admin, updateDoctor);
-//Sede
+router.put('/api/adminDeleteDr/:doctorId', Admin, deleteDoctor);
+router.put('/api/adminUpdateDr/:doctorId', Admin, updateDoctor);
+//Venue
 router.post('/api/adminCreateSede', Admin, createVenue);
-router.put('/api/adminUpdateSede/:idSede', Admin, updateVenue);
-router.put('/api/adminDeleteSede/:idSede', Admin, deleteVenue);
-//ObraSocial
+router.put('/api/adminUpdateSede/:venueId', Admin, updateVenue);
+router.put('/api/adminDeleteSede/:venueId', Admin, deleteVenue);
+//Insurance
 router.post('/api/adminCreateObraSocial', Admin, createInsurance);
 router.get('/api/os', getInsurances);
-router.put('/api/adminDeleteOS/:idObraSocial', Admin, deleteInsurance);
-router.put('/api/adminUpdateOS/:idObraSocial', Admin, updateInsurance);
-//Especialidad
+router.put('/api/adminDeleteOS/:insuranceId', Admin, deleteInsurance);
+router.put('/api/adminUpdateOS/:insuranceId', Admin, updateInsurance);
+//Specialty
 router.post('/api/adminCreateEsp', Admin, createSpecialty);
-router.put('/api/deleteSpecialties/:idEspecialidad', Admin, deleteSpecialty);
-//Combinaciones
+router.put('/api/deleteSpecialties/:specialtyId', Admin, deleteSpecialty);
+//Combinations
 router.post('/api/adminCreateSeEspDoc', Admin, createSeEspDoc);
-router.put('/api/adminDeleteSeEspDoc', Admin, deleteSeEspDoc); //Espera body de idSede, idEspecialidad, idDoctor
+router.put('/api/adminDeleteSeEspDoc', Admin, deleteSeEspDoc); //Expects body with venueId, specialtyId, doctorId
 router.get('/api/adminGetCombinaciones', Admin, getCombinaciones);
-//Horarios
+//Schedules
 router.post('/api/adminCreateHorario', Admin, createHorarios);
 router.post('/api/adminGetHorariosXDoctor', Admin, getHorariosXDoctor);
 router.put('/api/adminUpdateHorario', Admin, updateHorarios);

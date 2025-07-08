@@ -9,7 +9,7 @@ import {
 import { AdminOrPatient, Patient } from '../middleware/authorizeRole.js';
 const router = Router();
 
-// Ruta de debug para ver doctors
+// Debug route to view doctors
 router.get('/api/doctors/debug', async (req, res) => {
   try {
     const { pool } = await import('../db.js');
@@ -17,7 +17,7 @@ router.get('/api/doctors/debug', async (req, res) => {
       `SELECT d.*, u.first_name, u.last_name 
        FROM doctors d 
        LEFT JOIN users u ON d.dni = u.dni 
-       ORDER BY d.idDoctor`
+       ORDER BY d.doctorId`
     );
     res.json(result);
   } catch (error) {
@@ -25,16 +25,16 @@ router.get('/api/doctors/debug', async (req, res) => {
   }
 });
 
-//Doctores a partir de venue y specialty
+//Doctors based on venue and specialty
 router.post('/api/doctors', Patient, getDoctors);
 
 router.post('/api/availabledoctors', getDoctorsByVenueAndSpecialty);
-//Todos los doctors
+//All doctors
 router.post('/api/alldoctors', getDoctors);
 
 router.post('/api/doctorscontra', getDoctorByDniContra);
 
-router.get('/api/doctorsId/:idDoctor', AdminOrPatient, getDoctorById);
+router.get('/api/doctorsId/:doctorId', AdminOrPatient, getDoctorById);
 
 router.get('/api/doctorsdni', getDoctorByDni);
 

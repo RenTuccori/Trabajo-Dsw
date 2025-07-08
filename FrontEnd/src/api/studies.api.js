@@ -1,9 +1,9 @@
 import axiosInstance from './axiosInstance';
 
-// Subir un nuevo estudio
+// Upload a new study
 export const uploadEstudio = async (formData) => {
   try {
-    const response = await axiosInstance.post('estudios/upload', formData, {
+    const response = await axiosInstance.post('studies/upload', formData, {
       headers: {
         'Content-Type': 'multipart/form-data',
       },
@@ -14,30 +14,30 @@ export const uploadEstudio = async (formData) => {
   }
 };
 
-// Obtener estudios por patient
+// Get studies by patient
 export const getEstudiosByPaciente = async (patientId) => {
   try {
-    const response = await axiosInstance.get(`estudios/patient/${patientId}`);
+    const response = await axiosInstance.get(`studies/patient/${patientId}`);
     return response;
   } catch (error) {
     throw error.response?.data || error.message;
   }
 };
 
-// Obtener estudios por doctor
+// Get studies by doctor
 export const getEstudiosByDoctor = async (doctorId) => {
   try {
-    const response = await axiosInstance.get(`estudios/doctor/${doctorId}`);
+    const response = await axiosInstance.get(`studies/doctor/${doctorId}`);
     return response;
   } catch (error) {
     throw error.response?.data || error.message;
   }
 };
 
-// Descargar estudio
-export const downloadEstudio = async (idEstudio) => {
+// Download study
+export const downloadEstudio = async (studyId) => {
   try {
-    const response = await axiosInstance.get(`estudios/download/${idEstudio}`, {
+    const response = await axiosInstance.get(`studies/download/${studyId}`, {
       responseType: 'blob',
     });
     return response;
@@ -46,10 +46,10 @@ export const downloadEstudio = async (idEstudio) => {
   }
 };
 
-// Eliminar estudio
-export const deleteEstudio = async (idEstudio) => {
+// Delete study
+export const deleteEstudio = async (studyId) => {
   try {
-    const response = await axiosInstance.delete(`estudios/${idEstudio}`);
+    const response = await axiosInstance.delete(`studies/${studyId}`);
     return response;
   } catch (error) {
     throw error.response?.data || error.message;

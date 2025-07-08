@@ -1,7 +1,15 @@
-import axios from 'axios';
-const dbUrl = import.meta.env.VITE_DB_URL
+import axiosInstance from './axiosInstance';
+
 export const getObrasSociales = async () => {
-    return await axios.get(`http://${dbUrl}/api/os`);
+    console.log('🌐 FRONTEND - getObrasSociales: Obteniendo obras sociales');
+    try {
+        const response = await axiosInstance.get(`os`);
+        console.log('✅ FRONTEND - Respuesta obras sociales:', response.data);
+        return response;
+    } catch (error) {
+        console.error('❌ FRONTEND - Error en getObrasSociales:', error);
+        throw error;
+    }
 }
 
 

@@ -3,7 +3,7 @@ import Select from 'react-select';
 import { useNavigate } from 'react-router-dom';
 import { useAdministracion } from '../../context/administration/AdministrationProvider.jsx';
 
-export function createDoctor() {
+export function CreateDoctor() {
   const navigate = useNavigate();
   const {
     doctors,

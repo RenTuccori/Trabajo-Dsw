@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAdministracion } from '../../context/administration/AdministrationProvider.jsx';
 
-export function createVenue() {
+export function CreateVenue() {
   const navigate = useNavigate();
   const { venues, createNewVenue, getVenues, deleteVenue } =
     useAdministracion();

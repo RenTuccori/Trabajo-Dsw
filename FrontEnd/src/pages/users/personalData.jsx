@@ -7,7 +7,7 @@ import Select from 'react-select';
 import { notifyError } from '../../components/ToastConfig';
 import { confirmDialog } from '../../components/SwalConfig';
 
-export function personalData() {
+export function PersonalData() {
   const { healthInsurances, getHealthInsurances, createUser } = usePacientes();
   const { login } = useAuth();
   const [selectedObraSociales, setSelectedObraSociales] = useState(null);

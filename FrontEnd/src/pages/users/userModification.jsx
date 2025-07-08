@@ -3,13 +3,13 @@ import { useNavigate } from 'react-router-dom';
 import Select from 'react-select';
 import { usePacientes } from '../../context/patients/PatientsProvider';
 
-export function userModification() {
+export function UserModification() {
   const {
     userByDni,
-    getUserByDni,
+    getUserByDniFunction,
     getHealthInsurances,
     healthInsurances,
-    updateUser,
+    updateUserFunction,
   } = usePacientes();
   const [selectedObraSociales, setSelectedObraSociales] = useState(null);
   const navigate = useNavigate();
@@ -42,46 +42,77 @@ export function userModification() {
     );
 
     if (result.isConfirmed) {
-      const response = await updateUser(formData);
+      console.log('💾 FRONTEND - handleSubmit: Datos a enviar:', formData);
+      try {
+        const response = await updateUserFunction(formData);
+        console.log('📨 FRONTEND - handleSubmit: Respuesta recibida:', response);
 
-      if (response.data) {
-        console.log('Usuario actualizado con éxito');
-        window.notifySuccess('Usuario actualizado con éxito'); // Toast de éxito
-        navigate('/patient');
-      } else {
-        console.log('Error al actualizar user');
+        // Verificar si la respuesta indica éxito
+        if (response && response.data && (response.status === 200 || response.data.message === 'User updated')) {
+          console.log('✅ FRONTEND - Usuario actualizado con éxito');
+          window.notifySuccess('Usuario actualizado con éxito');
+          navigate('/patient');
+        } else {
+          console.log('❌ FRONTEND - Error al actualizar user - respuesta:', response);
+          window.confirmDialog(
+            'Error',
+            'No se pudo actualizar el usuario',
+            'error'
+          );
+        }
+      } catch (error) {
+        console.error('💥 FRONTEND - Error en handleSubmit:', error);
         window.confirmDialog(
           'Error',
-          'No se pudo actualizar el user',
+          'Ocurrió un error al actualizar el usuario',
           'error'
-        ); // Mensaje de error
+        );
       }
     }
   };
 
   useEffect(() => {
+    console.log('🔄 FRONTEND - userModification: useEffect disparado');
+    console.log('👤 FRONTEND - userByDni:', userByDni);
+    console.log('🏥 FRONTEND - healthInsurances:', healthInsurances);
+    
     getHealthInsurances();
-    getUserByDni();
+    getUserByDniFunction();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
     if (userByDni && healthInsurances.length > 0) {
+      console.log('🔧 FRONTEND - userModification: Mapeando datos del usuario:', userByDni);
+      console.log('🏥 FRONTEND - Obras sociales disponibles:', healthInsurances);
+      
+      const insuranceId = userByDni.idInsuranceCompany || userByDni.healthInsuranceId;
+      console.log('🆔 FRONTEND - ID de obra social del usuario:', insuranceId);
+      
+      // Buscar la obra social correspondiente
+      const matchingInsurance = healthInsurances.find((os) => 
+        (os.healthInsuranceId || os.idInsuranceCompany) === insuranceId
+      );
+      console.log('🔍 FRONTEND - Obra social encontrada:', matchingInsurance);
+      
       setFormData({
         dni: userByDni.dni,
-        name: userByDni.name,
+        name: userByDni.firstName || userByDni.name || '', // Mapear firstName a name
         lastName: userByDni.lastName,
         phone: userByDni.phone,
         email: userByDni.email,
         address: userByDni.address,
-        healthInsuranceId: userByDni.healthInsuranceId,
+        healthInsuranceId: insuranceId, // Mapear campo correcto
       });
 
       setSelectedObraSociales({
-        value: userByDni.healthInsuranceId,
-        label:
-          healthInsurances.find((os) => os.healthInsuranceId === userByDni.healthInsuranceId)
-            ?.name || 'No asignada',
+        value: insuranceId,
+        label: matchingInsurance?.name || 'No asignada',
+      });
+      
+      console.log('✅ FRONTEND - Obra social seleccionada:', {
+        value: insuranceId,
+        label: matchingInsurance?.name || 'No asignada',
       });
     }
   }, [userByDni, healthInsurances]);
@@ -156,10 +187,13 @@ export function userModification() {
           <div>
             <p className="text-center text-gray-600 text-lg">Obra Social</p>
             <Select
-              options={(healthInsurances || []).map((obrasociales) => ({
-                value: obrasociales.healthInsuranceId,
-                label: obrasociales.name,
-              }))}
+              options={(healthInsurances || []).map((obrasociales) => {
+                console.log('🏥 FRONTEND - Mapeando obra social:', obrasociales);
+                return {
+                  value: obrasociales.healthInsuranceId || obrasociales.idInsuranceCompany,
+                  label: obrasociales.name,
+                };
+              })}
               onChange={handleObraSocialChange}
               value={selectedObraSociales}
               className="react-select"

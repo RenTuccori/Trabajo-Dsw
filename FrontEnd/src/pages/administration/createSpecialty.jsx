@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAdministracion } from '../../context/administration/AdministrationProvider.jsx';
 
-export function createSpecialty() {
+export function CreateSpecialty() {
   const navigate = useNavigate();
   const {
     specialties,

@@ -1,9 +1,7 @@
-import axios from 'axios';
 import axiosInstance from './axiosInstance';
-const dbUrl = import.meta.env.VITE_DB_URL
 
 export const getAdmin = async ({ user, password }) => {
-    return await axios.post(`http://${dbUrl}/api/admin`, { user, password });
+    return await axiosInstance.post(`admin`, { user, password });
 }
 
 //Doctor
@@ -72,18 +70,18 @@ export const createObraSocial = async ({ name }) => {
     }
 }
 
-export const updateObraSocial = async ({ healthInsuranceId, name }) => {
+export const updateObraSocial = async ({ insuranceId, name }) => {
     try {
-        const response = await axiosInstance.put(`adminUpdateOS/${healthInsuranceId}`, { name });
+        const response = await axiosInstance.put(`adminUpdateOS/${insuranceId}`, { name });
         return response;
     } catch (error) {
         return error.response.data.message;
     }
 }
 
-export const deleteObraSocial = async (healthInsuranceId) => {
+export const deleteObraSocial = async (insuranceId) => {
     try {
-        const response = await axiosInstance.put(`adminDeleteOS/${healthInsuranceId}`, healthInsuranceId);
+        const response = await axiosInstance.put(`adminDeleteOS/${insuranceId}`, insuranceId);
         return response;
     } catch (error) {
         return error.response.data.message;
@@ -138,9 +136,9 @@ export const getCombinaciones = async () => {
 }
 
 //Horarios
-export const createHorarios = async ({ venueId, doctorId, specialtyId, dia, hora_inicio, hora_fin, status }) => {
+export const createHorarios = async ({ venueId, doctorId, specialtyId, day, startTime, endTime, status }) => {
     try {
-        const response = await axiosInstance.post(`adminCreateHorario`, { venueId, doctorId, specialtyId, dia, hora_inicio, hora_fin, status });
+        const response = await axiosInstance.post(`adminCreateHorario`, { venueId, doctorId, specialtyId, day, startTime, endTime, status });
         return response;
     } catch (error) {
         return error.response.data.message;
@@ -156,9 +154,9 @@ export const getHorariosXDoctor = async ({ venueId, specialtyId, doctorId }) => 
     }
 }
 
-export const updateHorarios = async ({ venueId, doctorId, specialtyId, dia, hora_inicio, hora_fin, status }) => {
+export const updateHorarios = async ({ venueId, doctorId, specialtyId, day, startTime, endTime, status }) => {
     try {
-        const response = await axiosInstance.put(`adminUpdateHorario`, { venueId, doctorId, specialtyId, dia, hora_inicio, hora_fin, status });
+        const response = await axiosInstance.put(`adminUpdateHorario`, { venueId, doctorId, specialtyId, day, startTime, endTime, status });
         return response;
     } catch (error) {
         return error.response.data.message;

@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { useAdministracion } from '../../context/administration/AdministrationProvider.jsx';
 
-export function createSchedules() {
+export function CreateSchedules() {
   const navigate = useNavigate();
   const location = useLocation();
   const { venueId, specialtyId, doctorId } = location.state || {};

@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAdministracion } from '../../context/administration/AdministrationProvider.jsx';
 
-export function createInsurance() {
+export function CreateInsurance() {
   const navigate = useNavigate();
   const {
     healthInsurances,

@@ -2,27 +2,33 @@ import { pool } from '../db.js';
 
 export const getVenues = async (req, res) => {
   try {
-    const [result] = await pool.query('SELECT * FROM venues WHERE estado = \'Habilitado\'');
+    console.log('🏢 BACKEND - getVenues: Obteniendo sedes');
+    const [result] = await pool.query('SELECT * FROM sites WHERE status = \'Habilitado\'');
+    console.log('🗄️ BACKEND - Sedes encontradas:', result);
+    console.log('📊 BACKEND - Número de sedes:', result.length);
+    
     if (result.length === 0) {
-      return res.status(404).json({ message: 'No hay venues habilitadas' });
+      console.log('⚠️ BACKEND - No hay sedes habilitadas');
+      return res.status(404).json({ message: 'No enabled venues' });
     } else {
+      console.log('✅ BACKEND - Enviando sedes');
       res.json(result);
     }
   } catch (error) {
-    console.log(error);
+    console.log('💥 BACKEND - Error en getVenues:', error);
     return res.status(500).json({ message: error.message });
   }
 };
 
 export const getVenueById = async (req, res) => {
   try {
-    const { idSede } = req.params;
+    const { venueId } = req.params;
     const [result] = await pool.query(
-      'SELECT * FROM venues WHERE idSede = ? AND estado = \'Habilitado\'',
-      [idSede]
+      'SELECT * FROM sites WHERE idSite = ? AND status = \'Habilitado\'',
+      [venueId]
     );
     if (result.length === 0) {
-      return res.status(404).json({ message: 'Sede no encontrada o no está habilitada' });
+      return res.status(404).json({ message: 'Venue not found or not enabled' });
     } else {
       res.json(result[0]);
     }
@@ -33,31 +39,31 @@ export const getVenueById = async (req, res) => {
 
 export const createVenue = async (req, res) => {
   try {
-    const { first_name, address } = req.body;
-    const estado = 'Habilitado';
+    const { name, address } = req.body;
+    const status = 'Habilitado';
 
-    // Verificar si ya existe una venue con el mismo first_name y estado habilitado
-    const [existingSede] = await pool.query(
-      'SELECT * FROM venues WHERE first_name = ? AND estado = ?',
-      [first_name, estado]
+    // Check if a venue with the same name and enabled status already exists
+    const [existingVenue] = await pool.query(
+      'SELECT * FROM sites WHERE name = ? AND status = ?',
+      [name, status]
     );
 
-    if (existingSede.length > 0) {
-      // Si ya existe una venue habilitada con el mismo first_name
-      return res.status(400).json({ message: 'Ya existe una venue habilitada con este first_name.' });
+    if (existingVenue.length > 0) {
+      // If an enabled venue with the same name already exists
+      return res.status(400).json({ message: 'An enabled venue with this name already exists.' });
     }
 
-    // Insertar nueva venue con estado habilitado
+    // Insert new venue with enabled status
     const [result] = await pool.query(
-      'INSERT INTO venues (first_name, address, estado) VALUES (?, ?, ?)',
-      [first_name, address, estado]
+      'INSERT INTO sites (name, address, status) VALUES (?, ?, ?)',
+      [name, address, status]
     );
 
     res.json({
-      idSede: result.insertId,
-      first_name,
+      idSite: result.insertId,
+      name: name,
       address,
-      estado,
+      status: status,
     });
   } catch (error) {
     return res.status(500).json({ message: error.message });
@@ -68,19 +74,19 @@ export const createVenue = async (req, res) => {
 
 
 export const updateVenue = async (req, res) => {
-  const { idSede } = req.params;
-  const { first_name, address } = req.body;
+  const { venueId } = req.params;
+  const { name, address } = req.body;
 
   try {
     const [result] = await pool.query(
-      'UPDATE venues SET first_name = ?, address = ? WHERE idSede = ?',
-      [first_name, address, idSede]
+      'UPDATE sites SET name = ?, address = ? WHERE idSite = ?',
+      [name, address, venueId]
     );
 
     if (result.affectedRows === 0) {
-      return res.status(404).json({ message: 'Sede no encontrada' });
+      return res.status(404).json({ message: 'Venue not found' });
     }
-    res.json({ idSede, first_name, address });
+    res.json({ venueId, name, address });
   } catch (error) {
     return res.status(500).json({ message: error.message });
   }
@@ -89,37 +95,37 @@ export const updateVenue = async (req, res) => {
 
 export const deleteVenue = async (req, res) => {
   try {
-    const { idSede } = req.params;
+    const { venueId } = req.params;
 
-    // Iniciar una transacción para asegurar consistencia en las actualizaciones
+    // Start a transaction to ensure consistency in updates
     await pool.query('START TRANSACTION');
 
-    // Actualizar el estado de la venue a "Deshabilitado"
-    const [resultSede] = await pool.query(
-      'UPDATE venues SET estado = "Deshabilitado" WHERE idSede = ?',
-      [idSede]
+    // Update venue status to "Deshabilitado"
+    const [resultVenue] = await pool.query(
+      'UPDATE sites SET status = "Deshabilitado" WHERE idSite = ?',
+      [venueId]
     );
 
-    // Si no se encontró la venue, devolver un error
-    if (resultSede.affectedRows === 0) {
-      // Si la venue no existe, hacer un rollback de la transacción
+    // If venue not found, return error
+    if (resultVenue.affectedRows === 0) {
+      // If venue doesn't exist, rollback transaction
       await pool.query('ROLLBACK');
-      return res.status(404).json({ message: 'Sede no encontrada' });
+      return res.status(404).json({ message: 'Venue not found' });
     }
 
-    // Actualizar el estado de las combinaciones en la tabla sededoctoresp a "Deshabilitado"
-    const [resultCombinacion] = await pool.query(
-      'UPDATE sededoctoresp SET estado = "Deshabilitado" WHERE idSede = ?',
-      [idSede]
+    // Update status of combinations in sitedoctorspecialty table to "Deshabilitado"
+    const [resultCombination] = await pool.query(
+      'UPDATE sitedoctorspecialty SET status = "Deshabilitado" WHERE idSite = ?',
+      [venueId]
     );
 
-    // Confirmar la transacción si todo salió bien
+    // Commit transaction if everything went well
     await pool.query('COMMIT');
 
-    // Si la transacción fue exitosa, devolver 204 No Content
-    return res.sendStatus(204); // No hay contenido que devolver, pero la operación fue exitosa
+    // If transaction was successful, return 204 No Content
+    return res.sendStatus(204); // No content to return, but operation was successful
   } catch (error) {
-    // Si ocurre un error, hacer rollback de la transacción
+    // If an error occurs, rollback transaction
     await pool.query('ROLLBACK');
     return res.status(500).json({ message: error.message });
   }

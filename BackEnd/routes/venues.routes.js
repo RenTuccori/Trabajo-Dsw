@@ -5,6 +5,6 @@ const router = Router();
 
 router.get('/api/venues', AdminOrPatient, getVenues);
 
-router.get('/api/venues/:idSede', Patient, getVenueById);
+router.get('/api/venues/:venueId', Patient, getVenueById);
 
 export default router;

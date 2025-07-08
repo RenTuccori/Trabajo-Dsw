@@ -6,7 +6,7 @@ import '../../estilos/home.css';
 import '../../estilos/sacarturno.css';
 import '../../estilos/verTurnos.css';
 
-export function todayAppointments() {
+export function TodayAppointments() {
   const { turnosHoy, TurnosHoy } = useDoctores();
   const navigate = useNavigate();
 
@@ -41,14 +41,14 @@ export function todayAppointments() {
                 className="bg-gray-50 rounded-lg p-4 shadow-sm mb-4"
               >
                 <p>
-                  <strong>Sede:</strong> {appointment.sede}
+                  <strong>Sede:</strong> {appointment.venue}
                 </p>
                 <p>
-                  <strong>Especialidad:</strong> {appointment.especialidad}
+                  <strong>Especialidad:</strong> {appointment.specialty}
                 </p>
                 <p>
                   <strong>Fecha y Hora:</strong>{' '}
-                  {formatFechaHora(appointment.dateAndTime)}
+                  {formatFechaHora(appointment.dateTime)}
                 </p>
                 <p>
                   <strong>Estado:</strong> {appointment.status}
@@ -57,7 +57,7 @@ export function todayAppointments() {
                   <strong>DNI Paciente:</strong> {appointment.dni}
                 </p>
                 <p>
-                  <strong>Apellido y Nombre:</strong> {appointment.nomyapel}
+                  <strong>Apellido y Nombre:</strong> {appointment.patientName}
                 </p>
               </div>
             ))

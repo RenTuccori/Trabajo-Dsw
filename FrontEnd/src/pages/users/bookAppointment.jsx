@@ -5,7 +5,7 @@ import { useNavigate } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import 'react-datepicker/dist/react-datepicker.css';
 
-export function bookAppointment() {
+export function BookAppointment() {
   const navigate = useNavigate();
   const {
     venues,
@@ -38,6 +38,11 @@ export function bookAppointment() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
+  useEffect(() => {
+    console.log('🔄 FRONTEND - Especialidades actualizadas:', specialties);
+    console.log('📊 FRONTEND - Número de especialidades:', specialties?.length || 0);
+  }, [specialties]);
+
   const customStyles = {
     option: (provided, state) => ({
       ...provided,
@@ -66,19 +71,42 @@ export function bookAppointment() {
   };
 
   const handleSedeChange = async (selectedOption) => {
+    console.log('🏢 FRONTEND - handleSedeChange: Sede seleccionada:', selectedOption);
     setSelectedVenue(selectedOption);
     setSelectedSpecialty(null);
     setSelectedDoctor(null);
+    
+    // Configurar el venueId cuando se selecciona la sede
     if (selectedOption) {
-      getSpecialties({ venueId: selectedOption.value });
+      console.log('🆔 FRONTEND - Configurando venueId:', selectedOption.value);
+      setVenueId(selectedOption.value);
+    }
+    
+    if (selectedOption) {
+      console.log('📞 FRONTEND - Obteniendo especialidades para sede:', selectedOption.value);
+      await getSpecialties({ venueId: selectedOption.value });
+      console.log('📋 FRONTEND - Especialidades después de la llamada:', specialties);
     }
   };
 
   const handleEspecilidadChange = async (selectedOption) => {
+    console.log('🩺 FRONTEND - handleEspecilidadChange: Especialidad seleccionada:', selectedOption);
+    console.log('🏢 FRONTEND - Sede actual:', selectedVenue);
     setSelectedSpecialty(selectedOption);
     setSelectedDoctor(null);
+    
+    // Configurar el specialtyId cuando se selecciona la especialidad
+    if (selectedOption) {
+      console.log('🆔 FRONTEND - Configurando specialtyId:', selectedOption.value);
+      setSpecialtyId(selectedOption.value);
+    }
+    
     if (selectedVenue && selectedOption) {
-      getDoctors({
+      console.log('📞 FRONTEND - Obteniendo doctores para sede y especialidad:', {
+        venueId: selectedVenue.value,
+        specialtyId: selectedOption.value
+      });
+      await getDoctors({
         venueId: selectedVenue.value,
         specialtyId: selectedOption.value,
       });
@@ -86,11 +114,22 @@ export function bookAppointment() {
   };
 
   const handleDoctorChange = async (selectedOption) => {
+    console.log('👨‍⚕️ FRONTEND - handleDoctorChange: Doctor seleccionado:', selectedOption);
+    console.log('🏢 FRONTEND - Sede actual:', selectedVenue);
+    console.log('🩺 FRONTEND - Especialidad actual:', selectedSpecialty);
     setSelectedDoctor(selectedOption);
     setSelectedDate(null);
+    
+    // Configurar el doctorId cuando se selecciona el doctor
+    if (selectedOption) {
+      console.log('🆔 FRONTEND - Configurando doctorId:', selectedOption.value);
+      setDoctorId(selectedOption.value);
+    }
+    
     if (selectedVenue && selectedOption && selectedSpecialty) {
-      getDates({ selectedOption, selectedSpecialty, selectedVenue });
-      console.log(dates);
+      console.log('📞 FRONTEND - Obteniendo fechas para doctor, especialidad y sede');
+      await getDates({ selectedOption, selectedSpecialty, selectedVenue });
+      console.log('📅 FRONTEND - Fechas obtenidas:', dates);
     }
   };
 
@@ -176,10 +215,13 @@ export function bookAppointment() {
           <p className="text-center text-gray-600 text-lg">Sede</p>
           <Select
             className="react-select"
-            options={(venues || []).map((sede) => ({
-              value: sede.venueId,
-              label: sede.name,
-            }))}
+            options={(venues || []).map((sede) => {
+              console.log('🏢 FRONTEND - Mapeando sede:', sede);
+              return {
+                value: sede.venueId || sede.idSite,
+                label: sede.name,
+              };
+            })}
             onChange={handleSedeChange}
             value={selectedVenue}
             styles={customStyles}
@@ -187,10 +229,13 @@ export function bookAppointment() {
           <p className="text-center text-gray-600 text-lg">Especialidad</p>
           <Select
             className="react-select"
-            options={(specialties || []).map((especialidad) => ({
-              value: especialidad.specialtyId,
-              label: especialidad.name,
-            }))}
+            options={(specialties || []).map((especialidad) => {
+              console.log('🩺 FRONTEND - Mapeando especialidad:', especialidad);
+              return {
+                value: especialidad.idSpecialty || especialidad.specialtyId,
+                label: especialidad.name,
+              };
+            })}
             onChange={handleEspecilidadChange}
             value={selectedSpecialty}
             isDisabled={!selectedVenue}
@@ -199,10 +244,13 @@ export function bookAppointment() {
           <p className="text-center text-gray-600 text-lg">Doctores</p>
           <Select
             className="react-select"
-            options={(doctors || []).map((doctor) => ({
-              value: doctor.doctorId,
-              label: doctor.nombreyapellido,
-            }))}
+            options={(doctors || []).map((doctor) => {
+              console.log('👨‍⚕️ FRONTEND - Mapeando doctor:', doctor);
+              return {
+                value: doctor.idDoctor || doctor.doctorId,
+                label: doctor.nombreyapellido,
+              };
+            })}
             value={selectedDoctor}
             onChange={handleDoctorChange}
             isDisabled={!selectedSpecialty}
@@ -222,8 +270,8 @@ export function bookAppointment() {
           <Select
             className="react-select"
             options={(schedules || []).map((horario) => ({
-              value: horario.hora_inicio,
-              label: horario.hora_inicio,
+              value: horario.startTime,
+              label: horario.startTime,
             }))}
             onChange={handleHorarioChange}
             value={selectedSchedule}

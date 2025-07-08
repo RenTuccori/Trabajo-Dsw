@@ -11,25 +11,25 @@ import { Doctor, Patient } from '../middleware/authorizeRole.js';
 
 const router = Router();
 
-// Ruta de prueba
+// Test route
 router.get('/api/studies/test', (req, res) => {
-  res.json({ message: 'Rutas de studies funcionando correctamente' });
+  res.json({ message: 'Studies routes working correctly' });
 });
 
-// Ruta de debug temporal para ver studies
+// Temporary debug route to view studies
 router.get('/api/studies/debug', async (req, res) => {
   try {
     const { pool } = await import('../db.js');
     const [result] = await pool.query(
       `SELECT e.*, 
-              p.dni as dniPaciente, up.first_name as nombrePaciente, up.last_name as apellidoPaciente,
-              d.dni as dniDoctor, ud.first_name as nombreDoctor, ud.last_name as apellidoDoctor
+              p.dni as patientDni, up.first_name as patientFirstName, up.last_name as patientLastName,
+              d.dni as doctorDni, ud.first_name as doctorFirstName, ud.last_name as doctorLastName
        FROM studies e
-       LEFT JOIN patients p ON e.idPaciente = p.idPaciente
+       LEFT JOIN patients p ON e.patientId = p.patientId
        LEFT JOIN users up ON p.dni = up.dni
-       LEFT JOIN doctors d ON e.idDoctor = d.idDoctor
+       LEFT JOIN doctors d ON e.doctorId = d.doctorId
        LEFT JOIN users ud ON d.dni = ud.dni
-       ORDER BY e.idEstudio DESC`
+       ORDER BY e.studyId DESC`
     );
     res.json(result);
   } catch (error) {
@@ -37,7 +37,7 @@ router.get('/api/studies/debug', async (req, res) => {
   }
 });
 
-// Subir un nuevo study (solo doctors)
+// Upload a new study (doctors only)
 router.post(
   '/api/studies/upload',
   Doctor,
@@ -45,20 +45,20 @@ router.post(
   createStudy
 );
 
-// Obtener studies por patient (patients pueden ver sus studies)
+// Get studies by patient (patients can see their studies)
 router.get(
-  '/api/studies/patient/:idPaciente',
+  '/api/studies/patient/:patientId',
   Patient,
   getStudiesByPatient
 );
 
-// Obtener studies por doctor (doctors pueden ver sus studies subidos)
-router.get('/api/studies/doctor/:idDoctor', Doctor, getStudiesByDoctor);
+// Get studies by doctor (doctors can see their uploaded studies)
+router.get('/api/studies/doctor/:doctorId', Doctor, getStudiesByDoctor);
 
-// Descargar archivo de study
-router.get('/api/studies/download/:idEstudio', downloadStudy);
+// Download study file
+router.get('/api/studies/download/:studyId', downloadStudy);
 
-// Eliminar study (solo doctors)
-router.delete('/api/studies/:idEstudio', Doctor, deleteStudy);
+// Delete study (doctors only)
+router.delete('/api/studies/:studyId', Doctor, deleteStudy);
 
 export default router;

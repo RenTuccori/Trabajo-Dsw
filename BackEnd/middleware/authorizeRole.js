@@ -1,22 +1,29 @@
 // middleware/authorizeRole.js
 export const authorizeRole = (...allowedRoles) => {
   return (req, res, next) => {
+    console.log('🔐 BACKEND - Middleware authorizeRole ejecutándose');
+    console.log('🎯 BACKEND - Roles permitidos:', allowedRoles);
+    
     const userRole = req.session.rol; // Usuario tiene un único rol
+    console.log('👤 BACKEND - Rol del usuario:', userRole);
 
     if (!userRole) {
+      console.log('❌ BACKEND - Sin rol de usuario, acceso denegado');
       return res
         .status(401)
-        .json({ message: 'No autorizado. Token inválido o inexistente.' });
+        .json({ message: 'Unauthorized. Invalid or missing token.' });
     }
 
     if (!allowedRoles.includes(userRole)) {
+      console.log('🚫 BACKEND - Rol no autorizado para esta ruta');
       return res.status(403).json({
-        message: `Acceso denegado. Se requiere uno de los roles: ${allowedRoles.join(
+        message: `Access denied. Required roles: ${allowedRoles.join(
           ', '
         )}.`,
       });
     }
 
+    console.log('✅ BACKEND - Autorización exitosa, continuando...');
     next();
   };
 };

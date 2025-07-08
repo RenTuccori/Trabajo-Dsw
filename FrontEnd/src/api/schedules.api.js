@@ -9,9 +9,9 @@ export const getFechasDispTodos = async ({ doctorId, specialtyId, venueId }) => 
     }
 }
 
-export const getHorariosDisp = async ({ doctorId, specialtyId, venueId, fecha }) => {
+export const getHorariosDisp = async ({ doctorId, specialtyId, venueId, date }) => {
     try {
-        const response = await axiosInstance.post(`HorariosDispDocEspSed`, { doctorId, specialtyId, venueId, fecha });
+        const response = await axiosInstance.post(`HorariosDispDocEspSed`, { doctorId, specialtyId, venueId, date });
         return response;
     } catch (error) {
         return error.response.data.message;

@@ -35,7 +35,7 @@ const DoctorsProvider = ({ children }) => {
         setTurnosHist(response.data.data);
         console.log('entre')
         const fechasDisponibles = response.data.data.map(
-          (appointment) => new Date(appointment.dateAndTime.split('T')[0])
+          (appointment) => new Date(appointment.dateTime.split('T')[0])
         );
         setDates(fechasDisponibles);
       } else {
@@ -57,7 +57,7 @@ const DoctorsProvider = ({ children }) => {
       .padStart(2, '0')}-${fecha.getDate().toString().padStart(2, '0')}`;
     const response = await getappointmentsByDate({
       doctorId,
-      dateAndTime: formattedDate,
+      dateTime: formattedDate,
     });
     setTurnosFecha(response.data);
   }

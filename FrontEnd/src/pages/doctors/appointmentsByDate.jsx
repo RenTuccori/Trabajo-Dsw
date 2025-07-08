@@ -4,7 +4,7 @@ import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import { useNavigate } from 'react-router-dom';
 
-export function appointmentsByDate() {
+export function AppointmentsByDate() {
   const navigate = useNavigate();
   const [selectedDate, setSelectedDate] = useState(null);
   const { dates, Historico, turnosFecha, Fecha } = useDoctores();
@@ -65,13 +65,13 @@ export function appointmentsByDate() {
                   className="bg-gray-50 rounded-lg p-4 shadow-sm mb-4"
                 >
                   <p>
-                    <strong>Sede:</strong> {appointment.sede}
+                    <strong>Sede:</strong> {appointment.venue}
                   </p>
                   <p>
-                    <strong>Especialidad:</strong> {appointment.especialidad}
+                    <strong>Especialidad:</strong> {appointment.specialty}
                   </p>
                   <p>
-                    <strong>Hora:</strong> {formatHora(appointment.dateAndTime)}
+                    <strong>Hora:</strong> {formatHora(appointment.dateTime)}
                   </p>
                   <p>
                     <strong>Estado:</strong> {appointment.status}
@@ -80,7 +80,7 @@ export function appointmentsByDate() {
                     <strong>DNI Paciente:</strong> {appointment.dni}
                   </p>
                   <p>
-                    <strong>Apellido y Nombre:</strong> {appointment.nomyapel}
+                    <strong>Apellido y Nombre:</strong> {appointment.patientName}
                   </p>
                 </div>
               ))

@@ -1,10 +1,13 @@
 import axiosInstance from './axiosInstance';
 
 export const getSedes = async () => {
+    console.log('🌐 FRONTEND - getSedes: Obteniendo sedes del backend');
     try {
         const response = await axiosInstance.get(`venues`);
+        console.log('✅ FRONTEND - Respuesta sedes:', response.data);
         return response;
     } catch (error) {
+        console.error('❌ FRONTEND - Error en getSedes:', error);
         return error.response.data.message;
     }
 }

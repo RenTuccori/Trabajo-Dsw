@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/global/AuthProvider';
 
-function doctorHome() {
+function DoctorHome() {
   const { doctorId, login, comprobarToken, nombreUsuario, apellidoUsuario } =
     useAuth();
   const [dni, setDni] = useState('');
@@ -122,7 +122,7 @@ function doctorHome() {
   );
 }
 
-export default doctorHome;
+export default DoctorHome;
 
 
 

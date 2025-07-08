@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { usePacientes } from '../../context/patients/PatientsProvider.jsx';
 
-export function appointmentConfirmation() {
+export function AppointmentConfirmation() {
   const navigate = useNavigate();
   const {
     specialtyName,
@@ -12,12 +12,13 @@ export function appointmentConfirmation() {
     venueAddress,
     dateAndTime,
     createAppointment,
-    getDoctorById,
+    getDoctorByIdFunction,
     getSpecialtyById,
     getVenueById,
     userEmail,
-    getUserByDni,
-    sendEmail,
+    getUserByDniFunction,
+    getPatientByDni,
+    sendEmailFunction,
   } = usePacientes();
 
   const [turnoCreado, setTurnoCreado] = useState(false); // Estado para saber si el appointment fue creado
@@ -25,17 +26,21 @@ export function appointmentConfirmation() {
   useEffect(() => {
     const confirmarTurno = async () => {
       try {
+        console.log('🎯 FRONTEND - appointmentConfirmation: Iniciando confirmación de turno');
         // Asegurarse de que todas las funciones asincrónicas se completen antes de continuar
-        await getUserByDni();
-        await getDoctorById();
+        await getUserByDniFunction();
+        await getPatientByDni(); // Añadir esta línea para obtener el patientId
+        await getDoctorByIdFunction();
         await getSpecialtyById();
         await getVenueById();
 
         // Crear appointment
+        console.log('📝 FRONTEND - appointmentConfirmation: Creando appointment');
         await createAppointment();
+        console.log('✅ FRONTEND - appointmentConfirmation: Appointment creado exitosamente');
         setTurnoCreado(true);
       } catch (error) {
-        console.error('Error al crear el appointment:', error);
+        console.error('💥 FRONTEND - appointmentConfirmation: Error al crear el appointment:', error);
       }
     };
 
@@ -63,13 +68,15 @@ export function appointmentConfirmation() {
             </div>`;
 
       // Llamar a la función para mandar el correo
-      sendEmail({
+      console.log('📧 FRONTEND - appointmentConfirmation: Enviando email de confirmación');
+      sendEmailFunction({
         to: userEmail, // Asegúrate de pasar el destinatario como tal
         subject: 'Turno Creado',
         html: cuerpo,
       });
+      console.log('✅ FRONTEND - appointmentConfirmation: Email enviado exitosamente');
     }
-  }, [turnoCreado, userEmail]); // Este efecto se ejecuta solo cuando `userEmail` y `turnoCreado` están listos
+  }, [turnoCreado, userEmail, dateAndTime, doctorName, doctorLastName, specialtyName, venueName, venueAddress, sendEmailFunction]); // Este efecto se ejecuta solo cuando `userEmail` y `turnoCreado` están listos
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-blue-100 to-white flex flex-col items-center justify-center p-6">

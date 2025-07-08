@@ -5,7 +5,7 @@ import { useDoctores } from '../../context/doctors/DoctorsProvider.jsx';
 import '../../estilos/home.css';
 import '../../estilos/sacarturno.css';
 
-export function historicalAppointments() {
+export function HistoricalAppointments() {
   const { turnosHist, Historico } = useDoctores();
   const navigate = useNavigate();
 
@@ -45,14 +45,14 @@ export function historicalAppointments() {
                 className="bg-gray-50 rounded-lg p-4 shadow-sm mb-4"
               >
                 <p>
-                  <strong>Sede:</strong> {appointment.sede}
+                  <strong>Sede:</strong> {appointment.venue}
                 </p>
                 <p>
-                  <strong>Especialidad:</strong> {appointment.especialidad}
+                  <strong>Especialidad:</strong> {appointment.specialty}
                 </p>
                 <p>
                   <strong>Fecha y Hora:</strong>{' '}
-                  {formatFechaHora(appointment.dateAndTime)}
+                  {formatFechaHora(appointment.dateTime)}
                 </p>
                 <p>
                   <strong>Estado:</strong> {appointment.status}
@@ -61,7 +61,7 @@ export function historicalAppointments() {
                   <strong>DNI Paciente:</strong> {appointment.dni}
                 </p>
                 <p>
-                  <strong>Apellido y Nombre:</strong> {appointment.nomyapel}
+                  <strong>Apellido y Nombre:</strong> {appointment.patientName}
                 </p>
               </div>
             ))

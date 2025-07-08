@@ -1,12 +1,12 @@
 import { Routes, Route } from 'react-router-dom';
 import PatientsProvider from '../context/patients/PatientsProvider.jsx';
-import userHome from '../pages/users/userHome.jsx';
-import { bookAppointment } from '../pages/users/bookAppointment.jsx';
-import { personalData } from '../pages/users/personalData.jsx';
-import { userModification } from '../pages/users/userModification.jsx';
-import { patientAppointments } from '../pages/users/patientAppointments.jsx';
-import { appointmentConfirmation } from '../pages/users/appointmentConfirmation';
-import viewStudies from '../pages/users/viewStudies.jsx';
+import UserHome from '../pages/users/userHome.jsx';
+import { BookAppointment } from '../pages/users/bookAppointment.jsx';
+import { PersonalData } from '../pages/users/personalData.jsx';
+import { UserModification } from '../pages/users/userModification.jsx';
+import { PatientAppointments } from '../pages/users/patientAppointments.jsx';
+import { AppointmentConfirmation } from '../pages/users/appointmentConfirmation';
+import ViewStudies from '../pages/users/viewStudies.jsx';
 import { validation } from './validation.jsx';
 import { ProtectedRoute } from '../components/ProtectedRoute.jsx';
 import { useAuth } from '../context/global/AuthProvider.jsx';
@@ -16,14 +16,14 @@ export function PacientesRoutes() {
   return (
     <PatientsProvider>
       <Routes>
-        <Route path="/" element={<userHome />} />
-        <Route path="/personalData" element={<personalData />} />
+        <Route path="/" element={<UserHome />} />
+        <Route path="/personalData" element={<PersonalData />} />
         <Route
           path="/bookAppointment"
           element={
             <validation rol={rol} esperado={'Patient'}>
               <ProtectedRoute requiredRole="Patient">
-                <bookAppointment />
+                <BookAppointment />
               </ProtectedRoute>
             </validation>
           }
@@ -33,7 +33,7 @@ export function PacientesRoutes() {
           element={
             <validation rol={rol} esperado={'Patient'}>
               <ProtectedRoute requiredRole="Patient">
-                <userModification />
+                <UserModification />
               </ProtectedRoute>
             </validation>
           }
@@ -43,7 +43,7 @@ export function PacientesRoutes() {
           element={
             <validation rol={rol} esperado={'Patient'}>
               <ProtectedRoute requiredRole="Patient">
-                <appointmentConfirmation />
+                <AppointmentConfirmation />
               </ProtectedRoute>
             </validation>
           }
@@ -53,7 +53,7 @@ export function PacientesRoutes() {
           element={
             <validation rol={rol} esperado={'Patient'}>
               <ProtectedRoute requiredRole="Patient">
-                <patientAppointments />
+                <PatientAppointments />
               </ProtectedRoute>
             </validation>
           }
@@ -63,7 +63,7 @@ export function PacientesRoutes() {
           element={
             <validation rol={rol} esperado={'Patient'}>
               <ProtectedRoute requiredRole="Patient">
-                <viewStudies />
+                <ViewStudies />
               </ProtectedRoute>
             </validation>
           }

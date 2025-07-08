@@ -49,12 +49,12 @@ export const upload = multer({
 // Crear un nuevo study
 export const createStudy = async (req, res) => {
   try {
-    const { idPaciente, fechaRealizacion, description } = req.body;
+    const { patientId, performanceDate, description } = req.body;
 
-    // Extraer idDoctor del token JWT
+    // Extract idDoctor from JWT token
     const authHeader = req.headers.authorization;
     if (!authHeader) {
-      return res.status(401).json({ message: 'Token requerido' });
+      return res.status(401).json({ message: 'Token required' });
     }
 
     const token = authHeader.split(' ')[1];
@@ -63,136 +63,136 @@ export const createStudy = async (req, res) => {
       const jwt = await import('jsonwebtoken');
       decodedToken = jwt.default.verify(token, 'CLAVE_SUPER_SEGURISIMA');
     } catch (error) {
-      return res.status(401).json({ message: 'Token inválido' });
+      return res.status(401).json({ message: 'Invalid token' });
     }
 
     const idDoctor = decodedToken.idDoctor;
     if (!idDoctor) {
       return res
         .status(400)
-        .json({ message: 'ID de doctor no encontrado en el token' });
+        .json({ message: 'Doctor ID not found in token' });
     }
 
     if (!req.file) {
       return res
         .status(400)
-        .json({ message: 'No se ha subido ningún archivo' });
+        .json({ message: 'No file uploaded' });
     }
 
-    const fechaCarga = new Date();
-    const nombreArchivo = req.file.originalname;
-    const rutaArchivo = req.file.path;
+    const uploadDate = new Date();
+    const fileName = req.file.originalname;
+    const filePath = req.file.path;
 
     const [result] = await pool.query(
-      `INSERT INTO studies (idPaciente, idDoctor, fechaRealizacion, fechaCarga, nombreArchivo, rutaArchivo, description)
+      `INSERT INTO studies (idPatient, idDoctor, performanceDate, uploadDate, fileName, filePath, description)
        VALUES (?, ?, ?, ?, ?, ?, ?)`,
       [
-        idPaciente,
+        patientId,
         idDoctor,
-        fechaRealizacion,
-        fechaCarga,
-        nombreArchivo,
-        rutaArchivo,
+        performanceDate,
+        uploadDate,
+        fileName,
+        filePath,
         description,
       ]
     );
 
     res.status(201).json({
-      message: 'Estudio subido exitosamente',
-      idEstudio: result.insertId,
-      nombreArchivo,
-      fechaCarga,
+      message: 'Study uploaded successfully',
+      idStudy: result.insertId,
+      fileName: fileName,
+      uploadDate: uploadDate,
     });
   } catch (error) {
-    // Si hay error, eliminar el archivo subido
+    // If there's an error, delete the uploaded file
     if (req.file && fs.existsSync(req.file.path)) {
       fs.unlinkSync(req.file.path);
     }
-    console.error('Error al crear study:', error);
+    console.error('Error creating study:', error);
     return res.status(500).json({ message: error.message });
   }
 };
 
-// Obtener studies por patient
+// Get studies by patient
 export const getStudiesByPatient = async (req, res) => {
   try {
-    const { idPaciente } = req.params;
+    const { patientId } = req.params;
 
     const [result] = await pool.query(
-      `SELECT e.idEstudio, e.fechaRealizacion, e.fechaCarga, e.nombreArchivo, 
-              e.description, CONCAT(u.first_name, ' ', u.last_name) as nombreDoctor
-       FROM studies e
-       INNER JOIN doctors d ON e.idDoctor = d.idDoctor
+      `SELECT s.idStudy, s.performanceDate, s.uploadDate, s.fileName, 
+              s.description, CONCAT(u.firstName, ' ', u.lastName) as doctorName
+       FROM studies s
+       INNER JOIN doctors d ON s.idDoctor = d.idDoctor
        INNER JOIN users u ON d.dni = u.dni
-       WHERE e.idPaciente = ?
-       ORDER BY e.fechaCarga DESC`,
-      [idPaciente]
+       WHERE s.idPatient = ?
+       ORDER BY s.uploadDate DESC`,
+      [patientId]
     );
 
     if (result.length === 0) {
-      return res.json([]); // Devolver array vacío en lugar de 404
+      return res.json([]); // Return empty array instead of 404
     }
 
     res.json(result);
   } catch (error) {
-    console.error('Error al obtener studies:', error);
+    console.error('Error getting studies:', error);
     return res.status(500).json({ message: error.message });
   }
 };
 
-// Obtener studies por doctor
+// Get studies by doctor
 export const getStudiesByDoctor = async (req, res) => {
   try {
     const { idDoctor } = req.params;
 
     const [result] = await pool.query(
-      `SELECT e.idEstudio, e.fechaRealizacion, e.fechaCarga, e.nombreArchivo, 
-              e.description, CONCAT(u.first_name, ' ', u.last_name) as nombrePaciente,
-              p.dni as dniPaciente
-       FROM studies e
-       INNER JOIN patients p ON e.idPaciente = p.idPaciente
+      `SELECT s.idStudy, s.performanceDate, s.uploadDate, s.fileName, 
+              s.description, CONCAT(u.firstName, ' ', u.lastName) as patientName,
+              p.dni as patientDni
+       FROM studies s
+       INNER JOIN patients p ON s.idPatient = p.idPatient
        INNER JOIN users u ON p.dni = u.dni
-       WHERE e.idDoctor = ?
-       ORDER BY e.fechaCarga DESC`,
+       WHERE s.idDoctor = ?
+       ORDER BY s.uploadDate DESC`,
       [idDoctor]
     );
 
     if (result.length === 0) {
-      return res.json([]); // Devolver array vacío en lugar de 404
+      return res.json([]); // Return empty array instead of 404
     }
 
     res.json(result);
   } catch (error) {
-    console.error('Error al obtener studies:', error);
+    console.error('Error getting studies:', error);
     return res.status(500).json({ message: error.message });
   }
 };
 
-// Descargar archivo de study
+// Download study file
 export const downloadStudy = async (req, res) => {
   try {
-    const { idEstudio } = req.params;
+    const { studyId } = req.params;
 
     const [result] = await pool.query(
-      'SELECT rutaArchivo, nombreArchivo FROM studies WHERE idEstudio = ?',
-      [idEstudio]
+      'SELECT filePath, fileName FROM studies WHERE idStudy = ?',
+      [studyId]
     );
 
     if (result.length === 0) {
-      return res.status(404).json({ message: 'Estudio no encontrado' });
+      return res.status(404).json({ message: 'Study not found' });
     }
 
-    const { rutaArchivo, nombreArchivo } = result[0];
+    const { filePath, fileName } = result[0];
 
-    if (!fs.existsSync(rutaArchivo)) {
+    if (!fs.existsSync(filePath)) {
       return res
         .status(404)
-        .json({ message: 'Archivo no encontrado en el servidor' });
+        .json({ message: 'File not found on server' });
     }
 
-    res.download(rutaArchivo, nombreArchivo);
+    res.download(filePath, fileName);
   } catch (error) {
-    console.error('Error al descargar study:', error);
+    console.error('Error downloading study:', error);
     return res.status(500).json({ message: error.message });
   }
 };

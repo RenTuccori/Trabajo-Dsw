@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/global/AuthProvider';
 
-function administrationHome() {
+function AdministrationHome() {
   const { login, idAdmin, comprobarToken } = useAuth();
   const [user, setUser] = useState('');
   const [password, setContra] = useState('');
@@ -118,7 +118,7 @@ function administrationHome() {
   );
 }
 
-export default administrationHome;
+export default AdministrationHome;
 
 
 

@@ -3,7 +3,7 @@ import { useNavigate, useParams } from 'react-router-dom'; // Importa useParams
 import Select from 'react-select';
 import { useAdministracion } from '../../context/administration/AdministrationProvider';
 
-export function updateDoctor() {
+export function UpdateDoctor() {
   const {
     getHealthInsurances,
     healthInsurances,

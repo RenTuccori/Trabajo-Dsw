@@ -256,9 +256,9 @@ const AdministrationProvider = ({ children }) => {
         venueId,
         doctorId,
         specialtyId,
-        dia,
-        hora_inicio,
-        hora_fin,
+        day: dia,
+        startTime: hora_inicio,
+        endTime: hora_fin,
         status,
       });
     } catch (error) {
@@ -279,9 +279,9 @@ const AdministrationProvider = ({ children }) => {
         venueId,
         doctorId,
         specialtyId,
-        dia,
-        hora_inicio,
-        hora_fin,
+        day: dia,
+        startTime: hora_inicio,
+        endTime: hora_fin,
         status,
       });
     } catch (error) {

@@ -60,42 +60,79 @@ const PatientsProvider = ({ children }) => {
   const { dni } = useAuth();
 
   async function updateUserFunction(data) {
-    const response = await updateUser(data);
-    return response;
+    console.log('🔄 FRONTEND - updateUserFunction: Datos recibidos:', data);
+    try {
+      const response = await updateUser(data);
+      console.log('✅ FRONTEND - updateUserFunction: Respuesta de API:', response);
+      return response;
+    } catch (error) {
+      console.error('❌ FRONTEND - updateUserFunction: Error:', error);
+      throw error;
+    }
   }
 
   async function getVenues() {
-    const response = await getSedes();
-    setVenues(response.data);
+    console.log('🏢 FRONTEND - getVenues: Obteniendo sedes');
+    try {
+      const response = await getSedes();
+      console.log('✅ FRONTEND - Sedes obtenidas:', response.data);
+      setVenues(response.data);
+    } catch (error) {
+      console.error('❌ FRONTEND - Error obteniendo sedes:', error);
+    }
   }
 
   async function getSpecialties({ venueId }) {
-    const response = await getEspecialidades({ venueId });
-    setSpecialties(response.data);
+    console.log('🩺 FRONTEND - getSpecialties: Obteniendo especialidades para sede:', venueId);
+    try {
+      const response = await getEspecialidades({ venueId });
+      console.log('✅ FRONTEND - Especialidades obtenidas:', response.data);
+      setSpecialties(response.data);
+    } catch (error) {
+      console.error('❌ FRONTEND - Error obteniendo especialidades:', error);
+    }
   }
 
   async function getDoctors({ venueId, specialtyId }) {
-    console.log({ venueId, specialtyId });
-    const response = await getDoctorsAPI({ venueId, specialtyId });
-    console.log('mis doctors', response.data);
-    setDoctors(response.data);
+    console.log('👨‍⚕️ FRONTEND - getDoctors: Obteniendo doctores para:', { venueId, specialtyId });
+    try {
+      const response = await getDoctorsAPI({ venueId, specialtyId });
+      console.log('✅ FRONTEND - Doctores obtenidos:', response.data);
+      setDoctors(response.data);
+    } catch (error) {
+      console.error('❌ FRONTEND - Error obteniendo doctores:', error);
+    }
   }
   async function getDates({
     selectedOption,
     selectedSpecialty,
     selectedVenue,
   }) {
-    const response = await getFechasDispTodos({
+    console.log('📅 FRONTEND - getDates: Obteniendo fechas para:', {
       doctorId: selectedOption.value,
       specialtyId: selectedSpecialty.value,
       venueId: selectedVenue.value,
     });
-    const fechasFormateadas = response.data.map((item) => {
-      const [year, month, day] = item.fecha.split('-'); // Descomponer la fecha
-      return new Date(Number(year), Number(month) - 1, Number(day)); // Crear la fecha (mes empieza en 0)
-    });
+    
+    try {
+      const response = await getFechasDispTodos({
+        doctorId: selectedOption.value,
+        specialtyId: selectedSpecialty.value,
+        venueId: selectedVenue.value,
+      });
+      
+      console.log('✅ FRONTEND - Fechas obtenidas del backend:', response.data);
+      
+      const fechasFormateadas = response.data.map((item) => {
+        const [year, month, day] = item.date.split('-'); // Descomponer la fecha
+        return new Date(Number(year), Number(month) - 1, Number(day)); // Crear la fecha (mes empieza en 0)
+      });
 
-    setDates(fechasFormateadas);
+      console.log('📅 FRONTEND - Fechas formateadas:', fechasFormateadas);
+      setDates(fechasFormateadas);
+    } catch (error) {
+      console.error('❌ FRONTEND - Error obteniendo fechas:', error);
+    }
   }
   async function getSchedules({
     selectedDoctor,
@@ -107,20 +144,20 @@ const PatientsProvider = ({ children }) => {
       doctorId: selectedDoctor.value,
       specialtyId: selectedSpecialty.value,
       venueId: selectedVenue.value,
-      fecha: date,
+      date: date,
     });
     setSchedules(response.data);
   }
 
-  useEffect(() => {
-    if (dni) {
-      getPatientByDni();
-    }
-  }, [dni, getPatientByDni]);
-
   async function getHealthInsurances() {
-    const response = await getObrasSociales();
-    setHealthInsurances(response.data);
+    console.log('🏥 FRONTEND - getHealthInsurances: Obteniendo obras sociales');
+    try {
+      const response = await getObrasSociales();
+      console.log('✅ FRONTEND - Obras sociales obtenidas:', response.data);
+      setHealthInsurances(response.data);
+    } catch (error) {
+      console.error('❌ FRONTEND - Error obteniendo obras sociales:', error);
+    }
   }
 
   async function createUserFunction(data) {
@@ -140,9 +177,17 @@ const PatientsProvider = ({ children }) => {
   }
 
   async function getDoctorByIdFunction() {
-    const response = await getDoctorById(doctorId);
-    setDoctorName(response.data.name);
-    setDoctorLastName(response.data.lastName);
+    try {
+      console.log('👨‍⚕️ FRONTEND - getDoctorByIdFunction: Obteniendo doctor con ID:', doctorId);
+      const response = await getDoctorById(doctorId);
+      console.log('📋 FRONTEND - getDoctorByIdFunction: Respuesta recibida:', response.data);
+      setDoctorName(response.data.firstName);
+      setDoctorLastName(response.data.lastName);
+      console.log('✅ FRONTEND - getDoctorByIdFunction: Doctor configurado:', response.data.firstName, response.data.lastName);
+    } catch (error) {
+      console.error('💥 FRONTEND - getDoctorByIdFunction: Error obteniendo doctor:', error);
+      throw error; // Re-lanzar para que lo maneje appointmentConfirmation
+    }
   }
 
   async function getVenueById() {
@@ -152,7 +197,18 @@ const PatientsProvider = ({ children }) => {
   }
 
   async function createAppointment() {
-    await createTurno({
+    console.log('🎯 FRONTEND - createAppointment: Iniciando creación de cita');
+    console.log('📋 FRONTEND - Valores del contexto antes de enviar:');
+    console.log('  - patientId:', patientId);
+    console.log('  - dateAndTime:', dateAndTime);
+    console.log('  - specialtyId:', specialtyId);
+    console.log('  - doctorId:', doctorId);
+    console.log('  - venueId:', venueId);
+    console.log('  - status:', status);
+    console.log('  - cancellationDate:', cancellationDate);
+    console.log('  - confirmationDate:', confirmationDate);
+    
+    const appointmentData = {
       patientId,
       dateAndTime,
       cancellationDate,
@@ -161,13 +217,39 @@ const PatientsProvider = ({ children }) => {
       specialtyId,
       doctorId,
       venueId,
-    });
+    };
+    
+    console.log('📤 FRONTEND - Objeto de datos enviado a createTurno:', appointmentData);
+    
+    try {
+      const result = await createTurno(appointmentData);
+      console.log('✅ FRONTEND - createAppointment: Respuesta recibida:', result);
+      return result;
+    } catch (error) {
+      console.error('❌ FRONTEND - createAppointment: Error:', error);
+      throw error;
+    }
   }
 
   const getPatientByDni = useCallback(async () => {
-    const reponse = await getPacienteDni({ dni });
-    setPatientId(reponse.data.patientId);
+    console.log('🔍 FRONTEND - getPatientByDni: Obteniendo paciente con DNI:', dni);
+    try {
+      const response = await getPacienteDni({ dni });
+      console.log('✅ FRONTEND - getPatientByDni: Respuesta recibida:', response);
+      console.log('🆔 FRONTEND - idPatient obtenido:', response.data.idPatient);
+      setPatientId(response.data.idPatient); // Usar idPatient, no patientId
+      return response.data.idPatient; // Retornar el idPatient para poder verificar que se obtuvo
+    } catch (error) {
+      console.error('❌ FRONTEND - getPatientByDni: Error:', error);
+      throw error;
+    }
   }, [dni]);
+
+  useEffect(() => {
+    if (dni) {
+      getPatientByDni();
+    }
+  }, [dni, getPatientByDni]);
 
   async function getPatientAppointments() {
     try {
@@ -196,17 +278,24 @@ const PatientsProvider = ({ children }) => {
   }
 
   async function getUserByDniFunction() {
+    console.log('🔍 FRONTEND - getUserByDniFunction: Iniciando función');
+    console.log('📋 FRONTEND - DNI para buscar:', dni);
+    
     try {
       const response = await getUserDni({ dni });
+      console.log('📨 FRONTEND - Respuesta de getUserDni:', response);
+      
       if (response && response.data) {
+        console.log('✅ FRONTEND - Datos del usuario obtenidos:', response.data);
         setUserByDni(response.data);
         setUserEmail(response.data.email);
+        console.log('💾 FRONTEND - Estado actualizado con datos del usuario');
       } else {
-        console.error('No se pudo obtener los datos del user');
+        console.error('❌ FRONTEND - No se pudo obtener los datos del user');
         window.notifyError('Error al obtener los datos del user');
       }
     } catch (error) {
-      console.error('Error al obtener user por DNI:', error);
+      console.error('💥 FRONTEND - Error al obtener user por DNI:', error);
       window.notifyError('Error al obtener los datos del user');
     }
   }

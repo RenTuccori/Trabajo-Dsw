@@ -3,46 +3,56 @@ import jwt from 'jsonwebtoken';
 
 export const getDoctorsByVenueAndSpecialty = async (req, res) => {
   try {
-    const { idSede, idEspecialidad } = req.body;
+    console.log('👨‍⚕️ BACKEND - getDoctorsByVenueAndSpecialty: Inicio de función');
+    const { venueId, specialtyId } = req.body;
+    console.log('📋 BACKEND - Parámetros recibidos:', { venueId, specialtyId });
+    
     const [result] = await pool.query(
-      `SELECT doc.idDoctor, CONCAT(u.first_name, " ", u.last_name) nombreyapellido 
-       FROM sededoctoresp sde
-       INNER JOIN doctors doc ON sde.idDoctor = doc.idDoctor
+      `SELECT doc.idDoctor, CONCAT(u.firstName, " ", u.lastName) AS nombreyapellido 
+       FROM sitedoctorspecialty sds
+       INNER JOIN doctors doc ON sds.idDoctor = doc.idDoctor
        INNER JOIN users u ON doc.dni = u.dni 
-       WHERE sde.idSede = ? AND sde.idEspecialidad = ? AND doc.estado = 'Habilitado'`,
-      [idSede, idEspecialidad]
+       WHERE sds.idSite = ? AND sds.idSpecialty = ? AND doc.status = 'Habilitado'`,
+      [venueId, specialtyId]
     );
+    
+    console.log('🗄️ BACKEND - Doctores encontrados:', result);
+    console.log('📊 BACKEND - Número de doctores:', result.length);
+    
     if (result.length === 0) {
+      console.log('⚠️ BACKEND - No se encontraron doctores para esta combinación');
       return res
         .status(404)
-        .json({ message: 'No hay doctors para esta specialty' });
+        .json({ message: 'No doctors for this specialty' });
     } else {
+      console.log('✅ BACKEND - Enviando doctores encontrados');
       res.json(result);
     }
   } catch (error) {
+    console.log('💥 BACKEND - Error en getDoctorsByVenueAndSpecialty:', error);
     return res.status(500).json({ message: error.message });
   }
 };
 
 export const getAvailableDoctors = async (req, res) => {
   try {
-    const { idSede } = req.body;
+    const { venueId } = req.body;
     const [result] = await pool.query(
-      `SELECT doc.idDoctor, CONCAT(u.first_name, " ", u.last_name) AS nombreyapellido 
+      `SELECT doc.idDoctor, CONCAT(u.firstName, " ", u.lastName) AS fullName 
        FROM doctors doc 
        INNER JOIN users u ON doc.dni = u.dni
        WHERE doc.idDoctor NOT IN (
-         SELECT sde.idDoctor 
-         FROM sededoctoresp sde 
-         WHERE sde.idSede = ?
-       ) AND doc.estado = 'Habilitado'`,
-      [idSede]
+         SELECT sds.idDoctor 
+         FROM sitedoctorspecialty sds 
+         WHERE sds.idSite = ?
+       ) AND doc.status = 'Habilitado'`,
+      [venueId]
     );
 
     if (result.length === 0) {
       return res.status(404).json({
         message:
-          'No hay doctors disponibles para esta specialty fuera de esta venue',
+          'No available doctors for this specialty outside this venue',
       });
     } else {
       res.json(result);
@@ -54,19 +64,26 @@ export const getAvailableDoctors = async (req, res) => {
 
 export const getDoctors = async (req, res) => {
   try {
+    console.log('👨‍⚕️ BACKEND - getDoctors: Inicio de función');
     const [result] = await pool.query(
-      `SELECT doc.idDoctor, CONCAT(u.first_name, " ", u.last_name) nombreyapellido 
+      `SELECT doc.idDoctor, CONCAT(u.firstName, " ", u.lastName) AS nombreyapellido 
        FROM doctors doc
        INNER JOIN users u ON doc.dni = u.dni 
-       WHERE doc.estado = 'Habilitado'
-       ORDER BY u.last_name ASC`
+       WHERE doc.status = 'Habilitado'
+       ORDER BY u.lastName ASC`
     );
+    console.log('🗄️ BACKEND - Doctores encontrados (getDoctors):', result);
+    console.log('📊 BACKEND - Número de doctores (getDoctors):', result.length);
+    
     if (result.length === 0) {
-      return res.status(404).json({ message: 'No hay doctors' });
+      console.log('⚠️ BACKEND - No se encontraron doctores');
+      return res.status(404).json({ message: 'No doctors' });
     } else {
+      console.log('✅ BACKEND - Enviando doctores');
       res.json(result);
     }
   } catch (error) {
+    console.log('💥 BACKEND - Error en getDoctors:', error);
     return res.status(500).json({ message: error.message });
   }
 };
@@ -75,14 +92,14 @@ export const getDoctorByDni = async (req, res) => {
   try {
     const [dni] = req.body;
     const [result] = await pool.query(
-      `SELECT doc.dni AS DNI, u.first_name, u.last_name, u.email 
+      `SELECT doc.dni AS DNI, u.firstName, u.lastName, u.email 
        FROM doctors doc 
        INNER JOIN users u ON doc.dni = u.dni
-       WHERE doc.dni = ? AND doc.estado = 'Habilitado'`,
+       WHERE doc.dni = ? AND doc.status = 'Habilitado'`,
       [dni]
     );
     if (result.length === 0) {
-      return res.status(404).json({ message: 'Doctor no encontrado' });
+      return res.status(404).json({ message: 'Doctor not found' });
     } else {
       res.json(result[0]);
     }
@@ -93,44 +110,50 @@ export const getDoctorByDni = async (req, res) => {
 
 export const getDoctorById = async (req, res) => {
   try {
-    const { idDoctor } = req.params;
+    console.log('👨‍⚕️ BACKEND - getDoctorById: Inicio de función');
+    const { doctorId } = req.params;
+    console.log('📋 BACKEND - getDoctorById: Doctor ID recibido:', doctorId);
     const [result] = await pool.query(
-      `SELECT u.first_name, u.last_name, u.email, doc.dni, doc.duracionTurno, doc.contra, u.phone, u.address, u.idObraSocial, os.first_name AS obraSocial
+      `SELECT u.firstName, u.lastName, u.email, doc.dni, doc.appointmentDuration, doc.password, u.phone, u.address, u.idInsuranceCompany, ic.name AS insuranceCompany
        FROM doctors doc 
        INNER JOIN users u ON doc.dni = u.dni
-       INNER JOIN obrasociales os ON u.idObraSocial = os.idObraSocial
-       WHERE doc.idDoctor = ? AND doc.estado = 'Habilitado'`,
-      [idDoctor]
+       INNER JOIN insurance_companies ic ON u.idInsuranceCompany = ic.idInsuranceCompany
+       WHERE doc.idDoctor = ? AND doc.status = 'Habilitado'`,
+      [doctorId]
     );
+    console.log('🗄️ BACKEND - getDoctorById: Resultado de la query:', result);
     if (result.length === 0) {
-      return res.status(404).json({ message: 'Doctor no encontrado' });
+      console.log('⚠️ BACKEND - getDoctorById: Doctor no encontrado');
+      return res.status(404).json({ message: 'Doctor not found' });
     } else {
+      console.log('✅ BACKEND - getDoctorById: Doctor encontrado, enviando datos');
       res.json(result[0]);
     }
   } catch (error) {
+    console.error('💥 BACKEND - getDoctorById: Error:', error.message);
     return res.status(500).json({ message: error.message });
   }
 };
 
 export const getDoctorByDniContra = async (req, res) => {
   try {
-    const { dni, contra } = req.body;
+    const { dni, password } = req.body;
     const [result] = await pool.query(
-      `SELECT doc.idDoctor, u.first_name, u.last_name
+      `SELECT doc.idDoctor, u.firstName, u.lastName
        FROM doctors doc 
        INNER JOIN users u ON doc.dni = u.dni
-       WHERE doc.dni = ? AND doc.contra = ? AND doc.estado = 'Habilitado'`,
-      [dni, contra]
+       WHERE doc.dni = ? AND doc.password = ? AND doc.status = 'Habilitado'`,
+      [dni, password]
     );
     if (result.length === 0) {
-      return res.status(404).json({ message: 'Doctor no encontrado' });
+      return res.status(404).json({ message: 'Doctor not found' });
     } else {
       const token = jwt.sign(
         {
           idDoctor: result[0].idDoctor,
-          first_name: result[0].first_name,
-          last_name: result[0].last_name,
-          rol: 'Doctor',
+          firstName: result[0].firstName,
+          lastName: result[0].lastName,
+          role: 'Doctor',
         },
         'CLAVE_SUPER_SEGURISIMA',
         { expiresIn: '5m' }
@@ -143,12 +166,12 @@ export const getDoctorByDniContra = async (req, res) => {
 };
 
 export const createDoctor = async (req, res) => {
-  const { dni, duracionTurno, contra } = req.body;
-  const estado = 'Habilitado';
+  const { dni, appointmentDuration, password } = req.body;
+  const status = 'Habilitado';
   try {
     const [result] = await pool.query(
-      'INSERT INTO doctors (dni, duracionTurno, contra, estado) VALUES (?, ?, ?,?)',
-      [dni, duracionTurno, contra, estado]
+      'INSERT INTO doctors (dni, appointmentDuration, password, status) VALUES (?, ?, ?,?)',
+      [dni, appointmentDuration, password, status]
     );
 
     const idDoctor = result.insertId;
@@ -156,9 +179,9 @@ export const createDoctor = async (req, res) => {
     res.json({
       idDoctor,
       dni,
-      duracionTurno,
-      contra,
-      estado,
+      appointmentDuration,
+      password,
+      status,
     });
   } catch (error) {
     return res.status(500).json({ message: error.message });
@@ -169,38 +192,38 @@ export const deleteDoctor = async (req, res) => {
   try {
     const { idDoctor } = req.params;
 
-    // Iniciar una transacción para asegurar consistencia en las actualizaciones
+    // Start a transaction to ensure consistency in updates
     await pool.query('START TRANSACTION');
 
-    // Actualizar el estado del doctor a "Deshabilitado"
+    // Update doctor status to "Deshabilitado"
     const [resultDoctor] = await pool.query(
-      'UPDATE doctors SET estado = "Deshabilitado" WHERE idDoctor = ?',
+      'UPDATE doctors SET status = "Deshabilitado" WHERE idDoctor = ?',
       [idDoctor]
     );
 
-    // Si no se encontró el doctor, devolver un error
+    // If doctor not found, return error
     if (resultDoctor.affectedRows === 0) {
-      // Si el doctor no existe, hacer un rollback de la transacción
+      // If doctor doesn't exist, rollback transaction
       await pool.query('ROLLBACK');
-      return res.status(404).json({ message: 'Doctor no encontrado' });
+      return res.status(404).json({ message: 'Doctor not found' });
     }
 
-    // Actualizar el estado de las combinaciones en la tabla sededoctoresp a "Deshabilitado"
+    // Update status of combinations in sitedoctorspecialty table to "Deshabilitado"
     const [resultCombinacion] = await pool.query(
-      'UPDATE sededoctoresp SET estado = "Deshabilitado" WHERE idDoctor = ?',
+      'UPDATE sitedoctorspecialty SET status = "Deshabilitado" WHERE idDoctor = ?',
       [idDoctor]
     );
     const [resultHorario] = await pool.query(
-      'UPDATE horarios_disponibles SET estado = "Deshabilitado" WHERE idDoctor = ?',
+      'UPDATE available_schedules SET status = "Deshabilitado" WHERE idDoctor = ?',
       [idDoctor]
     );
-    // Confirmar la transacción si todo salió bien
+    // Commit transaction if everything went well
     await pool.query('COMMIT');
 
-    // Si la transacción fue exitosa, devolver 204 No Content
-    return res.sendStatus(204); // No hay contenido que devolver, pero la operación fue exitosa
+    // If transaction was successful, return 204 No Content
+    return res.sendStatus(204); // No content to return, but operation was successful
   } catch (error) {
-    // Si ocurre un error, hacer rollback de la transacción
+    // If an error occurs, rollback transaction
     await pool.query('ROLLBACK');
     return res.status(500).json({ message: error.message });
   }
@@ -208,18 +231,18 @@ export const deleteDoctor = async (req, res) => {
 
 export const updateDoctor = async (req, res) => {
   const { idDoctor } = req.params;
-  const { duracionTurno, contra } = req.body;
+  const { appointmentDuration, password } = req.body;
   try {
     const [result] = await pool.query(
-      'UPDATE doctors SET duracionTurno = ?, contra = ? WHERE idDoctor = ?',
-      [duracionTurno, contra, idDoctor]
+      'UPDATE doctors SET appointmentDuration = ?, password = ? WHERE idDoctor = ?',
+      [appointmentDuration, password, idDoctor]
     );
 
     if (result.affectedRows === 0) {
-      return res.status(404).json({ message: 'Doctor no encontrado' });
+      return res.status(404).json({ message: 'Doctor not found' });
     }
-    res.json({ idDoctor, duracionTurno, contra });
-    console.log('Doctor actualizado:');
+    res.json({ idDoctor, appointmentDuration, password });
+    console.log('Doctor updated:');
   } catch (error) {
     return res.status(500).json({ message: error.message });
   }

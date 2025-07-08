@@ -8,7 +8,7 @@ import {
 } from '../../api/studies.api';
 import { getPacientes } from '../../api/patients.api';
 
-function uploadStudy() {
+function UploadStudy() {
   const { doctorId } = useAuth();
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
@@ -397,7 +397,7 @@ function uploadStudy() {
   );
 }
 
-export default uploadStudy;
+export default UploadStudy;
 
 
 
