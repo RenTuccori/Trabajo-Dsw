@@ -22,14 +22,14 @@ router.get('/api/studies/debug', async (req, res) => {
     const { pool } = await import('../db.js');
     const [result] = await pool.query(
       `SELECT e.*, 
-              p.dni as patientDni, up.first_name as patientFirstName, up.last_name as patientLastName,
-              d.dni as doctorDni, ud.first_name as doctorFirstName, ud.last_name as doctorLastName
+              p.dni as patientDni, up.firstName as patientFirstName, up.lastName as patientLastName,
+              d.dni as doctorDni, ud.firstName as doctorFirstName, ud.lastName as doctorLastName
        FROM studies e
-       LEFT JOIN patients p ON e.patientId = p.patientId
+       LEFT JOIN patients p ON e.idPatient = p.idPatient
        LEFT JOIN users up ON p.dni = up.dni
-       LEFT JOIN doctors d ON e.doctorId = d.doctorId
+       LEFT JOIN doctors d ON e.idDoctor = d.idDoctor
        LEFT JOIN users ud ON d.dni = ud.dni
-       ORDER BY e.studyId DESC`
+       ORDER BY e.idStudy DESC`
     );
     res.json(result);
   } catch (error) {
@@ -46,11 +46,7 @@ router.post(
 );
 
 // Get studies by patient (patients can see their studies)
-router.get(
-  '/api/studies/patient/:patientId',
-  Patient,
-  getStudiesByPatient
-);
+router.get('/api/studies/patient/:patientId', Patient, getStudiesByPatient);
 
 // Get studies by doctor (doctors can see their uploaded studies)
 router.get('/api/studies/doctor/:doctorId', Doctor, getStudiesByDoctor);

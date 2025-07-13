@@ -14,7 +14,7 @@ function UserHome() {
     console.log('🚀 FRONTEND - UserHome: Iniciando proceso de login');
     console.log('📋 FRONTEND - DNI introducido:', dniform);
     console.log('📅 FRONTEND - Fecha introducida:', fecha);
-    
+
     try {
       console.log('📞 FRONTEND - Llamando a función login del AuthProvider');
       await login({
@@ -58,7 +58,7 @@ function UserHome() {
         <h1 className="text-center text-2xl font-semibold text-gray-800">
           {dni && nombreUsuario && apellidoUsuario
             ? `Bienvenido/a ${nombreUsuario}`
-            : 'Bienvenido al sistema de appointments'}
+            : 'Bienvenido al sistema de turnos'}
         </h1>
 
         {!dni ? (
@@ -140,6 +140,3 @@ function UserHome() {
 }
 
 export default UserHome;
-
-
-

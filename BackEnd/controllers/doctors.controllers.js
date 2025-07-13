@@ -3,10 +3,12 @@ import jwt from 'jsonwebtoken';
 
 export const getDoctorsByVenueAndSpecialty = async (req, res) => {
   try {
-    console.log('👨‍⚕️ BACKEND - getDoctorsByVenueAndSpecialty: Inicio de función');
+    console.log(
+      '👨‍⚕️ BACKEND - getDoctorsByVenueAndSpecialty: Inicio de función'
+    );
     const { venueId, specialtyId } = req.body;
     console.log('📋 BACKEND - Parámetros recibidos:', { venueId, specialtyId });
-    
+
     const [result] = await pool.query(
       `SELECT doc.idDoctor, CONCAT(u.firstName, " ", u.lastName) AS nombreyapellido 
        FROM sitedoctorspecialty sds
@@ -15,15 +17,15 @@ export const getDoctorsByVenueAndSpecialty = async (req, res) => {
        WHERE sds.idSite = ? AND sds.idSpecialty = ? AND doc.status = 'Habilitado'`,
       [venueId, specialtyId]
     );
-    
+
     console.log('🗄️ BACKEND - Doctores encontrados:', result);
     console.log('📊 BACKEND - Número de doctores:', result.length);
-    
+
     if (result.length === 0) {
-      console.log('⚠️ BACKEND - No se encontraron doctores para esta combinación');
-      return res
-        .status(404)
-        .json({ message: 'No doctors for this specialty' });
+      console.log(
+        '⚠️ BACKEND - No se encontraron doctores para esta combinación'
+      );
+      return res.status(404).json({ message: 'No doctors for this specialty' });
     } else {
       console.log('✅ BACKEND - Enviando doctores encontrados');
       res.json(result);
@@ -51,8 +53,7 @@ export const getAvailableDoctors = async (req, res) => {
 
     if (result.length === 0) {
       return res.status(404).json({
-        message:
-          'No available doctors for this specialty outside this venue',
+        message: 'No available doctors for this specialty outside this venue',
       });
     } else {
       res.json(result);
@@ -74,7 +75,7 @@ export const getDoctors = async (req, res) => {
     );
     console.log('🗄️ BACKEND - Doctores encontrados (getDoctors):', result);
     console.log('📊 BACKEND - Número de doctores (getDoctors):', result.length);
-    
+
     if (result.length === 0) {
       console.log('⚠️ BACKEND - No se encontraron doctores');
       return res.status(404).json({ message: 'No doctors' });
@@ -126,7 +127,9 @@ export const getDoctorById = async (req, res) => {
       console.log('⚠️ BACKEND - getDoctorById: Doctor no encontrado');
       return res.status(404).json({ message: 'Doctor not found' });
     } else {
-      console.log('✅ BACKEND - getDoctorById: Doctor encontrado, enviando datos');
+      console.log(
+        '✅ BACKEND - getDoctorById: Doctor encontrado, enviando datos'
+      );
       res.json(result[0]);
     }
   } catch (error) {
@@ -153,7 +156,7 @@ export const getDoctorByDniContra = async (req, res) => {
           idDoctor: result[0].idDoctor,
           firstName: result[0].firstName,
           lastName: result[0].lastName,
-          role: 'Doctor',
+          rol: 'Doctor',
         },
         'CLAVE_SUPER_SEGURISIMA',
         { expiresIn: '5m' }

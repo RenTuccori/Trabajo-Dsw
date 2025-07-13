@@ -6,7 +6,11 @@ import {
   getDoctorById,
   getDoctorsByVenueAndSpecialty,
 } from '../controllers/doctors.controllers.js';
-import { AdminOrPatient, Patient } from '../middleware/authorizeRole.js';
+import {
+  AdminOrPatient,
+  Patient,
+  AnyRole,
+} from '../middleware/authorizeRole.js';
 const router = Router();
 
 // Debug route to view doctors
@@ -14,10 +18,10 @@ router.get('/api/doctors/debug', async (req, res) => {
   try {
     const { pool } = await import('../db.js');
     const [result] = await pool.query(
-      `SELECT d.*, u.first_name, u.last_name 
+      `SELECT d.*, u.firstName, u.lastName 
        FROM doctors d 
        LEFT JOIN users u ON d.dni = u.dni 
-       ORDER BY d.doctorId`
+       ORDER BY d.idDoctor`
     );
     res.json(result);
   } catch (error) {
@@ -26,7 +30,7 @@ router.get('/api/doctors/debug', async (req, res) => {
 });
 
 //Doctors based on venue and specialty
-router.post('/api/doctors', Patient, getDoctors);
+router.post('/api/doctors', AnyRole, getDoctors);
 
 router.post('/api/availabledoctors', getDoctorsByVenueAndSpecialty);
 //All doctors

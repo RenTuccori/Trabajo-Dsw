@@ -15,7 +15,7 @@ export const getAdmin = async (req, res) => {
       return res.status(404).json({ message: 'User not found' });
     } else {
       const token = jwt.sign(
-        { idAdmin: result[0].idAdmin, role: 'Admin' },
+        { idAdmin: result[0].idAdmin, rol: 'Admin' },
         'CLAVE_SUPER_SEGURISIMA',
         { expiresIn: '30m' }
       );
@@ -126,9 +126,7 @@ SELECT
     const [result] = await pool.query(query);
 
     if (result.length === 0) {
-      return res
-        .status(404)
-        .json({ message: 'No assignments found.' });
+      return res.status(404).json({ message: 'No assignments found.' });
     }
 
     res.json(result);
@@ -137,15 +135,8 @@ SELECT
   }
 };
 export const createHorarios = async (req, res) => {
-  const {
-    venueId,
-    doctorId,
-    specialtyId,
-    day,
-    startTime,
-    endTime,
-    status,
-  } = req.body;
+  const { venueId, doctorId, specialtyId, day, startTime, endTime, status } =
+    req.body;
   try {
     await pool.query(
       'INSERT INTO available_schedules (idSite, idDoctor, idSpecialty, day, startTime, endTime, status) VALUES (?, ?, ?, ?, ?, ?, ?)',
@@ -160,26 +151,17 @@ export const createHorarios = async (req, res) => {
 
 export const updateHorarios = async (req, res) => {
   try {
-    const {
-      venueId,
-      doctorId,
-      specialtyId,
-      day,
-      startTime,
-      endTime,
-      status,
-    } = req.body;
+    const { venueId, doctorId, specialtyId, day, startTime, endTime, status } =
+      req.body;
     console.log(req.body);
     // SQL query to update the schedule
     const [result] = await pool.query(
       'UPDATE available_schedules SET startTime = ?, endTime = ?, status = ? WHERE idSite = ? AND idDoctor = ? AND idSpecialty = ? AND day = ?',
       [startTime, endTime, status, venueId, doctorId, specialtyId, day]
     );
-    
+
     if (result.affectedRows > 0) {
-      return res
-        .status(200)
-        .json({ message: 'Schedule updated successfully' });
+      return res.status(200).json({ message: 'Schedule updated successfully' });
     } else {
       return res
         .status(404)
@@ -187,9 +169,7 @@ export const updateHorarios = async (req, res) => {
     }
   } catch (error) {
     console.error('Error updating schedule:', error);
-    return res
-      .status(500)
-      .json({ message: 'Server error updating schedule' });
+    return res.status(500).json({ message: 'Server error updating schedule' });
   }
 };
 

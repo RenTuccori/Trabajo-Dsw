@@ -13,10 +13,10 @@ router.get('/api/patient/debug', async (req, res) => {
   try {
     const { pool } = await import('../db.js');
     const [result] = await pool.query(
-      `SELECT pac.patientId, pac.dni, pac.status, usu.first_name, usu.last_name 
+      `SELECT pac.idPatient, pac.dni, pac.status, usu.firstName, usu.lastName 
        FROM patients pac 
        LEFT JOIN users usu ON pac.dni = usu.dni 
-       ORDER BY pac.patientId`
+       ORDER BY pac.idPatient`
     );
     res.json(result);
   } catch (error) {

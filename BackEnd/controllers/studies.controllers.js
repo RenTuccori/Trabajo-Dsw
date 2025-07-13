@@ -68,15 +68,11 @@ export const createStudy = async (req, res) => {
 
     const idDoctor = decodedToken.idDoctor;
     if (!idDoctor) {
-      return res
-        .status(400)
-        .json({ message: 'Doctor ID not found in token' });
+      return res.status(400).json({ message: 'Doctor ID not found in token' });
     }
 
     if (!req.file) {
-      return res
-        .status(400)
-        .json({ message: 'No file uploaded' });
+      return res.status(400).json({ message: 'No file uploaded' });
     }
 
     const uploadDate = new Date();
@@ -117,7 +113,10 @@ export const createStudy = async (req, res) => {
 export const getStudiesByPatient = async (req, res) => {
   try {
     const { patientId } = req.params;
-    console.log('🔍 BACKEND - getStudiesByPatient: Obteniendo estudios para patientId:', patientId);
+    console.log(
+      '🔍 BACKEND - getStudiesByPatient: Obteniendo estudios para patientId:',
+      patientId
+    );
 
     const [result] = await pool.query(
       `SELECT s.idStudy, s.performanceDate, s.uploadDate, s.fileName, 
@@ -130,15 +129,25 @@ export const getStudiesByPatient = async (req, res) => {
       [patientId]
     );
 
-    console.log('📊 BACKEND - getStudiesByPatient: Resultado de la query:', result);
-    console.log('🔢 BACKEND - getStudiesByPatient: Cantidad de estudios encontrados:', result.length);
+    console.log(
+      '📊 BACKEND - getStudiesByPatient: Resultado de la query:',
+      result
+    );
+    console.log(
+      '🔢 BACKEND - getStudiesByPatient: Cantidad de estudios encontrados:',
+      result.length
+    );
 
     if (result.length === 0) {
-      console.log('❌ BACKEND - getStudiesByPatient: No se encontraron estudios');
+      console.log(
+        '❌ BACKEND - getStudiesByPatient: No se encontraron estudios'
+      );
       return res.json([]); // Return empty array instead of 404
     }
 
-    console.log('✅ BACKEND - getStudiesByPatient: Estudios encontrados, enviando respuesta');
+    console.log(
+      '✅ BACKEND - getStudiesByPatient: Estudios encontrados, enviando respuesta'
+    );
     res.json(result);
   } catch (error) {
     console.error('❌ BACKEND - Error getting studies:', error);
@@ -149,7 +158,7 @@ export const getStudiesByPatient = async (req, res) => {
 // Get studies by doctor
 export const getStudiesByDoctor = async (req, res) => {
   try {
-    const { idDoctor } = req.params;
+    const { doctorId } = req.params;
 
     const [result] = await pool.query(
       `SELECT s.idStudy, s.performanceDate, s.uploadDate, s.fileName, 
@@ -160,7 +169,7 @@ export const getStudiesByDoctor = async (req, res) => {
        INNER JOIN users u ON p.dni = u.dni
        WHERE s.idDoctor = ?
        ORDER BY s.uploadDate DESC`,
-      [idDoctor]
+      [doctorId]
     );
 
     if (result.length === 0) {
@@ -191,9 +200,7 @@ export const downloadStudy = async (req, res) => {
     const { filePath, fileName } = result[0];
 
     if (!fs.existsSync(filePath)) {
-      return res
-        .status(404)
-        .json({ message: 'File not found on server' });
+      return res.status(404).json({ message: 'File not found on server' });
     }
 
     res.download(filePath, fileName);
@@ -206,30 +213,30 @@ export const downloadStudy = async (req, res) => {
 // Eliminar study
 export const deleteStudy = async (req, res) => {
   try {
-    const { idEstudio } = req.params;
+    const { studyId } = req.params;
 
     // Primero obtener la ruta del archivo
     const [study] = await pool.query(
-      'SELECT rutaArchivo FROM studies WHERE idEstudio = ?',
-      [idEstudio]
+      'SELECT filePath FROM studies WHERE idStudy = ?',
+      [studyId]
     );
 
     if (study.length === 0) {
-      return res.status(404).json({ message: 'Estudio no encontrado' });
+      return res.status(404).json({ message: 'Study not found' });
     }
 
     // Eliminar de la base de datos
-    await pool.query('DELETE FROM studies WHERE idEstudio = ?', [idEstudio]);
+    await pool.query('DELETE FROM studies WHERE idStudy = ?', [studyId]);
 
     // Eliminar archivo físico
-    const rutaArchivo = study[0].rutaArchivo;
-    if (fs.existsSync(rutaArchivo)) {
-      fs.unlinkSync(rutaArchivo);
+    const filePath = study[0].filePath;
+    if (fs.existsSync(filePath)) {
+      fs.unlinkSync(filePath);
     }
 
-    res.json({ message: 'Estudio eliminado exitosamente' });
+    res.json({ message: 'Study deleted successfully' });
   } catch (error) {
-    console.error('Error al eliminar study:', error);
+    console.error('Error deleting study:', error);
     return res.status(500).json({ message: error.message });
   }
 };

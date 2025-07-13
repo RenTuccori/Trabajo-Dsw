@@ -16,7 +16,7 @@ router.get('/api/users/debug', async (req, res) => {
   try {
     const { pool } = await import('../db.js');
     const [result] = await pool.query(
-      `SELECT dni, first_name, last_name, fechaNacimiento FROM users ORDER BY dni`
+      `SELECT dni, firstName, lastName, birthDate FROM users ORDER BY dni`
     );
     res.json(result);
   } catch (error) {
