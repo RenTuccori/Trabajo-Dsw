@@ -23,9 +23,16 @@ import {
   getEspecialidades,
   getAllSpecialities,
 } from '../../api/specialties.api';
-import { getDoctores, getDoctorById as getDoctorByIdAPI } from '../../api/doctors.api';
+import {
+  getDoctores,
+  getDoctorById as getDoctorByIdAPI,
+} from '../../api/doctors.api';
 import { getObrasSociales } from '../../api/insurance.api.js';
-import { getUserDni, createUser as createUserAPI, updateUser as updateUserAPI } from '../../api/users.api.js';
+import {
+  getUserDni,
+  createUser as createUserAPI,
+  updateUser as updateUserAPI,
+} from '../../api/users.api.js';
 import PropTypes from 'prop-types';
 // eslint-disable-next-line react-refresh/only-export-components
 export const useAdministracion = () => {
@@ -96,7 +103,7 @@ const AdministrationProvider = ({ children }) => {
     try {
       await createSpecialty({ name });
     } catch (error) {
-      console.error('Error al obtener las venues:', error);
+      console.error('Error creating specialty:', error);
       throw error;
     }
   }
@@ -143,9 +150,17 @@ const AdministrationProvider = ({ children }) => {
       throw error;
     }
   }
-  async function updateDoctorFunction({ doctorId, appointmentDuration, password }) {
+  async function updateDoctorFunction({
+    doctorId,
+    appointmentDuration,
+    password,
+  }) {
     try {
-      const response = await updateDoctor({ doctorId, appointmentDuration, password });
+      const response = await updateDoctor({
+        doctorId,
+        appointmentDuration,
+        password,
+      });
       return response;
     } catch (error) {
       console.error('Error al actualizar el doctor:', error);
@@ -189,7 +204,11 @@ const AdministrationProvider = ({ children }) => {
   }
 
   //Combinaciones de sede, especialidad y doctor
-  async function createVenueSpecialtyDoctor({ venueId, specialtyId, doctorId }) {
+  async function createVenueSpecialtyDoctor({
+    venueId,
+    specialtyId,
+    doctorId,
+  }) {
     try {
       await createSeEspDoc({
         venueId,
@@ -202,7 +221,11 @@ const AdministrationProvider = ({ children }) => {
     }
   }
 
-  async function deleteVenueSpecialtyDoctor({ venueId, doctorId, specialtyId }) {
+  async function deleteVenueSpecialtyDoctor({
+    venueId,
+    doctorId,
+    specialtyId,
+  }) {
     try {
       await deleteSeEspDoc({
         venueId,
@@ -346,10 +369,10 @@ const AdministrationProvider = ({ children }) => {
         createNewVenue,
         getVenues,
         deleteVenue,
-        createSpecialtyFunction,
+        createSpecialty: createSpecialtyFunction,
         specialties,
         setSpecialties,
-        deleteSpecialtyFunction,
+        deleteSpecialty: deleteSpecialtyFunction,
         createHealthInsurance,
         getHealthInsurances,
         healthInsurances,
@@ -394,6 +417,3 @@ AdministrationProvider.propTypes = {
 };
 
 export default AdministrationProvider;
-
-
-

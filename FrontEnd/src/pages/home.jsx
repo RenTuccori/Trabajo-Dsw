@@ -18,10 +18,14 @@ export default function Home() {
       <div className="relative bg-white rounded-lg shadow-md w-full max-w-md p-6 z-10">
         <div className="text-center mb-6">
           <h1 className="text-3xl font-bold text-blue-800">Sanatorio UTN</h1>
-          <p className="text-gray-600">Bienvenido a nuestro sistema de appointments</p>
+          <p className="text-gray-600">
+            Bienvenido a nuestro sistema de turnos
+          </p>
         </div>
         <div className="space-y-4">
-          <p className="text-center text-gray-600">Por favor, selecciona tu rol para continuar:</p>
+          <p className="text-center text-gray-600">
+            Por favor, selecciona tu rol para continuar:
+          </p>
           <div className="grid grid-cols-2 gap-4">
             <button
               className="h-24 flex flex-col items-center justify-center border border-gray-300 rounded-lg hover:bg-blue-50 transition-colors"
@@ -35,13 +39,11 @@ export default function Home() {
               onClick={() => navigate('/patient')}
             >
               <span className="text-4xl mb-2">🙋‍♂️</span>
-              Soy patient
+              Soy paciente
             </button>
           </div>
         </div>
       </div>
     </div>
   );
-
 }
-

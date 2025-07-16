@@ -32,7 +32,7 @@ function AdministrationHome() {
     <div className="space-y-4">
       <div className="space-y-2">
         <p className="text-lg font-semibold text-blue-800">
-          Ingrese su user
+          Ingrese su usuario
         </p>
         <input
           type="text"
@@ -42,7 +42,7 @@ function AdministrationHome() {
           className="w-full border border-gray-300 rounded-lg py-2 px-4"
         />
         <p className="text-lg font-semibold text-blue-800">
-          Ingrese su Contraseña
+          Ingrese su contraseña
         </p>
         <input
           type="password"
@@ -65,7 +65,7 @@ function AdministrationHome() {
   const renderMenu = () => (
     <div className="space-y-4">
       <h2 className="text-2xl font-semibold mb-4 text-center">
-        Menú Principal
+        Menú principal
       </h2>
       <button
         onClick={() => navigate('/admin/createVenue')}
@@ -95,7 +95,7 @@ function AdministrationHome() {
         onClick={() => navigate('/admin/crearOS')}
         className="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition-colors"
       >
-        Obras Sociales
+        Obras sociales
       </button>
       <button
         onClick={() => {
@@ -104,7 +104,7 @@ function AdministrationHome() {
         }}
         className="w-full bg-gray-200 text-gray-700 py-2 rounded-lg hover:bg-gray-300 transition-colors"
       >
-        Cerrar Sesión
+        Cerrar sesión
       </button>
     </div>
   );
@@ -119,6 +119,3 @@ function AdministrationHome() {
 }
 
 export default AdministrationHome;
-
-
-

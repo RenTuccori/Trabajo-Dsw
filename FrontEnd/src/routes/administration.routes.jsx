@@ -8,7 +8,7 @@ import { CreateCombination } from '../pages/administration/createCombination.jsx
 import { CreateDoctor } from '../pages/administration/createDoctor.jsx';
 import { UpdateDoctor } from '../pages/administration/updateDoctor.jsx';
 import { CreateSchedules } from '../pages/administration/createSchedules.jsx';
-import { validation } from './validation.jsx';
+import { Validation } from './validation.jsx';
 import { ProtectedRoute } from '../components/ProtectedRoute.jsx';
 import { useAuth } from '../context/global/AuthProvider.jsx';
 
@@ -22,77 +22,74 @@ export function AdministracionRoutes() {
         <Route
           path="/createVenue"
           element={
-            <validation rol={rol} esperado={'Admin'}>
+            <Validation rol={rol} esperado={'Admin'}>
               <ProtectedRoute requiredRole="Admin">
                 <CreateVenue />
               </ProtectedRoute>
-            </validation>
+            </Validation>
           }
         />
         <Route
           path="/crearEsp"
           element={
-            <validation rol={rol} esperado={'Admin'}>
+            <Validation rol={rol} esperado={'Admin'}>
               <ProtectedRoute requiredRole="Admin">
                 <CreateSpecialty />
               </ProtectedRoute>
-            </validation>
+            </Validation>
           }
         />
         <Route
           path="/crearOS"
           element={
-            <validation rol={rol} esperado={'Admin'}>
+            <Validation rol={rol} esperado={'Admin'}>
               <ProtectedRoute requiredRole="Admin">
-                <createInsurance />
+                <CreateInsurance />
               </ProtectedRoute>
-            </validation>
+            </Validation>
           }
         />
         <Route
           path="/combinacion"
           element={
-            <validation rol={rol} esperado={'Admin'}>
+            <Validation rol={rol} esperado={'Admin'}>
               <ProtectedRoute requiredRole="Admin">
-                <createCombination />
+                <CreateCombination />
               </ProtectedRoute>
-            </validation>
+            </Validation>
           }
         />
         <Route
           path="/schedules"
           element={
-            <validation rol={rol} esperado={'Admin'}>
+            <Validation rol={rol} esperado={'Admin'}>
               <ProtectedRoute requiredRole="Admin">
-                <createSchedules />
+                <CreateSchedules />
               </ProtectedRoute>
-            </validation>
+            </Validation>
           }
         />
         <Route
           path="/crearDoc"
           element={
-            <validation rol={rol} esperado={'Admin'}>
+            <Validation rol={rol} esperado={'Admin'}>
               <ProtectedRoute requiredRole="Admin">
-                <createDoctor />
+                <CreateDoctor />
               </ProtectedRoute>
-            </validation>
+            </Validation>
           }
         />
         <Route
           path="/actualizarDoc/:doctorId"
           element={
-            <validation rol={rol} esperado={'Admin'}>
+            <Validation rol={rol} esperado={'Admin'}>
               <ProtectedRoute requiredRole="Admin">
-                <updateDoctor />
+                <UpdateDoctor />
               </ProtectedRoute>
-            </validation>
+            </Validation>
           }
         />
       </Routes>
     </AdministrationProvider>
   );
 }
-
-
-

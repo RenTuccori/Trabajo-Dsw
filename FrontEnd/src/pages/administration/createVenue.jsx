@@ -95,14 +95,14 @@ export function CreateVenue() {
           {venues.length > 0 ? (
             venues.map((sede) => (
               <li
-                key={sede.venueId}
+                key={sede.idSite}
                 className="bg-gray-100 p-4 rounded-lg flex justify-between items-center"
               >
                 <span>
                   <strong>{sede.name}</strong> - {sede.address}
                 </span>
                 <button
-                  onClick={() => handleBorrarSede(sede.venueId)}
+                  onClick={() => handleBorrarSede(sede.idSite)}
                   className="text-red-600 hover:text-red-800"
                 >
                   Eliminar
@@ -119,6 +119,3 @@ export function CreateVenue() {
     </div>
   );
 }
-
-
-

@@ -58,42 +58,28 @@ const AuthProvider = ({ children }) => {
   }, []);
 
   async function login({ identifier, credential, userType }) {
-    console.log('🔐 FRONTEND - AuthProvider: Iniciando login');
-    console.log('📋 FRONTEND - Datos de login:', { identifier, credential: '***', userType });
-    
     try {
       let response;
       let token;
 
       switch (userType) {
         case 'Patient': {
-          console.log('👤 FRONTEND - Iniciando login de paciente');
           // Paciente
           response = await getUserDniFecha({
             dni: identifier,
             birthDate: credential,
           });
-          console.log('📤 FRONTEND - Respuesta de getUserDniFecha recibida');
-          
+
           token = response.data;
-          console.log('🔑 FRONTEND - Token extraído:', token ? 'Presente' : 'No presente');
-          
+
           localStorage.setItem('token', token);
-          console.log('💾 FRONTEND - Token guardado en localStorage');
-          
+
           const decodedPatient = jwtDecode(token);
-          console.log('🔓 FRONTEND - Token decodificado:', {
-            dni: decodedPatient.dni,
-            name: decodedPatient.name,
-            lastName: decodedPatient.lastName,
-            rol: decodedPatient.rol
-          });
-          
+
           setDni(decodedPatient.dni);
           setNombreUsuario(decodedPatient.name || '');
           setApellidoUsuario(decodedPatient.lastName || '');
           setRol('Patient');
-          console.log('✅ FRONTEND - Estado de paciente actualizado exitosamente');
           break;
         }
         case 'Doctor': {
@@ -132,19 +118,16 @@ const AuthProvider = ({ children }) => {
       console.error('💥 FRONTEND - Error en el inicio de sesión:', error);
       console.error('📄 FRONTEND - Detalles del error:', error.response?.data);
       console.error('🔢 FRONTEND - Código de estado:', error.response?.status);
-      
+
       if (userType === 'Patient') {
-        console.log('🧹 FRONTEND - Limpiando estado de paciente por error');
         setDni(null);
         setNombreUsuario('');
         setApellidoUsuario('');
       } else if (userType === 'Doctor') {
-        console.log('🧹 FRONTEND - Limpiando estado de doctor por error');
         setDoctorId(null);
         setNombreUsuario('');
         setApellidoUsuario('');
       } else if (userType === 'Admin') {
-        console.log('🧹 FRONTEND - Limpiando estado de admin por error');
         setIdAdmin(null);
       }
       throw error;
@@ -152,14 +135,10 @@ const AuthProvider = ({ children }) => {
   }
 
   function comprobarToken(userType) {
-    console.log('🔍 FRONTEND - comprobarToken ejecutándose para tipo:', userType);
-    
     if (localStorage.getItem('token')) {
-      console.log('🔑 FRONTEND - Token encontrado en localStorage');
       try {
         const decoded = jwtDecode(localStorage.getItem('token'));
-        console.log('🔓 FRONTEND - Token decodificado:', decoded);
-        
+
         if (decoded.exp < Date.now() / 1000) {
           console.error('⏰ FRONTEND - Token expired');
           localStorage.removeItem('token');
@@ -172,7 +151,6 @@ const AuthProvider = ({ children }) => {
           setRol('');
           navigate('/');
         } else {
-          console.log('✅ FRONTEND - Token válido, actualizando estado para:', userType);
           switch (userType) {
             case 'Patient': // Paciente
               setDni(decoded.dni);
@@ -207,7 +185,6 @@ const AuthProvider = ({ children }) => {
         navigate('/');
       }
     } else {
-      console.log('⚠️ FRONTEND - No hay token en localStorage');
       // Limpiar todos los estados cuando no hay token
       setDni('');
       setDoctorId('');
@@ -241,6 +218,3 @@ AuthProvider.propTypes = {
 };
 
 export default AuthProvider;
-
-
-

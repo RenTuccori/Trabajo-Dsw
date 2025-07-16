@@ -238,7 +238,7 @@ export function CreateDoctor() {
                   </p>
                   <Select
                     options={healthInsurances.map((obrasocial) => ({
-                      value: obrasocial.healthInsuranceId,
+                      value: obrasocial.idInsuranceCompany,
                       label: obrasocial.name,
                     }))}
                     onChange={handleObraSocialChange}
@@ -323,7 +323,7 @@ export function CreateDoctor() {
           {doctors.length > 0 ? (
             doctors.map((doctor) => (
               <li
-                key={doctor.doctorId}
+                key={doctor.idDoctor}
                 className="bg-gray-100 p-4 rounded-lg flex justify-between items-center"
               >
                 <span>
@@ -331,13 +331,13 @@ export function CreateDoctor() {
                 </span>
                 <div className="flex space-x-4">
                   <button
-                    onClick={() => handleDelete(doctor.doctorId)}
+                    onClick={() => handleDelete(doctor.idDoctor)}
                     className="text-red-600 hover:text-red-800"
                   >
                     Eliminar
                   </button>
                   <button
-                    onClick={() => handleUpdate(doctor.doctorId)}
+                    onClick={() => handleUpdate(doctor.idDoctor)}
                     className="text-blue-600 hover:text-blue-800"
                   >
                     Actualizar
@@ -355,6 +355,3 @@ export function CreateDoctor() {
     </div>
   );
 }
-
-
-

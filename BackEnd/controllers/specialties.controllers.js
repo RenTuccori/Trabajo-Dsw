@@ -5,12 +5,12 @@ export const getSpecialties = async (req, res) => {
     console.log('🩺 BACKEND - getSpecialties: Inicio de función');
     const { venueId } = req.body;
     console.log('🏢 BACKEND - venueId recibido:', venueId);
-    
+
     const [result] = await pool.query(
-      'SELECT DISTINCT sds.idSpecialty, s.name FROM specialties s INNER JOIN sitedoctorspecialty sds ON s.idSpecialty = sds.idSpecialty WHERE sds.idSite = ? AND s.status = \'Habilitado\'',
+      "SELECT DISTINCT sds.idSpecialty, s.name FROM specialties s INNER JOIN sitedoctorspecialty sds ON s.idSpecialty = sds.idSpecialty WHERE sds.idSite = ? AND s.status = 'Habilitado'",
       [venueId]
     );
-    
+
     console.log('🗄️ BACKEND - Especialidades encontradas:', result);
     console.log('📊 BACKEND - Número de especialidades:', result.length);
     res.json(result);
@@ -22,7 +22,9 @@ export const getSpecialties = async (req, res) => {
 
 export const getAllSpecialities = async (req, res) => {
   try {
-    const [result] = await pool.query('SELECT * FROM specialties WHERE status = \'Habilitado\'');
+    const [result] = await pool.query(
+      "SELECT * FROM specialties WHERE status = 'Habilitado'"
+    );
     res.json(result);
   } catch (error) {
     return res.status(500).json({ message: error.message });
@@ -52,7 +54,7 @@ export const getSpecialtyById = async (req, res) => {
   try {
     const { specialtyId } = req.params;
     const [result] = await pool.query(
-      'SELECT * FROM specialties WHERE idSpecialty = ? AND status = \'Habilitado\'',
+      "SELECT * FROM specialties WHERE idSpecialty = ? AND status = 'Habilitado'",
       [specialtyId]
     );
     if (result.length === 0) {
@@ -63,7 +65,6 @@ export const getSpecialtyById = async (req, res) => {
     return res.status(500).json({ message: error.message });
   }
 };
-
 
 export const createSpecialty = async (req, res) => {
   try {
@@ -78,7 +79,11 @@ export const createSpecialty = async (req, res) => {
 
     if (existingSpecialty.length > 0) {
       // If an enabled specialty with the same name already exists
-      return res.status(400).json({ message: 'An enabled specialty with this name already exists.' });
+      return res
+        .status(400)
+        .json({
+          message: 'An enabled specialty with this name already exists.',
+        });
     }
 
     // Insert new specialty with enabled status
@@ -97,7 +102,6 @@ export const createSpecialty = async (req, res) => {
   }
 };
 
-
 export const updateSpecialty = async (req, res) => {
   try {
     const result = await pool.query(
@@ -115,7 +119,7 @@ export const updateSpecialty = async (req, res) => {
 
 export const deleteSpecialty = async (req, res) => {
   try {
-    const { idEspecialidad } = req.params;
+    const { specialtyId } = req.params;
 
     // Iniciar una transacción para asegurar consistencia en las actualizaciones
     await pool.query('START TRANSACTION');
@@ -123,7 +127,7 @@ export const deleteSpecialty = async (req, res) => {
     // Actualizar el estado de la specialty a "Deshabilitado"
     const [resultEspecialidad] = await pool.query(
       'UPDATE specialties SET status = "Deshabilitado" WHERE idSpecialty = ?',
-      [idEspecialidad]
+      [specialtyId]
     );
 
     // Si no se encontró la specialty, devolver un error
@@ -135,7 +139,7 @@ export const deleteSpecialty = async (req, res) => {
     // Actualizar el estado de las combinaciones en la tabla sitedoctorspecialty a "Deshabilitado"
     const [resultCombinacion] = await pool.query(
       'UPDATE sitedoctorspecialty SET status = "Deshabilitado" WHERE idSpecialty = ?',
-      [idEspecialidad]
+      [specialtyId]
     );
 
     // Confirmar la transacción si todo salió bien
