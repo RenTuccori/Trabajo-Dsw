@@ -3,9 +3,9 @@ import { pool } from '../db.js';
 export const getTurnoByDni = async (req, res) => {
   try {
     const { dni } = req.body;
-    console.log('🎯 BACKEND - getTurnoByDni: Buscando turnos para DNI:', dni);
-    
-    const [result] = await pool.query(`
+
+    const [result] = await pool.query(
+      `
       SELECT p.dni, DATE_FORMAT(a.dateTime, '%Y-%m-%d %H:%i:%s') AS dateTime, s.name AS venue, s.address AS address, sp.name AS specialty, usudoc.lastName AS doctor, a.status, a.idAppointment
       FROM users u
       inner JOIN patients p on u.dni = p.dni 
@@ -16,15 +16,12 @@ export const getTurnoByDni = async (req, res) => {
       inner join users usudoc on doc.dni = usudoc.dni WHERE u.dni = ?
       and date(a.dateTime) > current_date() and a.status != 'Cancelado'
       order by a.dateTime`,
-      [dni]);
-      
-    console.log('📊 BACKEND - getTurnoByDni: Resultados encontrados:', result.length);
-    
+      [dni]
+    );
+
     if (result.length === 0) {
-      console.log('✅ BACKEND - getTurnoByDni: No hay turnos futuros, devolviendo array vacío');
       return res.status(200).json([]);
     } else {
-      console.log('✅ BACKEND - getTurnoByDni: Devolviendo', result.length, 'turnos');
       res.json(result);
     }
   } catch (error) {
@@ -36,7 +33,8 @@ export const getTurnoByDni = async (req, res) => {
 export const getTurnoByDoctorHistorico = async (req, res) => {
   try {
     const { doctorId } = req.body;
-    const [result] = await pool.query(`
+    const [result] = await pool.query(
+      `
       SELECT 
         s.name AS venue, 
         sp.name AS specialty, 
@@ -52,13 +50,15 @@ export const getTurnoByDoctorHistorico = async (req, res) => {
       WHERE a.idDoctor = ? 
       AND a.dateTime >= current_date() 
       AND a.status != 'Cancelado'
-      ORDER BY a.dateTime`, 
+      ORDER BY a.dateTime`,
       [doctorId]
     );
 
     // If no results, return 200 with empty array
     if (result.length === 0) {
-      return res.status(200).json({ message: 'No historical appointments', data: [] });
+      return res
+        .status(200)
+        .json({ message: 'No historical appointments', data: [] });
     }
 
     // If there are results, return the appointments list
@@ -72,7 +72,8 @@ export const getTurnoByDoctorHistorico = async (req, res) => {
 export const getTurnoByDoctorHoy = async (req, res) => {
   try {
     const { doctorId } = req.body;
-    const [result] = await pool.query(`select s.name venue,sp.name specialty,a.dateTime,a.status,u.dni,concat(u.lastName,' ',u.firstName) patientName from  appointments a
+    const [result] = await pool.query(
+      `select s.name venue,sp.name specialty,a.dateTime,a.status,u.dni,concat(u.lastName,' ',u.firstName) patientName from  appointments a
       inner join patients p
       on p.idPatient = a.idPatient
       inner join users u 
@@ -84,7 +85,8 @@ export const getTurnoByDoctorHoy = async (req, res) => {
       where a.idDoctor = ? and date(a.dateTime) = current_date()
       and a.status = 'Confirmado'
       order by a.dateTime`,
-      [doctorId]);
+      [doctorId]
+    );
     if (result.length === 0) {
       return res.status(404).json({ message: 'No appointments' });
     } else {
@@ -95,11 +97,11 @@ export const getTurnoByDoctorHoy = async (req, res) => {
   }
 };
 
-
 export const getTurnoByDoctorFecha = async (req, res) => {
   try {
     const { doctorId, dateTime } = req.body;
-    const [result] = await pool.query(`select s.name venue,sp.name specialty,a.dateTime,a.status,u.dni,concat(u.lastName,' ',u.firstName) patientName from  appointments a
+    const [result] = await pool.query(
+      `select s.name venue,sp.name specialty,a.dateTime,a.status,u.dni,concat(u.lastName,' ',u.firstName) patientName from  appointments a
       inner join patients p
       on p.idPatient = a.idPatient
       inner join users u 
@@ -110,7 +112,8 @@ export const getTurnoByDoctorFecha = async (req, res) => {
       on sp.idSpecialty = a.idSpecialty
       where a.idDoctor = ? and date(a.dateTime) = ?
       order by a.dateTime`,
-      [doctorId, dateTime]);
+      [doctorId, dateTime]
+    );
     if (result.length === 0) {
       return res.status(404).json({ message: 'No appointments' });
     } else {
@@ -123,25 +126,18 @@ export const getTurnoByDoctorFecha = async (req, res) => {
 export const confirmAppointment = async (req, res) => {
   try {
     const { appointmentId } = req.body;
-    console.log('🎯 BACKEND - confirmAppointment: Confirmando appointment con ID:', appointmentId);
-    
+
     const currentDate = new Date().toISOString().slice(0, 19).replace('T', ' '); // Format 'YYYY-MM-DD HH:MM:SS'
-    console.log('📅 BACKEND - Fecha de confirmación:', currentDate);
 
     const [result] = await pool.query(
       'UPDATE appointments SET status = ?, confirmationDate = ? WHERE idAppointment = ?',
-      ["Confirmado", currentDate, appointmentId]
+      ['Confirmado', currentDate, appointmentId]
     );
 
-    console.log('📊 BACKEND - Resultado de la query:', result);
-    console.log('🔄 BACKEND - Filas afectadas:', result.affectedRows);
-
     if (result.affectedRows === 0) {
-      console.log('❌ BACKEND - Appointment no encontrado');
       return res.status(404).json({ message: 'Appointment not found' });
     }
 
-    console.log('✅ BACKEND - Appointment confirmado exitosamente');
     res.json({ message: 'Appointment status updated to "Confirmado"' });
   } catch (error) {
     console.error('❌ BACKEND - Error en confirmAppointment:', error);
@@ -149,29 +145,21 @@ export const confirmAppointment = async (req, res) => {
   }
 };
 
-
 export const cancelAppointment = async (req, res) => {
   try {
     const { appointmentId } = req.body;
-    console.log('🎯 BACKEND - cancelAppointment: Cancelando appointment con ID:', appointmentId);
-    
+
     const currentDate = new Date().toISOString().slice(0, 19).replace('T', ' '); // Format 'YYYY-MM-DD HH:MM:SS'
-    console.log('📅 BACKEND - Fecha de cancelación:', currentDate);
 
     const [result] = await pool.query(
       'UPDATE appointments SET status = ?, cancellationDate = ? WHERE idAppointment = ?',
-      ["Cancelado", currentDate, appointmentId]
+      ['Cancelado', currentDate, appointmentId]
     );
 
-    console.log('📊 BACKEND - Resultado de la query:', result);
-    console.log('🔄 BACKEND - Filas afectadas:', result.affectedRows);
-
     if (result.affectedRows === 0) {
-      console.log('❌ BACKEND - Appointment no encontrado');
       return res.status(404).json({ message: 'Appointment not found' });
     }
 
-    console.log('✅ BACKEND - Appointment cancelado exitosamente');
     res.json({ message: 'Appointment status updated to "Cancelado"' });
   } catch (error) {
     console.error('❌ BACKEND - Error en cancelAppointment:', error);
@@ -179,13 +167,9 @@ export const cancelAppointment = async (req, res) => {
   }
 };
 
-
 export const createAppointment = async (req, res) => {
   const mail = null;
-  
-  console.log('🎯 BACKEND - createAppointment: Iniciando creación de cita');
-  console.log('📋 BACKEND - req.body recibido:', req.body);
-  
+
   const {
     patientId,
     dateTime,
@@ -200,34 +184,15 @@ export const createAppointment = async (req, res) => {
 
   // Usar dateAndTime si dateTime no existe
   const finalDateTime = dateTime || dateAndTime;
-  
-  console.log('🔍 BACKEND - Valores extraídos:');
-  console.log('  - patientId:', patientId);
-  console.log('  - dateTime:', dateTime);
-  console.log('  - dateAndTime:', dateAndTime);
-  console.log('  - finalDateTime:', finalDateTime);
-  console.log('  - specialtyId:', specialtyId);
-  console.log('  - doctorId:', doctorId);
-  console.log('  - venueId:', venueId);
-  console.log('  - status:', status);
-  
+
   if (!patientId) {
-    console.log('❌ BACKEND - patientId es null o undefined!');
     return res.status(400).json({ message: 'patientId is required' });
   }
-  
+
   if (!finalDateTime) {
-    console.log('❌ BACKEND - finalDateTime es null o undefined!');
     return res.status(400).json({ message: 'dateTime is required' });
   }
   try {
-    console.log('📝 BACKEND - Ejecutando query INSERT con valores:');
-    console.log('  - patientId:', patientId);
-    console.log('  - finalDateTime:', finalDateTime);
-    console.log('  - specialtyId:', specialtyId);
-    console.log('  - doctorId:', doctorId);
-    console.log('  - venueId:', venueId);
-    
     const [result] = await pool.query(
       `INSERT INTO appointments (idPatient, dateTime, cancellationDate, confirmationDate, status, idSpecialty, idDoctor, idSite, email) 
       VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
@@ -240,13 +205,10 @@ export const createAppointment = async (req, res) => {
         specialtyId,
         doctorId,
         venueId,
-        mail
+        mail,
       ]
     );
-    
-    console.log('✅ BACKEND - Appointment creado exitosamente');
-    console.log('🆔 BACKEND - ID del appointment creado:', result.insertId);
-    
+
     res.json({
       idAppointment: result.insertId,
       idPatient: patientId,
@@ -257,19 +219,19 @@ export const createAppointment = async (req, res) => {
       idSpecialty: specialtyId,
       idDoctor: doctorId,
       idSite: venueId,
-      email: mail
+      email: mail,
     });
   } catch (error) {
     return res.status(500).json({ message: error.message });
   }
 };
 
-
 export const deleteAppointment = async (req, res) => {
   try {
-    const [result] = await pool.query('DELETE FROM appointments WHERE idAppointment = ?', [
-      req.params.appointmentId,
-    ]);
+    const [result] = await pool.query(
+      'DELETE FROM appointments WHERE idAppointment = ?',
+      [req.params.appointmentId]
+    );
     if (result.affectedRows === 0) {
       return res.status(404).json({ message: 'error' });
     }

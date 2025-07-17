@@ -24,17 +24,12 @@ app.use(cors());
 app.use(express.json()); // To use JSON in the body
 
 app.use((req, res, next) => {
-  console.log(`🌐 BACKEND - Nueva petición: ${req.method} ${req.path}`);
-  
   let data = null;
   let token = null;
   const authHeader = req.headers.authorization;
-  
-  console.log('🔍 BACKEND - Auth header:', authHeader ? 'Presente' : 'No presente');
-  
+
   if (authHeader) {
     token = authHeader.split(' ')[1];
-    console.log('🔑 BACKEND - Token extraído:', token ? 'Presente' : 'No extraído');
   }
 
   req.session = { rol: null };
@@ -43,16 +38,12 @@ app.use((req, res, next) => {
     if (token) {
       data = jwt.verify(token, 'CLAVE_SUPER_SEGURISIMA');
       req.session.rol = data.rol;
-      console.log('✅ BACKEND - Token verificado exitosamente, rol:', data.rol);
     } else {
-      console.log('⚠️ BACKEND - No hay token para verificar');
     }
   } catch (e) {
-    console.log('❌ BACKEND - Error al verificar token:', e.message);
     req.session.rol = null;
   }
-  
-  console.log('👤 BACKEND - Rol de sesión establecido:', req.session.rol);
+
   next();
 });
 

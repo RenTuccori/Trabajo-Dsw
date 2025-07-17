@@ -3,11 +3,7 @@ import jwt from 'jsonwebtoken';
 
 export const getDoctorsByVenueAndSpecialty = async (req, res) => {
   try {
-    console.log(
-      '👨‍⚕️ BACKEND - getDoctorsByVenueAndSpecialty: Inicio de función'
-    );
     const { venueId, specialtyId } = req.body;
-    console.log('📋 BACKEND - Parámetros recibidos:', { venueId, specialtyId });
 
     const [result] = await pool.query(
       `SELECT doc.idDoctor, CONCAT(u.firstName, " ", u.lastName) AS nombreyapellido 
@@ -18,20 +14,12 @@ export const getDoctorsByVenueAndSpecialty = async (req, res) => {
       [venueId, specialtyId]
     );
 
-    console.log('🗄️ BACKEND - Doctores encontrados:', result);
-    console.log('📊 BACKEND - Número de doctores:', result.length);
-
     if (result.length === 0) {
-      console.log(
-        '⚠️ BACKEND - No se encontraron doctores para esta combinación'
-      );
       return res.status(404).json({ message: 'No doctors for this specialty' });
     } else {
-      console.log('✅ BACKEND - Enviando doctores encontrados');
       res.json(result);
     }
   } catch (error) {
-    console.log('💥 BACKEND - Error en getDoctorsByVenueAndSpecialty:', error);
     return res.status(500).json({ message: error.message });
   }
 };
@@ -65,7 +53,6 @@ export const getAvailableDoctors = async (req, res) => {
 
 export const getDoctors = async (req, res) => {
   try {
-    console.log('👨‍⚕️ BACKEND - getDoctors: Inicio de función');
     const [result] = await pool.query(
       `SELECT doc.idDoctor, CONCAT(u.firstName, " ", u.lastName) AS nombreyapellido 
        FROM doctors doc
@@ -73,18 +60,13 @@ export const getDoctors = async (req, res) => {
        WHERE doc.status = 'Habilitado'
        ORDER BY u.lastName ASC`
     );
-    console.log('🗄️ BACKEND - Doctores encontrados (getDoctors):', result);
-    console.log('📊 BACKEND - Número de doctores (getDoctors):', result.length);
 
     if (result.length === 0) {
-      console.log('⚠️ BACKEND - No se encontraron doctores');
       return res.status(404).json({ message: 'No doctors' });
     } else {
-      console.log('✅ BACKEND - Enviando doctores');
       res.json(result);
     }
   } catch (error) {
-    console.log('💥 BACKEND - Error en getDoctors:', error);
     return res.status(500).json({ message: error.message });
   }
 };
@@ -111,9 +93,7 @@ export const getDoctorByDni = async (req, res) => {
 
 export const getDoctorById = async (req, res) => {
   try {
-    console.log('👨‍⚕️ BACKEND - getDoctorById: Inicio de función');
     const { doctorId } = req.params;
-    console.log('📋 BACKEND - getDoctorById: Doctor ID recibido:', doctorId);
     const [result] = await pool.query(
       `SELECT u.firstName, u.lastName, u.email, doc.dni, doc.appointmentDuration, doc.password, u.phone, u.address, u.idInsuranceCompany, ic.name AS insuranceCompany
        FROM doctors doc 
@@ -122,18 +102,12 @@ export const getDoctorById = async (req, res) => {
        WHERE doc.idDoctor = ? AND doc.status = 'Habilitado'`,
       [doctorId]
     );
-    console.log('🗄️ BACKEND - getDoctorById: Resultado de la query:', result);
     if (result.length === 0) {
-      console.log('⚠️ BACKEND - getDoctorById: Doctor no encontrado');
       return res.status(404).json({ message: 'Doctor not found' });
     } else {
-      console.log(
-        '✅ BACKEND - getDoctorById: Doctor encontrado, enviando datos'
-      );
       res.json(result[0]);
     }
   } catch (error) {
-    console.error('💥 BACKEND - getDoctorById: Error:', error.message);
     return res.status(500).json({ message: error.message });
   }
 };
@@ -245,7 +219,6 @@ export const updateDoctor = async (req, res) => {
       return res.status(404).json({ message: 'Doctor not found' });
     }
     res.json({ idDoctor, appointmentDuration, password });
-    console.log('Doctor updated:');
   } catch (error) {
     return res.status(500).json({ message: error.message });
   }

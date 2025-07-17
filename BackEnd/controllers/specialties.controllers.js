@@ -2,20 +2,15 @@ import { pool } from '../db.js';
 
 export const getSpecialties = async (req, res) => {
   try {
-    console.log('🩺 BACKEND - getSpecialties: Inicio de función');
     const { venueId } = req.body;
-    console.log('🏢 BACKEND - venueId recibido:', venueId);
 
     const [result] = await pool.query(
       "SELECT DISTINCT sds.idSpecialty, s.name FROM specialties s INNER JOIN sitedoctorspecialty sds ON s.idSpecialty = sds.idSpecialty WHERE sds.idSite = ? AND s.status = 'Habilitado'",
       [venueId]
     );
 
-    console.log('🗄️ BACKEND - Especialidades encontradas:', result);
-    console.log('📊 BACKEND - Número de especialidades:', result.length);
     res.json(result);
   } catch (error) {
-    console.log('💥 BACKEND - Error en getSpecialties:', error);
     return res.status(500).json({ message: error.message });
   }
 };
@@ -79,11 +74,9 @@ export const createSpecialty = async (req, res) => {
 
     if (existingSpecialty.length > 0) {
       // If an enabled specialty with the same name already exists
-      return res
-        .status(400)
-        .json({
-          message: 'An enabled specialty with this name already exists.',
-        });
+      return res.status(400).json({
+        message: 'An enabled specialty with this name already exists.',
+      });
     }
 
     // Insert new specialty with enabled status

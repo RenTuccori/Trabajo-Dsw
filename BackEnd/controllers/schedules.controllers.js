@@ -1,25 +1,30 @@
 import { pool } from '../db.js';
 
 export const getAvailableDatesByDoctorSpecialtyVenue = async (req, res) => {
-    try {
-        console.log('[SCHEDULES] getAvailableDatesByDoctorSpecialtyVenue - Request body:', req.body);
-        const { doctorId, specialtyId, venueId } = req.body;
-        console.log('[SCHEDULES] Parameters - doctorId:', doctorId, 'specialtyId:', specialtyId, 'venueId:', venueId);
-        
-        // Verificar si los parámetros existen en la base de datos
-        const [doctorCheck] = await pool.query('SELECT * FROM doctors WHERE idDoctor = ?', [doctorId]);
-        const [specialtyCheck] = await pool.query('SELECT * FROM specialties WHERE idSpecialty = ?', [specialtyId]);
-        const [venueCheck] = await pool.query('SELECT * FROM sites WHERE idSite = ?', [venueId]);
-        const [scheduleCheck] = await pool.query('SELECT * FROM available_schedules WHERE idDoctor = ? AND idSpecialty = ? AND idSite = ?', [doctorId, specialtyId, venueId]);
-        
-        console.log('[SCHEDULES] Doctor exists:', doctorCheck.length > 0 ? 'YES' : 'NO', doctorCheck);
-        console.log('[SCHEDULES] Specialty exists:', specialtyCheck.length > 0 ? 'YES' : 'NO', specialtyCheck);
-        console.log('[SCHEDULES] Venue exists:', venueCheck.length > 0 ? 'YES' : 'NO', venueCheck);
-        console.log('[SCHEDULES] Schedule exists:', scheduleCheck.length > 0 ? 'YES' : 'NO', scheduleCheck);
-        
-        // Query simplificada para debug
-        console.log('[SCHEDULES] Running simplified query first...');
-        const [simpleResult] = await pool.query(`
+  try {
+    const { doctorId, specialtyId, venueId } = req.body;
+
+    // Verificar si los parámetros existen en la base de datos
+    const [doctorCheck] = await pool.query(
+      'SELECT * FROM doctors WHERE idDoctor = ?',
+      [doctorId]
+    );
+    const [specialtyCheck] = await pool.query(
+      'SELECT * FROM specialties WHERE idSpecialty = ?',
+      [specialtyId]
+    );
+    const [venueCheck] = await pool.query(
+      'SELECT * FROM sites WHERE idSite = ?',
+      [venueId]
+    );
+    const [scheduleCheck] = await pool.query(
+      'SELECT * FROM available_schedules WHERE idDoctor = ? AND idSpecialty = ? AND idSite = ?',
+      [doctorId, specialtyId, venueId]
+    );
+
+    // Query simplificada para debug
+    const [simpleResult] = await pool.query(
+      `
             SELECT 
                 DATE_FORMAT(d.dates, "%Y-%m-%d") AS date,
                 sch.day,
@@ -42,10 +47,12 @@ export const getAvailableDatesByDoctorSpecialtyVenue = async (req, res) => {
               AND sch.idSite = ?
               AND d.dates > CURDATE()
             LIMIT 10
-        `, [doctorId, specialtyId, venueId]);
-        console.log('[SCHEDULES] Simple query result:', simpleResult.length, 'rows', simpleResult);
-        
-        const [result] = await pool.query(`
+        `,
+      [doctorId, specialtyId, venueId]
+    );
+
+    const [result] = await pool.query(
+      `
             WITH RECURSIVE time_slots AS (
     SELECT 
         DATE_FORMAT(d.dates, "%Y-%m-%d") AS date,
@@ -116,22 +123,21 @@ LEFT JOIN appointments a
     AND ts.venueId = ?
     GROUP BY ts.date, ts.day, u.firstName, u.lastName 
     ORDER BY ts.date;
-        `, [doctorId, specialtyId, venueId, doctorId, specialtyId, venueId]);
-        console.log('[SCHEDULES] Query executed, result count:', result.length);
-        res.json(result);
-    } catch (error) {
-        console.error('[SCHEDULES] Error in getAvailableDatesByDoctorSpecialtyVenue:', error.message);
-        res.status(500).json({ message: "Server error", details: error.message });
-    }
-}
+        `,
+      [doctorId, specialtyId, venueId, doctorId, specialtyId, venueId]
+    );
+    res.json(result);
+  } catch (error) {
+    res.status(500).json({ message: 'Server error', details: error.message });
+  }
+};
 
 //Available dates for all doctors and one specialty and one venue
 export const getAvailableDatesBySpecialtyVenue = async (req, res) => {
-    try {
-        console.log('[SCHEDULES] getAvailableDatesBySpecialtyVenue - Request body:', req.body);
-        const { specialtyId, venueId } = req.body;
-        console.log('[SCHEDULES] Parameters - specialtyId:', specialtyId, 'venueId:', venueId);
-        const [result] = await pool.query(`
+  try {
+    const { specialtyId, venueId } = req.body;
+    const [result] = await pool.query(
+      `
             WITH RECURSIVE time_slots AS (
             SELECT 
                 DATE_FORMAT(d.dates, "%Y-%m-%d") AS date,
@@ -201,22 +207,20 @@ export const getAvailableDatesBySpecialtyVenue = async (req, res) => {
             GROUP BY ts.date, ts.day, u.firstName, u.lastName  -- Group by date and day
             ORDER BY ts.date;
         `,
-            [specialtyId, venueId, specialtyId, venueId]);
-        console.log('[SCHEDULES] Query executed, result count:', result.length);
-        res.json(result);
-    } catch (error) {
-        console.error('[SCHEDULES] Error in getAvailableDatesBySpecialtyVenue:', error.message);
-        res.status(500).json({ message: "Server error", details: error.message });
-    }
-}
+      [specialtyId, venueId, specialtyId, venueId]
+    );
+    res.json(result);
+  } catch (error) {
+    res.status(500).json({ message: 'Server error', details: error.message });
+  }
+};
 
 //Available schedules by doctor, specialty and venue
 export const getAvailableSchedulesByDoctorSpecialtyVenue = async (req, res) => {
-    try {
-        console.log('[SCHEDULES] getAvailableSchedulesByDoctorSpecialtyVenue - Request body:', req.body);
-        const { doctorId, specialtyId, venueId, date } = req.body;
-        console.log('[SCHEDULES] Parameters - doctorId:', doctorId, 'specialtyId:', specialtyId, 'venueId:', venueId, 'date:', date);
-        const [result] = await pool.query(`
+  try {
+    const { doctorId, specialtyId, venueId, date } = req.body;
+    const [result] = await pool.query(
+      `
             WITH RECURSIVE time_slots AS (
             SELECT 
                 sch.idSite AS venueId,
@@ -268,21 +272,20 @@ export const getAvailableSchedulesByDoctorSpecialtyVenue = async (req, res) => {
             AND CONCAT(?, ' ', ts.startTime) = a.dateTime
             WHERE (a.idAppointment IS NULL OR a.cancellationDate IS NOT NULL)
             ORDER BY ts.startTime;
-        `, [doctorId, specialtyId, venueId, date, date]);
-        console.log('[SCHEDULES] Query executed, result count:', result.length);
-        res.json(result);
-    } catch (error) {
-        console.error('[SCHEDULES] Error in getAvailableSchedulesByDoctorSpecialtyVenue:', error.message);
-        res.status(500).json({ message: "Server error", details: error.message });
-    }
+        `,
+      [doctorId, specialtyId, venueId, date, date]
+    );
+    res.json(result);
+  } catch (error) {
+    res.status(500).json({ message: 'Server error', details: error.message });
+  }
 };
 
 export const getAvailableSchedulesBySpecialtyVenue = async (req, res) => {
-    try {
-        console.log('[SCHEDULES] getAvailableSchedulesBySpecialtyVenue - Request body:', req.body);
-        const { specialtyId, venueId, date } = req.body;
-        console.log('[SCHEDULES] Parameters - specialtyId:', specialtyId, 'venueId:', venueId, 'date:', date);
-        const [result] = await pool.query(`
+  try {
+    const { specialtyId, venueId, date } = req.body;
+    const [result] = await pool.query(
+      `
             WITH RECURSIVE time_slots AS (
             SELECT 
                 sch.idSite AS venueId,
@@ -334,11 +337,11 @@ export const getAvailableSchedulesBySpecialtyVenue = async (req, res) => {
             AND CONCAT(?, ' ', ts.startTime) = a.dateTime
             WHERE (a.idAppointment IS NULL OR a.cancellationDate IS NOT NULL)
             ORDER BY ts.startTime;
-        `, [specialtyId, venueId, date, date]);
-        console.log('[SCHEDULES] Query executed, result count:', result.length);
-        res.json(result);
-    } catch (error) {
-        console.error('[SCHEDULES] Error in getAvailableSchedulesBySpecialtyVenue:', error.message);
-        res.status(500).json({ message: "Server error", details: error.message });
-    }
+        `,
+      [specialtyId, venueId, date, date]
+    );
+    res.json(result);
+  } catch (error) {
+    res.status(500).json({ message: 'Server error', details: error.message });
+  }
 };

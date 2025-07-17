@@ -2,20 +2,16 @@ import { pool } from '../db.js';
 
 export const getVenues = async (req, res) => {
   try {
-    console.log('🏢 BACKEND - getVenues: Obteniendo sedes');
-    const [result] = await pool.query('SELECT * FROM sites WHERE status = \'Habilitado\'');
-    console.log('🗄️ BACKEND - Sedes encontradas:', result);
-    console.log('📊 BACKEND - Número de sedes:', result.length);
-    
+    const [result] = await pool.query(
+      "SELECT * FROM sites WHERE status = 'Habilitado'"
+    );
+
     if (result.length === 0) {
-      console.log('⚠️ BACKEND - No hay sedes habilitadas');
       return res.status(404).json({ message: 'No enabled venues' });
     } else {
-      console.log('✅ BACKEND - Enviando sedes');
       res.json(result);
     }
   } catch (error) {
-    console.log('💥 BACKEND - Error en getVenues:', error);
     return res.status(500).json({ message: error.message });
   }
 };
@@ -24,11 +20,13 @@ export const getVenueById = async (req, res) => {
   try {
     const { venueId } = req.params;
     const [result] = await pool.query(
-      'SELECT * FROM sites WHERE idSite = ? AND status = \'Habilitado\'',
+      "SELECT * FROM sites WHERE idSite = ? AND status = 'Habilitado'",
       [venueId]
     );
     if (result.length === 0) {
-      return res.status(404).json({ message: 'Venue not found or not enabled' });
+      return res
+        .status(404)
+        .json({ message: 'Venue not found or not enabled' });
     } else {
       res.json(result[0]);
     }
@@ -50,7 +48,9 @@ export const createVenue = async (req, res) => {
 
     if (existingVenue.length > 0) {
       // If an enabled venue with the same name already exists
-      return res.status(400).json({ message: 'An enabled venue with this name already exists.' });
+      return res
+        .status(400)
+        .json({ message: 'An enabled venue with this name already exists.' });
     }
 
     // Insert new venue with enabled status
@@ -70,9 +70,6 @@ export const createVenue = async (req, res) => {
   }
 };
 
-
-
-
 export const updateVenue = async (req, res) => {
   const { venueId } = req.params;
   const { name, address } = req.body;
@@ -91,7 +88,6 @@ export const updateVenue = async (req, res) => {
     return res.status(500).json({ message: error.message });
   }
 };
-
 
 export const deleteVenue = async (req, res) => {
   try {

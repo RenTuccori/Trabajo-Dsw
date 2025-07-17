@@ -5,7 +5,6 @@ let isSendingEmails = false; // Variable para evitar ejecución simultánea
 
 export const sendReminderEmails = async () => {
   if (isSendingEmails) {
-    console.log('Email sending is already in progress. Skipping this execution.');
     return; // If already sending emails, do not continue.
   }
 
@@ -40,15 +39,16 @@ export const sendReminderEmails = async () => {
         await sendEmail({ body: mailBody }, { json: () => {} });
 
         // Update the `email` field to 1 after sending the email
-        await pool.query(`
+        await pool.query(
+          `
           UPDATE appointments
           SET email = 1
           WHERE idAppointment = ?;
-        `, [idAppointment]);
+        `,
+          [idAppointment]
+        );
       }
-      console.log(`Reminder emails sent to ${rows.length} patients.`);
     } else {
-      console.log('No pending appointments to remind at this time.');
     }
   } catch (error) {
     console.error('Error sending appointment reminders:', error);
@@ -58,8 +58,6 @@ export const sendReminderEmails = async () => {
 };
 
 export const startAutoReminderEmails = () => {
-  console.log('Starting automatic email reminders...');
-
   // Execute immediately on startup
   sendReminderEmails();
 

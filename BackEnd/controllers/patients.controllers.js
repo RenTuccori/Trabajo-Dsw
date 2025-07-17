@@ -16,7 +16,6 @@ export const getPatients = async (req, res) => {
       res.json(result);
     }
   } catch (error) {
-    console.log(error);
     return res.status(500).json({ message: error.message });
   }
 };
@@ -24,8 +23,7 @@ export const getPatients = async (req, res) => {
 export const getPacienteByDni = async (req, res) => {
   try {
     const { dni } = req.body;
-    console.log('🔍 BACKEND - getPacienteByDni: Buscando paciente con DNI:', dni);
-    
+
     const [result] = await pool.query(
       `SELECT p.idPatient, u.firstName, u.lastName, u.dni
        FROM patients p
@@ -33,21 +31,15 @@ export const getPacienteByDni = async (req, res) => {
        WHERE u.dni = ? AND p.status = 'Habilitado'`,
       [dni]
     );
-    
-    console.log('📊 BACKEND - Resultado de la query:', result);
-    
+
     if (result.length === 0) {
-      console.log('❌ BACKEND - Paciente no encontrado o no habilitado');
       return res
         .status(404)
         .json({ message: 'Patient not found or not enabled' });
     } else {
-      console.log('✅ BACKEND - Paciente encontrado:', result[0]);
-      console.log('🆔 BACKEND - idPatient devuelto:', result[0].idPatient);
       res.json(result[0]);
     }
   } catch (error) {
-    console.error('❌ BACKEND - Error en getPacienteByDni:', error);
     return res.status(500).json({ message: error.message });
   }
 };

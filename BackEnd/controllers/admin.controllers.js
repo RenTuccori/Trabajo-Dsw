@@ -79,7 +79,6 @@ export const createSeEspDoc = async (req, res) => {
 export const deleteSeEspDoc = async (req, res) => {
   try {
     const { venueId, doctorId, specialtyId } = req.body;
-    console.log(req.body);
     // Update the status to 'Deshabilitado'
     const [result] = await pool.query(
       'UPDATE sitedoctorspecialty SET status = "Deshabilitado" WHERE idSite = ? AND idDoctor = ? AND idSpecialty = ?',
@@ -153,7 +152,6 @@ export const updateHorarios = async (req, res) => {
   try {
     const { venueId, doctorId, specialtyId, day, startTime, endTime, status } =
       req.body;
-    console.log(req.body);
     // SQL query to update the schedule
     const [result] = await pool.query(
       'UPDATE available_schedules SET startTime = ?, endTime = ?, status = ? WHERE idSite = ? AND idDoctor = ? AND idSpecialty = ? AND day = ?',
