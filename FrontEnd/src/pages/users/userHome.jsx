@@ -11,24 +11,15 @@ function UserHome() {
   const [fecha, setFecha] = useState('');
 
   const handleLogin = async () => {
-    console.log('🚀 FRONTEND - UserHome: Iniciando proceso de login');
-    console.log('📋 FRONTEND - DNI introducido:', dniform);
-    console.log('📅 FRONTEND - Fecha introducida:', fecha);
-
     try {
-      console.log('📞 FRONTEND - Llamando a función login del AuthProvider');
       await login({
         identifier: dniform,
         credential: fecha,
         userType: 'Patient',
       });
-      console.log('✅ FRONTEND - Login completado exitosamente');
       window.notifySuccess('¡Login exitoso!'); // Muestra mensaje de éxito
     } catch (error) {
-      console.error('❌ FRONTEND - Error en handleLogin:', error);
-      console.error('📄 FRONTEND - Detalles del error:', error.response?.data);
       window.notifyError('Error en el login, verifica tus datos.'); // Muestra mensaje de error si hay fallo
-      console.error('Error de login:', error);
     }
   };
   useEffect(() => {

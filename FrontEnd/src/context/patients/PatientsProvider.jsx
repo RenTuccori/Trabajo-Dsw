@@ -8,7 +8,10 @@ import {
   getEspecialidades,
   getEspecialidadById,
 } from '../../api/specialties.api';
-import { getDoctors as getDoctorsAPI, getDoctorById } from '../../api/doctors.api';
+import {
+  getDoctors as getDoctorsAPI,
+  getDoctorById,
+} from '../../api/doctors.api';
 import { getFechasDispTodos, getHorariosDisp } from '../../api/schedules.api';
 import { createUser, getUserDni, updateUser } from '../../api/users.api';
 import { getObrasSociales } from '../../api/insurance.api';
@@ -60,30 +63,23 @@ const PatientsProvider = ({ children }) => {
   const { dni } = useAuth();
 
   async function updateUserFunction(data) {
-    console.log('🔄 FRONTEND - updateUserFunction: Datos recibidos:', data);
-    try {
-      const response = await updateUser(data);
-      console.log('✅ FRONTEND - updateUserFunction: Respuesta de API:', response);
-      return response;
-    } catch (error) {
-      console.error('❌ FRONTEND - updateUserFunction: Error:', error);
-      throw error;
-    }
+    return await updateUser(data);
   }
 
   async function getVenues() {
-    console.log('🏢 FRONTEND - getVenues: Obteniendo sedes');
     try {
       const response = await getSedes();
-      console.log('✅ FRONTEND - Sedes obtenidas:', response.data);
       setVenues(response.data);
     } catch (error) {
-      console.error('❌ FRONTEND - Error obteniendo sedes:', error);
+      // Handle error silently or show user notification
     }
   }
 
   async function getSpecialties({ venueId }) {
-    console.log('🩺 FRONTEND - getSpecialties: Obteniendo especialidades para sede:', venueId);
+    console.log(
+      '🩺 FRONTEND - getSpecialties: Obteniendo especialidades para sede:',
+      venueId
+    );
     try {
       const response = await getEspecialidades({ venueId });
       console.log('✅ FRONTEND - Especialidades obtenidas:', response.data);
@@ -94,7 +90,10 @@ const PatientsProvider = ({ children }) => {
   }
 
   async function getDoctors({ venueId, specialtyId }) {
-    console.log('👨‍⚕️ FRONTEND - getDoctors: Obteniendo doctores para:', { venueId, specialtyId });
+    console.log('👨‍⚕️ FRONTEND - getDoctors: Obteniendo doctores para:', {
+      venueId,
+      specialtyId,
+    });
     try {
       const response = await getDoctorsAPI({ venueId, specialtyId });
       console.log('✅ FRONTEND - Doctores obtenidos:', response.data);
@@ -113,16 +112,16 @@ const PatientsProvider = ({ children }) => {
       specialtyId: selectedSpecialty.value,
       venueId: selectedVenue.value,
     });
-    
+
     try {
       const response = await getFechasDispTodos({
         doctorId: selectedOption.value,
         specialtyId: selectedSpecialty.value,
         venueId: selectedVenue.value,
       });
-      
+
       console.log('✅ FRONTEND - Fechas obtenidas del backend:', response.data);
-      
+
       const fechasFormateadas = response.data.map((item) => {
         const [year, month, day] = item.date.split('-'); // Descomponer la fecha
         return new Date(Number(year), Number(month) - 1, Number(day)); // Crear la fecha (mes empieza en 0)
@@ -161,9 +160,11 @@ const PatientsProvider = ({ children }) => {
   }
 
   async function createUserFunction(data) {
-    console.log('🎯 FRONTEND - createUserFunction: Iniciando creación de usuario');
+    console.log(
+      '🎯 FRONTEND - createUserFunction: Iniciando creación de usuario'
+    );
     console.log('📋 FRONTEND - Datos recibidos:', data);
-    
+
     // Mapear campos del frontend al backend
     const backendData = {
       dni: data.dni,
@@ -173,19 +174,27 @@ const PatientsProvider = ({ children }) => {
       phone: data.phone,
       email: data.email,
       address: data.address,
-      insuranceCompanyId: data.healthInsuranceId // Mapear healthInsuranceId a insuranceCompanyId
+      insuranceCompanyId: data.healthInsuranceId, // Mapear healthInsuranceId a insuranceCompanyId
     };
-    
+
     console.log('🔄 FRONTEND - Datos mapeados para backend:', backendData);
-    
+
     try {
       const response = await createUser(backendData);
-      console.log('✅ FRONTEND - createUserFunction: Usuario creado en BD:', response);
+      console.log(
+        '✅ FRONTEND - createUserFunction: Usuario creado en BD:',
+        response
+      );
       setUser(response.data);
-      
-      console.log('📝 FRONTEND - createUserFunction: Creando paciente con DNI:', data.dni);
+
+      console.log(
+        '📝 FRONTEND - createUserFunction: Creando paciente con DNI:',
+        data.dni
+      );
       await createPaciente({ dni: data.dni });
-      console.log('✅ FRONTEND - createUserFunction: Paciente creado exitosamente');
+      console.log(
+        '✅ FRONTEND - createUserFunction: Paciente creado exitosamente'
+      );
     } catch (error) {
       console.error('❌ FRONTEND - createUserFunction: Error:', error);
       throw error;
@@ -204,14 +213,27 @@ const PatientsProvider = ({ children }) => {
 
   async function getDoctorByIdFunction() {
     try {
-      console.log('👨‍⚕️ FRONTEND - getDoctorByIdFunction: Obteniendo doctor con ID:', doctorId);
+      console.log(
+        '👨‍⚕️ FRONTEND - getDoctorByIdFunction: Obteniendo doctor con ID:',
+        doctorId
+      );
       const response = await getDoctorById(doctorId);
-      console.log('📋 FRONTEND - getDoctorByIdFunction: Respuesta recibida:', response.data);
+      console.log(
+        '📋 FRONTEND - getDoctorByIdFunction: Respuesta recibida:',
+        response.data
+      );
       setDoctorName(response.data.firstName);
       setDoctorLastName(response.data.lastName);
-      console.log('✅ FRONTEND - getDoctorByIdFunction: Doctor configurado:', response.data.firstName, response.data.lastName);
+      console.log(
+        '✅ FRONTEND - getDoctorByIdFunction: Doctor configurado:',
+        response.data.firstName,
+        response.data.lastName
+      );
     } catch (error) {
-      console.error('💥 FRONTEND - getDoctorByIdFunction: Error obteniendo doctor:', error);
+      console.error(
+        '💥 FRONTEND - getDoctorByIdFunction: Error obteniendo doctor:',
+        error
+      );
       throw error; // Re-lanzar para que lo maneje appointmentConfirmation
     }
   }
@@ -233,7 +255,7 @@ const PatientsProvider = ({ children }) => {
     console.log('  - status:', status);
     console.log('  - cancellationDate:', cancellationDate);
     console.log('  - confirmationDate:', confirmationDate);
-    
+
     const appointmentData = {
       patientId,
       dateAndTime,
@@ -244,12 +266,18 @@ const PatientsProvider = ({ children }) => {
       doctorId,
       venueId,
     };
-    
-    console.log('📤 FRONTEND - Objeto de datos enviado a createTurno:', appointmentData);
-    
+
+    console.log(
+      '📤 FRONTEND - Objeto de datos enviado a createTurno:',
+      appointmentData
+    );
+
     try {
       const result = await createTurno(appointmentData);
-      console.log('✅ FRONTEND - createAppointment: Respuesta recibida:', result);
+      console.log(
+        '✅ FRONTEND - createAppointment: Respuesta recibida:',
+        result
+      );
       return result;
     } catch (error) {
       console.error('❌ FRONTEND - createAppointment: Error:', error);
@@ -258,10 +286,16 @@ const PatientsProvider = ({ children }) => {
   }
 
   const getPatientByDni = useCallback(async () => {
-    console.log('🔍 FRONTEND - getPatientByDni: Obteniendo paciente con DNI:', dni);
+    console.log(
+      '🔍 FRONTEND - getPatientByDni: Obteniendo paciente con DNI:',
+      dni
+    );
     try {
       const response = await getPacienteDni({ dni });
-      console.log('✅ FRONTEND - getPatientByDni: Respuesta recibida:', response);
+      console.log(
+        '✅ FRONTEND - getPatientByDni: Respuesta recibida:',
+        response
+      );
       console.log('🆔 FRONTEND - idPatient obtenido:', response.data.idPatient);
       setPatientId(response.data.idPatient); // Usar idPatient, no patientId
       return response.data.idPatient; // Retornar el idPatient para poder verificar que se obtuvo
@@ -278,16 +312,28 @@ const PatientsProvider = ({ children }) => {
   }, [dni, getPatientByDni]);
 
   async function getPatientAppointments() {
-    console.log('🎯 FRONTEND - getPatientAppointments: Obteniendo citas para DNI:', dni);
+    console.log(
+      '🎯 FRONTEND - getPatientAppointments: Obteniendo citas para DNI:',
+      dni
+    );
     try {
       const response = await getpatientAppointments({ dni });
-      console.log('📋 FRONTEND - getPatientAppointments: Respuesta recibida:', response);
-      
+      console.log(
+        '📋 FRONTEND - getPatientAppointments: Respuesta recibida:',
+        response
+      );
+
       if (response && response.data) {
-        console.log('📊 FRONTEND - getPatientAppointments: Datos de citas:', response.data);
-        // Verificar si los appointment tienen appointmentId o idAppointment
+        console.log(
+          '📊 FRONTEND - getPatientAppointments: Datos de citas:',
+          response.data
+        );
+        // Los appointments del backend siempre tienen idAppointment
         if (response.data.length > 0) {
-          console.log('🔍 FRONTEND - getPatientAppointments: Estructura del primer appointment:', response.data[0]);
+          console.log(
+            '🔍 FRONTEND - getPatientAppointments: Estructura del primer appointment:',
+            response.data[0]
+          );
         }
         setAppointments(response.data);
       } else {
@@ -296,26 +342,34 @@ const PatientsProvider = ({ children }) => {
         window.notifyError('Error al obtener los appointments');
       }
     } catch (error) {
-      console.error('❌ FRONTEND - Error al obtener appointments del patient:', error);
+      console.error(
+        '❌ FRONTEND - Error al obtener appointments del patient:',
+        error
+      );
       setAppointments([]);
       window.notifyError('Error al obtener los appointments');
     }
   }
 
   async function confirmAppointment({ appointmentId }) {
-    console.log('🎯 FRONTEND - confirmAppointment: Confirmando turno con ID:', appointmentId);
+    console.log(
+      '🎯 FRONTEND - confirmAppointment: Confirmando turno con ID:',
+      appointmentId
+    );
     try {
       const result = await confirmarTurno({ appointmentId });
       console.log('✅ FRONTEND - confirmAppointment: Resultado:', result);
-      
+
       setAppointments((prevTurnos) =>
         prevTurnos.map((appointment) =>
-          (appointment.appointmentId === appointmentId || appointment.idAppointment === appointmentId) 
-            ? { ...appointment, status: 'Confirmado' } 
+          appointment.idAppointment === appointmentId
+            ? { ...appointment, status: 'Confirmado' }
             : appointment
         )
       );
-      console.log('📝 FRONTEND - confirmAppointment: Estado actualizado en el contexto');
+      console.log(
+        '📝 FRONTEND - confirmAppointment: Estado actualizado en el contexto'
+      );
     } catch (error) {
       console.error('❌ FRONTEND - confirmAppointment: Error:', error);
       throw error;
@@ -325,13 +379,16 @@ const PatientsProvider = ({ children }) => {
   async function getUserByDniFunction() {
     console.log('🔍 FRONTEND - getUserByDniFunction: Iniciando función');
     console.log('📋 FRONTEND - DNI para buscar:', dni);
-    
+
     try {
       const response = await getUserDni({ dni });
       console.log('📨 FRONTEND - Respuesta de getUserDni:', response);
-      
+
       if (response && response.data) {
-        console.log('✅ FRONTEND - Datos del usuario obtenidos:', response.data);
+        console.log(
+          '✅ FRONTEND - Datos del usuario obtenidos:',
+          response.data
+        );
         setUserByDni(response.data);
         setUserEmail(response.data.email);
         console.log('💾 FRONTEND - Estado actualizado con datos del usuario');
@@ -346,19 +403,24 @@ const PatientsProvider = ({ children }) => {
   }
 
   async function cancelAppointment({ appointmentId }) {
-    console.log('🎯 FRONTEND - cancelAppointment: Cancelando turno con ID:', appointmentId);
+    console.log(
+      '🎯 FRONTEND - cancelAppointment: Cancelando turno con ID:',
+      appointmentId
+    );
     try {
       const result = await cancelarTurno({ appointmentId });
       console.log('✅ FRONTEND - cancelAppointment: Resultado:', result);
-      
+
       setAppointments((prevTurnos) =>
         prevTurnos.map((appointment) =>
-          (appointment.appointmentId === appointmentId || appointment.idAppointment === appointmentId) 
-            ? { ...appointment, status: 'Cancelado' } 
+          appointment.idAppointment === appointmentId
+            ? { ...appointment, status: 'Cancelado' }
             : appointment
         )
       );
-      console.log('📝 FRONTEND - cancelAppointment: Estado actualizado en el contexto');
+      console.log(
+        '📝 FRONTEND - cancelAppointment: Estado actualizado en el contexto'
+      );
     } catch (error) {
       console.error('❌ FRONTEND - cancelAppointment: Error:', error);
       throw error;
@@ -425,6 +487,3 @@ PatientsProvider.propTypes = {
 };
 
 export default PatientsProvider;
-
-
-

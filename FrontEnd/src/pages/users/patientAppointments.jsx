@@ -21,8 +21,6 @@ export function PatientAppointments() {
   }, []);
 
   const handleConfirmarTurno = async (appointment) => {
-    console.log('🎯 FRONTEND - handleConfirmarTurno: Confirmando turno:', appointment);
-    
     const result = await window.confirmDialog(
       'Confirmar Turno',
       '¿Estás seguro que deseas confirmar este appointment?'
@@ -31,23 +29,25 @@ export function PatientAppointments() {
     if (result.isConfirmed) {
       try {
         // Usar idAppointment si appointmentId no existe
-        const appointmentId = appointment.appointmentId || appointment.idAppointment;
-        console.log('🆔 FRONTEND - appointmentId a usar:', appointmentId);
-        
+        const appointmentId =
+          appointment.appointmentId || appointment.idAppointment;
+
         await confirmAppointment({ appointmentId });
         window.notifySuccess('¡Turno confirmado con éxito!'); // Mensaje de éxito
         const cuerpo = `<div style="background-color: #f0f4f8; padding: 20px; border-radius: 10px; font-family: Arial, sans-serif; max-width: 600px; margin: auto;">
                     <h1 style="color: #1c4e80; text-align: center;">¡Tu appointment ha sido confirmado con éxito!</h1>
                     <div style="background-color: #ffffff; padding: 20px; border-radius: 8px; margin-top: 20px;">
-                        <p><strong>Sede:</strong> ${appointment.Sede}</p>
-                        <p><strong>Dirección:</strong> ${appointment.Direccion}</p>
+                        <p><strong>Sede:</strong> ${appointment.venue}</p>
+                        <p><strong>Dirección:</strong> ${
+                          appointment.address
+                        }</p>
                         <p><strong>Especialidad:</strong> ${
-                          appointment.Especialidad
+                          appointment.specialty
                         }</p>
                         <p><strong>Fecha y Hora:</strong> ${formatFechaHora(
-                          appointment.dateAndTime
+                          appointment.dateTime
                         )}</p>
-                        <p><strong>Doctor:</strong> ${appointment.Doctor}</p>
+                        <p><strong>Doctor:</strong> ${appointment.doctor}</p>
                         <p><strong>DNI Paciente:</strong> ${appointment.dni}</p>
                     </div>
                     <footer style="text-align: center; margin-top: 20px;">
@@ -64,15 +64,12 @@ export function PatientAppointments() {
           html: cuerpo,
         });
       } catch (error) {
-        window.notifyError('Error al confirmar el appointment'); // Mensaje de error
-        console.error('Error al confirmar appointment:', error);
+        window.notifyError('Error al confirmar el appointment');
       }
     }
   };
 
   const handleCancelarTurno = async (appointment) => {
-    console.log('🎯 FRONTEND - handleCancelarTurno: Cancelando turno:', appointment);
-    
     const result = await window.confirmDialog(
       'Cancelar Turno',
       '¿Estás seguro que deseas cancelar este appointment?'
@@ -81,21 +78,23 @@ export function PatientAppointments() {
     if (result.isConfirmed) {
       try {
         // Usar idAppointment si appointmentId no existe
-        const appointmentId = appointment.appointmentId || appointment.idAppointment;
-        console.log('🆔 FRONTEND - appointmentId a usar:', appointmentId);
-        
+        const appointmentId =
+          appointment.appointmentId || appointment.idAppointment;
+
         await cancelAppointment({ appointmentId });
         window.notifySuccess('¡Turno cancelado con éxito!'); // Mensaje de éxito
         const cuerpo = `<div style="background-color: #f0f4f8; padding: 20px; border-radius: 10px; font-family: Arial, sans-serif; max-width: 600px; margin: auto;">
                 <h1 style="color: #1c4e80; text-align: center;">¡Tu appointment ha sido cancelado con éxito!</h1>
                 <div style="background-color: #ffffff; padding: 20px; border-radius: 8px; margin-top: 20px;">
-                    <p><strong>Sede:</strong> ${appointment.Sede}</p>
-                    <p><strong>Dirección:</strong> ${appointment.Direccion}</p>
-                    <p><strong>Especialidad:</strong> ${appointment.Especialidad}</p>
+                    <p><strong>Sede:</strong> ${appointment.venue}</p>
+                    <p><strong>Dirección:</strong> ${appointment.address}</p>
+                    <p><strong>Especialidad:</strong> ${
+                      appointment.specialty
+                    }</p>
                     <p><strong>Fecha y Hora:</strong> ${formatFechaHora(
-                      appointment.dateAndTime
+                      appointment.dateTime
                     )}</p>
-                    <p><strong>Doctor:</strong> ${appointment.Doctor}</p>
+                    <p><strong>Doctor:</strong> ${appointment.doctor}</p>
                     <p><strong>DNI Paciente:</strong> ${appointment.dni}</p>
                 </div>
                 <footer style="text-align: center; margin-top: 20px;">
@@ -112,8 +111,7 @@ export function PatientAppointments() {
           html: cuerpo,
         });
       } catch (error) {
-        window.notifyError('Error al cancelar el appointment'); // Mensaje de error
-        console.error('Error al cancelar appointment:', error);
+        window.notifyError('Error al cancelar el appointment');
       }
     }
   };
@@ -145,20 +143,20 @@ export function PatientAppointments() {
               className="bg-gray-50 rounded-lg p-4 shadow-sm mb-4"
             >
               <p>
-                <strong>Sede:</strong> {appointment.Sede}
+                <strong>Sede:</strong> {appointment.venue}
               </p>
               <p>
-                <strong>Dirección:</strong> {appointment.Direccion}
+                <strong>Dirección:</strong> {appointment.address}
               </p>
               <p>
-                <strong>Especialidad:</strong> {appointment.Especialidad}
+                <strong>Especialidad:</strong> {appointment.specialty}
               </p>
               <p>
                 <strong>Fecha y Hora:</strong>{' '}
-                {formatFechaHora(appointment.dateAndTime)}
+                {formatFechaHora(appointment.dateTime)}
               </p>
               <p>
-                <strong>Doctor:</strong> {appointment.Doctor}
+                <strong>Doctor:</strong> {appointment.doctor}
               </p>
               <p>
                 <strong>DNI Paciente:</strong> {appointment.dni}
@@ -199,6 +197,3 @@ export function PatientAppointments() {
     </div>
   );
 }
-
-
-

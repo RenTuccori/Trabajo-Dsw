@@ -7,7 +7,7 @@ import { UserModification } from '../pages/users/userModification.jsx';
 import { PatientAppointments } from '../pages/users/patientAppointments.jsx';
 import { AppointmentConfirmation } from '../pages/users/appointmentConfirmation';
 import ViewStudies from '../pages/users/viewStudies.jsx';
-import { validation } from './validation.jsx';
+import { Validation } from './validation.jsx';
 import { ProtectedRoute } from '../components/ProtectedRoute.jsx';
 import { useAuth } from '../context/global/AuthProvider.jsx';
 
@@ -21,57 +21,54 @@ export function PacientesRoutes() {
         <Route
           path="/bookAppointment"
           element={
-            <validation rol={rol} esperado={'Patient'}>
+            <Validation rol={rol} esperado={'Patient'}>
               <ProtectedRoute requiredRole="Patient">
                 <BookAppointment />
               </ProtectedRoute>
-            </validation>
+            </Validation>
           }
         />
         <Route
           path="/editarpersonalData"
           element={
-            <validation rol={rol} esperado={'Patient'}>
+            <Validation rol={rol} esperado={'Patient'}>
               <ProtectedRoute requiredRole="Patient">
                 <UserModification />
               </ProtectedRoute>
-            </validation>
+            </Validation>
           }
         />
         <Route
           path="/appointmentConfirmation"
           element={
-            <validation rol={rol} esperado={'Patient'}>
+            <Validation rol={rol} esperado={'Patient'}>
               <ProtectedRoute requiredRole="Patient">
                 <AppointmentConfirmation />
               </ProtectedRoute>
-            </validation>
+            </Validation>
           }
         />
         <Route
           path="/verturnos"
           element={
-            <validation rol={rol} esperado={'Patient'}>
+            <Validation rol={rol} esperado={'Patient'}>
               <ProtectedRoute requiredRole="Patient">
                 <PatientAppointments />
               </ProtectedRoute>
-            </validation>
+            </Validation>
           }
         />
         <Route
           path="/estudios"
           element={
-            <validation rol={rol} esperado={'Patient'}>
+            <Validation rol={rol} esperado={'Patient'}>
               <ProtectedRoute requiredRole="Patient">
                 <ViewStudies />
               </ProtectedRoute>
-            </validation>
+            </Validation>
           }
         />
       </Routes>
     </PatientsProvider>
   );
 }
-
-
-

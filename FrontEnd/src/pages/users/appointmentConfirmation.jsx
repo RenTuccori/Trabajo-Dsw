@@ -26,7 +26,6 @@ export function AppointmentConfirmation() {
   useEffect(() => {
     const confirmarTurno = async () => {
       try {
-        console.log('🎯 FRONTEND - appointmentConfirmation: Iniciando confirmación de turno');
         // Asegurarse de que todas las funciones asincrónicas se completen antes de continuar
         await getUserByDniFunction();
         await getPatientByDni(); // Añadir esta línea para obtener el patientId
@@ -35,12 +34,13 @@ export function AppointmentConfirmation() {
         await getVenueById();
 
         // Crear appointment
-        console.log('📝 FRONTEND - appointmentConfirmation: Creando appointment');
         await createAppointment();
-        console.log('✅ FRONTEND - appointmentConfirmation: Appointment creado exitosamente');
         setTurnoCreado(true);
       } catch (error) {
-        console.error('💥 FRONTEND - appointmentConfirmation: Error al crear el appointment:', error);
+        console.error(
+          '💥 FRONTEND - appointmentConfirmation: Error al crear el appointment:',
+          error
+        );
       }
     };
 
@@ -68,15 +68,29 @@ export function AppointmentConfirmation() {
             </div>`;
 
       // Llamar a la función para mandar el correo
-      console.log('📧 FRONTEND - appointmentConfirmation: Enviando email de confirmación');
+      console.log(
+        '📧 FRONTEND - appointmentConfirmation: Enviando email de confirmación'
+      );
       sendEmailFunction({
         to: userEmail, // Asegúrate de pasar el destinatario como tal
         subject: 'Turno Creado',
         html: cuerpo,
       });
-      console.log('✅ FRONTEND - appointmentConfirmation: Email enviado exitosamente');
+      console.log(
+        '✅ FRONTEND - appointmentConfirmation: Email enviado exitosamente'
+      );
     }
-  }, [turnoCreado, userEmail, dateAndTime, doctorName, doctorLastName, specialtyName, venueName, venueAddress, sendEmailFunction]); // Este efecto se ejecuta solo cuando `userEmail` y `turnoCreado` están listos
+  }, [
+    turnoCreado,
+    userEmail,
+    dateAndTime,
+    doctorName,
+    doctorLastName,
+    specialtyName,
+    venueName,
+    venueAddress,
+    sendEmailFunction,
+  ]); // Este efecto se ejecuta solo cuando `userEmail` y `turnoCreado` están listos
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-blue-100 to-white flex flex-col items-center justify-center p-6">
@@ -117,6 +131,3 @@ export function AppointmentConfirmation() {
     </div>
   );
 }
-
-
-

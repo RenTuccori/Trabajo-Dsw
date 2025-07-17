@@ -5,7 +5,7 @@ import { AppointmentsByDate } from '../pages/doctors/appointmentsByDate.jsx';
 import { TodayAppointments } from '../pages/doctors/todayAppointments.jsx';
 import { HistoricalAppointments } from '../pages/doctors/historicalAppointments.jsx';
 import UploadStudy from '../pages/doctors/uploadStudy.jsx';
-import { validation } from './validation.jsx';
+import { Validation } from './validation.jsx';
 import { ProtectedRoute } from '../components/ProtectedRoute.jsx';
 import { useAuth } from '../context/global/AuthProvider.jsx';
 
@@ -18,47 +18,44 @@ export function DoctoresRoutes() {
         <Route
           path="/turnoshist"
           element={
-            <validation rol={rol} esperado={'Doctor'}>
+            <Validation rol={rol} esperado={'Doctor'}>
               <ProtectedRoute requiredRole="Doctor">
                 <HistoricalAppointments />
               </ProtectedRoute>
-            </validation>
+            </Validation>
           }
         />
         <Route
           path="/turnoshoy"
           element={
-            <validation rol={rol} esperado={'Doctor'}>
+            <Validation rol={rol} esperado={'Doctor'}>
               <ProtectedRoute requiredRole="Doctor">
                 <TodayAppointments />
               </ProtectedRoute>
-            </validation>
+            </Validation>
           }
         />
         <Route
           path="/turnosfecha"
           element={
-            <validation rol={rol} esperado={'Doctor'}>
+            <Validation rol={rol} esperado={'Doctor'}>
               <ProtectedRoute requiredRole="Doctor">
                 <AppointmentsByDate />
               </ProtectedRoute>
-            </validation>
+            </Validation>
           }
         />
         <Route
           path="/estudios"
           element={
-            <validation rol={rol} esperado={'Doctor'}>
+            <Validation rol={rol} esperado={'Doctor'}>
               <ProtectedRoute requiredRole="Doctor">
                 <UploadStudy />
               </ProtectedRoute>
-            </validation>
+            </Validation>
           }
         />
       </Routes>
     </DoctorsProvider>
   );
 }
-
-
-
