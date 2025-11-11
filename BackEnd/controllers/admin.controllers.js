@@ -1,21 +1,26 @@
-import { pool } from '../db.js';
+import Administrator from '../models/Administrator.js';
+import DoctorSpecialtyLocation from '../models/DoctorSpecialtyLocation.js';
+import Doctor from '../models/Doctor.js';
+import Specialty from '../models/Specialty.js';
+import Location from '../models/Location.js';
+import User from '../models/User.js';
 import jwt from 'jsonwebtoken';
 
 export const getAdmin = async (req, res) => {
   try {
     const { usuario, contra } = req.body;
-    const [result] = await pool.query(
-      `SELECT idAdmin FROM 
-        admin ad
-        WHERE ad.usuario = ? and ad.contra = ?`,
-      [usuario, contra]
-    );
+    const admin = await Administrator.findOne({
+      where: {
+        username: usuario,
+        password: contra
+      }
+    });
 
-    if (result.length === 0) {
+    if (!admin) {
       return res.status(404).json({ message: 'Usuario no encontrado' });
     } else {
       const token = jwt.sign(
-        { idAdmin: result[0].idAdmin, rol: 'Admin' },
+        { idAdmin: admin.id, rol: 'Admin' },
         'CLAVE_SUPER_SEGURISIMA',
         { expiresIn: '30m' }
       );
@@ -29,48 +34,30 @@ export const getAdmin = async (req, res) => {
 export const createSeEspDoc = async (req, res) => {
   try {
     const { idSede, idEspecialidad, idDoctor } = req.body;
-    const estadoHabilitado = 'Habilitado';
+    const status = 'Habilitado';
 
-    // Validar si la combinación ya existe
-    const result = await pool.query(
-      'SELECT * FROM sededoctoresp WHERE idSede = ? AND idEspecialidad = ? AND idDoctor = ?',
-      [idSede, idEspecialidad, idDoctor]
-    );
-
-    if (result[0].length > 0) {
-      const currentRecord = result[0][0];
-
-      if (currentRecord.estado === estadoHabilitado) {
-        // Si está habilitado, no hacer nada
-        return res
-          .status(200)
-          .json({ message: 'La combinación ya está habilitada.' });
-      } else {
-        // Si está deshabilitado, habilitarlo
-        await pool.query(
-          'UPDATE sededoctoresp SET estado = ? WHERE idSede = ? AND idEspecialidad = ? AND idDoctor = ?',
-          [estadoHabilitado, idSede, idEspecialidad, idDoctor]
-        );
-
-        return res
-          .status(200)
-          .json({ message: 'La combinación se habilitó exitosamente.' });
+    // Find or create
+    const [record, created] = await DoctorSpecialtyLocation.findOrCreate({
+      where: {
+        location_id: idSede,
+        specialty_id: idEspecialidad,
+        doctor_id: idDoctor
+      },
+      defaults: {
+        status: status
       }
-    }
-
-    // Si no existe, crear la combinación
-    await pool.query(
-      'INSERT INTO sededoctoresp (idSede, idEspecialidad, idDoctor, estado) VALUES (?, ?, ?, ?)',
-      [idSede, idEspecialidad, idDoctor, estadoHabilitado]
-    );
-
-    res.status(201).json({
-      message: 'Asignación creada con éxito.',
-      idSede,
-      idEspecialidad,
-      idDoctor,
-      estado: estadoHabilitado,
     });
+
+    if (!created) {
+      if (record.status === status) {
+        return res.status(200).json({ message: 'La combinación ya está habilitada.' });
+      } else {
+        await record.update({ status: status });
+        return res.status(200).json({ message: 'Combinación habilitada.' });
+      }
+    } else {
+      res.status(201).json({ message: 'Combinación creada y habilitada.' });
+    }
   } catch (error) {
     return res.status(500).json({ message: error.message });
   }

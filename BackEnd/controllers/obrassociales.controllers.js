@@ -1,12 +1,14 @@
-import { pool } from '../db.js';
+import HealthInsurance from '../models/HealthInsurance.js';
 
 export const getObrasSociales = async (req, res) => {
     try {
-        const [result] = await pool.query('SELECT * FROM obrasociales WHERE estado = \'Habilitado\'');
-        if (result.length === 0) {
+        const healthInsurances = await HealthInsurance.findAll({
+            where: { status: 'Habilitado' }
+        });
+        if (healthInsurances.length === 0) {
             return res.status(404).json({ message: 'No hay obras sociales habilitadas' });
         } else {
-            res.json(result);
+            res.json(healthInsurances);
         }
     } catch (error) {
         console.log(error);
@@ -17,14 +19,16 @@ export const getObrasSociales = async (req, res) => {
 export const getObraSocialById = async (req, res) => {
     try {
         const { idObraSocial } = req.body;
-        const [result] = await pool.query(
-            'SELECT * FROM obrasociales WHERE idObraSocial = ? AND estado = \'Habilitado\'',
-            [idObraSocial]
-        );
-        if (result.length === 0) {
+        const healthInsurance = await HealthInsurance.findOne({
+            where: {
+                id: idObraSocial,
+                status: 'Habilitado'
+            }
+        });
+        if (!healthInsurance) {
             return res.status(404).json({ message: 'Obra social no encontrada o no habilitada' });
         } else {
-            res.json(result[0]);
+            res.json(healthInsurance);
         }
     } catch (error) {
         return res.status(500).json({ message: error.message });
@@ -34,19 +38,15 @@ export const getObraSocialById = async (req, res) => {
 
 export const createObraSocial = async (req, res) => {
     const { nombre } = req.body;
-    const estado = 'Habilitado'; // Definir el estado directamente
+    const status = 'Habilitado';
 
     try {
-        const [result] = await pool.query(
-            'INSERT INTO obrasociales (nombre, estado) VALUES (?, ?)',
-            [nombre, estado]
-        );
-
-        res.json({
-            idObraSocial: result.insertId,
-            nombre,
-            estado
+        const newHealthInsurance = await HealthInsurance.create({
+            name: nombre,
+            status: status
         });
+
+        res.json(newHealthInsurance);
     } catch (error) {
         return res.status(500).json({ message: error.message });
     }

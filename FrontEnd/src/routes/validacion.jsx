@@ -31,7 +31,7 @@ export function Validacion({ rol, children, esperado }) {
             </p>
             <Link
               to="/"
-              className="block w-full bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded transition duration-300 ease-in-out flex items-center justify-center"
+              className="w-full bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded transition duration-300 ease-in-out flex items-center justify-center"
             >
               <svg
                 className="h-5 w-5 mr-2"

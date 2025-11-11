@@ -4,7 +4,7 @@
   "main": "index.js",
   "type": "module",
   "scripts": {
-    "dev": "nodemon server/index.js",
+    "dev": "nodemon index.js",
     "test": "cross-env NODE_OPTIONS=--experimental-vm-modules jest --verbose",
     "test:watch": "cross-env NODE_OPTIONS=--experimental-vm-modules jest --watch",
     "test:coverage": "cross-env NODE_OPTIONS=--experimental-vm-modules jest --coverage"
@@ -21,7 +21,8 @@
     "multer": "^2.0.1",
     "mysql2": "^3.9.7",
     "nodemailer": "^6.9.15",
-    "nodemon": "^3.1.0"
+    "nodemon": "^3.1.0",
+    "sequelize": "^6.37.7"
   },
   "devDependencies": {
     "cross-env": "^7.0.3",

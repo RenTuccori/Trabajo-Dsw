@@ -1,4 +1,7 @@
-import { pool } from '../db.js';
+import Study from '../models/Study.js';
+import Patient from '../models/Patient.js';
+import Doctor from '../models/Doctor.js';
+import User from '../models/User.js';
 import multer from 'multer';
 import path from 'path';
 import fs from 'fs';
@@ -79,29 +82,25 @@ export const createEstudio = async (req, res) => {
         .json({ message: 'No se ha subido ningún archivo' });
     }
 
-    const fechaCarga = new Date();
-    const nombreArchivo = req.file.originalname;
-    const rutaArchivo = req.file.path;
+    const uploadDate = new Date();
+    const fileName = req.file.originalname;
+    const filePath = req.file.path;
 
-    const [result] = await pool.query(
-      `INSERT INTO estudios (idPaciente, idDoctor, fechaRealizacion, fechaCarga, nombreArchivo, rutaArchivo, descripcion)
-       VALUES (?, ?, ?, ?, ?, ?, ?)`,
-      [
-        idPaciente,
-        idDoctor,
-        fechaRealizacion,
-        fechaCarga,
-        nombreArchivo,
-        rutaArchivo,
-        descripcion,
-      ]
-    );
+    const newStudy = await Study.create({
+      patient_id: idPaciente,
+      doctor_id: idDoctor,
+      performed_date: fechaRealizacion,
+      upload_date: uploadDate,
+      file_name: fileName,
+      file_path: filePath,
+      description: descripcion,
+    });
 
     res.status(201).json({
       message: 'Estudio subido exitosamente',
-      idEstudio: result.insertId,
-      nombreArchivo,
-      fechaCarga,
+      idEstudio: newStudy.id,
+      nombreArchivo: fileName,
+      fechaCarga: uploadDate,
     });
   } catch (error) {
     // Si hay error, eliminar el archivo subido
@@ -118,20 +117,25 @@ export const getEstudiosByPaciente = async (req, res) => {
   try {
     const { idPaciente } = req.params;
 
-    const [result] = await pool.query(
-      `SELECT e.idEstudio, e.fechaRealizacion, e.fechaCarga, e.nombreArchivo, 
-              e.descripcion, CONCAT(u.nombre, ' ', u.apellido) as nombreDoctor
-       FROM estudios e
-       INNER JOIN doctores d ON e.idDoctor = d.idDoctor
-       INNER JOIN usuarios u ON d.dni = u.dni
-       WHERE e.idPaciente = ?
-       ORDER BY e.fechaCarga DESC`,
-      [idPaciente]
-    );
+    const studies = await Study.findAll({
+      where: { patient_id: idPaciente },
+      include: [
+        {
+          model: Doctor,
+          include: [User]
+        }
+      ],
+      order: [['upload_date', 'DESC']]
+    });
 
-    if (result.length === 0) {
-      return res.json([]); // Devolver array vacío en lugar de 404
-    }
+    const result = studies.map(study => ({
+      idEstudio: study.id,
+      fechaRealizacion: study.performed_date,
+      fechaCarga: study.upload_date,
+      nombreArchivo: study.file_name,
+      descripcion: study.description,
+      nombreDoctor: `${study.Doctor.User.first_name} ${study.Doctor.User.last_name}`
+    }));
 
     res.json(result);
   } catch (error) {
@@ -145,21 +149,26 @@ export const getEstudiosByDoctor = async (req, res) => {
   try {
     const { idDoctor } = req.params;
 
-    const [result] = await pool.query(
-      `SELECT e.idEstudio, e.fechaRealizacion, e.fechaCarga, e.nombreArchivo, 
-              e.descripcion, CONCAT(u.nombre, ' ', u.apellido) as nombrePaciente,
-              p.dni as dniPaciente
-       FROM estudios e
-       INNER JOIN pacientes p ON e.idPaciente = p.idPaciente
-       INNER JOIN usuarios u ON p.dni = u.dni
-       WHERE e.idDoctor = ?
-       ORDER BY e.fechaCarga DESC`,
-      [idDoctor]
-    );
+    const studies = await Study.findAll({
+      where: { doctor_id: idDoctor },
+      include: [
+        {
+          model: Patient,
+          include: [User]
+        }
+      ],
+      order: [['upload_date', 'DESC']]
+    });
 
-    if (result.length === 0) {
-      return res.json([]); // Devolver array vacío en lugar de 404
-    }
+    const result = studies.map(study => ({
+      idEstudio: study.id,
+      fechaRealizacion: study.performed_date,
+      fechaCarga: study.upload_date,
+      nombreArchivo: study.file_name,
+      descripcion: study.description,
+      nombrePaciente: `${study.Patient.User.first_name} ${study.Patient.User.last_name}`,
+      dniPaciente: study.Patient.dni
+    }));
 
     res.json(result);
   } catch (error) {
@@ -173,24 +182,21 @@ export const downloadEstudio = async (req, res) => {
   try {
     const { idEstudio } = req.params;
 
-    const [result] = await pool.query(
-      'SELECT rutaArchivo, nombreArchivo FROM estudios WHERE idEstudio = ?',
-      [idEstudio]
-    );
+    const study = await Study.findByPk(idEstudio);
 
-    if (result.length === 0) {
+    if (!study) {
       return res.status(404).json({ message: 'Estudio no encontrado' });
     }
 
-    const { rutaArchivo, nombreArchivo } = result[0];
+    const { file_path, file_name } = study;
 
-    if (!fs.existsSync(rutaArchivo)) {
+    if (!fs.existsSync(file_path)) {
       return res
         .status(404)
         .json({ message: 'Archivo no encontrado en el servidor' });
     }
 
-    res.download(rutaArchivo, nombreArchivo);
+    res.download(file_path, file_name);
   } catch (error) {
     console.error('Error al descargar estudio:', error);
     return res.status(500).json({ message: error.message });
@@ -203,23 +209,20 @@ export const deleteEstudio = async (req, res) => {
     const { idEstudio } = req.params;
 
     // Primero obtener la ruta del archivo
-    const [estudio] = await pool.query(
-      'SELECT rutaArchivo FROM estudios WHERE idEstudio = ?',
-      [idEstudio]
-    );
+    const study = await Study.findByPk(idEstudio);
 
-    if (estudio.length === 0) {
+    if (!study) {
       return res.status(404).json({ message: 'Estudio no encontrado' });
     }
 
-    // Eliminar de la base de datos
-    await pool.query('DELETE FROM estudios WHERE idEstudio = ?', [idEstudio]);
-
     // Eliminar archivo físico
-    const rutaArchivo = estudio[0].rutaArchivo;
+    const rutaArchivo = study.file_path;
     if (fs.existsSync(rutaArchivo)) {
       fs.unlinkSync(rutaArchivo);
     }
+
+    // Eliminar de la base de datos
+    await study.destroy();
 
     res.json({ message: 'Estudio eliminado exitosamente' });
   } catch (error) {

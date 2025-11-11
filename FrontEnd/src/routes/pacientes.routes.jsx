@@ -17,7 +17,17 @@ export function PacientesRoutes() {
     <PacientesProvider>
       <Routes>
         <Route path="/" element={<HomeUsuario />} />
-        <Route path="/datospersonales" element={<DatosPersonales />} />
+        <Route path="/registro" element={<DatosPersonales />} />
+        <Route
+          path="/datospersonales"
+          element={
+            <Validacion rol={rol} esperado={'Patient'}>
+              <ProtectedRoute requiredRole="Patient">
+                <DatosPersonales />
+              </ProtectedRoute>
+            </Validacion>
+          }
+        />
         <Route
           path="/sacarturno"
           element={

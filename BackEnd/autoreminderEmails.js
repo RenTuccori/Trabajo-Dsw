@@ -13,18 +13,18 @@ export const sendReminderEmails = async () => {
 
   try {
     const [rows] = await pool.query(`
-      SELECT tur.idTurno, usu.email
-      FROM turnos tur
-      INNER JOIN pacientes pac ON pac.idPaciente = tur.idPaciente
-      INNER JOIN usuarios usu ON usu.dni = pac.dni
-      WHERE tur.fechaConfirmacion IS NULL 
-        AND tur.fechaCancelacion IS NULL 
-        AND TIMESTAMPDIFF(HOUR, NOW(), tur.fechaYHora) BETWEEN 24 AND 36
-        AND tur.mail IS NULL; -- Solo selecciona turnos donde el campo email es NULL
+      SELECT tur.id, usu.email
+      FROM appointments tur
+      INNER JOIN patients pac ON pac.id = tur.patient_id
+      INNER JOIN users usu ON usu.national_id = pac.national_id
+      WHERE tur.confirmation_date IS NULL 
+        AND tur.cancellation_date IS NULL 
+        AND TIMESTAMPDIFF(HOUR, NOW(), tur.date_time) BETWEEN 24 AND 36
+        AND tur.email_sent IS NULL; -- Solo selecciona turnos donde el campo email es NULL
     `);
 
     if (rows.length > 0) {
-      for (const { idTurno, email } of rows) {
+      for (const { id, email } of rows) {
         const mailBody = {
           to: email,
           subject: 'Recordatorio de Confirmación de Turno',
@@ -41,10 +41,10 @@ export const sendReminderEmails = async () => {
 
         // Actualizar el campo `email` a 1 después de enviar el correo
         await pool.query(`
-          UPDATE turnos
-          SET mail = 1
-          WHERE idTurno = ?;
-        `, [idTurno]);
+          UPDATE appointments
+          SET email_sent = 1
+          WHERE id = ?;
+        `, [id]);
       }
       console.log(`Se han enviado recordatorios a ${rows.length} pacientes.`);
     } else {

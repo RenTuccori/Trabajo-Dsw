@@ -1,22 +1,37 @@
-import { pool } from '../db.js';
+import { Op } from 'sequelize';
+import Doctor from '../models/Doctor.js';
+import User from '../models/User.js';
+import DoctorSpecialtyLocation from '../models/DoctorSpecialtyLocation.js';
+import Specialty from '../models/Specialty.js';
+import Location from '../models/Location.js';
 import jwt from 'jsonwebtoken';
 
 export const getDoctors = async (req, res) => {
   try {
     const { idSede, idEspecialidad } = req.body;
-    const [result] = await pool.query(
-      `SELECT doc.idDoctor, CONCAT(u.nombre, " ", u.apellido) nombreyapellido 
-       FROM sededoctoresp sde
-       INNER JOIN doctores doc ON sde.idDoctor = doc.idDoctor
-       INNER JOIN usuarios u ON doc.dni = u.dni 
-       WHERE sde.idSede = ? AND sde.idEspecialidad = ? AND doc.estado = 'Habilitado'`,
-      [idSede, idEspecialidad]
-    );
-    if (result.length === 0) {
+    const doctorSpecialties = await DoctorSpecialtyLocation.findAll({
+      where: {
+        location_id: idSede,
+        specialty_id: idEspecialidad,
+        status: 'Habilitado'
+      },
+      include: [
+        {
+          model: Doctor,
+          where: { status: 'Habilitado' },
+          include: [User]
+        }
+      ]
+    });
+    if (doctorSpecialties.length === 0) {
       return res
         .status(404)
         .json({ message: 'No hay doctores para esta especialidad' });
     } else {
+      const result = doctorSpecialties.map(ds => ({
+        idDoctor: ds.Doctor.id,
+        nombreyapellido: `${ds.Doctor.User.first_name} ${ds.Doctor.User.last_name}`
+      }));
       res.json(result);
     }
   } catch (error) {
@@ -27,24 +42,30 @@ export const getDoctors = async (req, res) => {
 export const getAvailableDoctors = async (req, res) => {
   try {
     const { idSede } = req.body;
-    const [result] = await pool.query(
-      `SELECT doc.idDoctor, CONCAT(u.nombre, " ", u.apellido) AS nombreyapellido 
-       FROM doctores doc 
-       INNER JOIN usuarios u ON doc.dni = u.dni
-       WHERE doc.idDoctor NOT IN (
-         SELECT sde.idDoctor 
-         FROM sededoctoresp sde 
-         WHERE sde.idSede = ?
-       ) AND doc.estado = 'Habilitado'`,
-      [idSede]
-    );
+    const assignedDoctors = await DoctorSpecialtyLocation.findAll({
+      where: { location_id: idSede },
+      attributes: ['doctor_id']
+    });
+    const assignedIds = assignedDoctors.map(ds => ds.doctor_id);
 
-    if (result.length === 0) {
+    const doctors = await Doctor.findAll({
+      where: {
+        status: 'Habilitado',
+        id: { [Op.notIn]: assignedIds }
+      },
+      include: [User]
+    });
+
+    if (doctors.length === 0) {
       return res.status(404).json({
         message:
           'No hay doctores disponibles para esta especialidad fuera de esta sede',
       });
     } else {
+      const result = doctors.map(doc => ({
+        idDoctor: doc.id,
+        nombreyapellido: `${doc.User.first_name} ${doc.User.last_name}`
+      }));
       res.json(result);
     }
   } catch (error) {
@@ -115,21 +136,24 @@ export const getDoctorById = async (req, res) => {
 export const getDoctorByDniContra = async (req, res) => {
   try {
     const { dni, contra } = req.body;
-    const [result] = await pool.query(
-      `SELECT doc.idDoctor, u.nombre, u.apellido
-       FROM doctores doc 
-       INNER JOIN usuarios u ON doc.dni = u.dni
-       WHERE doc.dni = ? AND doc.contra = ? AND doc.estado = 'Habilitado'`,
-      [dni, contra]
-    );
-    if (result.length === 0) {
+    const doctor = await Doctor.findOne({
+      where: {
+        status: 'Habilitado'
+      },
+      include: [{
+        model: User,
+        where: { national_id: dni }
+      }]
+    });
+
+    if (!doctor || doctor.password !== contra) {
       return res.status(404).json({ message: 'Doctor no encontrado' });
     } else {
       const token = jwt.sign(
         {
-          idDoctor: result[0].idDoctor,
-          nombre: result[0].nombre,
-          apellido: result[0].apellido,
+          idDoctor: doctor.id,
+          nombre: doctor.User.first_name,
+          apellido: doctor.User.last_name,
           rol: 'Doctor',
         },
         'CLAVE_SUPER_SEGURISIMA',

@@ -18,6 +18,11 @@ function HomeUsuario() {
         userType: 'Patient',
       });
       window.notifySuccess('¡Login exitoso!'); // Muestra mensaje de éxito
+      
+      // Esperar un poco para que el estado se actualice
+      setTimeout(() => {
+        navigate('/paciente/'); // Redirigir a la página principal (esta misma página)
+      }, 100);
     } catch (error) {
       window.notifyError('Error en el login, verifica tus datos.'); // Muestra mensaje de error si hay fallo
       console.error('Error de login:', error);
@@ -82,7 +87,7 @@ function HomeUsuario() {
                 Verificar
               </button>
               <button
-                onClick={() => navigate('/paciente/datospersonales')}
+                onClick={() => navigate('/paciente/registro')}
                 className="w-full bg-gray-200 text-gray-700 py-2 rounded-lg hover:bg-gray-300 transition-colors"
               >
                 Registrarse

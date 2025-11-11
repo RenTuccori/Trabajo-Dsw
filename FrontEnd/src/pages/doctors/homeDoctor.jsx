@@ -14,6 +14,7 @@ function HomeDoctor() {
     try {
       await login({ identifier: dni, credential: contra, userType: 'Doctor' });
       window.notifySuccess('¡Login exitoso!');
+      navigate('/doctor/'); // Redirigir a la página principal (esta misma página)
     } catch (error) {
       console.error('Error al iniciar sesión', error);
 

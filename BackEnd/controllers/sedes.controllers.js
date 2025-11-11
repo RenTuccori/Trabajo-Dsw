@@ -1,12 +1,14 @@
-import { pool } from '../db.js';
+import Location from '../models/Location.js';
 
 export const getSedes = async (req, res) => {
   try {
-    const [result] = await pool.query('SELECT * FROM sedes WHERE estado = \'Habilitado\'');
-    if (result.length === 0) {
+    const locations = await Location.findAll({
+      where: { status: 'Habilitado' }
+    });
+    if (locations.length === 0) {
       return res.status(404).json({ message: 'No hay sedes habilitadas' });
     } else {
-      res.json(result);
+      res.json(locations);
     }
   } catch (error) {
     console.log(error);
@@ -17,14 +19,16 @@ export const getSedes = async (req, res) => {
 export const getSedeById = async (req, res) => {
   try {
     const { idSede } = req.params;
-    const [result] = await pool.query(
-      'SELECT * FROM sedes WHERE idSede = ? AND estado = \'Habilitado\'',
-      [idSede]
-    );
-    if (result.length === 0) {
+    const location = await Location.findOne({
+      where: {
+        id: idSede,
+        status: 'Habilitado'
+      }
+    });
+    if (!location) {
       return res.status(404).json({ message: 'Sede no encontrada o no está habilitada' });
     } else {
-      res.json(result[0]);
+      res.json(location);
     }
   } catch (error) {
     return res.status(500).json({ message: error.message });
@@ -34,31 +38,28 @@ export const getSedeById = async (req, res) => {
 export const createSede = async (req, res) => {
   try {
     const { nombre, direccion } = req.body;
-    const estado = 'Habilitado';
+    const status = 'Habilitado';
 
     // Verificar si ya existe una sede con el mismo nombre y estado habilitado
-    const [existingSede] = await pool.query(
-      'SELECT * FROM sedes WHERE nombre = ? AND estado = ?',
-      [nombre, estado]
-    );
+    const existingLocation = await Location.findOne({
+      where: {
+        name: nombre,
+        status: status
+      }
+    });
 
-    if (existingSede.length > 0) {
-      // Si ya existe una sede habilitada con el mismo nombre
+    if (existingLocation) {
       return res.status(400).json({ message: 'Ya existe una sede habilitada con este nombre.' });
     }
 
-    // Insertar nueva sede con estado habilitado
-    const [result] = await pool.query(
-      'INSERT INTO sedes (nombre, direccion, estado) VALUES (?, ?, ?)',
-      [nombre, direccion, estado]
-    );
-
-    res.json({
-      idSede: result.insertId,
-      nombre,
-      direccion,
-      estado,
+    // Crear nueva sede
+    const newLocation = await Location.create({
+      name: nombre,
+      address: direccion,
+      status: status
     });
+
+    res.json(newLocation);
   } catch (error) {
     return res.status(500).json({ message: error.message });
   }

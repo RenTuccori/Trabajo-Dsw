@@ -1,4 +1,5 @@
 import { pool } from '../db.js';
+import sequelize from '../models/index.js';
 
 //Fechas disponibles por un medico, especialidad y sede
 export const getFechasDispDocEspSed = async (req, res) => {
@@ -7,20 +8,20 @@ export const getFechasDispDocEspSed = async (req, res) => {
         const [result] = await pool.query(`
             WITH RECURSIVE time_slots AS (
     SELECT 
-        DATE_FORMAT(fe.fechas, "%Y-%m-%d") AS fecha,
-        hd.idSede,
-        hd.idDoctor,
-        hd.idEspecialidad,
-        hd.dia,
-        hd.hora_inicio AS start_time,
-        ADDTIME(hd.hora_inicio, SEC_TO_TIME(doc.duracionTurno * 60)) AS end_time,
-        hd.hora_fin,
-        doc.duracionTurno
-    FROM horarios_disponibles hd
-    JOIN doctores doc
-        ON hd.idDoctor = doc.idDoctor
-    JOIN fechas fe 
-        ON hd.dia = CASE DAYNAME(fe.fechas)
+        DATE_FORMAT(fe.date, "%Y-%m-%d") AS fecha,
+        hd.location_id as idSede,
+        hd.doctor_id as idDoctor,
+        hd.specialty_id as idEspecialidad,
+        hd.day as dia,
+        hd.start_time AS start_time,
+        ADDTIME(hd.start_time, SEC_TO_TIME(doc.appointment_duration * 60)) AS end_time,
+        hd.end_time as hora_fin,
+        doc.appointment_duration as duracionTurno
+    FROM available_schedules hd
+    JOIN doctors doc
+        ON hd.doctor_id = doc.id
+    JOIN dates fe 
+        ON hd.day = CASE DAYNAME(fe.date)
                         WHEN 'Monday' THEN 'Lunes'
                         WHEN 'Tuesday' THEN 'Martes'
                         WHEN 'Wednesday' THEN 'Miércoles'
@@ -29,10 +30,10 @@ export const getFechasDispDocEspSed = async (req, res) => {
                         WHEN 'Saturday' THEN 'Sábado'
                         WHEN 'Sunday' THEN 'Domingo'
                     END
-    WHERE hd.idDoctor = ?
-      AND hd.idEspecialidad = ? 
-      AND hd.idSede = ?
-      AND fe.fechas > current_date()
+    WHERE hd.doctor_id = ?
+      AND hd.specialty_id = ? 
+      AND hd.location_id = ?
+      AND fe.date > current_date()
 
     UNION ALL
 
@@ -53,13 +54,13 @@ SELECT DISTINCT
     ts.fecha  -- Obtener el horario mínimo
 FROM 
     time_slots ts
-JOIN usuarios usu 
-    ON usu.dni = (SELECT dni FROM doctores WHERE idDoctor = ts.idDoctor)
-LEFT JOIN turnos tur
-    ON tur.idDoctor = ts.idDoctor
-    AND tur.idEspecialidad = ts.idEspecialidad
-    AND tur.idSede = ts.idSede
-    AND ts.dia = CASE DAYNAME(tur.fechaYHora)
+JOIN users usu 
+    ON usu.dni = (SELECT dni FROM doctors WHERE id = ts.idDoctor)
+LEFT JOIN appointments tur
+    ON tur.doctor_id = ts.idDoctor
+    AND tur.specialty_id = ts.idEspecialidad
+    AND tur.location_id = ts.idSede
+    AND ts.dia = CASE DAYNAME(tur.date_time)
                     WHEN 'Monday' THEN 'Lunes'
                     WHEN 'Tuesday' THEN 'Martes'
                     WHEN 'Wednesday' THEN 'Miércoles'
@@ -68,15 +69,14 @@ LEFT JOIN turnos tur
                     WHEN 'Saturday' THEN 'Sábado'
                     WHEN 'Sunday' THEN 'Domingo'
                 END
-    AND CONCAT(ts.fecha, ' ', ts.start_time) = tur.fechaYHora
-    WHERE (tur.idTurno IS NULL OR tur.fechaCancelacion IS NOT NULL)
+    AND CONCAT(ts.fecha, ' ', ts.start_time) = tur.date_time
+    WHERE (tur.id IS NULL OR tur.cancellation_date IS NOT NULL)
     AND ts.idDoctor = ?
     AND ts.idEspecialidad = ?
     AND ts.idSede = ?
-    GROUP BY ts.fecha, ts.dia, usu.nombre, usu.apellido 
+    GROUP BY ts.fecha, ts.dia, usu.first_name, usu.last_name 
     ORDER BY ts.fecha;
         `, [idDoctor, idEspecialidad, idSede, idDoctor, idEspecialidad, idSede]);
-        [idDoctor, idEspecialidad, idSede];
         res.json(result);
     } catch (error) {
         return res.status(500).json({ message: error.message });
@@ -90,20 +90,20 @@ export const getFechasDispEspSed = async (req, res) => {
         const [result] = await pool.query(`
             WITH RECURSIVE time_slots AS (
     SELECT 
-        DATE_FORMAT(fe.fechas, "%Y-%m-%d") AS fecha,
-        hd.idSede,
-        hd.idDoctor,
-        hd.idEspecialidad,
-        hd.dia,
-        hd.hora_inicio AS start_time,
-        ADDTIME(hd.hora_inicio, SEC_TO_TIME(doc.duracionTurno * 60)) AS end_time,
-        hd.hora_fin,
-        doc.duracionTurno
-    FROM horarios_disponibles hd
-    JOIN doctores doc
-        ON hd.idDoctor = doc.idDoctor
-    JOIN fechas fe 
-        ON hd.dia = CASE DAYNAME(fe.fechas)
+        DATE_FORMAT(fe.date, "%Y-%m-%d") AS fecha,
+        hd.location_id as idSede,
+        hd.doctor_id as idDoctor,
+        hd.specialty_id as idEspecialidad,
+        hd.day as dia,
+        hd.start_time AS start_time,
+        ADDTIME(hd.start_time, SEC_TO_TIME(doc.appointment_duration * 60)) AS end_time,
+        hd.end_time as hora_fin,
+        doc.appointment_duration as duracionTurno
+    FROM available_schedules hd
+    JOIN doctors doc
+        ON hd.doctor_id = doc.id
+    JOIN dates fe 
+        ON hd.day = CASE DAYNAME(fe.date)
                         WHEN 'Monday' THEN 'Lunes'
                         WHEN 'Tuesday' THEN 'Martes'
                         WHEN 'Wednesday' THEN 'Miércoles'
@@ -134,13 +134,13 @@ export const getFechasDispEspSed = async (req, res) => {
     ts.fecha  
     FROM 
     time_slots ts
-    JOIN usuarios usu 
-    ON usu.dni = (SELECT dni FROM doctores WHERE idDoctor = ts.idDoctor)
-    LEFT JOIN turnos tur
-    ON tur.idDoctor = ts.idDoctor
-    AND tur.idEspecialidad = ts.idEspecialidad
-    AND tur.idSede = ts.idSede
-    AND ts.dia = CASE DAYNAME(tur.fechaYHora)
+    JOIN users usu 
+    ON usu.dni = (SELECT dni FROM doctors WHERE id = ts.idDoctor)
+    LEFT JOIN appointments tur
+    ON tur.doctor_id = ts.idDoctor
+    AND tur.specialty_id = ts.idEspecialidad
+    AND tur.location_id = ts.idSede
+    AND ts.dia = CASE DAYNAME(tur.date_time)
                     WHEN 'Monday' THEN 'Lunes'
                     WHEN 'Tuesday' THEN 'Martes'
                     WHEN 'Wednesday' THEN 'Miércoles'
@@ -149,13 +149,13 @@ export const getFechasDispEspSed = async (req, res) => {
                     WHEN 'Saturday' THEN 'Sábado'
                     WHEN 'Sunday' THEN 'Domingo'
                 END
-    AND CONCAT(ts.fecha, ' ', ts.start_time) = tur.fechaYHora
-    WHERE (tur.idTurno IS NULL OR tur.fechaCancelacion IS NOT NULL)
+    AND CONCAT(ts.fecha, ' ', ts.start_time) = tur.date_time
+    WHERE (tur.id IS NULL OR tur.cancellation_date IS NOT NULL)
     AND ts.idEspecialidad = ?
     AND ts.idSede = ?
-    GROUP BY ts.fecha, ts.dia, usu.nombre, usu.apellido  -- Agrupar por fecha y día
+    GROUP BY ts.fecha, ts.dia, usu.first_name, usu.last_name  -- Agrupar por fecha y día
     ORDER BY ts.fecha;`,
-            [idEspecialidad, idSede]);
+            [idEspecialidad, idSede, idEspecialidad, idSede]);
         res.json(result);
     } catch (error) {
         return res.status(500).json({ message: error.message });
@@ -169,20 +169,20 @@ export const getHorariosDispDocEspSed = async (req, res) => {
         const [result] = await pool.query(`
             WITH RECURSIVE time_slots AS (
             SELECT 
-                hd.idSede,
-                hd.idDoctor,
-                hd.idEspecialidad,
-                hd.dia,
-                hd.hora_inicio AS start_time,
-                ADDTIME(hd.hora_inicio, SEC_TO_TIME(doc.duracionTurno * 60)) AS end_time,
-                hd.hora_fin,
-                doc.duracionTurno
-            FROM horarios_disponibles hd
-            JOIN doctores doc
-                    ON hd.idDoctor = doc.idDoctor
-                    WHERE hd.idDoctor = ?
-                    AND hd.idEspecialidad = ? 
-                    AND hd.idSede = ?
+                hd.location_id as idSede,
+                hd.doctor_id as idDoctor,
+                hd.specialty_id as idEspecialidad,
+                hd.day as dia,
+                hd.start_time AS start_time,
+                ADDTIME(hd.start_time, SEC_TO_TIME(doc.appointment_duration * 60)) AS end_time,
+                hd.end_time as hora_fin,
+                doc.appointment_duration as duracionTurno
+            FROM available_schedules hd
+            JOIN doctors doc
+                    ON hd.doctor_id = doc.id
+                    WHERE hd.doctor_id = ?
+                    AND hd.specialty_id = ? 
+                    AND hd.location_id = ?
                     UNION ALL
                     SELECT 
                         ts.idSede,
@@ -197,14 +197,14 @@ export const getHorariosDispDocEspSed = async (req, res) => {
                     WHERE ADDTIME(ts.end_time, SEC_TO_TIME(ts.duracionTurno * 60)) <= ts.hora_fin
                 )
                 SELECT 
-                    usu.nombre, 
-                    usu.apellido, 
+                    usu.first_name as nombre, 
+                    usu.last_name as apellido, 
                     ts.start_time AS hora_inicio, 
                     ts.dia 
                 FROM 
                     time_slots ts
-                JOIN fechas fe 
-                    ON ts.dia = CASE DAYNAME(fe.fechas)
+                JOIN dates fe 
+                    ON ts.dia = CASE DAYNAME(fe.date)
                     WHEN 'Monday' THEN 'Lunes'
                     WHEN 'Tuesday' THEN 'Martes'
                     WHEN 'Wednesday' THEN 'Miércoles'
@@ -213,11 +213,11 @@ export const getHorariosDispDocEspSed = async (req, res) => {
                     WHEN 'Saturday' THEN 'Sábado'
                     WHEN 'Sunday' THEN 'Domingo'
                     END
-                    LEFT JOIN turnos tur
-                    ON tur.idDoctor = ts.idDoctor
-                    AND tur.idEspecialidad = ts.idEspecialidad
-                    AND tur.idSede = ts.idSede
-                    AND ts.dia = CASE DAYNAME(tur.fechaYHora)
+                    LEFT JOIN appointments tur
+                    ON tur.doctor_id = ts.idDoctor
+                    AND tur.specialty_id = ts.idEspecialidad
+                    AND tur.location_id = ts.idSede
+                    AND ts.dia = CASE DAYNAME(tur.date_time)
                     WHEN 'Monday' THEN 'Lunes'
                     WHEN 'Tuesday' THEN 'Martes'
                     WHEN 'Wednesday' THEN 'Miércoles'
@@ -226,14 +226,14 @@ export const getHorariosDispDocEspSed = async (req, res) => {
                     WHEN 'Saturday' THEN 'Sábado'
                     WHEN 'Sunday' THEN 'Domingo'
                 END
-            AND CONCAT(fe.fechas, ' ', ts.start_time) = tur.fechaYHora
-        JOIN usuarios usu 
-            ON usu.dni = (SELECT dni FROM doctores WHERE idDoctor = ts.idDoctor)
-        WHERE (tur.idTurno IS NULL OR tur.fechaCancelacion IS NOT NULL)
+            AND CONCAT(fe.date, ' ', ts.start_time) = tur.date_time
+        JOIN users usu 
+            ON usu.dni = (SELECT dni FROM doctors WHERE id = ts.idDoctor)
+        WHERE (tur.id IS NULL OR tur.cancellation_date IS NOT NULL)
         AND ts.idDoctor = ?
         AND ts.idEspecialidad = ?
         AND ts.idSede = ?
-        AND fe.fechas = ?
+        AND fe.date = ?
         ORDER BY ts.dia, ts.start_time;
         `, [idDoctor, idEspecialidad, idSede, idDoctor, idEspecialidad, idSede, fecha]);
 
@@ -249,19 +249,19 @@ export const getHorariosDispEspSed = async (req, res) => {
         const [result] = await pool.query(`
             WITH RECURSIVE time_slots AS (
             SELECT 
-                hd.idSede,
-                hd.idDoctor,
-                hd.idEspecialidad,
-                hd.dia,
-                hd.hora_inicio AS start_time,
-                ADDTIME(hd.hora_inicio, SEC_TO_TIME(doc.duracionTurno * 60)) AS end_time,
-                hd.hora_fin,
-                doc.duracionTurno
-            FROM horarios_disponibles hd
-            JOIN doctores doc
-                    ON hd.idDoctor = doc.idDoctor
-                    WHERE hd.idEspecialidad = ? 
-                    AND hd.idSede = ?
+                hd.location_id as idSede,
+                hd.doctor_id as idDoctor,
+                hd.specialty_id as idEspecialidad,
+                hd.day as dia,
+                hd.start_time AS start_time,
+                ADDTIME(hd.start_time, SEC_TO_TIME(doc.appointment_duration * 60)) AS end_time,
+                hd.end_time as hora_fin,
+                doc.appointment_duration as duracionTurno
+            FROM available_schedules hd
+            JOIN doctors doc
+                    ON hd.doctor_id = doc.id
+                    WHERE hd.specialty_id = ? 
+                    AND hd.location_id = ?
                     UNION ALL
                     SELECT 
                         ts.idSede,
@@ -276,14 +276,14 @@ export const getHorariosDispEspSed = async (req, res) => {
                     WHERE ADDTIME(ts.end_time, SEC_TO_TIME(ts.duracionTurno * 60)) <= ts.hora_fin
                 )
                 SELECT 
-                    usu.nombre, 
-                    usu.apellido, 
+                    usu.first_name as nombre, 
+                    usu.last_name as apellido, 
                     ts.start_time AS hora_inicio, 
                     ts.dia 
                 FROM 
                     time_slots ts
-                JOIN fechas fe 
-                    ON ts.dia = CASE DAYNAME(fe.fechas)
+                JOIN dates fe 
+                    ON ts.dia = CASE DAYNAME(fe.date)
                     WHEN 'Monday' THEN 'Lunes'
                     WHEN 'Tuesday' THEN 'Martes'
                     WHEN 'Wednesday' THEN 'Miércoles'
@@ -292,11 +292,11 @@ export const getHorariosDispEspSed = async (req, res) => {
                     WHEN 'Saturday' THEN 'Sábado'
                     WHEN 'Sunday' THEN 'Domingo'
                     END
-                    LEFT JOIN turnos tur
-                    ON tur.idDoctor = ts.idDoctor
-                    AND tur.idEspecialidad = ts.idEspecialidad
-                    AND tur.idSede = ts.idSede
-                    AND ts.dia = CASE DAYNAME(tur.fechaYHora)
+                    LEFT JOIN appointments tur
+                    ON tur.doctor_id = ts.idDoctor
+                    AND tur.specialty_id = ts.idEspecialidad
+                    AND tur.location_id = ts.idSede
+                    AND ts.dia = CASE DAYNAME(tur.date_time)
                     WHEN 'Monday' THEN 'Lunes'
                     WHEN 'Tuesday' THEN 'Martes'
                     WHEN 'Wednesday' THEN 'Miércoles'
@@ -305,13 +305,13 @@ export const getHorariosDispEspSed = async (req, res) => {
                     WHEN 'Saturday' THEN 'Sábado'
                     WHEN 'Sunday' THEN 'Domingo'
                 END
-            AND CONCAT(fe.fechas, ' ', ts.start_time) = tur.fechaYHora
-        JOIN usuarios usu 
-            ON usu.dni = (SELECT dni FROM doctores WHERE idDoctor = ts.idDoctor)
-        WHERE (tur.idTurno IS NULL OR tur.fechaCancelacion IS NOT NULL)
+            AND CONCAT(fe.date, ' ', ts.start_time) = tur.date_time
+        JOIN users usu 
+            ON usu.dni = (SELECT dni FROM doctors WHERE id = ts.idDoctor)
+        WHERE (tur.id IS NULL OR tur.cancellation_date IS NOT NULL)
         AND ts.idEspecialidad = ?
         AND ts.idSede = ?
-        AND fe.fechas = ?
+        AND fe.date = ?
         ORDER BY ts.dia, ts.start_time;
         `, [idEspecialidad, idSede, idEspecialidad, idSede, fecha]);
         res.json(result);

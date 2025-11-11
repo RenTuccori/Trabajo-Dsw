@@ -1,12 +1,22 @@
-import { pool } from '../db.js';
+import { Op } from 'sequelize';
+import Specialty from '../models/Specialty.js';
+import DoctorSpecialtyLocation from '../models/DoctorSpecialtyLocation.js';
 
 export const getSpecialties = async (req, res) => {
   try {
     const { idSede } = req.body;
-    const [result] = await pool.query(
-      'SELECT DISTINCT sde.idEspecialidad, es.nombre FROM especialidades es INNER JOIN sededoctoresp sde ON es.idEspecialidad = sde.idEspecialidad WHERE sde.idSede = ? AND es.estado = \'Habilitado\'',
-      [idSede]
-    );
+    const specialties = await DoctorSpecialtyLocation.findAll({
+      where: { location_id: idSede },
+      include: [
+        {
+          model: Specialty,
+          where: { status: 'Habilitado' }
+        }
+      ],
+      attributes: [],
+      includeAttributes: ['id', 'name']
+    });
+    const result = [...new Set(specialties.map(s => ({ idEspecialidad: s.Specialty.id, nombre: s.Specialty.name })))];
     res.json(result);
   } catch (error) {
     return res.status(500).json({ message: error.message });
@@ -15,8 +25,10 @@ export const getSpecialties = async (req, res) => {
 
 export const getAllSpecialities = async (req, res) => {
   try {
-    const [result] = await pool.query('SELECT * FROM especialidades WHERE estado = \'Habilitado\'');
-    res.json(result);
+    const specialties = await Specialty.findAll({
+      where: { status: 'Habilitado' }
+    });
+    res.json(specialties);
   } catch (error) {
     return res.status(500).json({ message: error.message });
   }
@@ -25,17 +37,19 @@ export const getAllSpecialities = async (req, res) => {
 export const getAvailableSpecialties = async (req, res) => {
   try {
     const { idSede } = req.body;
-    const [result] = await pool.query(
-      `SELECT es.idEspecialidad, es.nombre 
-       FROM especialidades es 
-       WHERE es.idEspecialidad NOT IN (
-         SELECT sde.idEspecialidad 
-         FROM sededoctoresp sde 
-         WHERE sde.idSede = ?
-       ) AND es.estado = 'Habilitado'`,
-      [idSede]
-    );
-    res.json(result);
+    const assignedSpecialties = await DoctorSpecialtyLocation.findAll({
+      where: { location_id: idSede },
+      attributes: ['specialty_id']
+    });
+    const assignedIds = assignedSpecialties.map(s => s.specialty_id);
+
+    const specialties = await Specialty.findAll({
+      where: {
+        status: 'Habilitado',
+        id: { [Op.notIn]: assignedIds }
+      }
+    });
+    res.json(specialties.map(s => ({ idEspecialidad: s.id, nombre: s.name })));
   } catch (error) {
     return res.status(500).json({ message: error.message });
   }

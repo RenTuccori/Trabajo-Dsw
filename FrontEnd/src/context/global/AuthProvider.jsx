@@ -33,9 +33,9 @@ const AuthProvider = ({ children }) => {
         if (decoded.exp > Date.now() / 1000) {
           // Token válido, restaurar estado según el rol del token
           if (decoded.rol === 'Patient') {
-            setDni(decoded.dni);
-            setNombreUsuario(decoded.nombre || '');
-            setApellidoUsuario(decoded.apellido || '');
+            setDni(decoded.national_id);
+            setNombreUsuario(decoded.first_name || '');
+            setApellidoUsuario(decoded.last_name || '');
             setRol('Patient');
           } else if (decoded.rol === 'Doctor') {
             setIdDoctor(decoded.idDoctor);
@@ -72,9 +72,9 @@ const AuthProvider = ({ children }) => {
           token = response.data;
           localStorage.setItem('token', token);
           const decodedPatient = jwtDecode(token);
-          setDni(decodedPatient.dni);
-          setNombreUsuario(decodedPatient.nombre || '');
-          setApellidoUsuario(decodedPatient.apellido || '');
+          setDni(decodedPatient.national_id);
+          setNombreUsuario(decodedPatient.first_name || '');
+          setApellidoUsuario(decodedPatient.last_name || '');
           setRol('Patient');
           break;
         }

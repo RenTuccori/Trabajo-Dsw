@@ -20,6 +20,7 @@ function HomeAdministracion() {
         userType: 'Admin',
       });
       window.notifySuccess('¡Login exitoso!');
+      navigate('/admin/'); // Redirigir a la página principal (esta misma página)
     } catch (error) {
       window.notifyError('Error: Usuario o contraseña incorrectos');
     }

@@ -4,12 +4,12 @@ import { pool } from './db.js'; // Asegúrate de importar tu conexión a la base
 export const autoCancelTurnos = async () => {
     try {
       const [result] = await pool.query(`
-        UPDATE turnos tur
-        SET tur.estado = 'Cancelado', 
-            tur.fechaCancelacion = NOW()
-        WHERE tur.fechaConfirmacion IS NULL 
-          AND tur.fechaCancelacion IS NULL 
-          AND TIMESTAMPDIFF(HOUR, NOW(), tur.fechaYHora) <= 12;
+        UPDATE appointments tur
+        SET tur.status = 'Cancelado', 
+            tur.cancellation_date = NOW()
+        WHERE tur.confirmation_date IS NULL 
+          AND tur.cancellation_date IS NULL 
+          AND TIMESTAMPDIFF(HOUR, NOW(), tur.date_time) <= 12;
       `);
       console.log(`Se han cancelado ${result.affectedRows} turnos.`);
     } catch (error) {

@@ -1,20 +1,20 @@
-import { pool } from '../db.js';
+import Patient from '../models/Patient.js';
+import User from '../models/User.js';
+import HealthInsurance from '../models/HealthInsurance.js';
 
 export const getPacientes = async (req, res) => {
   try {
-    const [result] = await pool.query(
-      `SELECT pac.idPaciente, usu.dni, usu.nombre, usu.apellido, obra.nombre as nombreObraSocial
-       FROM pacientes pac 
-       INNER JOIN usuarios usu ON usu.dni = pac.dni 
-       INNER JOIN obrasociales obra ON obra.idObraSocial = usu.idObraSocial
-       WHERE pac.estado = 'Habilitado'
-       ORDER BY usu.apellido, usu.nombre`
-    );
-    if (result.length === 0) {
-      return res.json([]); // Devolver array vacío en lugar de 404
-    } else {
-      res.json(result);
-    }
+    const patients = await Patient.findAll({
+      where: { status: 'Habilitado' },
+      include: [
+        {
+          model: User,
+          include: [HealthInsurance]
+        }
+      ],
+      order: [[User, 'last_name'], [User, 'first_name']]
+    });
+    res.json(patients);
   } catch (error) {
     console.log(error);
     return res.status(500).json({ message: error.message });
@@ -24,19 +24,16 @@ export const getPacientes = async (req, res) => {
 export const getPacienteByDni = async (req, res) => {
   try {
     const { dni } = req.body;
-    const [result] = await pool.query(
-      `SELECT pac.idPaciente, usu.nombre, usu.apellido, usu.dni
-       FROM pacientes pac
-       INNER JOIN usuarios usu ON usu.dni = pac.dni
-       WHERE usu.dni = ? AND pac.estado = 'Habilitado'`,
-      [dni]
-    );
-    if (result.length === 0) {
+    const patient = await Patient.findOne({
+      where: { national_id: dni, status: 'Habilitado' },
+      include: [User]
+    });
+    if (!patient) {
       return res
         .status(404)
         .json({ message: 'Paciente no encontrado o no está habilitado' });
     } else {
-      res.json(result[0]);
+      res.json(patient);
     }
   } catch (error) {
     return res.status(500).json({ message: error.message });
@@ -45,17 +42,13 @@ export const getPacienteByDni = async (req, res) => {
 
 export const createPaciente = async (req, res) => {
   const { dni } = req.body;
-  const estado = 'Habilitado';
+  const status = 'Habilitado';
   try {
-    const [result] = await pool.query(
-      'INSERT INTO pacientes (dni, estado) VALUES (?, ?)',
-      [dni, estado]
-    );
-    res.json({
-      idPaciente: result.insertId, // Devuelve el id autogenerado
-      dni,
-      estado,
+    const newPatient = await Patient.create({
+      national_id: dni,
+      status: status,
     });
+    res.json(newPatient);
   } catch (error) {
     return res.status(500).json({ message: error.message });
   }
