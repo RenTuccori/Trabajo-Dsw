@@ -1,120 +1,167 @@
 import { jest } from '@jest/globals';
-import jwt from 'jsonwebtoken';
 
-// Mock del pool de base de datos
-const mockPool = {
-  query: jest.fn(),
+// Mock the service layer
+const mockService = {
+  getAllUsers: jest.fn(),
+  findUserByDni: jest.fn(),
+  authenticatePatient: jest.fn(),
+  createNewUser: jest.fn(),
+  updateExistingUser: jest.fn(),
+  deleteExistingUser: jest.fn(),
 };
 
-jest.unstable_mockModule('../db.js', () => ({
-  pool: mockPool,
-}));
+jest.unstable_mockModule('../services/usuarios.service.js', () => mockService);
 
-// Importar después del mock
-const { getUserByDniFecha, getUsers } = await import(
-  '../controllers/usuarios.controllers.js'
-);
+const {
+  getUsers,
+  getUserByDni,
+  getUserByDniFecha,
+  createUser,
+  updateUser,
+  deleteUser,
+} = await import('../controllers/usuarios.controllers.js');
 
-describe('Usuarios Controllers Unit Tests', () => {
+describe('Usuarios Controller – Unit Tests', () => {
   let req, res;
 
   beforeEach(() => {
-    req = {
-      body: {},
-      params: {},
-      session: { rol: 'Patient' },
-    };
-
+    req = { body: {}, params: {}, session: { rol: 'Patient' } };
     res = {
       json: jest.fn(),
       status: jest.fn().mockReturnThis(),
-      send: jest.fn(),
+      sendStatus: jest.fn(),
     };
-
     jest.clearAllMocks();
   });
 
+  // ── getUsers ───────────────────────────────────────────
   describe('getUsers', () => {
-    it('should return all users successfully', async () => {
-      const mockUsers = [
-        { dni: '12345678', nombre: 'Juan', apellido: 'Pérez' },
-        { dni: '87654321', nombre: 'María', apellido: 'García' },
-      ];
-
-      mockPool.query.mockResolvedValue([mockUsers]);
+    it('should return all users', async () => {
+      const users = [{ dni: 11111111 }, { dni: 22222222 }];
+      mockService.getAllUsers.mockResolvedValue(users);
 
       await getUsers(req, res);
 
-      expect(mockPool.query).toHaveBeenCalledWith('SELECT * FROM usuarios');
-      expect(res.json).toHaveBeenCalledWith(mockUsers);
+      expect(mockService.getAllUsers).toHaveBeenCalled();
+      expect(res.json).toHaveBeenCalledWith(users);
     });
 
-    it('should return 404 when no users found', async () => {
-      mockPool.query.mockResolvedValue([[]]);
+    it('should return 404 when no users', async () => {
+      mockService.getAllUsers.mockResolvedValue([]);
 
       await getUsers(req, res);
 
       expect(res.status).toHaveBeenCalledWith(404);
-      expect(res.json).toHaveBeenCalledWith({
-        message: 'No hay usuarios cargados',
-      });
+      expect(res.json).toHaveBeenCalledWith({ message: 'No hay usuarios cargados' });
+    });
+
+    it('should return 500 on error', async () => {
+      mockService.getAllUsers.mockRejectedValue(new Error('DB error'));
+
+      await getUsers(req, res);
+
+      expect(res.status).toHaveBeenCalledWith(500);
     });
   });
 
-  describe('getUserByDniFecha', () => {
-    it('should return JWT token for valid credentials', async () => {
-      const mockUser = {
-        dni: '12345678',
-        nombre: 'Juan',
-        apellido: 'Pérez',
-        fechaNacimiento: '1990-01-01',
-      };
+  // ── getUserByDni ───────────────────────────────────────
+  describe('getUserByDni', () => {
+    it('should return user when found', async () => {
+      const user = { dni: 11111111, nombre: 'Test' };
+      req.body.dni = 11111111;
+      mockService.findUserByDni.mockResolvedValue(user);
 
-      req.body = { dni: '12345678', fechaNacimiento: '1990-01-01' };
-      mockPool.query.mockResolvedValue([[mockUser]]);
+      await getUserByDni(req, res);
+
+      expect(mockService.findUserByDni).toHaveBeenCalledWith(11111111);
+      expect(res.json).toHaveBeenCalledWith(user);
+    });
+
+    it('should return 404 when user not found', async () => {
+      req.body.dni = 99999999;
+      mockService.findUserByDni.mockResolvedValue(null);
+
+      await getUserByDni(req, res);
+
+      expect(res.status).toHaveBeenCalledWith(404);
+    });
+  });
+
+  // ── getUserByDniFecha (auth) ───────────────────────────
+  describe('getUserByDniFecha', () => {
+    it('should return a JWT token for valid credentials', async () => {
+      req.body = { dni: 11111111, fechaNacimiento: '1990-01-01' };
+      mockService.authenticatePatient.mockResolvedValue({ token: 'fake.jwt.token' });
 
       await getUserByDniFecha(req, res);
 
-      expect(mockPool.query).toHaveBeenCalledWith(
-        'SELECT * FROM usuarios WHERE dni = ? and fechaNacimiento = ?',
-        ['12345678', '1990-01-01']
-      );
-
-      // Verificar que se devolvió un JWT token
-      expect(res.json).toHaveBeenCalled();
-      const token = res.json.mock.calls[0][0];
-      expect(typeof token).toBe('string');
-
-      // Verificar que el token es válido y contiene los datos correctos
-      const decoded = jwt.verify(token, 'CLAVE_SUPER_SEGURISIMA');
-      expect(decoded.dni).toBe('12345678');
-      expect(decoded.nombre).toBe('Juan');
-      expect(decoded.apellido).toBe('Pérez');
-      expect(decoded.rol).toBe('Patient');
+      expect(mockService.authenticatePatient).toHaveBeenCalledWith(11111111, '1990-01-01');
+      expect(res.json).toHaveBeenCalledWith('fake.jwt.token');
     });
 
     it('should return 404 for invalid credentials', async () => {
-      req.body = { dni: '99999999', fechaNacimiento: '1990-01-01' };
-      mockPool.query.mockResolvedValue([[]]);
+      req.body = { dni: 99999999, fechaNacimiento: '2000-01-01' };
+      mockService.authenticatePatient.mockResolvedValue(null);
 
       await getUserByDniFecha(req, res);
 
       expect(res.status).toHaveBeenCalledWith(404);
-      expect(res.json).toHaveBeenCalledWith({
-        message: 'Usuario no encontrado',
-      });
+    });
+  });
+
+  // ── createUser ─────────────────────────────────────────
+  describe('createUser', () => {
+    it('should create a user and return 201', async () => {
+      const body = { dni: 33333333, nombre: 'Nuevo' };
+      req.body = body;
+      mockService.createNewUser.mockResolvedValue(body);
+
+      await createUser(req, res);
+
+      expect(res.status).toHaveBeenCalledWith(201);
+      expect(res.json).toHaveBeenCalledWith(body);
+    });
+  });
+
+  // ── updateUser ─────────────────────────────────────────
+  describe('updateUser', () => {
+    it('should update user and return updated data', async () => {
+      req.body = { dni: 11111111, nombre: 'Actualizado' };
+      mockService.updateExistingUser.mockResolvedValue({ dni: 11111111, nombre: 'Actualizado' });
+
+      await updateUser(req, res);
+
+      expect(res.json).toHaveBeenCalled();
     });
 
-    it('should handle missing credentials', async () => {
-      req.body = {}; // Sin dni ni fechaNacimiento
-      mockPool.query.mockResolvedValue([[]]);
+    it('should return 404 when user not found', async () => {
+      req.body = { dni: 99999999 };
+      mockService.updateExistingUser.mockResolvedValue(null);
 
-      await getUserByDniFecha(req, res);
+      await updateUser(req, res);
 
-      expect(mockPool.query).toHaveBeenCalledWith(
-        'SELECT * FROM usuarios WHERE dni = ? and fechaNacimiento = ?',
-        [undefined, undefined]
-      );
+      expect(res.status).toHaveBeenCalledWith(404);
+    });
+  });
+
+  // ── deleteUser ─────────────────────────────────────────
+  describe('deleteUser', () => {
+    it('should delete user and return 204', async () => {
+      req.body = { dni: 11111111 };
+      mockService.deleteExistingUser.mockResolvedValue(true);
+
+      await deleteUser(req, res);
+
+      expect(res.sendStatus).toHaveBeenCalledWith(204);
+    });
+
+    it('should return 404 when user not found', async () => {
+      req.body = { dni: 99999999 };
+      mockService.deleteExistingUser.mockResolvedValue(false);
+
+      await deleteUser(req, res);
+
+      expect(res.status).toHaveBeenCalledWith(404);
     });
   });
 });

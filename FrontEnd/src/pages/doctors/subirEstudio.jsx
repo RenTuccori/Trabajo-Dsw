@@ -25,7 +25,6 @@ function SubirEstudio() {
 
   // Cargar pacientes al montar el componente
   useEffect(() => {
-    console.log('Cargando pacientes...');
     const initializeData = async () => {
       setInitialLoading(true);
       await loadPacientes();
@@ -36,19 +35,16 @@ function SubirEstudio() {
 
   const loadEstudios = useCallback(async () => {
     try {
-      console.log('Cargando estudios para doctor:', idDoctor);
       const response = await getEstudiosByDoctor(idDoctor);
-      console.log('Respuesta de estudios:', response);
       setEstudios(response.data || []);
     } catch (error) {
-      console.error('Error al cargar estudios:', error);
+      window.notifyError('Error al cargar estudios');
       setEstudios([]); // Asegurar que estudios esté definido
     }
   }, [idDoctor]);
 
   // Cargar estudios cuando cambie el idDoctor
   useEffect(() => {
-    console.log('ID Doctor:', idDoctor);
     if (idDoctor) {
       loadEstudios();
     }
@@ -56,12 +52,9 @@ function SubirEstudio() {
 
   const loadPacientes = async () => {
     try {
-      console.log('Llamando a getPacientes...');
       const response = await getPacientes();
-      console.log('Respuesta de pacientes:', response);
       setPacientes(response.data || []);
     } catch (error) {
-      console.error('Error al cargar pacientes:', error);
       window.notifyError('Error al cargar la lista de pacientes');
       setPacientes([]); // Asegurar que pacientes esté definido
     }
@@ -123,7 +116,6 @@ function SubirEstudio() {
       // Recargar estudios
       loadEstudios();
     } catch (error) {
-      console.error('Error al subir estudio:', error);
       window.notifyError(error.message || 'Error al subir el estudio');
     } finally {
       setLoading(false);
@@ -144,7 +136,6 @@ function SubirEstudio() {
       link.remove();
       window.URL.revokeObjectURL(url);
     } catch (error) {
-      console.error('Error al descargar estudio:', error);
       window.notifyError('Error al descargar el archivo');
     }
   };

@@ -90,7 +90,6 @@ export function SacarTurno() {
     setSelectedFecha(null);
     if (selectedSede && selectedOption && selectedEspecialidad) {
       ObtenerFechas({ selectedOption, selectedEspecialidad, selectedSede });
-      console.log(fechas);
     }
   };
 
@@ -160,7 +159,6 @@ export function SacarTurno() {
   const handleHorarioChange = (selectedOption) => {
     setSelectedHorario(selectedOption);
     setFechaYHora(`${formatedFecha} ${selectedOption.value}`);
-    console.log(`${formatedFecha} ${selectedOption.value}`);
     setIdDoctor(selectedDoctor.value);
     setIdEspecialidad(selectedEspecialidad.value);
     setIdSede(selectedSede.value);

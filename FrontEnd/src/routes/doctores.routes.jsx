@@ -1,13 +1,14 @@
 import { Routes, Route } from 'react-router-dom';
 import DoctoresProvider from '../context/doctores/DoctoresProvider.jsx';
-import HomeDoctor from '../pages/doctors/homeDoctor.jsx';
-import { TurnosDoctorFecha } from '../pages/doctors/turnosDoctorFecha.jsx';
-import { TurnosDoctorHoy } from '../pages/doctors/turnosDoctorHoy.jsx';
-import { TurnosDoctorHistorico } from '../pages/doctors/turnosDoctorHistorico.jsx';
-import SubirEstudio from '../pages/doctors/subirEstudio.jsx';
-import { Validacion } from './validacion.jsx';
+import HomeDoctor from '../pages/doctors/HomeDoctor.jsx';
+import { TurnosDoctorFecha } from '../pages/doctors/TurnosDoctorFecha.jsx';
+import { TurnosDoctorHoy } from '../pages/doctors/TurnosDoctorHoy.jsx';
+import { TurnosDoctorHistorico } from '../pages/doctors/TurnosDoctorHistorico.jsx';
+import SubirEstudio from '../pages/doctors/SubirEstudio.jsx';
+import { Validacion } from './Validacion.jsx';
 import { ProtectedRoute } from '../components/ProtectedRoute.jsx';
 import { useAuth } from '../context/global/AuthProvider.jsx';
+import { USER_TYPES } from '../constants/userTypes.js';
 
 export function DoctoresRoutes() {
   const { rol } = useAuth();
@@ -18,8 +19,8 @@ export function DoctoresRoutes() {
         <Route
           path="/turnoshist"
           element={
-            <Validacion rol={rol} esperado={'Doctor'}>
-              <ProtectedRoute requiredRole="Doctor">
+            <Validacion rol={rol} esperado={USER_TYPES.DOCTOR}>
+              <ProtectedRoute requiredRole={USER_TYPES.DOCTOR}>
                 <TurnosDoctorHistorico />
               </ProtectedRoute>
             </Validacion>
@@ -28,8 +29,8 @@ export function DoctoresRoutes() {
         <Route
           path="/turnoshoy"
           element={
-            <Validacion rol={rol} esperado={'Doctor'}>
-              <ProtectedRoute requiredRole="Doctor">
+            <Validacion rol={rol} esperado={USER_TYPES.DOCTOR}>
+              <ProtectedRoute requiredRole={USER_TYPES.DOCTOR}>
                 <TurnosDoctorHoy />
               </ProtectedRoute>
             </Validacion>
@@ -38,8 +39,8 @@ export function DoctoresRoutes() {
         <Route
           path="/turnosfecha"
           element={
-            <Validacion rol={rol} esperado={'Doctor'}>
-              <ProtectedRoute requiredRole="Doctor">
+            <Validacion rol={rol} esperado={USER_TYPES.DOCTOR}>
+              <ProtectedRoute requiredRole={USER_TYPES.DOCTOR}>
                 <TurnosDoctorFecha />
               </ProtectedRoute>
             </Validacion>
@@ -48,8 +49,8 @@ export function DoctoresRoutes() {
         <Route
           path="/estudios"
           element={
-            <Validacion rol={rol} esperado={'Doctor'}>
-              <ProtectedRoute requiredRole="Doctor">
+            <Validacion rol={rol} esperado={USER_TYPES.DOCTOR}>
+              <ProtectedRoute requiredRole={USER_TYPES.DOCTOR}>
                 <SubirEstudio />
               </ProtectedRoute>
             </Validacion>

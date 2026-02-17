@@ -12,16 +12,20 @@ import emailRoutes from './routes/email.routes.js';
 import estudiosRouter from './routes/estudios.routes.js';
 import cors from 'cors';
 import jwt from 'jsonwebtoken';
+import config from 'dotenv';
+import { sequelize } from './models/index.js';
 
-// Importar las funciones de auto cancelación y auto recordatorio
-import { startAutoCancelTurnos } from './autoCancelTurnos.js'; // Cancelación de turnos cada 30 minutos
-import { startAutoReminderEmails } from './autoreminderEmails.js'; // Envío de recordatorios de correos cada 30 minutos
+import { startAutoCancelTurnos } from './autoCancelTurnos.js';
+import { startAutoReminderEmails } from './autoreminderEmails.js';
+
+config.config();
 
 const app = express();
-const PORT = 3000;
+const PORT = process.env.PORT || 3000;
+const JWT_SECRET = process.env.JWT_SECRET;
 
 app.use(cors());
-app.use(express.json()); // Para usar JSON en el body
+app.use(express.json());
 
 app.use((req, res, next) => {
   let data = null;
@@ -34,9 +38,9 @@ app.use((req, res, next) => {
   req.session = { rol: null };
 
   try {
-    data = jwt.verify(token, 'CLAVE_SUPER_SEGURISIMA');
-    req.session.rol = data.rol;
-  } catch (e) {
+    data = jwt.verify(token, JWT_SECRET);
+    Object.assign(req.session, data);
+  } catch {
     req.session.rol = null;
   }
   next();
@@ -54,12 +58,21 @@ app.use(adminRouter);
 app.use(emailRoutes);
 app.use(estudiosRouter);
 
-// Inicia la ejecución automática de la cancelación de turnos
 startAutoCancelTurnos();
-
-// Inicia la ejecución automática de recordatorios por correo electrónico
 startAutoReminderEmails();
 
-app.listen(PORT, () => {
-  console.log(`Server is running on PORT ${PORT}`);
-});
+const startServer = async () => {
+  try {
+    await sequelize.authenticate();
+    app.listen(PORT, () => {
+      // eslint-disable-next-line no-console
+      console.log(`Server is running on PORT ${PORT}`);
+    });
+  } catch (error) {
+    // eslint-disable-next-line no-console
+    console.error('Unable to connect to the database:', error);
+    process.exit(1);
+  }
+};
+
+startServer();

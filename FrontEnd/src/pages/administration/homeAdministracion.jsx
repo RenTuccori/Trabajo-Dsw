@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/global/AuthProvider';
+import { USER_TYPES } from '../../constants/userTypes.js';
 
 function HomeAdministracion() {
   const { login, idAdmin, comprobarToken } = useAuth();
@@ -9,7 +10,7 @@ function HomeAdministracion() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    comprobarToken('Admin');
+    comprobarToken(USER_TYPES.ADMIN);
   }, [comprobarToken]);
 
   const handleLogin = async () => {
@@ -17,7 +18,7 @@ function HomeAdministracion() {
       await login({
         identifier: usuario,
         credential: contra,
-        userType: 'Admin',
+        userType: USER_TYPES.ADMIN,
       });
       window.notifySuccess('¡Login exitoso!');
     } catch (error) {

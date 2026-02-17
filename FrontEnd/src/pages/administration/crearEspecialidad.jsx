@@ -29,7 +29,6 @@ export function CrearEspecialidad() {
         ObtenerEspecialidadesDisponibles(); // Actualizar la lista después de crear una especialidad
       } catch (error) {
         window.notifyError('Error al crear la especialidad');
-        console.error('Error al crear especialidad:', error);
       }
     }
   };
@@ -47,7 +46,6 @@ export function CrearEspecialidad() {
         ObtenerEspecialidadesDisponibles(); // Actualizar la lista después de borrar una especialidad
       } catch (error) {
         window.notifyError('Error al eliminar la especialidad');
-        console.error('Error al borrar especialidad:', error);
       }
     }
   };

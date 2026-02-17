@@ -52,7 +52,6 @@ export function DatosDoctor() {
       );
     } catch (error) {
       window.notifyError('Error al crear el usuario');
-      console.error('Error al crear usuario:', error);
     }
   };
 
@@ -65,7 +64,6 @@ export function DatosDoctor() {
       navigate('/admin'); // Redirige después de crear el doctor
     } catch (error) {
       window.notifyError('Error al crear el doctor');
-      console.error('Error al crear doctor:', error);
     }
   };
 

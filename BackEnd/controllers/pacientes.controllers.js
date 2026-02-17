@@ -1,22 +1,10 @@
-import { pool } from '../db.js';
+import * as pacientesService from '../services/pacientes.service.js';
 
 export const getPacientes = async (req, res) => {
   try {
-    const [result] = await pool.query(
-      `SELECT pac.idPaciente, usu.dni, usu.nombre, usu.apellido, obra.nombre as nombreObraSocial
-       FROM pacientes pac 
-       INNER JOIN usuarios usu ON usu.dni = pac.dni 
-       INNER JOIN obrasociales obra ON obra.idObraSocial = usu.idObraSocial
-       WHERE pac.estado = 'Habilitado'
-       ORDER BY usu.apellido, usu.nombre`
-    );
-    if (result.length === 0) {
-      return res.json([]); // Devolver array vacío en lugar de 404
-    } else {
-      res.json(result);
-    }
+    const pacientes = await pacientesService.getAllPacientes();
+    res.json(pacientes);
   } catch (error) {
-    console.log(error);
     return res.status(500).json({ message: error.message });
   }
 };
@@ -24,38 +12,20 @@ export const getPacientes = async (req, res) => {
 export const getPacienteByDni = async (req, res) => {
   try {
     const { dni } = req.body;
-    const [result] = await pool.query(
-      `SELECT pac.idPaciente, usu.nombre, usu.apellido, usu.dni
-       FROM pacientes pac
-       INNER JOIN usuarios usu ON usu.dni = pac.dni
-       WHERE usu.dni = ? AND pac.estado = 'Habilitado'`,
-      [dni]
-    );
-    if (result.length === 0) {
-      return res
-        .status(404)
-        .json({ message: 'Paciente no encontrado o no está habilitado' });
-    } else {
-      res.json(result[0]);
+    const paciente = await pacientesService.findPacienteByDni(dni);
+    if (!paciente) {
+      return res.status(404).json({ message: 'Paciente no encontrado' });
     }
+    res.json(paciente);
   } catch (error) {
     return res.status(500).json({ message: error.message });
   }
 };
 
 export const createPaciente = async (req, res) => {
-  const { dni } = req.body;
-  const estado = 'Habilitado';
   try {
-    const [result] = await pool.query(
-      'INSERT INTO pacientes (dni, estado) VALUES (?, ?)',
-      [dni, estado]
-    );
-    res.json({
-      idPaciente: result.insertId, // Devuelve el id autogenerado
-      dni,
-      estado,
-    });
+    const paciente = await pacientesService.createNewPaciente(req.body);
+    res.status(201).json(paciente);
   } catch (error) {
     return res.status(500).json({ message: error.message });
   }

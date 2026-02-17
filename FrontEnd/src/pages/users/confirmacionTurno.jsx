@@ -35,7 +35,7 @@ export function ConfirmacionTurno() {
         await CrearTurno();
         setTurnoCreado(true);
       } catch (error) {
-        console.error('Error al crear el turno:', error);
+        window.notifyError('Error al crear el turno');
       }
     };
 

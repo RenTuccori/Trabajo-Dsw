@@ -5,7 +5,7 @@ import { useAdministracion } from '../../context/administracion/AdministracionPr
 export function CrearHorarios() {
   const navigate = useNavigate();
   const location = useLocation();
-  const { idSede, idEspecialidad, idDoctor } = location.state || {};
+  const { idSede, idEspecialidad, idDoctor, nombreSede, nombreEspecialidad, nombreDoctor, apellidoDoctor } = location.state || {};
 
   const diasSemana = ['lunes', 'martes', 'miércoles', 'jueves', 'viernes'];
   const {
@@ -37,7 +37,6 @@ export function CrearHorarios() {
     };
 
     if (idSede && idEspecialidad && idDoctor) {
-      console.log('cargando horarios');
       cargarHorarios();
     } else {
       window.notifyError('Faltan datos para cargar horarios');
@@ -46,12 +45,10 @@ export function CrearHorarios() {
 
   useEffect(() => {
     if (horariosDoctor && horariosDoctor.length > 0) {
-      console.log('Horarios doctor:', horariosDoctor);
       const nuevosHorarios = diasSemana.map((dia) => {
         const horarioExistente = horariosDoctor.find(
           (horario) => horario.dia === dia // Convertir ambos a minúsculas
         );
-        console.log('Horario existente:', horarioExistente);
         return {
           dia,
           hora_inicio: horarioExistente ? horarioExistente.hora_inicio : '',
@@ -59,14 +56,12 @@ export function CrearHorarios() {
         };
       });
       setHorarios(nuevosHorarios);
-      console.log('Horarios cargados:', nuevosHorarios);
     }
   }, [horariosDoctor]);
 
   const handleInputChange = (index, field, value) => {
     const nuevosHorarios = [...horarios];
     nuevosHorarios[index][field] = value; // field puede ser 'hora_inicio' o 'hora_fin'
-    console.log('Nuevo horario:', nuevosHorarios[index]);
     setHorarios(nuevosHorarios);
   };
   const agregarHorariosDisponibles = async () => {
@@ -93,7 +88,6 @@ export function CrearHorarios() {
 
           if (horarioExistente) {
             // Usar PUT si el horario ya existe
-            console.log('Actualizando horario:', horario);
             await actualizarHorarios({
               idSede,
               idDoctor,
@@ -105,13 +99,6 @@ export function CrearHorarios() {
             });
           } else {
             // Usar POST si el horario no existe
-            console.log('Creando horario:', horario);
-            console.log(
-              'datos:',
-              horario.dia,
-              horario.hora_inicio,
-              horario.hora_fin
-            );
             await crearHorarios({
               idSede,
               idDoctor,
@@ -138,7 +125,7 @@ export function CrearHorarios() {
 
         <div className="bg-white rounded-lg shadow-md p-6 space-y-4">
           <h3 className="text-lg font-medium">
-            Sede: {idSede}, Especialidad: {idEspecialidad}, Doctor: {idDoctor}
+            Sede: {nombreSede || idSede}, Especialidad: {nombreEspecialidad || idEspecialidad}, Doctor: {nombreDoctor || idDoctor} {apellidoDoctor || ''}
           </h3>
 
           {/* Ingreso de nuevos horarios, con los horarios existentes ya pre-rellenados */}

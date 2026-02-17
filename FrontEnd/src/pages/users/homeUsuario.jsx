@@ -2,6 +2,7 @@
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/global/AuthProvider';
 import { useState, useEffect } from 'react';
+import { USER_TYPES } from '../../constants/userTypes.js';
 
 function HomeUsuario() {
   const navigate = useNavigate();
@@ -15,16 +16,15 @@ function HomeUsuario() {
       await login({
         identifier: dniform,
         credential: fecha,
-        userType: 'Patient',
+        userType: USER_TYPES.PATIENT,
       });
-      window.notifySuccess('¡Login exitoso!'); // Muestra mensaje de éxito
+      window.notifySuccess('¡Login exitoso!');
     } catch (error) {
-      window.notifyError('Error en el login, verifica tus datos.'); // Muestra mensaje de error si hay fallo
-      console.error('Error de login:', error);
+      window.notifyError('Error en el login, verifica tus datos.');
     }
   };
   useEffect(() => {
-    comprobarToken('Patient');
+    comprobarToken(USER_TYPES.PATIENT);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 

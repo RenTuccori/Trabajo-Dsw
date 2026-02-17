@@ -29,23 +29,17 @@ const DoctoresProvider = ({ children }) => {
   async function Historico() {
     try {
       const response = await getTurnosHistoricoDoctor({ idDoctor : idDoctor });
-      console.log(response.data.data)
-      console.log('length', response.data.data.length)
       if (response.data && response.data.data.length > 0) {
         setTurnosHist(response.data.data);
-        console.log('entre')
         const fechasDisponibles = response.data.data.map(
           (turno) => new Date(turno.fechaYHora.split('T')[0])
         );
         setFechas(fechasDisponibles);
       } else {
-        console.log('sali por else')
         setTurnosHist([]);
         setFechas([]);
       }
-    } catch (error) {
-      console.log('sali por catch')
-      console.error('Error al obtener turnos históricos:', error);
+    } catch {
       setTurnosHist([]);
       setFechas([]);
     }
@@ -66,8 +60,7 @@ const DoctoresProvider = ({ children }) => {
     try {
       const response = await getTurnosDoctorHoy({ idDoctor });
       setTurnosHoy(response.data || []);
-    } catch (error) {
-      console.error('Error al obtener los turnos de hoy:', error);
+    } catch {
       setTurnosHoy([]);
     }
   }

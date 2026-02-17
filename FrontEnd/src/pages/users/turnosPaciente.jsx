@@ -59,7 +59,6 @@ export function TurnosPaciente() {
         });
       } catch (error) {
         window.notifyError('Error al confirmar el turno'); // Mensaje de error
-        console.error('Error al confirmar turno:', error);
       }
     }
   };
@@ -101,7 +100,6 @@ export function TurnosPaciente() {
         });
       } catch (error) {
         window.notifyError('Error al cancelar el turno'); // Mensaje de error
-        console.error('Error al cancelar turno:', error);
       }
     }
   };

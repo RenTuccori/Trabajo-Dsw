@@ -45,11 +45,9 @@ export function ModificacionUsuario() {
       const response = await ActualizarUsuario(formData);
 
       if (response.data) {
-        console.log('Usuario actualizado con éxito');
         window.notifySuccess('Usuario actualizado con éxito'); // Toast de éxito
         navigate('/paciente');
       } else {
-        console.log('Error al actualizar usuario');
         window.confirmDialog(
           'Error',
           'No se pudo actualizar el usuario',

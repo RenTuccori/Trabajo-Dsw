@@ -7,36 +7,22 @@ import {
   getDoctores,
   getAvailableDoctors,
 } from '../controllers/doctores.controllers.js';
-import { AdminOrPatient, Patient } from '../middleware/authorizeRole.js';
+import { AdminOrPatient, Patient, Admin, Doctor } from '../middleware/authorizeRole.js';
+import { validateDoctorLogin, validateDoctorId, validateSedeEspBody, validateSedeIdBody, validateUserDni } from '../middleware/validators.js';
+import { validate } from '../middleware/validate.js';
+
 const router = Router();
 
-// Ruta de debug para ver doctores
-router.get('/api/doctors/debug', async (req, res) => {
-  try {
-    const { pool } = await import('../db.js');
-    const [result] = await pool.query(
-      `SELECT d.*, u.nombre, u.apellido 
-       FROM doctores d 
-       LEFT JOIN usuarios u ON d.dni = u.dni 
-       ORDER BY d.idDoctor`
-    );
-    res.json(result);
-  } catch (error) {
-    res.status(500).json({ error: error.message });
-  }
-});
+router.post('/api/doctors', Patient, validateSedeEspBody, validate, getDoctors);
 
-//Doctores a partir de sede y especialidad
-router.post('/api/doctors', Patient, getDoctors);
+router.post('/api/availabledoctors', Patient, validateSedeIdBody, validate, getAvailableDoctors);
 
-router.post('/api/availabledoctors', getAvailableDoctors);
-//Todos los doctores
-router.post('/api/alldoctors', getDoctores);
+router.post('/api/alldoctors', Admin, getDoctores);
 
-router.post('/api/doctorscontra', getDoctorByDniContra);
+router.post('/api/doctorscontra', validateDoctorLogin, validate, getDoctorByDniContra);
 
-router.get('/api/doctorsId/:idDoctor', AdminOrPatient, getDoctorById);
+router.get('/api/doctorsId/:idDoctor', AdminOrPatient, validateDoctorId, validate, getDoctorById);
 
-router.get('/api/doctorsdni', getDoctorByDni);
+router.get('/api/doctorsdni', Doctor, validateUserDni, validate, getDoctorByDni);
 
 export default router;

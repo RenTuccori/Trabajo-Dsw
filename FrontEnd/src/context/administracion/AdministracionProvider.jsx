@@ -53,21 +53,18 @@ const AdministracionProvider = ({ children }) => {
 
   async function crearNuevaSede({ nombre, direccion }) {
     try {
-      await createSede({ nombre, direccion }); // Llamada a la API
+      await createSede({ nombre, direccion });
     } catch (error) {
       if (error.response) {
-        // Error del servidor o del cliente
         if (error.response.status === 400) {
-          console.error('La sede ya está habilitada.');
+          window.notifyError('La sede ya está habilitada.');
         } else if (error.response.status === 500) {
-          console.error('Error en el servidor. Inténtalo de nuevo más tarde.');
+          window.notifyError('Error en el servidor. Inténtalo de nuevo más tarde.');
         } else {
-          console.error('Ocurrió un error inesperado:', error.response.data);
+          window.notifyError('Ocurrió un error inesperado.');
         }
-        throw error;
       } else {
-        // Error que no es de respuesta, como problemas de red
-        console.error('Error de red o de conexión:', error);
+        window.notifyError('Error de red o de conexión.');
       }
       throw error;
     }
@@ -80,9 +77,9 @@ const AdministracionProvider = ({ children }) => {
 
   async function borrarSede(idSede) {
     try {
-      await deleteSede(idSede); // Llamada a la API
+      await deleteSede(idSede);
     } catch (error) {
-      console.error('Error al borrar la sede:', error);
+      window.notifyError('Error al borrar la sede.');
       throw error;
     }
   }
@@ -96,15 +93,15 @@ const AdministracionProvider = ({ children }) => {
     try {
       await createSpecialty({ nombre });
     } catch (error) {
-      console.error('Error al obtener las sedes:', error);
+      window.notifyError('Error al crear la especialidad.');
       throw error;
     }
   }
   async function borrarEspecialidad(idEspecialidad) {
     try {
-      await deleteSpecialty(idEspecialidad); // Llamada a la API
+      await deleteSpecialty(idEspecialidad);
     } catch (error) {
-      console.error('Error al borrar la especialidad:', error);
+      window.notifyError('Error al borrar la especialidad.');
       throw error;
     }
   }
@@ -123,7 +120,7 @@ const AdministracionProvider = ({ children }) => {
       const response = await getDoctorById(idDoctor);
       setDoctor(response.data);
     } catch (error) {
-      console.error('Error al obtener el doctor por ID:', error);
+      window.notifyError('Error al obtener el doctor.');
       throw error;
     }
   }
@@ -131,15 +128,15 @@ const AdministracionProvider = ({ children }) => {
   async function CreaDoctor({ dni, duracionTurno, contra }) {
     try {
       await createDoctor({ dni, duracionTurno, contra });
-    } catch (error) {
-      console.error('Error al obtener las sedes:', error);
+    } catch {
+      window.notifyError('Error al crear el doctor.');
     }
   }
   async function borrarDoctor(idDoctor) {
     try {
       await deleteDoctor(idDoctor);
     } catch (error) {
-      console.error('Error al borrar el doctor:', error);
+      window.notifyError('Error al borrar el doctor.');
       throw error;
     }
   }
@@ -147,8 +144,8 @@ const AdministracionProvider = ({ children }) => {
     try {
       const response = await updateDoctor({ idDoctor, duracionTurno, contra });
       return response;
-    } catch (error) {
-      console.error('Error al actualizar el doctor:', error);
+    } catch {
+      window.notifyError('Error al actualizar el doctor.');
     }
   }
 
@@ -156,8 +153,8 @@ const AdministracionProvider = ({ children }) => {
   async function crearObraSocial({ nombre }) {
     try {
       await createObraSocial({ nombre });
-    } catch (error) {
-      console.error('Error al obtener las sedes:', error);
+    } catch {
+      window.notifyError('Error al crear la obra social.');
     }
   }
 
@@ -165,8 +162,8 @@ const AdministracionProvider = ({ children }) => {
     try {
       const response = await getObrasSociales();
       setObrasSociales(response.data);
-    } catch (error) {
-      console.error('Error al obtener las sedes:', error);
+    } catch {
+      window.notifyError('Error al obtener las obras sociales.');
     }
   }
 
@@ -174,17 +171,16 @@ const AdministracionProvider = ({ children }) => {
     try {
       await deleteObraSocial(idObraSocial);
     } catch (error) {
-      console.error('Error al borrar la obra social:', error);
+      window.notifyError('Error al borrar la obra social.');
       throw error;
     }
   }
 
   async function actualizarObraSocial({ idObraSocial, nombre }) {
     try {
-      console.log('idObraSocial:', idObraSocial, 'nombre:', nombre);
       await updateObraSocial({ idObraSocial, nombre });
-    } catch (error) {
-      console.error('Error al actualizar la obra social:', error);
+    } catch {
+      window.notifyError('Error al actualizar la obra social.');
     }
   }
 
@@ -197,7 +193,7 @@ const AdministracionProvider = ({ children }) => {
         idDoctor,
       });
     } catch (error) {
-      console.error('Error al obtener las sedes:', error);
+      window.notifyError('Error al crear la combinación.');
       throw error;
     }
   }
@@ -210,10 +206,7 @@ const AdministracionProvider = ({ children }) => {
         idEspecialidad,
       });
     } catch (error) {
-      console.error(
-        'Error al borrar la combinación de sede, especialidad y doctor:',
-        error
-      );
+      window.notifyError('Error al borrar la combinación.');
       throw error;
     }
   }
@@ -223,10 +216,7 @@ const AdministracionProvider = ({ children }) => {
       const response = await getCombinaciones();
       setCombinaciones(response.data);
     } catch (error) {
-      console.error(
-        'Error al obtener las combinaciones de sede, especialidad y doctor:',
-        error
-      );
+      window.notifyError('Error al obtener las combinaciones.');
       throw error;
     }
   }
@@ -242,16 +232,6 @@ const AdministracionProvider = ({ children }) => {
     estado,
   }) {
     try {
-      console.log(
-        'data:',
-        idSede,
-        idDoctor,
-        idEspecialidad,
-        dia,
-        hora_inicio,
-        hora_fin,
-        estado
-      );
       await createHorarios({
         idSede,
         idDoctor,
@@ -261,8 +241,8 @@ const AdministracionProvider = ({ children }) => {
         hora_fin,
         estado,
       });
-    } catch (error) {
-      console.error('Error al crear el horario:', error);
+    } catch {
+      window.notifyError('Error al crear el horario.');
     }
   }
   async function actualizarHorarios({
@@ -284,8 +264,8 @@ const AdministracionProvider = ({ children }) => {
         hora_fin,
         estado,
       });
-    } catch (error) {
-      console.error('Error al actualizar el horario:', error);
+    } catch {
+      window.notifyError('Error al actualizar el horario.');
     }
   }
   async function obtenerHorariosXDoctor({ idSede, idEspecialidad, idDoctor }) {
@@ -295,14 +275,11 @@ const AdministracionProvider = ({ children }) => {
         idEspecialidad,
         idDoctor,
       });
-      setHorariosDoctor(response.data); // Actualizar el estado con los horarios obtenidos
+      setHorariosDoctor(response.data);
     } catch (error) {
-      console.error('Error al obtener los horarios del doctor:', error);
       if (error.response && error.response.status === 404) {
-        setHorariosDoctor([]); // Establecer horarios a vacío
+        setHorariosDoctor([]);
       }
-
-      // Si hay otro tipo de error, lo lanzamos para que se maneje más arriba
       throw error;
     }
   }
@@ -313,29 +290,23 @@ const AdministracionProvider = ({ children }) => {
     try {
       const response = await getUserDni({ dni });
       setUsuario(response.data);
-      console.log('Paciente encontrado:', response.data);
     } catch (error) {
-      console.error('Error al obtener el paciente por DNI:', error);
+      window.notifyError('Error al obtener el paciente.');
       throw error;
     }
   }
 
   async function CrearUsuario(data) {
-    console.log('data:', data);
     const response = await createUser(data);
     setUsuario(response.data);
   }
   async function actualizarUsuario(data) {
     try {
-      console.log('Datos enviados para actualizar usuario:', data);
       const response = await updateUser(data);
-      console.log('Usuario actualizado:', response?.data);
       return response;
     } catch (error) {
-      console.error('Error al actualizar el usuario:', error);
-      console.error('Error status:', error.response?.status);
-      console.error('Error data:', error.response?.data);
-      throw error; // Re-lanzar el error para que pueda ser manejado en el componente
+      window.notifyError('Error al actualizar el usuario.');
+      throw error;
     }
   }
   return (

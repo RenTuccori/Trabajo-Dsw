@@ -8,32 +8,21 @@ import {
   deleteUser,
   getUserByDni,
 } from '../controllers/usuarios.controllers.js';
+import { validateUserDni, validateUserLogin, validateCreateUser, validateUpdateUser, validateDniParam } from '../middleware/validators.js';
+import { validate } from '../middleware/validate.js';
 
 const router = Router();
 
-// Ruta de debug para ver usuarios
-router.get('/api/users/debug', async (req, res) => {
-  try {
-    const { pool } = await import('../db.js');
-    const [result] = await pool.query(
-      `SELECT dni, nombre, apellido, fechaNacimiento FROM usuarios ORDER BY dni`
-    );
-    res.json(result);
-  } catch (error) {
-    res.status(500).json({ error: error.message });
-  }
-});
+router.post('/api/usersdni', Patient, validateUserDni, validate, getUserByDni);
 
-router.post('/api/usersdni', Patient, getUserByDni);
-
-router.post('/api/usersdnifecha', getUserByDniFecha);
+router.post('/api/usersdnifecha', validateUserLogin, validate, getUserByDniFecha);
 
 router.get('/api/userstodos', Patient, getUsers);
 
-router.post('/api/users', createUser);
+router.post('/api/users', validateCreateUser, validate, createUser);
 
-router.put('/api/users/', AdminOrPatient, updateUser);
+router.put('/api/users/', AdminOrPatient, validateUpdateUser, validate, updateUser);
 
-router.delete('/api/users/', deleteUser);
+router.delete('/api/users/:dni', AdminOrPatient, validateDniParam, validate, deleteUser);
 
 export default router;

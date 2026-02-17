@@ -1,18 +1,20 @@
 import { jest } from '@jest/globals';
 
+const TEST_SECRET = 'test-secret-key';
+
 describe('Backend Unit Tests - Simple', () => {
   describe('JWT Token Validation', () => {
     it('should validate JWT token structure', async () => {
       const jwt = await import('jsonwebtoken');
       const payload = { dni: '12345678', nombre: 'Juan', rol: 'Patient' };
-      const token = jwt.default.sign(payload, 'CLAVE_SUPER_SEGURISIMA', {
+      const token = jwt.default.sign(payload, TEST_SECRET, {
         expiresIn: '5m',
       });
 
       expect(token).toBeDefined();
       expect(typeof token).toBe('string');
 
-      const decoded = jwt.default.verify(token, 'CLAVE_SUPER_SEGURISIMA');
+      const decoded = jwt.default.verify(token, TEST_SECRET);
       expect(decoded.dni).toBe('12345678');
       expect(decoded.nombre).toBe('Juan');
       expect(decoded.rol).toBe('Patient');

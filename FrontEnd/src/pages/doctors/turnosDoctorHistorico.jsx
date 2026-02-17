@@ -3,7 +3,6 @@ import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useDoctores } from '../../context/doctores/DoctoresProvider.jsx';
 import '../../estilos/home.css';
-import '../../estilos/sacarturno.css';
 
 export function TurnosDoctorHistorico() {
   const { turnosHist, Historico } = useDoctores();

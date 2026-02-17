@@ -1,24 +1,66 @@
 -- Script de datos de prueba para el sistema médico
 -- Ejecutar en orden para mantener las referencias de claves foráneas
 -- 1. OBRAS SOCIALES (si no existen)
-INSERT IGNORE INTO obrasociales (idObraSocial, nombre)
-VALUES (1, 'OSDE'),
-  (2, 'Swiss Medical'),
-  (3, 'Medicus'),
-  (4, 'Galeno'),
-  (5, 'PAMI');
+INSERT IGNORE INTO obrasociales (idObraSocial, nombre, estado)
+VALUES (1, 'OSDE', 'Habilitado'),
+  (2, 'Swiss Medical', 'Habilitado'),
+  (3, 'Medicus', 'Habilitado'),
+  (4, 'Galeno', 'Habilitado'),
+  (5, 'PAMI', 'Habilitado');
 -- 2. SEDES (si no existen)
-INSERT IGNORE INTO sedes (idSede, nombre, direccion)
-VALUES (1, 'Sede Central', 'Av. Córdoba 1234, CABA'),
-  (2, 'Sede Norte', 'Av. Cabildo 5678, CABA'),
-  (3, 'Sede Sur', 'Av. Rivadavia 9012, CABA');
+INSERT IGNORE INTO sedes (idSede, nombre, direccion, estado)
+VALUES (1, 'Sede Central', 'Av. Córdoba 1234, CABA', 'Habilitado'),
+  (2, 'Sede Norte', 'Av. Cabildo 5678, CABA', 'Habilitado'),
+  (3, 'Sede Sur', 'Av. Rivadavia 9012, CABA', 'Habilitado');
+-- 2.1 FECHAS DISPONIBLES (para gestión de turnos)
+-- Generando fechas para los próximos 6 meses
+INSERT IGNORE INTO fechas (fechas)
+VALUES 
+  -- Febrero 2026
+  ('2026-02-16'), ('2026-02-17'), ('2026-02-18'), ('2026-02-19'), ('2026-02-20'),
+  ('2026-02-23'), ('2026-02-24'), ('2026-02-25'), ('2026-02-26'), ('2026-02-27'),
+  -- Marzo 2026
+  ('2026-03-02'), ('2026-03-03'), ('2026-03-04'), ('2026-03-05'), ('2026-03-06'),
+  ('2026-03-09'), ('2026-03-10'), ('2026-03-11'), ('2026-03-12'), ('2026-03-13'),
+  ('2026-03-16'), ('2026-03-17'), ('2026-03-18'), ('2026-03-19'), ('2026-03-20'),
+  ('2026-03-23'), ('2026-03-24'), ('2026-03-25'), ('2026-03-26'), ('2026-03-27'),
+  ('2026-03-30'), ('2026-03-31'),
+  -- Abril 2026
+  ('2026-04-01'), ('2026-04-02'), ('2026-04-03'), ('2026-04-06'), ('2026-04-07'),
+  ('2026-04-08'), ('2026-04-09'), ('2026-04-10'), ('2026-04-13'), ('2026-04-14'),
+  ('2026-04-15'), ('2026-04-16'), ('2026-04-17'), ('2026-04-20'), ('2026-04-21'),
+  ('2026-04-22'), ('2026-04-23'), ('2026-04-24'), ('2026-04-27'), ('2026-04-28'),
+  ('2026-04-29'), ('2026-04-30'),
+  -- Mayo 2026
+  ('2026-05-04'), ('2026-05-05'), ('2026-05-06'), ('2026-05-07'), ('2026-05-08'),
+  ('2026-05-11'), ('2026-05-12'), ('2026-05-13'), ('2026-05-14'), ('2026-05-15'),
+  ('2026-05-18'), ('2026-05-19'), ('2026-05-20'), ('2026-05-21'), ('2026-05-22'),
+  ('2026-05-25'), ('2026-05-26'), ('2026-05-27'), ('2026-05-28'), ('2026-05-29'),
+  -- Junio 2026
+  ('2026-06-01'), ('2026-06-02'), ('2026-06-03'), ('2026-06-04'), ('2026-06-05'),
+  ('2026-06-08'), ('2026-06-09'), ('2026-06-10'), ('2026-06-11'), ('2026-06-12'),
+  ('2026-06-15'), ('2026-06-16'), ('2026-06-17'), ('2026-06-18'), ('2026-06-19'),
+  ('2026-06-22'), ('2026-06-23'), ('2026-06-24'), ('2026-06-25'), ('2026-06-26'),
+  ('2026-06-29'), ('2026-06-30'),
+  -- Julio 2026
+  ('2026-07-01'), ('2026-07-02'), ('2026-07-03'), ('2026-07-06'), ('2026-07-07'),
+  ('2026-07-08'), ('2026-07-09'), ('2026-07-10'), ('2026-07-13'), ('2026-07-14'),
+  ('2026-07-15'), ('2026-07-16'), ('2026-07-17'), ('2026-07-20'), ('2026-07-21'),
+  ('2026-07-22'), ('2026-07-23'), ('2026-07-24'), ('2026-07-27'), ('2026-07-28'),
+  ('2026-07-29'), ('2026-07-30'), ('2026-07-31'),
+  -- Agosto 2026
+  ('2026-08-03'), ('2026-08-04'), ('2026-08-05'), ('2026-08-06'), ('2026-08-07'),
+  ('2026-08-10'), ('2026-08-11'), ('2026-08-12'), ('2026-08-13'), ('2026-08-14'),
+  ('2026-08-17'), ('2026-08-18'), ('2026-08-19'), ('2026-08-20'), ('2026-08-21'),
+  ('2026-08-24'), ('2026-08-25'), ('2026-08-26'), ('2026-08-27'), ('2026-08-28'),
+  ('2026-08-31');
 -- 3. ESPECIALIDADES (si no existen)
-INSERT IGNORE INTO especialidades (idEspecialidad, nombre)
-VALUES (1, 'Cardiología'),
-  (2, 'Neurología'),
-  (3, 'Traumatología'),
-  (4, 'Pediatría'),
-  (5, 'Ginecología');
+INSERT IGNORE INTO especialidades (idEspecialidad, nombre, estado)
+VALUES (1, 'Cardiología', 'Habilitado'),
+  (2, 'Neurología', 'Habilitado'),
+  (3, 'Traumatología', 'Habilitado'),
+  (4, 'Pediatría', 'Habilitado'),
+  (5, 'Ginecología', 'Habilitado');
 -- 4. USUARIOS DE PRUEBA
 INSERT INTO usuarios (
     dni,
@@ -193,7 +235,7 @@ VALUES ('87654321', 'Habilitado'),
   ('10987654', 'Habilitado');
 -- Alejandro Vega
 -- 7. RELACIÓN SEDE-DOCTOR-ESPECIALIDAD
-INSERT INTO sededoctoresp (idSede, idDoctor, idEspecialidad)
+INSERT INTO sededoctoresp (idSede, idDoctor, idEspecialidad, estado)
 VALUES -- Carlos Rodríguez (idDoctor depende del AUTO_INCREMENT, usar SELECT)
   (
     1,
@@ -202,7 +244,8 @@ VALUES -- Carlos Rodríguez (idDoctor depende del AUTO_INCREMENT, usar SELECT)
       FROM doctores
       WHERE dni = '12345678'
     ),
-    1
+    1,
+    'Habilitado'
   ),
   -- Cardiología en Sede Central
   (
@@ -212,7 +255,8 @@ VALUES -- Carlos Rodríguez (idDoctor depende del AUTO_INCREMENT, usar SELECT)
       FROM doctores
       WHERE dni = '12345678'
     ),
-    1
+    1,
+    'Habilitado'
   ),
   -- Cardiología en Sede Norte
   -- María González
@@ -223,7 +267,8 @@ VALUES -- Carlos Rodríguez (idDoctor depende del AUTO_INCREMENT, usar SELECT)
       FROM doctores
       WHERE dni = '23456789'
     ),
-    2
+    2,
+    'Habilitado'
   ),
   -- Neurología en Sede Central
   (
@@ -233,7 +278,8 @@ VALUES -- Carlos Rodríguez (idDoctor depende del AUTO_INCREMENT, usar SELECT)
       FROM doctores
       WHERE dni = '23456789'
     ),
-    2
+    2,
+    'Habilitado'
   ),
   -- Neurología en Sede Sur
   -- Juan López
@@ -244,7 +290,8 @@ VALUES -- Carlos Rodríguez (idDoctor depende del AUTO_INCREMENT, usar SELECT)
       FROM doctores
       WHERE dni = '34567890'
     ),
-    3
+    3,
+    'Habilitado'
   ),
   -- Traumatología en Sede Norte
   (
@@ -254,7 +301,8 @@ VALUES -- Carlos Rodríguez (idDoctor depende del AUTO_INCREMENT, usar SELECT)
       FROM doctores
       WHERE dni = '34567890'
     ),
-    3
+    3,
+    'Habilitado'
   ),
   -- Traumatología en Sede Sur
   -- Ana Martínez
@@ -265,7 +313,8 @@ VALUES -- Carlos Rodríguez (idDoctor depende del AUTO_INCREMENT, usar SELECT)
       FROM doctores
       WHERE dni = '45678901'
     ),
-    4
+    4,
+    'Habilitado'
   ),
   -- Pediatría en Sede Central
   (
@@ -275,7 +324,8 @@ VALUES -- Carlos Rodríguez (idDoctor depende del AUTO_INCREMENT, usar SELECT)
       FROM doctores
       WHERE dni = '45678901'
     ),
-    4
+    4,
+    'Habilitado'
   ),
   -- Pediatría en Sede Norte
   -- Roberto Silva
@@ -286,7 +336,8 @@ VALUES -- Carlos Rodríguez (idDoctor depende del AUTO_INCREMENT, usar SELECT)
       FROM doctores
       WHERE dni = '56789012'
     ),
-    5
+    5,
+    'Habilitado'
   ),
   -- Ginecología en Sede Norte
   (
@@ -296,7 +347,8 @@ VALUES -- Carlos Rodríguez (idDoctor depende del AUTO_INCREMENT, usar SELECT)
       FROM doctores
       WHERE dni = '56789012'
     ),
-    5
+    5,
+    'Habilitado'
   );
 -- Ginecología en Sede Sur
 -- 8. HORARIOS DISPONIBLES (ejemplo para algunos doctores)
@@ -306,7 +358,8 @@ INSERT INTO horarios_disponibles (
     idEspecialidad,
     dia,
     hora_inicio,
-    hora_fin
+    hora_fin,
+    estado
   )
 VALUES -- Carlos Rodríguez - Cardiología
   (
@@ -319,7 +372,8 @@ VALUES -- Carlos Rodríguez - Cardiología
     1,
     'Lunes',
     '08:00:00',
-    '12:00:00'
+    '12:00:00',
+    'Habilitado'
   ),
   (
     1,
@@ -331,7 +385,8 @@ VALUES -- Carlos Rodríguez - Cardiología
     1,
     'Miércoles',
     '14:00:00',
-    '18:00:00'
+    '18:00:00',
+    'Habilitado'
   ),
   (
     2,
@@ -343,7 +398,8 @@ VALUES -- Carlos Rodríguez - Cardiología
     1,
     'Martes',
     '09:00:00',
-    '13:00:00'
+    '13:00:00',
+    'Habilitado'
   ),
   -- María González - Neurología
   (
@@ -356,7 +412,8 @@ VALUES -- Carlos Rodríguez - Cardiología
     2,
     'Lunes',
     '09:00:00',
-    '12:00:00'
+    '12:00:00',
+    'Habilitado'
   ),
   (
     1,
@@ -368,7 +425,8 @@ VALUES -- Carlos Rodríguez - Cardiología
     2,
     'Jueves',
     '15:00:00',
-    '18:00:00'
+    '18:00:00',
+    'Habilitado'
   ),
   (
     3,
@@ -380,7 +438,8 @@ VALUES -- Carlos Rodríguez - Cardiología
     2,
     'Viernes',
     '08:00:00',
-    '11:00:00'
+    '11:00:00',
+    'Habilitado'
   ),
   -- Juan López - Traumatología
   (
@@ -393,7 +452,8 @@ VALUES -- Carlos Rodríguez - Cardiología
     3,
     'Martes',
     '08:00:00',
-    '12:00:00'
+    '12:00:00',
+    'Habilitado'
   ),
   (
     2,
@@ -405,7 +465,8 @@ VALUES -- Carlos Rodríguez - Cardiología
     3,
     'Jueves',
     '14:00:00',
-    '17:00:00'
+    '17:00:00',
+    'Habilitado'
   ),
   (
     3,
@@ -417,7 +478,8 @@ VALUES -- Carlos Rodríguez - Cardiología
     3,
     'Miércoles',
     '09:00:00',
-    '12:00:00'
+    '12:00:00',
+    'Habilitado'
   );
 -- 9. ALGUNOS TURNOS DE EJEMPLO
 INSERT INTO turnos (

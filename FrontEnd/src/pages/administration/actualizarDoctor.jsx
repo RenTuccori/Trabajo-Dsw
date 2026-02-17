@@ -53,7 +53,6 @@ export function ActualizarDoctor() {
 
     if (result.isConfirmed) {
       try {
-        console.log('Datos a enviar:', formData);
 
         // Verificar que el token existe
         const token = localStorage.getItem('token');
@@ -83,14 +82,9 @@ export function ActualizarDoctor() {
           contra: formData.contra,
         };
 
-        console.log('Datos usuario:', usuarioData);
-        console.log('Datos doctor:', doctorData);
-
         const response = await actualizarUsuario(usuarioData);
-        console.log('Respuesta de actualización usuario:', response);
 
         const responseDoctor = await actualizarDoctor(doctorData);
-        console.log('Respuesta de actualización doctor:', responseDoctor);
 
         if (
           response &&
@@ -98,19 +92,13 @@ export function ActualizarDoctor() {
           responseDoctor &&
           responseDoctor.data
         ) {
-          console.log('Usuario y doctor actualizados con éxito');
           window.notifySuccess('Usuario actualizado con éxito');
           setHasChanges(false);
           navigate('/admin/crearDoc');
         } else {
-          console.log('Error: respuesta incompleta', {
-            response,
-            responseDoctor,
-          });
           window.notifyError('Error al actualizar el usuario o doctor');
         }
       } catch (error) {
-        console.error('Error completo al actualizar:', error);
         if (error.response?.status === 403) {
           window.notifyError('No tienes permisos para realizar esta acción');
         } else if (error.response?.status === 401) {

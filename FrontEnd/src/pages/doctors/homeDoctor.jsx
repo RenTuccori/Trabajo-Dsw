@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/global/AuthProvider';
+import { USER_TYPES } from '../../constants/userTypes.js';
 
 function HomeDoctor() {
   const { idDoctor, login, comprobarToken, nombreUsuario, apellidoUsuario } =
@@ -12,12 +13,9 @@ function HomeDoctor() {
   // Manejo del login con toast de éxito
   const handleLogin = async () => {
     try {
-      await login({ identifier: dni, credential: contra, userType: 'Doctor' });
+      await login({ identifier: dni, credential: contra, userType: USER_TYPES.DOCTOR });
       window.notifySuccess('¡Login exitoso!');
     } catch (error) {
-      console.error('Error al iniciar sesión', error);
-
-      // Usar el toast de error global
       window.notifyError('Error al iniciar sesión');
     }
   };
@@ -31,7 +29,7 @@ function HomeDoctor() {
   };
 
   useEffect(() => {
-    comprobarToken('Doctor');
+    comprobarToken(USER_TYPES.DOCTOR);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 

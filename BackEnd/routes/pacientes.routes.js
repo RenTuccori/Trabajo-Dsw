@@ -4,30 +4,16 @@ import {
   getPacienteByDni,
   createPaciente,
 } from '../controllers/pacientes.controllers.js';
-import { Patient } from '../middleware/authorizeRole.js';
+import { Patient, DoctorOrPatient } from '../middleware/authorizeRole.js';
+import { validateCreatePaciente, validateUserDni } from '../middleware/validators.js';
+import { validate } from '../middleware/validate.js';
 
 const router = Router();
 
-// Ruta de debug para ver pacientes
-router.get('/api/patient/debug', async (req, res) => {
-  try {
-    const { pool } = await import('../db.js');
-    const [result] = await pool.query(
-      `SELECT pac.idPaciente, pac.dni, pac.estado, usu.nombre, usu.apellido 
-       FROM pacientes pac 
-       LEFT JOIN usuarios usu ON pac.dni = usu.dni 
-       ORDER BY pac.idPaciente`
-    );
-    res.json(result);
-  } catch (error) {
-    res.status(500).json({ error: error.message });
-  }
-});
+router.get('/api/patient', DoctorOrPatient, getPacientes);
 
-router.get('/api/patient', getPacientes);
+router.post('/api/patientdni', Patient, validateUserDni, validate, getPacienteByDni);
 
-router.post('/api/patientdni', Patient, getPacienteByDni);
-
-router.post('/api/patientcreate', createPaciente);
+router.post('/api/patientcreate', validateCreatePaciente, validate, createPaciente);
 
 export default router;

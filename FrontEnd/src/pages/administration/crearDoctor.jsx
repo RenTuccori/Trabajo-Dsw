@@ -81,7 +81,6 @@ export function CrearDoctor() {
           setFormularioVisible(true);
         } else {
           window.notifyError('Error al buscar el usuario');
-          console.error('Error al buscar usuario:', error);
         }
       }
     } else {
@@ -104,7 +103,6 @@ export function CrearDoctor() {
         navigate('/admin');
       } catch (error) {
         window.notifyError('Error al crear el doctor');
-        console.error('Error al crear doctor:', error);
       }
     } else {
       window.notifyError('Complete todos los campos');
@@ -119,7 +117,6 @@ export function CrearDoctor() {
       await ObtenerDoctores();
     } catch (error) {
       window.notifyError(`Error al borrar el doctor con ID ${idDoctor}`);
-      console.error(`Error al borrar el doctor con ID ${idDoctor}:`, error);
     }
   };
 
@@ -131,7 +128,6 @@ export function CrearDoctor() {
       await ObtenerDoctores();
     } catch (error) {
       window.notifyError(`Error al actualizar el doctor con ID ${idDoctor}`);
-      console.error(`Error al actualizar el doctor con ID ${idDoctor}:`, error);
     }
   };
 

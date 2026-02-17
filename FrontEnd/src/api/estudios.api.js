@@ -3,11 +3,7 @@ import axiosInstance from './axiosInstance';
 // Subir un nuevo estudio
 export const uploadEstudio = async (formData) => {
   try {
-    const response = await axiosInstance.post('estudios/upload', formData, {
-      headers: {
-        'Content-Type': 'multipart/form-data',
-      },
-    });
+    const response = await axiosInstance.post('estudios/upload', formData);
     return response;
   } catch (error) {
     throw error.response?.data || error.message;

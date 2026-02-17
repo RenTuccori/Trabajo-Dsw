@@ -75,9 +75,7 @@ const PacientesProvider = ({ children }) => {
   }
 
   async function ObtenerDoctores({ idSede, idEspecialidad }) {
-    console.log({ idSede, idEspecialidad });
     const response = await getDoctors({ idSede, idEspecialidad });
-    console.log('mis doctores', response.data);
     setDoctores(response.data);
   }
   async function ObtenerFechas({
@@ -175,12 +173,10 @@ const PacientesProvider = ({ children }) => {
       if (response && response.data) {
         setTurnos(response.data);
       } else {
-        console.error('No se pudieron obtener los turnos');
         setTurnos([]);
         window.notifyError('Error al obtener los turnos');
       }
-    } catch (error) {
-      console.error('Error al obtener turnos del paciente:', error);
+    } catch {
       setTurnos([]);
       window.notifyError('Error al obtener los turnos');
     }
@@ -202,11 +198,9 @@ const PacientesProvider = ({ children }) => {
         setUsuarioDni(response.data);
         setMailUsuario(response.data.email);
       } else {
-        console.error('No se pudo obtener los datos del usuario');
         window.notifyError('Error al obtener los datos del usuario');
       }
-    } catch (error) {
-      console.error('Error al obtener usuario por DNI:', error);
+    } catch {
       window.notifyError('Error al obtener los datos del usuario');
     }
   }

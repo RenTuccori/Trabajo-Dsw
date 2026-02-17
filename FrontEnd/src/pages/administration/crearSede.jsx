@@ -27,7 +27,6 @@ export function CrearSede() {
         ObtenerSedes(); // Actualizar la lista después de crear una sede
       } catch (error) {
         window.notifyError('Error al crear la sede'); // Mostrar mensaje de error
-        console.error('Error al crear sede:', error);
       }
     }
   };
@@ -45,7 +44,6 @@ export function CrearSede() {
         ObtenerSedes(); // Actualizar la lista después de borrar una sede
       } catch (error) {
         window.notifyError('Error al eliminar la sede'); // Mostrar mensaje de error
-        console.error('Error al borrar sede:', error);
       }
     }
   };

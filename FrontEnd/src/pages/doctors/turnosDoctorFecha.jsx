@@ -36,7 +36,6 @@ export function TurnosDoctorFecha() {
   const handleDateChange = (date) => {
     setSelectedFecha(date);
     if (date) {
-      console.log('Fecha seleccionada:', date);
       Fecha(date); // Llamar a la función Fecha con la fecha seleccionada
     }
   };

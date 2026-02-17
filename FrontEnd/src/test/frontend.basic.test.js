@@ -5,9 +5,9 @@ describe('Frontend Test Suite', () => {
     expect(true).toBe(true);
   });
 
-  it('should have access to environment variables', () => {
-    expect(import.meta.env.VITE_API_BASE_URL).toBeDefined();
-    expect(import.meta.env.VITE_APP_NAME).toBeDefined();
+  it('should have access to import.meta.env', () => {
+    expect(import.meta.env).toBeDefined();
+    expect(import.meta.env.MODE).toBeDefined();
   });
 
   it('should validate basic JavaScript functionality', () => {

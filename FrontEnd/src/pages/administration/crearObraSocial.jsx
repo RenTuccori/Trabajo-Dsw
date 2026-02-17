@@ -30,7 +30,6 @@ export function CrearObraSocial() {
         ObtenerOS();
       } catch (error) {
         window.notifyError('Error al crear la obra social');
-        console.error('Error al crear obra social:', error);
       }
     }
   };
@@ -48,7 +47,6 @@ export function CrearObraSocial() {
         ObtenerOS();
       } catch (error) {
         window.notifyError('No se puede eliminar esta obra social');
-        console.error('Error al borrar obra social:', error);
       }
     }
   };
@@ -67,7 +65,6 @@ export function CrearObraSocial() {
         ObtenerOS();
       } catch (error) {
         window.notifyError('No se puede actualizar esta obra social');
-        console.error('Error al actualizar obra social:', error);
       }
     }
   };

@@ -20,7 +20,6 @@ function VerEstudios() {
       setPacienteData(response.data);
       return response.data.idPaciente;
     } catch (error) {
-      console.error('Error al cargar datos del paciente:', error);
       notifyError('Error al cargar datos del paciente');
       return null;
     }
@@ -32,7 +31,6 @@ function VerEstudios() {
       const response = await getEstudiosByPaciente(idPaciente);
       setEstudios(response.data || []);
     } catch (error) {
-      console.error('Error al cargar estudios:', error);
       if (error.response?.status !== 404) {
         notifyError('Error al cargar estudios');
       }
@@ -69,7 +67,6 @@ function VerEstudios() {
       link.remove();
       window.URL.revokeObjectURL(url);
     } catch (error) {
-      console.error('Error al descargar estudio:', error);
       notifyError('Error al descargar el archivo');
     }
   };

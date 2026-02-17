@@ -4,7 +4,7 @@ import {
   Routes,
   Navigate,
 } from 'react-router-dom';
-import Navbar from './components/navbar';
+import Navbar from './components/Navbar.jsx';
 import { AdministracionRoutes } from './routes/administracion.routes.jsx';
 import { DoctoresRoutes } from './routes/doctores.routes.jsx';
 import { PacientesRoutes } from './routes/pacientes.routes.jsx';

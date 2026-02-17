@@ -1,7 +1,7 @@
 import { render, screen } from '@testing-library/react';
 import { BrowserRouter } from 'react-router-dom';
 import { describe, it, expect } from 'vitest';
-import Navbar from '../components/navbar.jsx';
+import Navbar from '../components/Navbar.jsx';
 
 // Wrapper para React Router
 const renderWithRouter = (component) => {

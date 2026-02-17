@@ -246,11 +246,11 @@ export function CrearCombinacion() {
                           idSede: combinacion.idSede,
                           idEspecialidad: combinacion.idEspecialidad,
                           idDoctor: combinacion.idDoctor,
+                          nombreSede: combinacion.nombreSede,
+                          nombreEspecialidad: combinacion.nombreEspecialidad,
+                          nombreDoctor: combinacion.nombreDoctor,
+                          apellidoDoctor: combinacion.apellidoDoctor,
                         };
-                        console.log(
-                          'Datos a enviar para agregar horarios:',
-                          data
-                        ); // Log de los datos que se envían
                         navigate(`/admin/horarios`, { state: data });
                       }}
                     >
