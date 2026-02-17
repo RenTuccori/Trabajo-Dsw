@@ -8,7 +8,7 @@ import { notifyError } from '../../components/ToastConfig';
 import { confirmDialog } from '../../components/SwalConfig';
 
 export function DatosPersonales() {
-  const { obraSociales, ObtenerObraSociales, CrearUsuario } = usePacientes();
+  const { healthInsuranceList, fetchHealthInsurance, createNewUser } = usePacientes();
   const { login } = useAuth();
   const [selectedObraSociales, setSelectedObraSociales] = useState(null);
   const navigate = useNavigate();
@@ -32,9 +32,9 @@ export function DatosPersonales() {
   };
 
   const handleSubmit = async (e) => {
-    e.preventDefault(); // Previene el comportamiento por defecto del formulario
+    e.preventDefault(); // Prevent default form behavior
     try {
-      await CrearUsuario(formData); // Asegura que la creación del usuario sea asíncrona
+      await createNewUser(formData); // Ensure user creation is async
       login({
         dni: formData.dni,
         fechaNacimiento: formData.fechaNacimiento,
@@ -51,7 +51,7 @@ export function DatosPersonales() {
   };
 
   useEffect(() => {
-    ObtenerObraSociales();
+    fetchHealthInsurance();
   }, []);
 
   const handleObraSocialChange = (selectedOption) => {
@@ -148,7 +148,7 @@ export function DatosPersonales() {
           <div>
             <p className="text-center text-gray-600 text-lg">Obra Social</p>
             <Select
-              options={(obraSociales || []).map((obrasocial) => ({
+              options={(healthInsuranceList || []).map((obrasocial) => ({
                 value: obrasocial.idObraSocial,
                 label: obrasocial.nombre,
               }))}

@@ -2,11 +2,11 @@ import { useState, useEffect, useCallback } from 'react';
 import { useAuth } from '../../context/global/AuthProvider';
 import { useNavigate } from 'react-router-dom';
 import {
-  uploadEstudio,
-  getEstudiosByDoctor,
-  downloadEstudio as downloadEstudioAPI,
+  uploadStudy,
+  getStudiesByDoctor,
+  downloadStudy as downloadStudyAPI,
 } from '../../api/estudios.api';
-import { getPacientes } from '../../api/pacientes.api';
+import { getPatients } from '../../api/pacientes.api';
 
 function SubirEstudio() {
   const { idDoctor } = useAuth();
@@ -23,7 +23,7 @@ function SubirEstudio() {
   const [initialLoading, setInitialLoading] = useState(true);
   const [showEstudios, setShowEstudios] = useState(false);
 
-  // Cargar pacientes al montar el componente
+  // Load patients on component mount
   useEffect(() => {
     const initializeData = async () => {
       setInitialLoading(true);
@@ -35,15 +35,15 @@ function SubirEstudio() {
 
   const loadEstudios = useCallback(async () => {
     try {
-      const response = await getEstudiosByDoctor(idDoctor);
+      const response = await getStudiesByDoctor(idDoctor);
       setEstudios(response.data || []);
     } catch (error) {
-      window.notifyError('Error al cargar estudios');
-      setEstudios([]); // Asegurar que estudios esté definido
+      window.notifyError('Error al cargar los estudios');
+      setEstudios([]); // Ensure studies is defined
     }
   }, [idDoctor]);
 
-  // Cargar estudios cuando cambie el idDoctor
+  // Load studies when idDoctor changes
   useEffect(() => {
     if (idDoctor) {
       loadEstudios();
@@ -52,11 +52,11 @@ function SubirEstudio() {
 
   const loadPacientes = async () => {
     try {
-      const response = await getPacientes();
+      const response = await getPatients();
       setPacientes(response.data || []);
     } catch (error) {
       window.notifyError('Error al cargar la lista de pacientes');
-      setPacientes([]); // Asegurar que pacientes esté definido
+      setPacientes([]); // Ensure patients is defined
     }
   };
 
@@ -79,12 +79,12 @@ function SubirEstudio() {
     e.preventDefault();
 
     if (!formData.archivo) {
-      window.notifyError('Por favor seleccione un archivo');
+      window.notifyError('Seleccione un archivo');
       return;
     }
 
     if (!formData.idPaciente || !formData.fechaRealizacion) {
-      window.notifyError('Por favor complete todos los campos obligatorios');
+      window.notifyError('Complete todos los campos requeridos');
       return;
     }
 
@@ -97,11 +97,11 @@ function SubirEstudio() {
       data.append('fechaRealizacion', formData.fechaRealizacion);
       data.append('descripcion', formData.descripcion);
 
-      await uploadEstudio(data);
+      await uploadStudy(data);
 
       window.notifySuccess('Estudio subido exitosamente');
 
-      // Limpiar formulario
+      // Clear form
       setFormData({
         idPaciente: '',
         fechaRealizacion: '',
@@ -109,11 +109,11 @@ function SubirEstudio() {
         archivo: null,
       });
 
-      // Limpiar input file
+      // Clear file input
       const fileInput = document.getElementById('archivo');
       if (fileInput) fileInput.value = '';
 
-      // Recargar estudios
+      // Reload studies
       loadEstudios();
     } catch (error) {
       window.notifyError(error.message || 'Error al subir el estudio');
@@ -124,9 +124,9 @@ function SubirEstudio() {
 
   const downloadEstudio = async (idEstudio, nombreArchivo) => {
     try {
-      const response = await downloadEstudioAPI(idEstudio);
+      const response = await downloadStudyAPI(idEstudio);
 
-      // Crear enlace de descarga
+      // Create download link
       const url = window.URL.createObjectURL(new Blob([response.data]));
       const link = document.createElement('a');
       link.href = url;
@@ -173,7 +173,7 @@ function SubirEstudio() {
           Gestión de Estudios Médicos
         </h1>
 
-        {/* Botones de navegación */}
+        {/* Navigation buttons */}
         <div className="flex justify-center mb-6 space-x-4">
           <button
             onClick={() => setShowEstudios(false)}
@@ -198,14 +198,14 @@ function SubirEstudio() {
         </div>
 
         {!showEstudios ? (
-          /* Formulario para subir estudios */
+          /* Form to upload studies */
           <div className="bg-white rounded-lg shadow-md p-6">
             <h2 className="text-xl font-semibold text-gray-800 mb-4">
               Subir Nuevo Estudio
             </h2>
 
             <form onSubmit={handleSubmit} className="space-y-4">
-              {/* Selección de paciente */}
+              {/* Patient selection */}
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
                   Paciente *
@@ -227,7 +227,7 @@ function SubirEstudio() {
                 </select>
               </div>
 
-              {/* Fecha de realización */}
+              {/* Date performed */}
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
                   Fecha de Realización *
@@ -243,7 +243,7 @@ function SubirEstudio() {
                 />
               </div>
 
-              {/* Descripción */}
+              {/* Description */}
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
                   Descripción
@@ -258,7 +258,7 @@ function SubirEstudio() {
                 />
               </div>
 
-              {/* Archivo */}
+              {/* File */}
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
                   Archivo del Estudio *
@@ -278,7 +278,7 @@ function SubirEstudio() {
                 </p>
               </div>
 
-              {/* Botón de envío */}
+              {/* Submit button */}
               <button
                 type="submit"
                 disabled={loading}
@@ -291,7 +291,7 @@ function SubirEstudio() {
                 {loading ? 'Subiendo...' : 'Subir Estudio'}
               </button>
 
-              {/* Botón de volver al menú */}
+              {/* Back to menu button */}
               <button
                 type="button"
                 onClick={() => navigate('/doctor')}
@@ -302,7 +302,7 @@ function SubirEstudio() {
             </form>
           </div>
         ) : (
-          /* Lista de estudios */
+          /* Studies list */
           <div className="bg-white rounded-lg shadow-md p-6">
             <h2 className="text-xl font-semibold text-gray-800 mb-4">
               Estudios Subidos

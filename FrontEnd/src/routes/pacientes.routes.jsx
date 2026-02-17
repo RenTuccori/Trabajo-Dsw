@@ -22,7 +22,7 @@ export function PacientesRoutes() {
         <Route
           path="/sacarturno"
           element={
-            <Validacion rol={rol} esperado={USER_TYPES.PATIENT}>
+            <Validacion rol={rol} expected={USER_TYPES.PATIENT}>
               <ProtectedRoute requiredRole={USER_TYPES.PATIENT}>
                 <SacarTurno />
               </ProtectedRoute>
@@ -32,7 +32,7 @@ export function PacientesRoutes() {
         <Route
           path="/editardatospersonales"
           element={
-            <Validacion rol={rol} esperado={USER_TYPES.PATIENT}>
+            <Validacion rol={rol} expected={USER_TYPES.PATIENT}>
               <ProtectedRoute requiredRole={USER_TYPES.PATIENT}>
                 <ModificacionUsuario />
               </ProtectedRoute>
@@ -42,7 +42,7 @@ export function PacientesRoutes() {
         <Route
           path="/confirmacionturno"
           element={
-            <Validacion rol={rol} esperado={USER_TYPES.PATIENT}>
+            <Validacion rol={rol} expected={USER_TYPES.PATIENT}>
               <ProtectedRoute requiredRole={USER_TYPES.PATIENT}>
                 <ConfirmacionTurno />
               </ProtectedRoute>
@@ -52,7 +52,7 @@ export function PacientesRoutes() {
         <Route
           path="/verturnos"
           element={
-            <Validacion rol={rol} esperado={USER_TYPES.PATIENT}>
+            <Validacion rol={rol} expected={USER_TYPES.PATIENT}>
               <ProtectedRoute requiredRole={USER_TYPES.PATIENT}>
                 <TurnosPaciente />
               </ProtectedRoute>
@@ -62,7 +62,7 @@ export function PacientesRoutes() {
         <Route
           path="/estudios"
           element={
-            <Validacion rol={rol} esperado={USER_TYPES.PATIENT}>
+            <Validacion rol={rol} expected={USER_TYPES.PATIENT}>
               <ProtectedRoute requiredRole={USER_TYPES.PATIENT}>
                 <VerEstudios />
               </ProtectedRoute>

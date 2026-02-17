@@ -1,7 +1,7 @@
 import { Paciente, Usuario, ObraSocial } from '../models/index.js';
 
-export const getAllPacientes = async () => {
-  const pacientes = await Paciente.findAll({
+export const getAllPatients = async () => {
+  const patients = await Paciente.findAll({
     where: { estado: 'Habilitado' },
     include: [{
       model: Usuario,
@@ -14,17 +14,17 @@ export const getAllPacientes = async () => {
     }],
     order: [[{ model: Usuario, as: 'usuario' }, 'nombre', 'ASC']],
   });
-  return pacientes.map(p => ({
+  return patients.map(p => ({
     idPaciente: p.idPaciente,
     dni: p.usuario?.dni,
     nombre: p.usuario?.nombre,
     apellido: p.usuario?.apellido,
-    obraSocial: p.usuario?.obraSocial?.nombre,
+    healthInsurance: p.usuario?.obraSocial?.nombre,
   }));
 };
 
-export const findPacienteByDni = async (dni) => {
-  const paciente = await Paciente.findOne({
+export const findPatientByDni = async (dni) => {
+  const patient = await Paciente.findOne({
     where: { estado: 'Habilitado' },
     include: [{
       model: Usuario,
@@ -32,13 +32,13 @@ export const findPacienteByDni = async (dni) => {
       where: { dni },
     }],
   });
-  return paciente;
+  return patient;
 };
 
-export const createNewPaciente = async ({ dni }) => {
-  const paciente = await Paciente.create({
+export const createNewPatient = async ({ dni }) => {
+  const patient = await Paciente.create({
     dni,
     estado: 'Habilitado',
   });
-  return paciente;
+  return patient;
 };

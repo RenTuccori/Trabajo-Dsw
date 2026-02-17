@@ -5,18 +5,18 @@ import { usePacientes } from '../../context/paciente/PacientesProvider.jsx';
 export function TurnosPaciente() {
   const navigate = useNavigate();
   const {
-    ObtenerTurnosPaciente,
-    ConfirmarTurno,
-    CancelarTurno,
-    turnos,
-    MandarMail,
-    mailUsuario,
-    ObtenerUsuarioDni,
+    fetchPatientAppointments,
+    confirmAppointmentAction,
+    cancelAppointmentAction,
+    appointments,
+    sendEmailAction,
+    userEmail,
+    fetchUserByDni,
   } = usePacientes();
 
   useEffect(() => {
-    ObtenerUsuarioDni();
-    ObtenerTurnosPaciente();
+    fetchUserByDni();
+    fetchPatientAppointments();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -28,20 +28,20 @@ export function TurnosPaciente() {
 
     if (result.isConfirmed) {
       try {
-        await ConfirmarTurno({ idTurno: turno.idTurno });
-        window.notifySuccess('¡Turno confirmado con éxito!'); // Mensaje de éxito
+        await confirmAppointmentAction({ idTurno: turno.idTurno });
+        window.notifySuccess('¡Turno confirmado con éxito!'); // Success message
         const cuerpo = `<div style="background-color: #f0f4f8; padding: 20px; border-radius: 10px; font-family: Arial, sans-serif; max-width: 600px; margin: auto;">
                     <h1 style="color: #1c4e80; text-align: center;">¡Tu turno ha sido confirmado con éxito!</h1>
                     <div style="background-color: #ffffff; padding: 20px; border-radius: 8px; margin-top: 20px;">
-                        <p><strong>Sede:</strong> ${turno.Sede}</p>
-                        <p><strong>Dirección:</strong> ${turno.Direccion}</p>
+                        <p><strong>Sede:</strong> ${turno.location}</p>
+                        <p><strong>Dirección:</strong> ${turno.address}</p>
                         <p><strong>Especialidad:</strong> ${
-                          turno.Especialidad
+                          turno.specialty
                         }</p>
                         <p><strong>Fecha y Hora:</strong> ${formatFechaHora(
                           turno.fecha_hora
                         )}</p>
-                        <p><strong>Doctor:</strong> ${turno.Doctor}</p>
+                        <p><strong>Doctor:</strong> ${turno.doctor}</p>
                         <p><strong>DNI Paciente:</strong> ${turno.dni}</p>
                     </div>
                     <footer style="text-align: center; margin-top: 20px;">
@@ -51,14 +51,14 @@ export function TurnosPaciente() {
                     </div>
                     `;
 
-        // Llamar a la función para mandar el correo
-        MandarMail({
-          to: mailUsuario, // Asegúrate de pasar el destinatario como tal
+        // Call the function to send the email
+        sendEmailAction({
+          to: userEmail, // Make sure to pass the recipient
           subject: 'Turno Confirmado',
           html: cuerpo,
         });
       } catch (error) {
-        window.notifyError('Error al confirmar el turno'); // Mensaje de error
+        window.notifyError('Error al confirmar el turno'); // Error message
       }
     }
   };
@@ -71,18 +71,18 @@ export function TurnosPaciente() {
 
     if (result.isConfirmed) {
       try {
-        await CancelarTurno({ idTurno: turno.idTurno });
-        window.notifySuccess('¡Turno cancelado con éxito!'); // Mensaje de éxito
+        await cancelAppointmentAction({ idTurno: turno.idTurno });
+        window.notifySuccess('¡Turno cancelado con éxito!'); // Success message
         const cuerpo = `<div style="background-color: #f0f4f8; padding: 20px; border-radius: 10px; font-family: Arial, sans-serif; max-width: 600px; margin: auto;">
                 <h1 style="color: #1c4e80; text-align: center;">¡Tu turno ha sido cancelado con éxito!</h1>
                 <div style="background-color: #ffffff; padding: 20px; border-radius: 8px; margin-top: 20px;">
-                    <p><strong>Sede:</strong> ${turno.Sede}</p>
-                    <p><strong>Dirección:</strong> ${turno.Direccion}</p>
-                    <p><strong>Especialidad:</strong> ${turno.Especialidad}</p>
+                    <p><strong>Sede:</strong> ${turno.location}</p>
+                    <p><strong>Dirección:</strong> ${turno.address}</p>
+                    <p><strong>Especialidad:</strong> ${turno.specialty}</p>
                     <p><strong>Fecha y Hora:</strong> ${formatFechaHora(
                       turno.fecha_hora
                     )}</p>
-                    <p><strong>Doctor:</strong> ${turno.Doctor}</p>
+                    <p><strong>Doctor:</strong> ${turno.doctor}</p>
                     <p><strong>DNI Paciente:</strong> ${turno.dni}</p>
                 </div>
                 <footer style="text-align: center; margin-top: 20px;">
@@ -92,14 +92,14 @@ export function TurnosPaciente() {
                 </div>
                 `;
 
-        // Llamar a la función para mandar el correo
-        MandarMail({
-          to: mailUsuario, // Asegúrate de pasar el destinatario como tal
+        // Call the function to send the email
+        sendEmailAction({
+          to: userEmail, // Make sure to pass the recipient
           subject: 'Turno Cancelado',
           html: cuerpo,
         });
       } catch (error) {
-        window.notifyError('Error al cancelar el turno'); // Mensaje de error
+        window.notifyError('Error al cancelar el turno'); // Error message
       }
     }
   };
@@ -112,7 +112,7 @@ export function TurnosPaciente() {
     const fecha = date.toLocaleDateString('es-ES', opcionesFecha);
     const hora = date.toLocaleTimeString('es-ES', opcionesHora);
 
-    return `${fecha} a las ${hora}`; // Retorna la fecha y hora en un solo string
+    return `${fecha} a las ${hora}`; // Returns date and time in a single string
   };
 
   return (
@@ -124,27 +124,27 @@ export function TurnosPaciente() {
         >
           Volver
         </button>
-        {turnos && turnos.length > 0 ? (
-          turnos.map((turno, index) => (
+        {appointments && appointments.length > 0 ? (
+          appointments.map((turno, index) => (
             <div
               key={index}
               className="bg-gray-50 rounded-lg p-4 shadow-sm mb-4"
             >
               <p>
-                <strong>Sede:</strong> {turno.Sede}
+                <strong>Sede:</strong> {turno.location}
               </p>
               <p>
-                <strong>Dirección:</strong> {turno.Direccion}
+                <strong>Dirección:</strong> {turno.address}
               </p>
               <p>
-                <strong>Especialidad:</strong> {turno.Especialidad}
+                <strong>Especialidad:</strong> {turno.specialty}
               </p>
               <p>
                 <strong>Fecha y Hora:</strong>{' '}
                 {formatFechaHora(turno.fecha_hora)}
               </p>
               <p>
-                <strong>Doctor:</strong> {turno.Doctor}
+                <strong>Doctor:</strong> {turno.doctor}
               </p>
               <p>
                 <strong>DNI Paciente:</strong> {turno.dni}

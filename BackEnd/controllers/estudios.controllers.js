@@ -3,7 +3,7 @@ import path from 'path';
 import fs from 'fs';
 import * as estudiosService from '../services/estudios.service.js';
 
-// Configuración de multer para subir archivos
+// Multer configuration for file uploads
 const storage = multer.diskStorage({
   destination: (req, file, cb) => {
     const uploadPath = './files/estudios/';
@@ -25,7 +25,7 @@ const fileFilter = (req, file, cb) => {
   if (allowedTypes.includes(fileExt)) {
     cb(null, true);
   } else {
-    cb(new Error('Tipo de archivo no permitido. Solo se permiten: PDF, JPG, JPEG, PNG, DOC, DOCX'), false);
+    cb(new Error('File type not allowed. Only PDF, JPG, JPEG, PNG, DOC, DOCX are permitted'), false);
   }
 };
 
@@ -35,30 +35,30 @@ export const upload = multer({
   limits: { fileSize: 10 * 1024 * 1024 },
 });
 
-export const createEstudio = async (req, res) => {
+export const createStudy = async (req, res) => {
   try {
     const { idPaciente, fechaRealizacion, descripcion } = req.body;
     const idDoctor = req.session.idDoctor;
 
     if (!idDoctor) {
-      return res.status(400).json({ message: 'ID de doctor no encontrado en el token' });
+      return res.status(400).json({ message: 'Doctor ID not found in token' });
     }
 
     if (!req.file) {
-      return res.status(400).json({ message: 'No se ha subido ningún archivo' });
+      return res.status(400).json({ message: 'No file was uploaded' });
     }
 
     const fechaCarga = new Date();
     const nombreArchivo = req.file.originalname;
     const rutaArchivo = req.file.path;
 
-    const estudio = await estudiosService.createEstudio({
+    const study = await estudiosService.createStudy({
       idPaciente, idDoctor, fechaRealizacion, fechaCarga, nombreArchivo, rutaArchivo, descripcion,
     });
 
     res.status(201).json({
-      message: 'Estudio subido exitosamente',
-      idEstudio: estudio.idEstudio,
+      message: 'Study uploaded successfully',
+      idEstudio: study.idEstudio,
       nombreArchivo,
       fechaCarga,
     });
@@ -70,53 +70,53 @@ export const createEstudio = async (req, res) => {
   }
 };
 
-export const getEstudiosByPaciente = async (req, res) => {
+export const getStudiesByPatient = async (req, res) => {
   try {
-    const result = await estudiosService.getEstudiosByPaciente(req.params.idPaciente);
+    const result = await estudiosService.getStudiesByPatient(req.params.idPaciente);
     res.json(result);
   } catch (error) {
     return res.status(500).json({ message: error.message });
   }
 };
 
-export const getEstudiosByDoctor = async (req, res) => {
+export const getStudiesByDoctor = async (req, res) => {
   try {
-    const result = await estudiosService.getEstudiosByDoctor(req.params.idDoctor);
+    const result = await estudiosService.getStudiesByDoctor(req.params.idDoctor);
     res.json(result);
   } catch (error) {
     return res.status(500).json({ message: error.message });
   }
 };
 
-export const downloadEstudio = async (req, res) => {
+export const downloadStudy = async (req, res) => {
   try {
-    const estudio = await estudiosService.findEstudioById(req.params.idEstudio);
-    if (!estudio) {
-      return res.status(404).json({ message: 'Estudio no encontrado' });
+    const study = await estudiosService.findStudyById(req.params.idEstudio);
+    if (!study) {
+      return res.status(404).json({ message: 'Study not found' });
     }
-    if (!fs.existsSync(estudio.rutaArchivo)) {
-      return res.status(404).json({ message: 'Archivo no encontrado en el servidor' });
+    if (!fs.existsSync(study.rutaArchivo)) {
+      return res.status(404).json({ message: 'File not found on server' });
     }
-    res.download(estudio.rutaArchivo, estudio.nombreArchivo);
+    res.download(study.rutaArchivo, study.nombreArchivo);
   } catch (error) {
     return res.status(500).json({ message: error.message });
   }
 };
 
-export const deleteEstudio = async (req, res) => {
+export const deleteStudy = async (req, res) => {
   try {
-    const estudio = await estudiosService.findEstudioById(req.params.idEstudio);
-    if (!estudio) {
-      return res.status(404).json({ message: 'Estudio no encontrado' });
+    const study = await estudiosService.findStudyById(req.params.idEstudio);
+    if (!study) {
+      return res.status(404).json({ message: 'Study not found' });
     }
 
-    await estudiosService.deleteEstudioById(req.params.idEstudio);
+    await estudiosService.deleteStudyById(req.params.idEstudio);
 
-    if (fs.existsSync(estudio.rutaArchivo)) {
-      fs.unlinkSync(estudio.rutaArchivo);
+    if (fs.existsSync(study.rutaArchivo)) {
+      fs.unlinkSync(study.rutaArchivo);
     }
 
-    res.json({ message: 'Estudio eliminado exitosamente' });
+    res.json({ message: 'Study deleted successfully' });
   } catch (error) {
     return res.status(500).json({ message: error.message });
   }

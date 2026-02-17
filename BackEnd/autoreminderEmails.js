@@ -12,7 +12,7 @@ export const sendReminderEmails = async () => {
   isSendingEmails = true;
 
   try {
-    const turnos = await Turno.findAll({
+    const appointments = await Turno.findAll({
       attributes: ['idTurno'],
       include: [{
         model: Paciente,
@@ -39,27 +39,27 @@ export const sendReminderEmails = async () => {
       nest: true,
     });
 
-    for (const turno of turnos) {
-      const email = turno.paciente?.usuario?.email;
+    for (const appointment of appointments) {
+      const email = appointment.paciente?.usuario?.email;
       if (!email) continue;
 
       const mailBody = {
         to: email,
-        subject: 'Recordatorio de Confirmación de Turno',
+        subject: 'Appointment Confirmation Reminder',
         html: `
-          <p>Estimado paciente,</p>
-          <p>Le recordamos que tiene un turno pendiente de confirmación. Por favor, confirme o cancele su turno dentro de las próximas horas. De lo contrario, el turno será cancelado automáticamente.</p>
-          <p>Gracias,</p>
+          <p>Dear patient,</p>
+          <p>We remind you that you have an appointment pending confirmation. Please confirm or cancel your appointment within the next few hours. Otherwise, the appointment will be automatically cancelled.</p>
+          <p>Thank you,</p>
           <p>Sanatorio UTN</p>
         `,
       };
 
       await sendEmail({ body: mailBody }, { json: () => {} });
 
-      await Turno.update({ mail: 1 }, { where: { idTurno: turno.idTurno } });
+      await Turno.update({ mail: 1 }, { where: { idTurno: appointment.idTurno } });
     }
   } catch (error) {
-    // Error silenciado
+    // Error silenced
   } finally {
     isSendingEmails = false;
   }

@@ -1,32 +1,32 @@
 import { Sede, SedeDoctorEsp } from '../models/index.js';
 import { sequelize } from '../models/index.js';
 
-export const getAllSedes = async () => {
-  const sedes = await Sede.findAll({
+export const getAllLocations = async () => {
+  const locations = await Sede.findAll({
     where: { estado: 'Habilitado' },
   });
-  return sedes;
+  return locations;
 };
 
-export const findSedeById = async (idSede) => {
-  const sede = await Sede.findOne({
+export const findLocationById = async (idSede) => {
+  const location = await Sede.findOne({
     where: { idSede, estado: 'Habilitado' },
   });
-  return sede;
+  return location;
 };
 
-export const createNewSede = async ({ nombre, direccion }) => {
+export const createNewLocation = async ({ nombre, direccion }) => {
   const existing = await Sede.findOne({
     where: { nombre, estado: 'Habilitado' },
   });
   if (existing) {
-    throw { status: 400, message: 'Ya existe una sede habilitada con ese nombre.' };
+    throw { status: 400, message: 'An enabled location with that name already exists.' };
   }
-  const sede = await Sede.create({ nombre, direccion, estado: 'Habilitado' });
-  return sede;
+  const location = await Sede.create({ nombre, direccion, estado: 'Habilitado' });
+  return location;
 };
 
-export const updateExistingSede = async (idSede, { nombre, direccion }) => {
+export const updateExistingLocation = async (idSede, { nombre, direccion }) => {
   const [affectedRows] = await Sede.update(
     { nombre, direccion },
     { where: { idSede } }
@@ -34,7 +34,7 @@ export const updateExistingSede = async (idSede, { nombre, direccion }) => {
   return affectedRows > 0;
 };
 
-export const softDeleteSede = async (idSede) => {
+export const softDeleteLocation = async (idSede) => {
   const transaction = await sequelize.transaction();
   try {
     const [affectedRows] = await Sede.update(

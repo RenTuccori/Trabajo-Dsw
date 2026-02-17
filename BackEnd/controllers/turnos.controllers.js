@@ -1,97 +1,97 @@
 import * as turnosService from '../services/turnos.service.js';
 
-export const getTurnoByDni = async (req, res) => {
+export const getAppointmentByDni = async (req, res) => {
   try {
     const { dni } = req.body;
-    const turnos = await turnosService.getTurnosByPacienteDni(dni);
-    if (turnos.length === 0) {
-      return res.status(404).json({ message: 'No hay próximos turnos para este paciente' });
+    const appointments = await turnosService.getAppointmentsByPatientDni(dni);
+    if (appointments.length === 0) {
+      return res.status(404).json({ message: 'No upcoming appointments for this patient' });
     }
-    res.json(turnos);
+    res.json(appointments);
   } catch (error) {
     return res.status(500).json({ message: error.message });
   }
 };
 
-export const getTurnoByDoctorHistorico = async (req, res) => {
+export const getAppointmentsByDoctorHistory = async (req, res) => {
   try {
     const { idDoctor } = req.body;
-    const turnos = await turnosService.getTurnosHistoricoDoctor(idDoctor);
-    if (turnos.length === 0) {
-      return res.status(200).json({ message: 'No hay turnos históricos', data: [] });
+    const appointments = await turnosService.getDoctorAppointmentHistory(idDoctor);
+    if (appointments.length === 0) {
+      return res.status(200).json({ message: 'No appointment history', data: [] });
     }
-    return res.json({ data: turnos });
+    return res.json({ data: appointments });
   } catch (error) {
     return res.status(500).json({ message: error.message });
   }
 };
 
-export const getTurnoByDoctorHoy = async (req, res) => {
+export const getAppointmentsByDoctorToday = async (req, res) => {
   try {
     const { idDoctor } = req.body;
-    const turnos = await turnosService.getTurnosDoctorHoy(idDoctor);
-    if (turnos.length === 0) {
-      return res.status(404).json({ message: 'No hay turnos' });
+    const appointments = await turnosService.getDoctorAppointmentsToday(idDoctor);
+    if (appointments.length === 0) {
+      return res.status(404).json({ message: 'No appointments found' });
     }
-    res.json(turnos);
+    res.json(appointments);
   } catch (error) {
     return res.status(500).json({ message: error.message });
   }
 };
 
-export const getTurnoByDoctorFecha = async (req, res) => {
+export const getAppointmentsByDoctorDate = async (req, res) => {
   try {
     const { idDoctor, fechaYHora } = req.body;
-    const turnos = await turnosService.getTurnosDoctorByFecha(idDoctor, fechaYHora);
-    if (turnos.length === 0) {
-      return res.status(404).json({ message: 'No hay turnos' });
+    const appointments = await turnosService.getDoctorAppointmentsByDate(idDoctor, fechaYHora);
+    if (appointments.length === 0) {
+      return res.status(404).json({ message: 'No appointments found' });
     }
-    res.json(turnos);
+    res.json(appointments);
   } catch (error) {
     return res.status(500).json({ message: error.message });
   }
 };
 
-export const confirmarTurno = async (req, res) => {
+export const confirmAppointment = async (req, res) => {
   try {
     const { idTurno } = req.body;
-    const updated = await turnosService.confirmTurno(idTurno);
+    const updated = await turnosService.confirmAppointment(idTurno);
     if (!updated) {
-      return res.status(404).json({ message: 'Turno no encontrado' });
+      return res.status(404).json({ message: 'Appointment not found' });
     }
-    res.json({ message: 'Estado del turno actualizado a "Confirmado"' });
+    res.json({ message: 'Appointment status updated to "Confirmed"' });
   } catch (error) {
     return res.status(500).json({ message: error.message });
   }
 };
 
-export const cancelarTurno = async (req, res) => {
+export const cancelAppointment = async (req, res) => {
   try {
     const { idTurno } = req.body;
-    const updated = await turnosService.cancelTurno(idTurno);
+    const updated = await turnosService.cancelAppointment(idTurno);
     if (!updated) {
-      return res.status(404).json({ message: 'Turno no encontrado' });
+      return res.status(404).json({ message: 'Appointment not found' });
     }
-    res.json({ message: 'Estado del turno actualizado a "Cancelado"' });
+    res.json({ message: 'Appointment status updated to "Cancelled"' });
   } catch (error) {
     return res.status(500).json({ message: error.message });
   }
 };
 
-export const createTurno = async (req, res) => {
+export const createAppointment = async (req, res) => {
   try {
-    const turno = await turnosService.createNewTurno(req.body);
-    res.status(201).json(turno);
+    const appointment = await turnosService.createNewAppointment(req.body);
+    res.status(201).json(appointment);
   } catch (error) {
     return res.status(500).json({ message: error.message });
   }
 };
 
-export const deleteTurno = async (req, res) => {
+export const deleteAppointment = async (req, res) => {
   try {
-    const deleted = await turnosService.deleteExistingTurno(req.params.id);
+    const deleted = await turnosService.deleteExistingAppointment(req.params.id);
     if (!deleted) {
-      return res.status(404).json({ message: 'Turno no encontrado' });
+      return res.status(404).json({ message: 'Appointment not found' });
     }
     return res.sendStatus(204);
   } catch (error) {

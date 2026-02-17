@@ -1,7 +1,7 @@
 import axiosInstance from './axiosInstance';
 
-// Subir un nuevo estudio
-export const uploadEstudio = async (formData) => {
+// Upload a new study
+export const uploadStudy = async (formData) => {
   try {
     const response = await axiosInstance.post('estudios/upload', formData);
     return response;
@@ -10,8 +10,8 @@ export const uploadEstudio = async (formData) => {
   }
 };
 
-// Obtener estudios por paciente
-export const getEstudiosByPaciente = async (idPaciente) => {
+// Get studies by patient
+export const getStudiesByPatient = async (idPaciente) => {
   try {
     const response = await axiosInstance.get(`estudios/paciente/${idPaciente}`);
     return response;
@@ -20,8 +20,8 @@ export const getEstudiosByPaciente = async (idPaciente) => {
   }
 };
 
-// Obtener estudios por doctor
-export const getEstudiosByDoctor = async (idDoctor) => {
+// Get studies by doctor
+export const getStudiesByDoctor = async (idDoctor) => {
   try {
     const response = await axiosInstance.get(`estudios/doctor/${idDoctor}`);
     return response;
@@ -30,8 +30,8 @@ export const getEstudiosByDoctor = async (idDoctor) => {
   }
 };
 
-// Descargar estudio
-export const downloadEstudio = async (idEstudio) => {
+// Download study
+export const downloadStudy = async (idEstudio) => {
   try {
     const response = await axiosInstance.get(`estudios/download/${idEstudio}`, {
       responseType: 'blob',
@@ -42,8 +42,8 @@ export const downloadEstudio = async (idEstudio) => {
   }
 };
 
-// Eliminar estudio
-export const deleteEstudio = async (idEstudio) => {
+// Delete study
+export const deleteStudy = async (idEstudio) => {
   try {
     const response = await axiosInstance.delete(`estudios/${idEstudio}`);
     return response;

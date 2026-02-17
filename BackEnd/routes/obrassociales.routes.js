@@ -1,15 +1,15 @@
 import { Router } from 'express';
 import {
-  getObrasSociales,
-  getObraSocialById,
+  getHealthInsuranceList,
+  getHealthInsuranceById,
 } from '../controllers/obrassociales.controllers.js';
-import { validateObraSocialId } from '../middleware/validators.js';
+import { validateHealthInsuranceId } from '../middleware/validators.js';
 import { validate } from '../middleware/validate.js';
 
 const router = Router();
 
-router.get('/api/os', getObrasSociales);
+router.get('/api/os', getHealthInsuranceList);
 
-router.get('/api/osid', validateObraSocialId, validate, getObraSocialById);
+router.get('/api/osid', validateHealthInsuranceId, validate, getHealthInsuranceById);
 
 export default router;

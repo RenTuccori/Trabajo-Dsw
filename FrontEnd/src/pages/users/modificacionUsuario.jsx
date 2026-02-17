@@ -5,11 +5,11 @@ import { usePacientes } from '../../context/paciente/PacientesProvider';
 
 export function ModificacionUsuario() {
   const {
-    usuarioDni,
-    ObtenerUsuarioDni,
-    ObtenerObraSociales,
-    obraSociales,
-    ActualizarUsuario,
+    userByDni,
+    fetchUserByDni,
+    fetchHealthInsurance,
+    healthInsuranceList,
+    updateUserData,
   } = usePacientes();
   const [selectedObraSociales, setSelectedObraSociales] = useState(null);
   const navigate = useNavigate();
@@ -42,7 +42,7 @@ export function ModificacionUsuario() {
     );
 
     if (result.isConfirmed) {
-      const response = await ActualizarUsuario(formData);
+      const response = await updateUserData(formData);
 
       if (response.data) {
         window.notifySuccess('Usuario actualizado con éxito'); // Toast de éxito
@@ -58,31 +58,31 @@ export function ModificacionUsuario() {
   };
 
   useEffect(() => {
-    ObtenerObraSociales();
-    ObtenerUsuarioDni();
+    fetchHealthInsurance();
+    fetchUserByDni();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
-    if (usuarioDni && obraSociales.length > 0) {
+    if (userByDni && healthInsuranceList.length > 0) {
       setFormData({
-        dni: usuarioDni.dni,
-        nombre: usuarioDni.nombre,
-        apellido: usuarioDni.apellido,
-        telefono: usuarioDni.telefono,
-        email: usuarioDni.email,
-        direccion: usuarioDni.direccion,
-        idObraSocial: usuarioDni.idObraSocial,
+        dni: userByDni.dni,
+        nombre: userByDni.nombre,
+        apellido: userByDni.apellido,
+        telefono: userByDni.telefono,
+        email: userByDni.email,
+        direccion: userByDni.direccion,
+        idObraSocial: userByDni.idObraSocial,
       });
 
       setSelectedObraSociales({
-        value: usuarioDni.idObraSocial,
+        value: userByDni.idObraSocial,
         label:
-          obraSociales.find((os) => os.idObraSocial === usuarioDni.idObraSocial)
+          healthInsuranceList.find((os) => os.idObraSocial === userByDni.idObraSocial)
             ?.nombre || 'No asignada',
       });
     }
-  }, [usuarioDni, obraSociales]);
+  }, [userByDni, healthInsuranceList]);
 
   const handleObraSocialChange = (selectedOption) => {
     setSelectedObraSociales(selectedOption);
@@ -154,7 +154,7 @@ export function ModificacionUsuario() {
           <div>
             <p className="text-center text-gray-600 text-lg">Obra Social</p>
             <Select
-              options={(obraSociales || []).map((obrasociales) => ({
+              options={(healthInsuranceList || []).map((obrasociales) => ({
                 value: obrasociales.idObraSocial,
                 label: obrasociales.nombre,
               }))}

@@ -4,7 +4,7 @@ export const getUsers = async (req, res) => {
   try {
     const users = await usuariosService.getAllUsers();
     if (users.length === 0) {
-      return res.status(404).json({ message: 'No hay usuarios cargados' });
+      return res.status(404).json({ message: 'No users loaded' });
     }
     res.json(users);
   } catch (error) {
@@ -17,7 +17,7 @@ export const getUserByDniFecha = async (req, res) => {
     const { dni, fechaNacimiento } = req.body;
     const result = await usuariosService.authenticatePatient(dni, fechaNacimiento);
     if (!result) {
-      return res.status(404).json({ message: 'Usuario no encontrado' });
+      return res.status(404).json({ message: 'User not found' });
     }
     res.json(result.token);
   } catch (error) {
@@ -30,7 +30,7 @@ export const getUserByDni = async (req, res) => {
     const { dni } = req.body;
     const user = await usuariosService.findUserByDni(dni);
     if (!user) {
-      return res.status(404).json({ message: 'Usuario no encontrado' });
+      return res.status(404).json({ message: 'User not found' });
     }
     res.json(user);
   } catch (error) {
@@ -52,9 +52,9 @@ export const updateUser = async (req, res) => {
     const { dni, ...updateData } = req.body;
     const updated = await usuariosService.updateExistingUser(dni, updateData);
     if (!updated) {
-      return res.status(404).json({ message: 'Usuario no encontrado' });
+      return res.status(404).json({ message: 'User not found' });
     }
-    res.json({ message: 'Usuario actualizado' });
+    res.json({ message: 'User updated' });
   } catch (error) {
     return res.status(500).json({ message: error.message });
   }
@@ -64,7 +64,7 @@ export const deleteUser = async (req, res) => {
   try {
     const deleted = await usuariosService.deleteExistingUser(req.params.dni);
     if (!deleted) {
-      return res.status(404).json({ message: 'Usuario no encontrado' });
+      return res.status(404).json({ message: 'User not found' });
     }
     return res.sendStatus(204);
   } catch (error) {

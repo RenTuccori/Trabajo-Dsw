@@ -26,14 +26,14 @@ const {
   validateUserLogin,
   validateUserDni,
   validateCreateUser,
-  validateCreateSede,
-  validateSedeId,
-  validateCreateEspecialidad,
+  validateCreateLocation,
+  validateLocationId,
+  validateCreateSpecialty,
   validateDoctorLogin,
   validateCreateDoctor,
-  validateCreateTurno,
-  validateTurnoAction,
-  validateTurnoId,
+  validateCreateAppointment,
+  validateAppointmentAction,
+  validateAppointmentId,
   validateAdminLogin,
   validateSendEmail,
 } = await import('../middleware/validators.js');
@@ -89,30 +89,30 @@ describe('Validation Middleware Tests', () => {
     });
   });
 
-  describe('validateCreateSede', () => {
+  describe('validateCreateLocation', () => {
     it('should pass with nombre and direccion', async () => {
       const req = { body: { nombre: 'Sede Centro', direccion: 'Av. Siempreviva 123' } };
-      const res = await runValidation(validateCreateSede, req);
+      const res = await runValidation(validateCreateLocation, req);
       expect(res._status).toBeNull();
     });
 
     it('should fail without nombre', async () => {
       const req = { body: { direccion: 'Av. Siempreviva 123' } };
-      const res = await runValidation(validateCreateSede, req);
+      const res = await runValidation(validateCreateLocation, req);
       expect(res._status).toBe(400);
     });
   });
 
-  describe('validateSedeId', () => {
+  describe('validateLocationId', () => {
     it('should pass with valid param', async () => {
       const req = { params: { idSede: '1' } };
-      const res = await runValidation(validateSedeId, req);
+      const res = await runValidation(validateLocationId, req);
       expect(res._status).toBeNull();
     });
 
     it('should fail with non-numeric param', async () => {
       const req = { params: { idSede: 'abc' } };
-      const res = await runValidation(validateSedeId, req);
+      const res = await runValidation(validateLocationId, req);
       expect(res._status).toBe(400);
     });
   });
@@ -131,38 +131,38 @@ describe('Validation Middleware Tests', () => {
     });
   });
 
-  describe('validateCreateTurno', () => {
+  describe('validateCreateAppointment', () => {
     it('should pass with all required fields', async () => {
       const req = { body: { idPaciente: 1, fechaYHora: '2025-12-01 10:00', idEspecialidad: 1, idDoctor: 1, idSede: 1 } };
-      const res = await runValidation(validateCreateTurno, req);
+      const res = await runValidation(validateCreateAppointment, req);
       expect(res._status).toBeNull();
     });
 
     it('should fail without idPaciente', async () => {
       const req = { body: { fechaYHora: '2025-12-01 10:00', idEspecialidad: 1, idDoctor: 1, idSede: 1 } };
-      const res = await runValidation(validateCreateTurno, req);
+      const res = await runValidation(validateCreateAppointment, req);
       expect(res._status).toBe(400);
     });
   });
 
-  describe('validateTurnoAction', () => {
+  describe('validateAppointmentAction', () => {
     it('should pass with valid idTurno', async () => {
       const req = { body: { idTurno: 5 } };
-      const res = await runValidation(validateTurnoAction, req);
+      const res = await runValidation(validateAppointmentAction, req);
       expect(res._status).toBeNull();
     });
   });
 
-  describe('validateTurnoId', () => {
+  describe('validateAppointmentId', () => {
     it('should pass with valid param', async () => {
       const req = { params: { id: '10' } };
-      const res = await runValidation(validateTurnoId, req);
+      const res = await runValidation(validateAppointmentId, req);
       expect(res._status).toBeNull();
     });
 
     it('should fail with negative param', async () => {
       const req = { params: { id: '-1' } };
-      const res = await runValidation(validateTurnoId, req);
+      const res = await runValidation(validateAppointmentId, req);
       expect(res._status).toBe(400);
     });
   });

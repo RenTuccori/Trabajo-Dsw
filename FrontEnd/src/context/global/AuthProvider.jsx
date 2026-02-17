@@ -123,7 +123,7 @@ const AuthProvider = ({ children }) => {
           break;
         }
         default:
-          throw new Error('Tipo de usuario no válido');
+          throw new Error('Invalid user type');
       }
     } catch (error) {
       if (userType === USER_TYPES.PATIENT) {

@@ -5,28 +5,28 @@ import { useAdministracion } from '../../context/administracion/AdministracionPr
 export function CrearEspecialidad() {
   const navigate = useNavigate();
   const {
-    especialidades,
-    crearEspecialidad,
-    ObtenerEspecialidadesDisponibles,
-    borrarEspecialidad,
+    specialties,
+    createNewSpecialty,
+    fetchAllSpecialties,
+    removeSpecialty,
   } = useAdministracion();
   const [nombreEspecialidad, setNombreEspecialidad] = useState('');
 
-  // Obtener especialidades al cargar el componente
+  // Fetch specialties when the component mounts
   useEffect(() => {
-    ObtenerEspecialidadesDisponibles();
+    fetchAllSpecialties();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // Manejar la creación de una nueva especialidad
+  // Handle creating a new specialty
   const handleCrearEspecialidad = async (e) => {
     e.preventDefault();
     if (nombreEspecialidad.trim() !== '') {
       try {
-        await crearEspecialidad({ nombre: nombreEspecialidad });
-        setNombreEspecialidad(''); // Reiniciar el campo de texto
+        await createNewSpecialty({ nombre: nombreEspecialidad });
+        setNombreEspecialidad(''); // Reset the text field
         window.notifySuccess('¡Especialidad creada con éxito!');
-        ObtenerEspecialidadesDisponibles(); // Actualizar la lista después de crear una especialidad
+        fetchAllSpecialties(); // Refresh the list after creating a specialty
       } catch (error) {
         window.notifyError('Error al crear la especialidad');
       }
@@ -41,9 +41,9 @@ export function CrearEspecialidad() {
 
     if (result.isConfirmed) {
       try {
-        await borrarEspecialidad(idEspecialidad);
+        await removeSpecialty(idEspecialidad);
         window.notifySuccess('¡Especialidad eliminada con éxito!');
-        ObtenerEspecialidadesDisponibles(); // Actualizar la lista después de borrar una especialidad
+        fetchAllSpecialties(); // Refresh the list after deleting a specialty
       } catch (error) {
         window.notifyError('Error al eliminar la especialidad');
       }
@@ -85,8 +85,8 @@ export function CrearEspecialidad() {
           Especialidades creadas
         </h3>
         <ul className="space-y-2">
-          {especialidades.length > 0 ? (
-            especialidades.map((especialidad) => (
+          {specialties.length > 0 ? (
+            specialties.map((especialidad) => (
               <li
                 key={especialidad.idEspecialidad}
                 className="bg-gray-100 p-4 rounded-lg flex justify-between items-center"

@@ -19,7 +19,7 @@ export function DoctoresRoutes() {
         <Route
           path="/turnoshist"
           element={
-            <Validacion rol={rol} esperado={USER_TYPES.DOCTOR}>
+            <Validacion rol={rol} expected={USER_TYPES.DOCTOR}>
               <ProtectedRoute requiredRole={USER_TYPES.DOCTOR}>
                 <TurnosDoctorHistorico />
               </ProtectedRoute>
@@ -29,7 +29,7 @@ export function DoctoresRoutes() {
         <Route
           path="/turnoshoy"
           element={
-            <Validacion rol={rol} esperado={USER_TYPES.DOCTOR}>
+            <Validacion rol={rol} expected={USER_TYPES.DOCTOR}>
               <ProtectedRoute requiredRole={USER_TYPES.DOCTOR}>
                 <TurnosDoctorHoy />
               </ProtectedRoute>
@@ -39,7 +39,7 @@ export function DoctoresRoutes() {
         <Route
           path="/turnosfecha"
           element={
-            <Validacion rol={rol} esperado={USER_TYPES.DOCTOR}>
+            <Validacion rol={rol} expected={USER_TYPES.DOCTOR}>
               <ProtectedRoute requiredRole={USER_TYPES.DOCTOR}>
                 <TurnosDoctorFecha />
               </ProtectedRoute>
@@ -49,7 +49,7 @@ export function DoctoresRoutes() {
         <Route
           path="/estudios"
           element={
-            <Validacion rol={rol} esperado={USER_TYPES.DOCTOR}>
+            <Validacion rol={rol} expected={USER_TYPES.DOCTOR}>
               <ProtectedRoute requiredRole={USER_TYPES.DOCTOR}>
                 <SubirEstudio />
               </ProtectedRoute>

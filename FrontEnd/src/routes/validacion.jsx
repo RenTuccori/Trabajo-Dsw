@@ -1,11 +1,11 @@
 import { Link } from 'react-router-dom';
 import PropTypes from 'prop-types';
 
-export function Validacion({ rol, children, esperado }) {
-  // Manejar tanto strings como arrays
+export function Validacion({ rol, children, expected }) {
+  // Handle both strings and arrays
   const roles = Array.isArray(rol) ? rol : [rol];
 
-  if (roles.includes(esperado)) {
+  if (roles.includes(expected)) {
     return <>{children}</>;
   } else {
     return (
@@ -56,7 +56,7 @@ Validacion.propTypes = {
   rol: PropTypes.oneOfType([
     PropTypes.string,
     PropTypes.arrayOf(PropTypes.string),
-  ]).isRequired, // Puede ser un string o un array de strings
-  children: PropTypes.node.isRequired, // Los elementos hijos pueden ser cualquier cosa renderizable
-  esperado: PropTypes.string.isRequired, // Un string requerido
+  ]).isRequired, // Can be a string or an array of strings
+  children: PropTypes.node.isRequired, // Child elements can be anything renderable
+  expected: PropTypes.string.isRequired, // A required string
 };

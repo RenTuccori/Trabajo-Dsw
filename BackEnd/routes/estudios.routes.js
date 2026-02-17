@@ -1,26 +1,26 @@
 import { Router } from 'express';
 import {
-  createEstudio,
-  getEstudiosByPaciente,
-  getEstudiosByDoctor,
-  downloadEstudio,
-  deleteEstudio,
+  createStudy,
+  getStudiesByPatient,
+  getStudiesByDoctor,
+  downloadStudy,
+  deleteStudy,
   upload,
 } from '../controllers/estudios.controllers.js';
 import { Doctor, Patient, DoctorOrPatient } from '../middleware/authorizeRole.js';
-import { validateEstudioUpload, validateEstudioId, validatePacienteIdParam, validateDoctorId } from '../middleware/validators.js';
+import { validateStudyUpload, validateStudyId, validatePatientIdParam, validateDoctorId } from '../middleware/validators.js';
 import { validate } from '../middleware/validate.js';
 
 const router = Router();
 
-router.post('/api/estudios/upload', Doctor, upload.single('archivo'), validateEstudioUpload, validate, createEstudio);
+router.post('/api/estudios/upload', Doctor, upload.single('archivo'), validateStudyUpload, validate, createStudy);
 
-router.get('/api/estudios/paciente/:idPaciente', Patient, validatePacienteIdParam, validate, getEstudiosByPaciente);
+router.get('/api/estudios/paciente/:idPaciente', Patient, validatePatientIdParam, validate, getStudiesByPatient);
 
-router.get('/api/estudios/doctor/:idDoctor', Doctor, validateDoctorId, validate, getEstudiosByDoctor);
+router.get('/api/estudios/doctor/:idDoctor', Doctor, validateDoctorId, validate, getStudiesByDoctor);
 
-router.get('/api/estudios/download/:idEstudio', DoctorOrPatient, validateEstudioId, validate, downloadEstudio);
+router.get('/api/estudios/download/:idEstudio', DoctorOrPatient, validateStudyId, validate, downloadStudy);
 
-router.delete('/api/estudios/:idEstudio', Doctor, validateEstudioId, validate, deleteEstudio);
+router.delete('/api/estudios/:idEstudio', Doctor, validateStudyId, validate, deleteStudy);
 
 export default router;

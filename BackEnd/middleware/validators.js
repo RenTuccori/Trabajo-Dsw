@@ -1,181 +1,181 @@
 import { body, param, query } from 'express-validator';
 
-// === USUARIOS ===
+// === USERS ===
 export const validateUserLogin = [
-  body('dni').isInt({ min: 1000000 }).withMessage('DNI debe ser un número válido (mínimo 7 dígitos).'),
-  body('fechaNacimiento').isDate().withMessage('Fecha de nacimiento debe ser una fecha válida (YYYY-MM-DD).'),
+  body('dni').isInt({ min: 1000000 }).withMessage('DNI must be a valid number (minimum 7 digits).'),
+  body('fechaNacimiento').isDate().withMessage('Date of birth must be a valid date (YYYY-MM-DD).'),
 ];
 
 export const validateUserDni = [
-  body('dni').isInt({ min: 1000000 }).withMessage('DNI debe ser un número válido.'),
+  body('dni').isInt({ min: 1000000 }).withMessage('DNI must be a valid number.'),
 ];
 
 export const validateCreateUser = [
-  body('dni').isInt({ min: 1000000 }).withMessage('DNI debe ser un número válido.'),
-  body('fechaNacimiento').isDate().withMessage('Fecha de nacimiento es requerida.'),
-  body('nombre').trim().notEmpty().withMessage('Nombre es requerido.').isLength({ max: 100 }),
-  body('apellido').trim().notEmpty().withMessage('Apellido es requerido.').isLength({ max: 100 }),
-  body('email').optional({ nullable: true }).isEmail().withMessage('Email debe ser válido.'),
+  body('dni').isInt({ min: 1000000 }).withMessage('DNI must be a valid number.'),
+  body('fechaNacimiento').isDate().withMessage('Date of birth is required.'),
+  body('nombre').trim().notEmpty().withMessage('Name is required.').isLength({ max: 100 }),
+  body('apellido').trim().notEmpty().withMessage('Last name is required.').isLength({ max: 100 }),
+  body('email').optional({ nullable: true }).isEmail().withMessage('Email must be valid.'),
   body('telefono').optional({ nullable: true }).isLength({ max: 20 }),
   body('direccion').optional({ nullable: true }).isLength({ max: 100 }),
 ];
 
 export const validateUpdateUser = [
-  body('dni').isInt({ min: 1000000 }).withMessage('DNI es requerido.'),
+  body('dni').isInt({ min: 1000000 }).withMessage('DNI is required.'),
   body('nombre').optional().trim().notEmpty().isLength({ max: 100 }),
   body('apellido').optional().trim().notEmpty().isLength({ max: 100 }),
-  body('email').optional({ nullable: true }).isEmail().withMessage('Email debe ser válido.'),
+  body('email').optional({ nullable: true }).isEmail().withMessage('Email must be valid.'),
 ];
 
-// === SEDES ===
-export const validateCreateSede = [
-  body('nombre').trim().notEmpty().withMessage('Nombre de la sede es requerido.').isLength({ max: 100 }),
-  body('direccion').trim().notEmpty().withMessage('Dirección de la sede es requerida.').isLength({ max: 100 }),
+// === LOCATIONS ===
+export const validateCreateLocation = [
+  body('nombre').trim().notEmpty().withMessage('Location name is required.').isLength({ max: 100 }),
+  body('direccion').trim().notEmpty().withMessage('Location address is required.').isLength({ max: 100 }),
 ];
 
-export const validateSedeId = [
-  param('idSede').isInt({ min: 1 }).withMessage('ID de sede debe ser un número válido.'),
+export const validateLocationId = [
+  param('idSede').isInt({ min: 1 }).withMessage('Location ID must be a valid number.'),
 ];
 
-// === ESPECIALIDADES ===
-export const validateCreateEspecialidad = [
-  body('nombre').trim().notEmpty().withMessage('Nombre de la especialidad es requerido.').isLength({ max: 100 }),
+// === SPECIALTIES ===
+export const validateCreateSpecialty = [
+  body('nombre').trim().notEmpty().withMessage('Specialty name is required.').isLength({ max: 100 }),
 ];
 
-export const validateEspecialidadId = [
-  param('idEspecialidad').isInt({ min: 1 }).withMessage('ID de especialidad debe ser un número válido.'),
+export const validateSpecialtyId = [
+  param('idEspecialidad').isInt({ min: 1 }).withMessage('Specialty ID must be a valid number.'),
 ];
 
-// === DOCTORES ===
+// === DOCTORS ===
 export const validateDoctorLogin = [
-  body('dni').isInt({ min: 1000000 }).withMessage('DNI debe ser un número válido.'),
-  body('contra').notEmpty().withMessage('Contraseña es requerida.'),
+  body('dni').isInt({ min: 1000000 }).withMessage('DNI must be a valid number.'),
+  body('contra').notEmpty().withMessage('Password is required.'),
 ];
 
 export const validateCreateDoctor = [
-  body('dni').isInt({ min: 1000000 }).withMessage('DNI debe ser un número válido.'),
-  body('duracionTurno').isInt({ min: 1 }).withMessage('Duración del turno debe ser un número positivo.'),
-  body('contra').notEmpty().withMessage('Contraseña es requerida.').isLength({ min: 3, max: 45 }),
+  body('dni').isInt({ min: 1000000 }).withMessage('DNI must be a valid number.'),
+  body('duracionTurno').isInt({ min: 1 }).withMessage('Appointment duration must be a positive number.'),
+  body('contra').notEmpty().withMessage('Password is required.').isLength({ min: 3, max: 45 }),
 ];
 
 export const validateDoctorId = [
-  param('idDoctor').isInt({ min: 1 }).withMessage('ID de doctor debe ser un número válido.'),
+  param('idDoctor').isInt({ min: 1 }).withMessage('Doctor ID must be a valid number.'),
 ];
 
 export const validateUpdateDoctor = [
-  param('idDoctor').isInt({ min: 1 }).withMessage('ID de doctor debe ser un número válido.'),
-  body('duracionTurno').isInt({ min: 1 }).withMessage('Duración del turno debe ser un número positivo.'),
-  body('contra').notEmpty().withMessage('Contraseña es requerida.'),
+  param('idDoctor').isInt({ min: 1 }).withMessage('Doctor ID must be a valid number.'),
+  body('duracionTurno').isInt({ min: 1 }).withMessage('Appointment duration must be a positive number.'),
+  body('contra').notEmpty().withMessage('Password is required.'),
 ];
 
-// === TURNOS ===
-export const validateCreateTurno = [
-  body('idPaciente').isInt({ min: 1 }).withMessage('ID de paciente es requerido.'),
-  body('fechaYHora').notEmpty().withMessage('Fecha y hora son requeridas.'),
-  body('idEspecialidad').isInt({ min: 1 }).withMessage('ID de especialidad es requerido.'),
-  body('idDoctor').isInt({ min: 1 }).withMessage('ID de doctor es requerido.'),
-  body('idSede').isInt({ min: 1 }).withMessage('ID de sede es requerido.'),
+// === APPOINTMENTS ===
+export const validateCreateAppointment = [
+  body('idPaciente').isInt({ min: 1 }).withMessage('Patient ID is required.'),
+  body('fechaYHora').notEmpty().withMessage('Date and time are required.'),
+  body('idEspecialidad').isInt({ min: 1 }).withMessage('Specialty ID is required.'),
+  body('idDoctor').isInt({ min: 1 }).withMessage('Doctor ID is required.'),
+  body('idSede').isInt({ min: 1 }).withMessage('Location ID is required.'),
 ];
 
-export const validateTurnoAction = [
-  body('idTurno').isInt({ min: 1 }).withMessage('ID de turno es requerido.'),
+export const validateAppointmentAction = [
+  body('idTurno').isInt({ min: 1 }).withMessage('Appointment ID is required.'),
 ];
 
-export const validateTurnoId = [
-  param('id').isInt({ min: 1 }).withMessage('ID de turno debe ser un número válido.'),
+export const validateAppointmentId = [
+  param('id').isInt({ min: 1 }).withMessage('Appointment ID must be a valid number.'),
 ];
 
-// === OBRAS SOCIALES ===
-export const validateCreateObraSocial = [
-  body('nombre').trim().notEmpty().withMessage('Nombre de la obra social es requerido.').isLength({ max: 100 }),
+// === HEALTH INSURANCE ===
+export const validateCreateHealthInsurance = [
+  body('nombre').trim().notEmpty().withMessage('Health insurance name is required.').isLength({ max: 100 }),
 ];
 
-export const validateObraSocialId = [
-  param('idObraSocial').isInt({ min: 1 }).withMessage('ID de obra social debe ser un número válido.'),
+export const validateHealthInsuranceId = [
+  param('idObraSocial').isInt({ min: 1 }).withMessage('Health insurance ID must be a valid number.'),
 ];
 
-export const validateUpdateObraSocial = [
-  param('idObraSocial').isInt({ min: 1 }).withMessage('ID de obra social debe ser un número válido.'),
-  body('nombre').trim().notEmpty().withMessage('Nombre es requerido.').isLength({ max: 100 }),
+export const validateUpdateHealthInsurance = [
+  param('idObraSocial').isInt({ min: 1 }).withMessage('Health insurance ID must be a valid number.'),
+  body('nombre').trim().notEmpty().withMessage('Name is required.').isLength({ max: 100 }),
 ];
 
 // === ADMIN ===
 export const validateAdminLogin = [
-  body('usuario').trim().notEmpty().withMessage('Usuario es requerido.'),
-  body('contra').notEmpty().withMessage('Contraseña es requerida.'),
+  body('usuario').trim().notEmpty().withMessage('Username is required.'),
+  body('contra').notEmpty().withMessage('Password is required.'),
 ];
 
-// === COMBINACIONES ===
-export const validateCreateCombinacion = [
-  body('idSede').isInt({ min: 1 }).withMessage('ID de sede es requerido.'),
-  body('idEspecialidad').isInt({ min: 1 }).withMessage('ID de especialidad es requerido.'),
-  body('idDoctor').isInt({ min: 1 }).withMessage('ID de doctor es requerido.'),
+// === COMBINATIONS ===
+export const validateCreateCombination = [
+  body('idSede').isInt({ min: 1 }).withMessage('Location ID is required.'),
+  body('idEspecialidad').isInt({ min: 1 }).withMessage('Specialty ID is required.'),
+  body('idDoctor').isInt({ min: 1 }).withMessage('Doctor ID is required.'),
 ];
 
-// === HORARIOS ===
-export const validateCreateHorario = [
-  body('idSede').isInt({ min: 1 }).withMessage('ID de sede es requerido.'),
-  body('idDoctor').isInt({ min: 1 }).withMessage('ID de doctor es requerido.'),
-  body('idEspecialidad').isInt({ min: 1 }).withMessage('ID de especialidad es requerido.'),
-  body('dia').trim().notEmpty().withMessage('Día es requerido.'),
-  body('hora_inicio').matches(/^\d{2}:\d{2}/).withMessage('Hora de inicio debe tener formato HH:MM.'),
-  body('hora_fin').matches(/^\d{2}:\d{2}/).withMessage('Hora de fin debe tener formato HH:MM.'),
+// === SCHEDULES ===
+export const validateCreateSchedule = [
+  body('idSede').isInt({ min: 1 }).withMessage('Location ID is required.'),
+  body('idDoctor').isInt({ min: 1 }).withMessage('Doctor ID is required.'),
+  body('idEspecialidad').isInt({ min: 1 }).withMessage('Specialty ID is required.'),
+  body('dia').trim().notEmpty().withMessage('Day is required.'),
+  body('hora_inicio').matches(/^\d{2}:\d{2}/).withMessage('Start time must have format HH:MM.'),
+  body('hora_fin').matches(/^\d{2}:\d{2}/).withMessage('End time must have format HH:MM.'),
 ];
 
-// === HORARIOS DISPONIBLES ===
-export const validateFechasDisp = [
-  body('idDoctor').isInt({ min: 1 }).withMessage('ID de doctor es requerido.'),
-  body('idEspecialidad').isInt({ min: 1 }).withMessage('ID de especialidad es requerido.'),
-  body('idSede').isInt({ min: 1 }).withMessage('ID de sede es requerido.'),
+// === AVAILABLE SCHEDULES ===
+export const validateAvailableDates = [
+  body('idDoctor').isInt({ min: 1 }).withMessage('Doctor ID is required.'),
+  body('idEspecialidad').isInt({ min: 1 }).withMessage('Specialty ID is required.'),
+  body('idSede').isInt({ min: 1 }).withMessage('Location ID is required.'),
 ];
 
-export const validateHorariosDisp = [
-  body('idDoctor').isInt({ min: 1 }).withMessage('ID de doctor es requerido.'),
-  body('idEspecialidad').isInt({ min: 1 }).withMessage('ID de especialidad es requerido.'),
-  body('idSede').isInt({ min: 1 }).withMessage('ID de sede es requerido.'),
-  body('fecha').isDate().withMessage('Fecha debe ser válida.'),
+export const validateAvailableSchedules = [
+  body('idDoctor').isInt({ min: 1 }).withMessage('Doctor ID is required.'),
+  body('idEspecialidad').isInt({ min: 1 }).withMessage('Specialty ID is required.'),
+  body('idSede').isInt({ min: 1 }).withMessage('Location ID is required.'),
+  body('fecha').isDate().withMessage('Date must be valid.'),
 ];
 
-// === PACIENTES ===
-export const validateCreatePaciente = [
-  body('dni').isInt({ min: 1000000 }).withMessage('DNI debe ser un número válido.'),
+// === PATIENTS ===
+export const validateCreatePatient = [
+  body('dni').isInt({ min: 1000000 }).withMessage('DNI must be a valid number.'),
 ];
 
 // === REUSABLE BODY / PARAM VALIDATORS ===
-export const validateSedeIdBody = [
-  body('idSede').isInt({ min: 1 }).withMessage('ID de sede es requerido.'),
+export const validateLocationIdBody = [
+  body('idSede').isInt({ min: 1 }).withMessage('Location ID is required.'),
 ];
 
-export const validateSedeEspBody = [
-  body('idSede').isInt({ min: 1 }).withMessage('ID de sede es requerido.'),
-  body('idEspecialidad').isInt({ min: 1 }).withMessage('ID de especialidad es requerido.'),
+export const validateLocationSpecBody = [
+  body('idSede').isInt({ min: 1 }).withMessage('Location ID is required.'),
+  body('idEspecialidad').isInt({ min: 1 }).withMessage('Specialty ID is required.'),
 ];
 
-export const validatePacienteIdParam = [
-  param('idPaciente').isInt({ min: 1 }).withMessage('ID de paciente debe ser un número válido.'),
+export const validatePatientIdParam = [
+  param('idPaciente').isInt({ min: 1 }).withMessage('Patient ID must be a valid number.'),
 ];
 
 export const validateDoctorIdBody = [
-  body('idDoctor').isInt({ min: 1 }).withMessage('ID de doctor es requerido.'),
+  body('idDoctor').isInt({ min: 1 }).withMessage('Doctor ID is required.'),
 ];
 
 export const validateDniParam = [
-  param('dni').isInt({ min: 1000000 }).withMessage('DNI debe ser un número válido.'),
+  param('dni').isInt({ min: 1000000 }).withMessage('DNI must be a valid number.'),
 ];
 
-// === ESTUDIOS ===
-export const validateEstudioUpload = [
-  body('idPaciente').isInt({ min: 1 }).withMessage('ID de paciente es requerido.'),
-  body('fechaRealizacion').isDate().withMessage('Fecha de realización debe ser válida.'),
+// === STUDIES ===
+export const validateStudyUpload = [
+  body('idPaciente').isInt({ min: 1 }).withMessage('Patient ID is required.'),
+  body('fechaRealizacion').isDate().withMessage('Completion date must be valid.'),
 ];
 
-export const validateEstudioId = [
-  param('idEstudio').isInt({ min: 1 }).withMessage('ID de estudio debe ser un número válido.'),
+export const validateStudyId = [
+  param('idEstudio').isInt({ min: 1 }).withMessage('Study ID must be a valid number.'),
 ];
 
 // === EMAIL ===
 export const validateSendEmail = [
-  body('to').isEmail().withMessage('Dirección de email destinatario es requerida.'),
-  body('subject').trim().notEmpty().withMessage('Asunto es requerido.'),
-  body('html').trim().notEmpty().withMessage('Contenido del email es requerido.'),
+  body('to').isEmail().withMessage('Recipient email address is required.'),
+  body('subject').trim().notEmpty().withMessage('Subject is required.'),
+  body('html').trim().notEmpty().withMessage('Email content is required.'),
 ];

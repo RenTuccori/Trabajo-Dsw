@@ -3,16 +3,16 @@ import * as especialidadesService from '../services/especialidades.service.js';
 export const getSpecialties = async (req, res) => {
   try {
     const { idSede } = req.body;
-    const specialties = await especialidadesService.getSpecialtiesBySede(idSede);
+    const specialties = await especialidadesService.getSpecialtiesByLocation(idSede);
     res.json(specialties);
   } catch (error) {
     return res.status(500).json({ message: error.message });
   }
 };
 
-export const getAllSpecialities = async (req, res) => {
+export const getAllSpecialties = async (req, res) => {
   try {
-    const specialties = await especialidadesService.getAllEnabledSpecialties();
+    const specialties = await especialidadesService.getAllSpecialties();
     res.json(specialties);
   } catch (error) {
     return res.status(500).json({ message: error.message });
@@ -22,7 +22,7 @@ export const getAllSpecialities = async (req, res) => {
 export const getAvailableSpecialties = async (req, res) => {
   try {
     const { idSede } = req.body;
-    const specialties = await especialidadesService.getAvailableSpecialtiesForSede(idSede);
+    const specialties = await especialidadesService.getAvailableSpecialties(idSede);
     res.json(specialties);
   } catch (error) {
     return res.status(500).json({ message: error.message });
@@ -33,7 +33,7 @@ export const getSpecialtyById = async (req, res) => {
   try {
     const specialty = await especialidadesService.findSpecialtyById(req.params.idEspecialidad);
     if (!specialty) {
-      return res.status(404).json({ message: 'Especialidad no encontrada' });
+      return res.status(404).json({ message: 'Specialty not found' });
     }
     res.json(specialty);
   } catch (error) {
@@ -57,7 +57,7 @@ export const deleteSpecialty = async (req, res) => {
   try {
     const deleted = await especialidadesService.softDeleteSpecialty(req.params.idEspecialidad);
     if (!deleted) {
-      return res.status(404).json({ message: 'Especialidad no encontrada' });
+      return res.status(404).json({ message: 'Specialty not found' });
     }
     return res.sendStatus(204);
   } catch (error) {

@@ -1,12 +1,12 @@
 // Test Suite Summary for Backend
-// Este archivo muestra un resumen de los tests implementados
+// This file shows a summary of the implemented tests
 
 describe('Backend Test Suite', () => {
   it('should have comprehensive test coverage', () => {
     const testFiles = [
-      'usuarios.unit.test.js - Tests unitarios para controladores de usuarios',
-      'usuarios.integration.test.js - Tests de integración para endpoints de usuarios',
-      'authorization.unit.test.js - Tests para middleware de autorización',
+      'usuarios.unit.test.js - Unit tests for user controllers',
+      'usuarios.integration.test.js - Integration tests for user endpoints',
+      'authorization.unit.test.js - Tests for authorization middleware',
     ];
 
     expect(testFiles.length).toBeGreaterThan(0);

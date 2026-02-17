@@ -5,11 +5,11 @@ import { useDoctores } from '../../context/doctores/DoctoresProvider.jsx';
 import '../../estilos/home.css';
 
 export function TurnosDoctorHistorico() {
-  const { turnosHist, Historico } = useDoctores();
+  const { appointmentHistory, fetchHistory } = useDoctores();
   const navigate = useNavigate();
 
   useEffect(() => {
-    Historico();
+    fetchHistory();
   }, []);
 
   const formatFechaHora = (fechaYHora) => {
@@ -37,8 +37,8 @@ export function TurnosDoctorHistorico() {
           Volver
         </button>
         <div className="space-y-4">
-          {turnosHist && turnosHist.length > 0 ? (
-            turnosHist.map((turno, index) => (
+          {appointmentHistory && appointmentHistory.length > 0 ? (
+            appointmentHistory.map((turno, index) => (
               <div
                 key={index}
                 className="bg-gray-50 rounded-lg p-4 shadow-sm mb-4"
@@ -60,7 +60,7 @@ export function TurnosDoctorHistorico() {
                   <strong>DNI Paciente:</strong> {turno.dni}
                 </p>
                 <p>
-                  <strong>Apellido y Nombre:</strong> {turno.nomyapel}
+                  <strong>Apellido y Nombre:</strong> {turno.fullName}
                 </p>
               </div>
             ))

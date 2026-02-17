@@ -9,7 +9,7 @@ describe('Backend Integration Tests - Simple', () => {
     app = express();
     app.use(express.json());
 
-    // Mock simple de rutas para testing
+    // Simple route mock for testing
     app.get('/api/test/health', (req, res) => {
       res.json({ status: 'OK', timestamp: new Date().toISOString() });
     });

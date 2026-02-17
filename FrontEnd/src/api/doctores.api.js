@@ -24,7 +24,7 @@ export const getDoctorById = async (idDoctor) => {
     }
 }
 
-export const getDoctores = async () => {
+export const getAllDoctors = async () => {
     try {
         const response = await axiosInstance.post(`alldoctors`);
         return response;

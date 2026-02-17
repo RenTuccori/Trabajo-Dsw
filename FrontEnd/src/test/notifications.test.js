@@ -69,7 +69,7 @@ describe('Notification Utils', () => {
       await confirmDialog();
 
       expect(Swal.fire).toHaveBeenCalledWith({
-        title: '¿Está seguro?',
+        title: '¿Estás seguro?',
         text: 'Esta acción no se puede deshacer.',
         icon: 'warning',
         showCancelButton: true,
@@ -82,7 +82,7 @@ describe('Notification Utils', () => {
 
     it('should call Swal.fire for confirm dialog with custom values', async () => {
       const customTitle = 'Eliminar usuario';
-      const customText = '¿Está seguro de eliminar este usuario?';
+      const customText = '¿Estás seguro de que querés eliminar este usuario?';
 
       await confirmDialog(customTitle, customText);
 
@@ -100,7 +100,7 @@ describe('Notification Utils', () => {
 
     it('should call Swal.fire for success alert', async () => {
       const title = 'Usuario creado';
-      const text = 'El usuario se creó correctamente';
+      const text = 'El usuario fue creado exitosamente';
 
       await successAlert(title, text);
 

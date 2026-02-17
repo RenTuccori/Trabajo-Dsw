@@ -1,8 +1,8 @@
 import { Turno } from './models/index.js';
 import { Op, literal } from 'sequelize';
 
-// Función que cancela automáticamente los turnos con menos de 12 horas
-export const autoCancelTurnos = async () => {
+// Function that automatically cancels appointments with less than 12 hours remaining
+export const autoCancelAppointments = async () => {
   try {
     await Turno.update(
       {
@@ -20,15 +20,15 @@ export const autoCancelTurnos = async () => {
       }
     );
   } catch (error) {
-    // Error silenciado
+    // Error silenced
   }
 };
 
-export const startAutoCancelTurnos = () => {
-  // Ejecutar inmediatamente al inicio
-  autoCancelTurnos();
+export const startAutoCancelAppointments = () => {
+  // Run immediately on startup
+  autoCancelAppointments();
 
-  // Ejecutar cada 30 minutos
-  setInterval(autoCancelTurnos, 30 * 60 * 1000); // 30 minutos
+  // Run every 30 minutes
+  setInterval(autoCancelAppointments, 30 * 60 * 1000); // 30 minutes
 };
   

@@ -9,28 +9,28 @@ export function CrearHorarios() {
 
   const diasSemana = ['lunes', 'martes', 'miércoles', 'jueves', 'viernes'];
   const {
-    obtenerHorariosXDoctor,
-    crearHorarios,
-    horariosDoctor,
-    actualizarHorarios,
+    fetchSchedulesByDoctor,
+    createNewSchedule,
+    doctorSchedules,
+    updateScheduleData,
   } = useAdministracion();
   const [horarios, setHorarios] = useState(
-    diasSemana.map((dia) => ({ dia, hora_inicio: '', hora_fin: '' })) // Inicializar con días de la semana
+    diasSemana.map((dia) => ({ dia, hora_inicio: '', hora_fin: '' })) // Initialize with weekdays
   );
 
-  // Comprobar token y cargar los horarios del doctor
+  // Check token and load doctor's schedules
   useEffect(() => {
     const cargarHorarios = async () => {
       try {
-        await obtenerHorariosXDoctor({ idSede, idEspecialidad, idDoctor });
+        await fetchSchedulesByDoctor({ idSede, idEspecialidad, idDoctor });
       } catch (error) {
         if (error.response && error.response.status === 404) {
-          // Manejo específico para el error 404
+          // Specific handling for 404 error
           window.notifyError(
             'No se encontraron horarios para este doctor. Puedes crear nuevos horarios.'
           );
         } else {
-          // Manejo para otros tipos de errores
+          // Handling for other error types
           window.notifyError('Error al cargar los horarios');
         }
       }
@@ -44,10 +44,10 @@ export function CrearHorarios() {
   }, [idSede, idEspecialidad, idDoctor]);
 
   useEffect(() => {
-    if (horariosDoctor && horariosDoctor.length > 0) {
+    if (doctorSchedules && doctorSchedules.length > 0) {
       const nuevosHorarios = diasSemana.map((dia) => {
-        const horarioExistente = horariosDoctor.find(
-          (horario) => horario.dia === dia // Convertir ambos a minúsculas
+        const horarioExistente = doctorSchedules.find(
+          (horario) => horario.dia === dia // Compare both values
         );
         return {
           dia,
@@ -57,11 +57,11 @@ export function CrearHorarios() {
       });
       setHorarios(nuevosHorarios);
     }
-  }, [horariosDoctor]);
+  }, [doctorSchedules]);
 
   const handleInputChange = (index, field, value) => {
     const nuevosHorarios = [...horarios];
-    nuevosHorarios[index][field] = value; // field puede ser 'hora_inicio' o 'hora_fin'
+    nuevosHorarios[index][field] = value; // field can be 'hora_inicio' or 'hora_fin'
     setHorarios(nuevosHorarios);
   };
   const agregarHorariosDisponibles = async () => {
@@ -82,13 +82,13 @@ export function CrearHorarios() {
     if (result.isConfirmed) {
       try {
         for (const horario of horariosValidos) {
-          const horarioExistente = horariosDoctor.find(
+          const horarioExistente = doctorSchedules.find(
             (h) => h.dia === horario.dia
           );
 
           if (horarioExistente) {
-            // Usar PUT si el horario ya existe
-            await actualizarHorarios({
+            // Use PUT if the schedule already exists
+            await updateScheduleData({
               idSede,
               idDoctor,
               idEspecialidad,
@@ -98,8 +98,8 @@ export function CrearHorarios() {
               estado: 'Habilitado',
             });
           } else {
-            // Usar POST si el horario no existe
-            await crearHorarios({
+            // Use POST if the schedule doesn't exist
+            await createNewSchedule({
               idSede,
               idDoctor,
               idEspecialidad,
@@ -128,7 +128,7 @@ export function CrearHorarios() {
             Sede: {nombreSede || idSede}, Especialidad: {nombreEspecialidad || idEspecialidad}, Doctor: {nombreDoctor || idDoctor} {apellidoDoctor || ''}
           </h3>
 
-          {/* Ingreso de nuevos horarios, con los horarios existentes ya pre-rellenados */}
+          {/* New schedule input, with existing schedules pre-filled */}
           {diasSemana.map((dia, index) => (
             <div key={index} className="flex items-center space-x-4">
               <span className="w-1/4">
@@ -141,7 +141,7 @@ export function CrearHorarios() {
                 value={horarios[index]?.hora_inicio || ''}
                 onChange={(e) =>
                   handleInputChange(index, 'hora_inicio', e.target.value)
-                } // Asegurarse de que sea 'hora_inicio'
+                } // Ensure it is 'hora_inicio'
               />
               <input
                 type="time"
@@ -150,7 +150,7 @@ export function CrearHorarios() {
                 value={horarios[index]?.hora_fin || ''}
                 onChange={(e) =>
                   handleInputChange(index, 'hora_fin', e.target.value)
-                } // Asegurarse de que sea 'hora_fin'
+                } // Ensure it is 'hora_fin'
               />
             </div>
           ))}

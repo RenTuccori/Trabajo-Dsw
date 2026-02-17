@@ -1,6 +1,6 @@
 import axiosInstance from './axiosInstance';
 
-export const getTurnosHistoricoDoctor = async ({idDoctor}) => {
+export const getAppointmentHistoryByDoctor = async ({idDoctor}) => {
     try {
         const response = await axiosInstance.post(`turnosdoc`,{idDoctor});
         return response
@@ -9,7 +9,7 @@ export const getTurnosHistoricoDoctor = async ({idDoctor}) => {
     }
 }
 
-export const getTurnosDoctorHoy = async ({idDoctor}) => {
+export const getAppointmentsByDoctorToday = async ({idDoctor}) => {
     try {
         const response = await axiosInstance.post(`turnosdochoy`, {idDoctor});
         return response;
@@ -18,7 +18,7 @@ export const getTurnosDoctorHoy = async ({idDoctor}) => {
     }
 }
 
-export const getTurnosDoctorFecha = async ({idDoctor, fechaYHora}) => {
+export const getAppointmentsByDoctorDate = async ({idDoctor, fechaYHora}) => {
     try {
         const response = await axiosInstance.post(`turnosdocfecha`, {idDoctor, fechaYHora});
         return response;
@@ -28,7 +28,7 @@ export const getTurnosDoctorFecha = async ({idDoctor, fechaYHora}) => {
 }
 
 
-export const createTurno = async ({ idPaciente, fechaYHora, fechaCancelacion, fechaConfirmacion, estado, idEspecialidad, idDoctor, idSede }) => {
+export const createAppointment = async ({ idPaciente, fechaYHora, fechaCancelacion, fechaConfirmacion, estado, idEspecialidad, idDoctor, idSede }) => {
     try {
         const response = await axiosInstance.post(`turnos`, { idPaciente, fechaYHora, fechaCancelacion, fechaConfirmacion, estado, idEspecialidad, idDoctor, idSede });
         return response;
@@ -37,7 +37,7 @@ export const createTurno = async ({ idPaciente, fechaYHora, fechaCancelacion, fe
     }
 }
 
-export const getTurnosPaciente = async ({ dni }) => {
+export const getAppointmentsByPatient = async ({ dni }) => {
     try {
         const response = await axiosInstance.post(`turnospac`, { dni });
         return response;
@@ -46,7 +46,7 @@ export const getTurnosPaciente = async ({ dni }) => {
     }
 }
 
-export const confirmarTurno = async ({ idTurno }) => {
+export const confirmAppointment = async ({ idTurno }) => {
     try {
         const response = await axiosInstance.put(`turnos`, { idTurno });
         return response;
@@ -55,7 +55,7 @@ export const confirmarTurno = async ({ idTurno }) => {
     }
 }
 
-export const cancelarTurno = async ({ idTurno }) => {
+export const cancelAppointment = async ({ idTurno }) => {
     try {
         const response = await axiosInstance.put(`turnoscancel`, { idTurno });
         return response;

@@ -1,19 +1,19 @@
 import { Router } from 'express';
 import {
-  getPacientes,
-  getPacienteByDni,
-  createPaciente,
+  getPatients,
+  getPatientByDni,
+  createPatient,
 } from '../controllers/pacientes.controllers.js';
 import { Patient, DoctorOrPatient } from '../middleware/authorizeRole.js';
-import { validateCreatePaciente, validateUserDni } from '../middleware/validators.js';
+import { validateCreatePatient, validateUserDni } from '../middleware/validators.js';
 import { validate } from '../middleware/validate.js';
 
 const router = Router();
 
-router.get('/api/patient', DoctorOrPatient, getPacientes);
+router.get('/api/patient', DoctorOrPatient, getPatients);
 
-router.post('/api/patientdni', Patient, validateUserDni, validate, getPacienteByDni);
+router.post('/api/patientdni', Patient, validateUserDni, validate, getPatientByDni);
 
-router.post('/api/patientcreate', validateCreatePaciente, validate, createPaciente);
+router.post('/api/patientcreate', validateCreatePatient, validate, createPatient);
 
 export default router;

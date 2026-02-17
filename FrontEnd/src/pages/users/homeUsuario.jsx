@@ -20,7 +20,7 @@ function HomeUsuario() {
       });
       window.notifySuccess('¡Login exitoso!');
     } catch (error) {
-      window.notifyError('Error en el login, verifica tus datos.');
+      window.notifyError('Error al iniciar sesión, verifique sus datos.');
     }
   };
   useEffect(() => {
@@ -38,14 +38,14 @@ function HomeUsuario() {
 
   return (
     <div className="relative min-h-screen bg-gradient-to-b from-blue-100 to-white flex items-center justify-center p-4">
-      {/* Fondo de imagen */}
+      {/* Background image */}
       <div
         className="absolute inset-0 bg-cover bg-center z-0"
         style={{ backgroundImage: "url('../src/components/fondo2.png')" }}
       ></div>
       <div className="absolute inset-0 bg-gradient-to-b from-transparent to-white z-0"></div>
 
-      {/* Contenido */}
+      {/* Content */}
       <div className="relative z-10 bg-white rounded-lg shadow-md w-full max-w-md p-6 space-y-4">
         <h1 className="text-center text-2xl font-semibold text-gray-800">
           {dni && nombreUsuario && apellidoUsuario

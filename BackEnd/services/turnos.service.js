@@ -1,15 +1,15 @@
 import { Turno, Paciente, Usuario, Sede, Doctor, Especialidad } from '../models/index.js';
 import { Op, literal } from 'sequelize';
 
-export const getTurnosByPacienteDni = async (dni) => {
-  const paciente = await Paciente.findOne({
+export const getAppointmentsByPatientDni = async (dni) => {
+  const patient = await Paciente.findOne({
     include: [{ model: Usuario, as: 'usuario', where: { dni } }],
   });
-  if (!paciente) return [];
+  if (!patient) return [];
 
-  const turnos = await Turno.findAll({
+  const appointments = await Turno.findAll({
     where: {
-      idPaciente: paciente.idPaciente,
+      idPaciente: patient.idPaciente,
       estado: { [Op.ne]: 'Cancelado' },
       fechaYHora: { [Op.gt]: new Date() },
     },
@@ -24,20 +24,20 @@ export const getTurnosByPacienteDni = async (dni) => {
     order: [['fechaYHora', 'ASC']],
   });
 
-  return turnos.map(t => ({
+  return appointments.map(t => ({
     dni,
     fecha_hora: t.fechaYHora,
-    Sede: t.sede?.nombre,
-    Direccion: t.sede?.direccion,
-    Especialidad: t.especialidad?.nombre,
-    Doctor: t.doctor?.usuario?.apellido,
+    location: t.sede?.nombre,
+    address: t.sede?.direccion,
+    specialty: t.especialidad?.nombre,
+    doctor: t.doctor?.usuario?.apellido,
     estado: t.estado,
     idTurno: t.idTurno,
   }));
 };
 
-export const getTurnosHistoricoDoctor = async (idDoctor) => {
-  const turnos = await Turno.findAll({
+export const getDoctorAppointmentHistory = async (idDoctor) => {
+  const appointments = await Turno.findAll({
     where: {
       idDoctor,
       estado: { [Op.ne]: 'Cancelado' },
@@ -54,22 +54,22 @@ export const getTurnosHistoricoDoctor = async (idDoctor) => {
     order: [['fechaYHora', 'ASC']],
   });
 
-  return turnos.map(t => ({
+  return appointments.map(t => ({
     sede: t.sede?.nombre,
     especialidad: t.especialidad?.nombre,
     fechaYHora: t.fechaYHora,
     estado: t.estado,
     dni: t.paciente?.usuario?.dni,
-    nomyapel: `${t.paciente?.usuario?.apellido} ${t.paciente?.usuario?.nombre}`,
+    fullName: `${t.paciente?.usuario?.apellido} ${t.paciente?.usuario?.nombre}`,
   }));
 };
 
-export const getTurnosDoctorHoy = async (idDoctor) => {
+export const getDoctorAppointmentsToday = async (idDoctor) => {
   const today = new Date();
   const startOfDay = new Date(today.getFullYear(), today.getMonth(), today.getDate());
   const endOfDay = new Date(today.getFullYear(), today.getMonth(), today.getDate() + 1);
 
-  const turnos = await Turno.findAll({
+  const appointments = await Turno.findAll({
     where: {
       idDoctor,
       estado: 'Confirmado',
@@ -86,18 +86,18 @@ export const getTurnosDoctorHoy = async (idDoctor) => {
     order: [['fechaYHora', 'ASC']],
   });
 
-  return turnos.map(t => ({
+  return appointments.map(t => ({
     sede: t.sede?.nombre,
     especialidad: t.especialidad?.nombre,
     fechaYHora: t.fechaYHora,
     estado: t.estado,
     dni: t.paciente?.usuario?.dni,
-    nomyapel: `${t.paciente?.usuario?.apellido} ${t.paciente?.usuario?.nombre}`,
+    fullName: `${t.paciente?.usuario?.apellido} ${t.paciente?.usuario?.nombre}`,
   }));
 };
 
-export const getTurnosDoctorByFecha = async (idDoctor, fechaYHora) => {
-  const turnos = await Turno.findAll({
+export const getDoctorAppointmentsByDate = async (idDoctor, fechaYHora) => {
+  const appointments = await Turno.findAll({
     where: {
       idDoctor,
       estado: { [Op.ne]: 'Cancelado' },
@@ -114,17 +114,17 @@ export const getTurnosDoctorByFecha = async (idDoctor, fechaYHora) => {
     order: [['fechaYHora', 'ASC']],
   });
 
-  return turnos.map(t => ({
+  return appointments.map(t => ({
     sede: t.sede?.nombre,
     especialidad: t.especialidad?.nombre,
     fechaYHora: t.fechaYHora,
     estado: t.estado,
     dni: t.paciente?.usuario?.dni,
-    nomyapel: `${t.paciente?.usuario?.apellido} ${t.paciente?.usuario?.nombre}`,
+    fullName: `${t.paciente?.usuario?.apellido} ${t.paciente?.usuario?.nombre}`,
   }));
 };
 
-export const confirmTurno = async (idTurno) => {
+export const confirmAppointment = async (idTurno) => {
   const [affectedRows] = await Turno.update(
     { estado: 'Confirmado', fechaConfirmacion: new Date() },
     { where: { idTurno } }
@@ -132,7 +132,7 @@ export const confirmTurno = async (idTurno) => {
   return affectedRows > 0;
 };
 
-export const cancelTurno = async (idTurno) => {
+export const cancelAppointment = async (idTurno) => {
   const [affectedRows] = await Turno.update(
     { estado: 'Cancelado', fechaCancelacion: new Date() },
     { where: { idTurno } }
@@ -140,15 +140,15 @@ export const cancelTurno = async (idTurno) => {
   return affectedRows > 0;
 };
 
-export const createNewTurno = async (turnoData) => {
-  const turno = await Turno.create({
-    ...turnoData,
+export const createNewAppointment = async (appointmentData) => {
+  const appointment = await Turno.create({
+    ...appointmentData,
     mail: null,
   });
-  return turno;
+  return appointment;
 };
 
-export const deleteExistingTurno = async (idTurno) => {
+export const deleteExistingAppointment = async (idTurno) => {
   const affectedRows = await Turno.destroy({ where: { idTurno } });
   return affectedRows > 0;
 };

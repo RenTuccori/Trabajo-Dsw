@@ -35,27 +35,27 @@ describe('Backend Unit Tests - Simple', () => {
       expect(mockUser).toHaveProperty('apellido');
       expect(mockUser).toHaveProperty('fechaNacimiento');
 
-      // Validar formato de DNI
+      // Validate DNI format
       expect(mockUser.dni).toMatch(/^\d{8}$/);
     });
 
     it('should validate date formats', () => {
       const fechaNacimiento = '1990-01-01';
 
-      // Validar formato ISO
+      // Validate ISO format
       expect(fechaNacimiento).toMatch(/^\d{4}-\d{2}-\d{2}$/);
 
-      // Validar que es una fecha válida
+      // Validate that it's a valid date
       const date = new Date(fechaNacimiento + 'T00:00:00.000Z');
       expect(date.getUTCFullYear()).toBe(1990);
-      expect(date.getUTCMonth()).toBe(0); // Enero es 0
+      expect(date.getUTCMonth()).toBe(0); // January is 0
       expect(date.getUTCDate()).toBe(1);
     });
   });
 
   describe('Response Structures', () => {
     it('should have correct error response structure', () => {
-      const errorResponse = { message: 'Usuario no encontrado' };
+      const errorResponse = { message: 'User not found' };
 
       expect(errorResponse).toHaveProperty('message');
       expect(typeof errorResponse.message).toBe('string');

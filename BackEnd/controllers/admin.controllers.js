@@ -1,11 +1,11 @@
 import * as adminService from '../services/admin.service.js';
 
-export const getAdminByUserContra = async (req, res) => {
+export const getAdminByCredentials = async (req, res) => {
   try {
     const { usuario, contra } = req.body;
     const result = await adminService.authenticateAdmin(usuario, contra);
     if (!result) {
-      return res.status(404).json({ message: 'Administrador no encontrado' });
+      return res.status(404).json({ message: 'Administrator not found' });
     }
     res.json(result.token);
   } catch (error) {
@@ -13,21 +13,21 @@ export const getAdminByUserContra = async (req, res) => {
   }
 };
 
-export const createCombinacion = async (req, res) => {
+export const createCombination = async (req, res) => {
   try {
-    const combinacion = await adminService.createSedeDoctorEsp(req.body);
-    res.status(201).json(combinacion);
+    const combination = await adminService.createNewCombination(req.body);
+    res.status(201).json(combination);
   } catch (error) {
     return res.status(500).json({ message: error.message });
   }
 };
 
-export const deleteCombinacion = async (req, res) => {
+export const deleteCombination = async (req, res) => {
   try {
     const { idSede, idDoctor, idEspecialidad } = req.body;
-    const deleted = await adminService.deleteSedeDoctorEsp(idSede, idDoctor, idEspecialidad);
+    const deleted = await adminService.softDeleteCombination(idSede, idDoctor, idEspecialidad);
     if (!deleted) {
-      return res.status(404).json({ message: 'Combinación no encontrada' });
+      return res.status(404).json({ message: 'Combination not found' });
     }
     return res.sendStatus(204);
   } catch (error) {
@@ -35,44 +35,44 @@ export const deleteCombinacion = async (req, res) => {
   }
 };
 
-export const getCombinaciones = async (req, res) => {
+export const getCombinations = async (req, res) => {
   try {
-    const combinaciones = await adminService.getAllCombinaciones();
-    if (combinaciones.length === 0) {
-      return res.status(404).json({ message: 'No hay combinaciones' });
+    const combinations = await adminService.getAllCombinations();
+    if (combinations.length === 0) {
+      return res.status(404).json({ message: 'No combinations found' });
     }
-    res.json(combinaciones);
+    res.json(combinations);
   } catch (error) {
     return res.status(500).json({ message: error.message });
   }
 };
 
-export const createHorario = async (req, res) => {
+export const createSchedule = async (req, res) => {
   try {
-    const horario = await adminService.createNewHorario(req.body);
-    res.status(201).json(horario);
+    const schedule = await adminService.createNewSchedule(req.body);
+    res.status(201).json(schedule);
   } catch (error) {
     return res.status(500).json({ message: error.message });
   }
 };
 
-export const updateHorario = async (req, res) => {
+export const updateSchedule = async (req, res) => {
   try {
-    const updated = await adminService.updateExistingHorario(req.body);
+    const updated = await adminService.updateExistingSchedule(req.body);
     if (!updated) {
-      return res.status(404).json({ message: 'Horario no encontrado' });
+      return res.status(404).json({ message: 'Schedule not found' });
     }
-    res.json({ message: 'Horario actualizado' });
+    res.json({ message: 'Schedule updated' });
   } catch (error) {
     return res.status(500).json({ message: error.message });
   }
 };
 
-export const getHorarios = async (req, res) => {
+export const getSchedules = async (req, res) => {
   try {
     const { idSede, idEspecialidad, idDoctor } = req.body;
-    const horarios = await adminService.getHorariosByDoctor({ idSede, idEspecialidad, idDoctor });
-    res.json(horarios);
+    const schedules = await adminService.getSchedulesByDoctor({ idSede, idEspecialidad, idDoctor });
+    res.json(schedules);
   } catch (error) {
     return res.status(500).json({ message: error.message });
   }

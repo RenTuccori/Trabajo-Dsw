@@ -6,7 +6,7 @@ export const getAdmin = async ({ usuario, contra }) => {
     return await axios.post(`http://${dbUrl}/api/admin`, { usuario, contra });
 }
 
-//Doctor
+// Doctor
 export const createDoctor = async ({ dni, duracionTurno, contra }) => {
     try {
         const response = await axiosInstance.post(`adminCreateDr`, { dni, duracionTurno, contra });
@@ -34,8 +34,8 @@ export const updateDoctor = async ({ idDoctor, duracionTurno, contra }) => {
     }
 }
 
-//Sede
-export const createSede = async ({ nombre, direccion }) => {
+// Location
+export const createLocation = async ({ nombre, direccion }) => {
     try {
         const response = await axiosInstance.post(`adminCreateSede`, { nombre, direccion });
         return response;
@@ -44,7 +44,7 @@ export const createSede = async ({ nombre, direccion }) => {
     }
 }
 
-export const updateSede = async ({ idSede, nombre, direccion }) => {
+export const updateLocation = async ({ idSede, nombre, direccion }) => {
     try {
         const response = await axiosInstance.put(`adminUpdateSede/${idSede}`, { nombre, direccion });
         return response;
@@ -53,7 +53,7 @@ export const updateSede = async ({ idSede, nombre, direccion }) => {
     }
 }
 
-export const deleteSede = async (idSede) => {
+export const deleteLocation = async (idSede) => {
     try {
         const response = await axiosInstance.put(`adminDeleteSede/${idSede}`, idSede);
         return response;
@@ -62,8 +62,8 @@ export const deleteSede = async (idSede) => {
     }
 }
 
-//ObraSocial
-export const createObraSocial = async ({ nombre }) => {
+// Health Insurance
+export const createHealthInsurance = async ({ nombre }) => {
     try {
         const response = await axiosInstance.post(`adminCreateObraSocial`, { nombre });
         return response;
@@ -72,7 +72,7 @@ export const createObraSocial = async ({ nombre }) => {
     }
 }
 
-export const updateObraSocial = async ({ idObraSocial, nombre }) => {
+export const updateHealthInsurance = async ({ idObraSocial, nombre }) => {
     try {
         const response = await axiosInstance.put(`adminUpdateOS/${idObraSocial}`, { nombre });
         return response;
@@ -81,7 +81,7 @@ export const updateObraSocial = async ({ idObraSocial, nombre }) => {
     }
 }
 
-export const deleteObraSocial = async (idObraSocial) => {
+export const deleteHealthInsurance = async (idObraSocial) => {
     try {
         const response = await axiosInstance.put(`adminDeleteOS/${idObraSocial}`, idObraSocial);
         return response;
@@ -90,7 +90,7 @@ export const deleteObraSocial = async (idObraSocial) => {
     }
 }
 
-//Especialidad
+// Specialty
 export const createSpecialty = async ({ nombre }) => {
     try {
         const response = await axiosInstance.post(`adminCreateEsp`, { nombre });
@@ -109,8 +109,8 @@ export const deleteSpecialty = async (idEspecialidad) => {
     }
 }
 
-//combinaciones
-export const createSeEspDoc = async ({ idSede, idEspecialidad, idDoctor }) => {
+// Combinations
+export const createCombination = async ({ idSede, idEspecialidad, idDoctor }) => {
     try {
         const response = await axiosInstance.post(`adminCreateSeEspDoc`, { idSede, idEspecialidad, idDoctor });
         return response;
@@ -119,7 +119,7 @@ export const createSeEspDoc = async ({ idSede, idEspecialidad, idDoctor }) => {
     }
 }
 
-export const deleteSeEspDoc = async ({ idSede, idDoctor, idEspecialidad }) => {
+export const deleteCombination = async ({ idSede, idDoctor, idEspecialidad }) => {
     try {
         const response = await axiosInstance.put(`adminDeleteSeEspDoc`, { idSede, idDoctor, idEspecialidad });
         return response;
@@ -128,7 +128,7 @@ export const deleteSeEspDoc = async ({ idSede, idDoctor, idEspecialidad }) => {
     }
 }
 
-export const getCombinaciones = async () => {
+export const getCombinations = async () => {
     try {
         const response = await axiosInstance.get(`adminGetCombinaciones`);
         return response;
@@ -137,8 +137,8 @@ export const getCombinaciones = async () => {
     }
 }
 
-//Horarios
-export const createHorarios = async ({ idSede, idDoctor, idEspecialidad, dia, hora_inicio, hora_fin, estado }) => {
+// Schedules
+export const createSchedule = async ({ idSede, idDoctor, idEspecialidad, dia, hora_inicio, hora_fin, estado }) => {
     try {
         const response = await axiosInstance.post(`adminCreateHorario`, { idSede, idDoctor, idEspecialidad, dia, hora_inicio, hora_fin, estado });
         return response;
@@ -147,7 +147,7 @@ export const createHorarios = async ({ idSede, idDoctor, idEspecialidad, dia, ho
     }
 }
 
-export const getHorariosXDoctor = async ({ idSede, idEspecialidad, idDoctor }) => {
+export const getSchedulesByDoctor = async ({ idSede, idEspecialidad, idDoctor }) => {
     try {
         const response = await axiosInstance.post(`adminGetHorariosXDoctor`, { idSede, idEspecialidad, idDoctor });
         return response;
@@ -156,7 +156,7 @@ export const getHorariosXDoctor = async ({ idSede, idEspecialidad, idDoctor }) =
     }
 }
 
-export const updateHorarios = async ({ idSede, idDoctor, idEspecialidad, dia, hora_inicio, hora_fin, estado }) => {
+export const updateSchedule = async ({ idSede, idDoctor, idEspecialidad, dia, hora_inicio, hora_fin, estado }) => {
     try {
         const response = await axiosInstance.put(`adminUpdateHorario`, { idSede, idDoctor, idEspecialidad, dia, hora_inicio, hora_fin, estado });
         return response;

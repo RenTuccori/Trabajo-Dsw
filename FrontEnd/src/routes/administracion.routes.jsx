@@ -23,7 +23,7 @@ export function AdministracionRoutes() {
         <Route
           path="/crearSede"
           element={
-            <Validacion rol={rol} esperado={USER_TYPES.ADMIN}>
+            <Validacion rol={rol} expected={USER_TYPES.ADMIN}>
               <ProtectedRoute requiredRole={USER_TYPES.ADMIN}>
                 <CrearSede />
               </ProtectedRoute>
@@ -33,7 +33,7 @@ export function AdministracionRoutes() {
         <Route
           path="/crearEsp"
           element={
-            <Validacion rol={rol} esperado={USER_TYPES.ADMIN}>
+            <Validacion rol={rol} expected={USER_TYPES.ADMIN}>
               <ProtectedRoute requiredRole={USER_TYPES.ADMIN}>
                 <CrearEspecialidad />
               </ProtectedRoute>
@@ -43,7 +43,7 @@ export function AdministracionRoutes() {
         <Route
           path="/crearOS"
           element={
-            <Validacion rol={rol} esperado={USER_TYPES.ADMIN}>
+            <Validacion rol={rol} expected={USER_TYPES.ADMIN}>
               <ProtectedRoute requiredRole={USER_TYPES.ADMIN}>
                 <CrearObraSocial />
               </ProtectedRoute>
@@ -53,7 +53,7 @@ export function AdministracionRoutes() {
         <Route
           path="/combinacion"
           element={
-            <Validacion rol={rol} esperado={USER_TYPES.ADMIN}>
+            <Validacion rol={rol} expected={USER_TYPES.ADMIN}>
               <ProtectedRoute requiredRole={USER_TYPES.ADMIN}>
                 <CrearCombinacion />
               </ProtectedRoute>
@@ -63,7 +63,7 @@ export function AdministracionRoutes() {
         <Route
           path="/horarios"
           element={
-            <Validacion rol={rol} esperado={USER_TYPES.ADMIN}>
+            <Validacion rol={rol} expected={USER_TYPES.ADMIN}>
               <ProtectedRoute requiredRole={USER_TYPES.ADMIN}>
                 <CrearHorarios />
               </ProtectedRoute>
@@ -73,7 +73,7 @@ export function AdministracionRoutes() {
         <Route
           path="/crearDoc"
           element={
-            <Validacion rol={rol} esperado={USER_TYPES.ADMIN}>
+            <Validacion rol={rol} expected={USER_TYPES.ADMIN}>
               <ProtectedRoute requiredRole={USER_TYPES.ADMIN}>
                 <CrearDoctor />
               </ProtectedRoute>
@@ -83,7 +83,7 @@ export function AdministracionRoutes() {
         <Route
           path="/actualizarDoc/:idDoctor"
           element={
-            <Validacion rol={rol} esperado={USER_TYPES.ADMIN}>
+            <Validacion rol={rol} expected={USER_TYPES.ADMIN}>
               <ProtectedRoute requiredRole={USER_TYPES.ADMIN}>
                 <ActualizarDoctor />
               </ProtectedRoute>

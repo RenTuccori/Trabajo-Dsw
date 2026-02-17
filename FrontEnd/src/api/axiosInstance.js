@@ -2,7 +2,7 @@ import axios from 'axios';
 const dbUrl = import.meta.env.VITE_DB_URL;
 
 const axiosInstance = axios.create({
-  baseURL: `http://${dbUrl}/api/`, //colocar la ip de la maquina donde se esta ejecutando el backend
+  baseURL: `http://${dbUrl}/api/`, // Set the IP of the machine running the backend
 });
 
 axiosInstance.interceptors.request.use(
@@ -27,9 +27,9 @@ axiosInstance.interceptors.response.use(
       error.response &&
       (error.response.status === 401 || error.response.status === 403)
     ) {
-      // Limpiar el token inválido
+      // Clear the invalid token
       localStorage.removeItem('token');
-      // Redirigir al home
+      // Redirect to home
       window.location.href = '/';
     }
     return Promise.reject(error);

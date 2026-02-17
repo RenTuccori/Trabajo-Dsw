@@ -6,15 +6,15 @@ import { useAdministracion } from '../../context/administracion/AdministracionPr
 export function CrearDoctor() {
   const navigate = useNavigate();
   const {
-    doctores,
-    CreaDoctor,
-    ObtenerDoctores,
-    ObtenerUsuarioDni,
-    CrearUsuario,
-    ObtenerOS,
-    usuario,
-    obrasSociales,
-    borrarDoctor,
+    doctors,
+    createNewDoctor,
+    fetchDoctors,
+    fetchUserByDni,
+    createNewUser,
+    fetchHealthInsurance,
+    user,
+    healthInsuranceList,
+    removeDoctor,
   } = useAdministracion();
 
   const [dni, setDni] = useState('');
@@ -36,8 +36,8 @@ export function CrearDoctor() {
   });
 
   useEffect(() => {
-    ObtenerDoctores();
-    ObtenerOS();
+    fetchDoctors();
+    fetchHealthInsurance();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -58,8 +58,8 @@ export function CrearDoctor() {
     e.preventDefault();
     if (dni.trim() !== '') {
       try {
-        await ObtenerUsuarioDni(dni);
-        if (usuario.length !== 0) {
+        await fetchUserByDni(dni);
+        if (user.length !== 0) {
           setUsuarioExistente(true);
           window.notifySuccess(
             'Usuario encontrado, continúe con los siguientes pasos.'
@@ -70,10 +70,10 @@ export function CrearDoctor() {
             'Usuario no encontrado, complete los datos para crear uno nuevo.'
           );
         }
-        setFormularioVisible(true); // Muestra el formulario después de la búsqueda
+        setFormularioVisible(true); // Show the form after search
       } catch (error) {
         if (error.response && error.response.status === 404) {
-          // Si es un error 404, significa que no existe el usuario, continuar como nuevo
+          // If it's a 404 error, the user doesn't exist, continue as new
           setUsuarioExistente(false);
           window.notifyError(
             'Usuario no encontrado, complete los datos para crear uno nuevo.'
@@ -93,12 +93,12 @@ export function CrearDoctor() {
     if (duracionTurno.trim() !== '' && contra.trim() !== '') {
       try {
         if (!usuarioExistente) {
-          await CrearUsuario({
+          await createNewUser({
             ...formData,
-            dni, // Agregar el dni al nuevo usuario
+            dni, // Add the DNI to the new user
           });
         }
-        await CreaDoctor({ dni, duracionTurno, contra });
+        await createNewDoctor({ dni, duracionTurno, contra });
         window.notifySuccess('¡Doctor creado con éxito!');
         navigate('/admin');
       } catch (error) {
@@ -111,10 +111,10 @@ export function CrearDoctor() {
 
   const handleDelete = async (idDoctor) => {
     try {
-      await borrarDoctor(idDoctor);
+      await removeDoctor(idDoctor);
       window.notifySuccess(`Doctor con ID ${idDoctor} borrado.`);
-      // Actualiza la lista de doctores
-      await ObtenerDoctores();
+      // Refresh the doctor list
+      await fetchDoctors();
     } catch (error) {
       window.notifyError(`Error al borrar el doctor con ID ${idDoctor}`);
     }
@@ -122,10 +122,10 @@ export function CrearDoctor() {
 
   const handleUpdate = async (idDoctor) => {
     try {
-      // Redirigir a un formulario de actualización de doctor con el ID del doctor
+      // Redirect to the doctor update form with the doctor ID
       navigate(`/admin/actualizarDoc/${idDoctor}`);
-      // Después de actualizar, recargar la lista de doctores
-      await ObtenerDoctores();
+      // After updating, reload the doctor list
+      await fetchDoctors();
     } catch (error) {
       window.notifyError(`Error al actualizar el doctor con ID ${idDoctor}`);
     }
@@ -233,7 +233,7 @@ export function CrearDoctor() {
                     Obra social
                   </p>
                   <Select
-                    options={obrasSociales.map((obrasocial) => ({
+                    options={healthInsuranceList.map((obrasocial) => ({
                       value: obrasocial.idObraSocial,
                       label: obrasocial.nombre,
                     }))}
@@ -316,14 +316,14 @@ export function CrearDoctor() {
           Doctores creados
         </h3>
         <ul className="space-y-2">
-          {doctores.length > 0 ? (
-            doctores.map((doctor) => (
+          {doctors.length > 0 ? (
+            doctors.map((doctor) => (
               <li
                 key={doctor.idDoctor}
                 className="bg-gray-100 p-4 rounded-lg flex justify-between items-center"
               >
                 <span>
-                  <strong>{doctor.nombreyapellido}</strong>
+                  <strong>{doctor.fullName}</strong>
                 </span>
                 <div className="flex space-x-4">
                   <button

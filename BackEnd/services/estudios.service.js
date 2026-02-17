@@ -1,11 +1,11 @@
 import { Estudio, Doctor, Paciente, Usuario } from '../models/index.js';
 
-export const createEstudio = async ({ idPaciente, idDoctor, fechaRealizacion, fechaCarga, nombreArchivo, rutaArchivo, descripcion }) => {
+export const createStudy = async ({ idPaciente, idDoctor, fechaRealizacion, fechaCarga, nombreArchivo, rutaArchivo, descripcion }) => {
   return Estudio.create({ idPaciente, idDoctor, fechaRealizacion, fechaCarga, nombreArchivo, rutaArchivo, descripcion });
 };
 
-export const getEstudiosByPaciente = async (idPaciente) => {
-  const estudios = await Estudio.findAll({
+export const getStudiesByPatient = async (idPaciente) => {
+  const studies = await Estudio.findAll({
     where: { idPaciente },
     include: [{
       model: Doctor, as: 'doctor',
@@ -14,18 +14,18 @@ export const getEstudiosByPaciente = async (idPaciente) => {
     order: [['fechaCarga', 'DESC']],
   });
 
-  return estudios.map(e => ({
+  return studies.map(e => ({
     idEstudio: e.idEstudio,
     fechaRealizacion: e.fechaRealizacion,
     fechaCarga: e.fechaCarga,
     nombreArchivo: e.nombreArchivo,
     descripcion: e.descripcion,
-    nombreDoctor: e.doctor?.usuario ? `${e.doctor.usuario.nombre} ${e.doctor.usuario.apellido}` : null,
+    doctorName: e.doctor?.usuario ? `${e.doctor.usuario.nombre} ${e.doctor.usuario.apellido}` : null,
   }));
 };
 
-export const getEstudiosByDoctor = async (idDoctor) => {
-  const estudios = await Estudio.findAll({
+export const getStudiesByDoctor = async (idDoctor) => {
+  const studies = await Estudio.findAll({
     where: { idDoctor },
     include: [{
       model: Paciente, as: 'paciente',
@@ -34,22 +34,22 @@ export const getEstudiosByDoctor = async (idDoctor) => {
     order: [['fechaCarga', 'DESC']],
   });
 
-  return estudios.map(e => ({
+  return studies.map(e => ({
     idEstudio: e.idEstudio,
     fechaRealizacion: e.fechaRealizacion,
     fechaCarga: e.fechaCarga,
     nombreArchivo: e.nombreArchivo,
     descripcion: e.descripcion,
-    nombrePaciente: e.paciente?.usuario ? `${e.paciente.usuario.nombre} ${e.paciente.usuario.apellido}` : null,
-    dniPaciente: e.paciente?.usuario?.dni,
+    patientName: e.paciente?.usuario ? `${e.paciente.usuario.nombre} ${e.paciente.usuario.apellido}` : null,
+    patientDni: e.paciente?.usuario?.dni,
   }));
 };
 
-export const findEstudioById = async (idEstudio) => {
+export const findStudyById = async (idEstudio) => {
   return Estudio.findByPk(idEstudio);
 };
 
-export const deleteEstudioById = async (idEstudio) => {
+export const deleteStudyById = async (idEstudio) => {
   const affectedRows = await Estudio.destroy({ where: { idEstudio } });
   return affectedRows > 0;
 };

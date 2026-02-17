@@ -1,6 +1,6 @@
 import axiosInstance from './axiosInstance';
 
-export const getSedes = async () => {
+export const getLocations = async () => {
     try {
         const response = await axiosInstance.get(`sedes`);
         return response;
@@ -9,7 +9,7 @@ export const getSedes = async () => {
     }
 }
 
-export const getSedeById = async (idSede) => {
+export const getLocationById = async (idSede) => {
     try {
         const response = await axiosInstance.get(`sedes/${idSede}`);
         return response;

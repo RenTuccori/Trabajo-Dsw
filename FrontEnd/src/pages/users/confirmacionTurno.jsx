@@ -5,34 +5,34 @@ import { usePacientes } from '../../context/paciente/PacientesProvider.jsx';
 export function ConfirmacionTurno() {
   const navigate = useNavigate();
   const {
-    nombreEspecialidad,
-    nombreDoctor,
-    apellidoDoctor,
-    nombreSede,
-    direccionSede,
-    fechaYHora,
-    CrearTurno,
-    ObtenerDoctorId,
-    ObtenerEspecialidadId,
-    ObtenerSedeId,
-    mailUsuario,
-    ObtenerUsuarioDni,
-    MandarMail,
+    specialtyName,
+    doctorName,
+    doctorLastName,
+    locationName,
+    locationAddress,
+    dateAndTime,
+    createNewAppointment,
+    fetchDoctorById,
+    fetchSpecialtyById,
+    fetchLocationById,
+    userEmail,
+    fetchUserByDni,
+    sendEmailAction,
   } = usePacientes();
 
-  const [turnoCreado, setTurnoCreado] = useState(false); // Estado para saber si el turno fue creado
+  const [turnoCreado, setTurnoCreado] = useState(false); // State to track if the appointment was created
 
   useEffect(() => {
     const confirmarTurno = async () => {
       try {
-        // Asegurarse de que todas las funciones asincrónicas se completen antes de continuar
-        await ObtenerUsuarioDni();
-        await ObtenerDoctorId();
-        await ObtenerEspecialidadId();
-        await ObtenerSedeId();
+        // Ensure all async functions complete before continuing
+        await fetchUserByDni();
+        await fetchDoctorById();
+        await fetchSpecialtyById();
+        await fetchLocationById();
 
-        // Crear turno
-        await CrearTurno();
+        // Create appointment
+        await createNewAppointment();
         setTurnoCreado(true);
       } catch (error) {
         window.notifyError('Error al crear el turno');
@@ -45,16 +45,16 @@ export function ConfirmacionTurno() {
   }, []);
 
   useEffect(() => {
-    if (turnoCreado && mailUsuario) {
-      // Construir el cuerpo del correo como string HTML
+    if (turnoCreado && userEmail) {
+      // Build the email body as an HTML string
       const cuerpo = `
             <div style="background-color: #f0f4f8; padding: 20px; border-radius: 10px; font-family: Arial, sans-serif; max-width: 600px; margin: auto;">
                 <h1 style="color: #1c4e80; text-align: center;">¡Tu turno ha sido creado con éxito!</h1>
                 <div style="background-color: #ffffff; padding: 20px; border-radius: 8px;">
-                    <p><strong>Fecha y Hora:</strong> ${fechaYHora}</p>
-                    <p><strong>Especialidad:</strong> ${nombreEspecialidad}</p>
-                    <p><strong>Doctor:</strong> ${nombreDoctor} ${apellidoDoctor}</p>
-                    <p><strong>Sede:</strong> ${nombreSede}, ${direccionSede}</p>
+                    <p><strong>Fecha y Hora:</strong> ${dateAndTime}</p>
+                    <p><strong>Especialidad:</strong> ${specialtyName}</p>
+                    <p><strong>Doctor:</strong> ${doctorName} ${doctorLastName}</p>
+                    <p><strong>Sede:</strong> ${locationName}, ${locationAddress}</p>
                 </div>
                 <footer style="text-align: center;">
                     <p>Nos vemos pronto, ¡gracias por confiar en nosotros!</p>
@@ -62,14 +62,14 @@ export function ConfirmacionTurno() {
                 </footer>
             </div>`;
 
-      // Llamar a la función para mandar el correo
-      MandarMail({
-        to: mailUsuario, // Asegúrate de pasar el destinatario como tal
+      // Call the function to send the email
+      sendEmailAction({
+        to: userEmail, // Make sure to pass the recipient
         subject: 'Turno Creado',
         html: cuerpo,
       });
     }
-  }, [turnoCreado, mailUsuario]); // Este efecto se ejecuta solo cuando `mailUsuario` y `turnoCreado` están listos
+  }, [turnoCreado, userEmail]); // This effect runs only when `userEmail` and `turnoCreado` are ready
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-blue-100 to-white flex flex-col items-center justify-center p-6">
@@ -78,22 +78,22 @@ export function ConfirmacionTurno() {
           Turno creado
         </h1>
         <p className="text-gray-700">
-          <strong>Fecha y Hora:</strong> {fechaYHora}
+          <strong>Fecha y Hora:</strong> {dateAndTime}
         </p>
         <p className="text-gray-700">
-          <strong>Especialidad:</strong> {nombreEspecialidad}
+          <strong>Especialidad:</strong> {specialtyName}
         </p>
         <p className="text-gray-700">
-          <strong>Doctor:</strong> {nombreDoctor} {apellidoDoctor}
+          <strong>Doctor:</strong> {doctorName} {doctorLastName}
         </p>
         <p className="text-gray-700">
-          <strong>Sede:</strong> {nombreSede}, {direccionSede}
+          <strong>Sede:</strong> {locationName}, {locationAddress}
         </p>
         <p className="text-gray-700">
           <strong>Estado:</strong> Pendiente
         </p>
 
-        {/* Aviso sobre el correo electrónico */}
+        {/* Email notice */}
         <p className="text-sm text-gray-600 text-center mt-4">
           Si no recibiste el correo de confirmación, por favor verifica tu
           dirección de correo en la sección de <strong>Datos Personales</strong>{' '}

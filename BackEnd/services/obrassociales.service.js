@@ -1,28 +1,28 @@
 import { ObraSocial } from '../models/index.js';
 
-export const getAllObrasSociales = async () => {
-  const obrasSociales = await ObraSocial.findAll({
+export const getAllHealthInsurance = async () => {
+  const insuranceList = await ObraSocial.findAll({
     where: { estado: 'Habilitado' },
   });
-  return obrasSociales;
+  return insuranceList;
 };
 
-export const findObraSocialById = async (idObraSocial) => {
-  const obraSocial = await ObraSocial.findOne({
+export const findHealthInsuranceById = async (idObraSocial) => {
+  const insurance = await ObraSocial.findOne({
     where: { idObraSocial, estado: 'Habilitado' },
   });
-  return obraSocial;
+  return insurance;
 };
 
-export const createNewObraSocial = async ({ nombre }) => {
-  const obraSocial = await ObraSocial.create({
+export const createNewHealthInsurance = async ({ nombre }) => {
+  const insurance = await ObraSocial.create({
     nombre,
     estado: 'Habilitado',
   });
-  return obraSocial;
+  return insurance;
 };
 
-export const softDeleteObraSocial = async (idObraSocial) => {
+export const softDeleteHealthInsurance = async (idObraSocial) => {
   const [affectedRows] = await ObraSocial.update(
     { estado: 'Deshabilitado' },
     { where: { idObraSocial } }
@@ -30,9 +30,9 @@ export const softDeleteObraSocial = async (idObraSocial) => {
   return affectedRows > 0;
 };
 
-export const updateExistingObraSocial = async (idObraSocial, { nombre }) => {
+export const updateExistingHealthInsurance = async (idObraSocial, { nombre }) => {
   if (!nombre) {
-    throw { status: 400, message: 'El nombre es requerido.' };
+    throw { status: 400, message: 'Name is required.' };
   }
   const [affectedRows] = await ObraSocial.update(
     { nombre },

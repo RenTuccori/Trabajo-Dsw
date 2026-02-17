@@ -6,7 +6,7 @@ import { USER_TYPES } from '../constants/userTypes.js';
 
 const JWT_SECRET = process.env.JWT_SECRET;
 
-export const getDoctorsBySedEsp = async (idSede, idEspecialidad) => {
+export const getDoctorsByLocationSpecialty = async (idSede, idEspecialidad) => {
   const doctors = await Doctor.findAll({
     where: { estado: 'Habilitado' },
     include: [
@@ -25,11 +25,11 @@ export const getDoctorsBySedEsp = async (idSede, idEspecialidad) => {
   });
   return doctors.map(d => ({
     idDoctor: d.idDoctor,
-    nombreyapellido: `${d.usuario.nombre} ${d.usuario.apellido}`,
+    fullName: `${d.usuario.nombre} ${d.usuario.apellido}`,
   }));
 };
 
-export const getAvailableDoctorsForSede = async (idSede) => {
+export const getAllAvailableDoctors = async (idSede) => {
   const assignedIds = await SedeDoctorEsp.findAll({
     where: { idSede, estado: 'Habilitado' },
     attributes: ['idDoctor'],
@@ -50,11 +50,11 @@ export const getAvailableDoctorsForSede = async (idSede) => {
   });
   return doctors.map(d => ({
     idDoctor: d.idDoctor,
-    nombreyapellido: `${d.usuario.nombre} ${d.usuario.apellido}`,
+    fullName: `${d.usuario.nombre} ${d.usuario.apellido}`,
   }));
 };
 
-export const getAllEnabledDoctors = async () => {
+export const getAllDoctors = async () => {
   const doctors = await Doctor.findAll({
     where: { estado: 'Habilitado' },
     include: [{
@@ -66,7 +66,7 @@ export const getAllEnabledDoctors = async () => {
   });
   return doctors.map(d => ({
     idDoctor: d.idDoctor,
-    nombreyapellido: `${d.usuario.nombre} ${d.usuario.apellido}`,
+    fullName: `${d.usuario.nombre} ${d.usuario.apellido}`,
   }));
 };
 
@@ -127,7 +127,7 @@ export const authenticateDoctor = async (dni, contra) => {
   if (!doctor) return null;
 
   const token = jwt.sign(
-    { idDoctor: doctor.idDoctor, dni: doctor.dni, nombre: doctor.usuario.nombre, apellido: doctor.usuario.apellido, rol: USER_TYPES.DOCTOR },
+    { idDoctor: doctor.idDoctor, dni: doctor.dni, nombre: doctor.usuario.nombre, apellido: doctor.usuario.apellido, role: USER_TYPES.DOCTOR },
     JWT_SECRET,
     { expiresIn: '8h' }
   );

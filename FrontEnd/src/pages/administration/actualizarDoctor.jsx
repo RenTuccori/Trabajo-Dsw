@@ -1,23 +1,23 @@
 import { useEffect, useState } from 'react';
-import { useNavigate, useParams } from 'react-router-dom'; // Importa useParams
+import { useNavigate, useParams } from 'react-router-dom'; // Import useParams
 import Select from 'react-select';
 import { useAdministracion } from '../../context/administracion/AdministracionProvider';
 
 export function ActualizarDoctor() {
   const {
-    ObtenerOS,
-    obrasSociales,
+    fetchHealthInsurance,
+    healthInsuranceList,
     doctor,
-    ObtenerDoctorPorId,
-    actualizarUsuario,
-    actualizarDoctor,
+    fetchDoctorById,
+    updateUserData,
+    updateDoctorData,
   } = useAdministracion();
 
   const [selectedObraSociales, setSelectedObraSociales] = useState(null);
-  const [hasChanges, setHasChanges] = useState(false); // Estado para rastrear cambios
-  const [, setOriginalData] = useState({}); // Datos originales para comparar
+  const [hasChanges, setHasChanges] = useState(false); // State to track changes
+  const [, setOriginalData] = useState({}); // Original data for comparison
   const navigate = useNavigate();
-  const { idDoctor } = useParams(); // Usa useParams para obtener el idDoctor desde la URL
+  const { idDoctor } = useParams(); // Use useParams to get idDoctor from the URL
 
   const [formData, setFormData] = useState({
     idDoctor: '',
@@ -39,13 +39,13 @@ export function ActualizarDoctor() {
       ...prevFormData,
       [name]: value,
     }));
-    setHasChanges(true); // Marca como cambiado al modificar un campo
+    setHasChanges(true); // Mark as changed when modifying a field
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // Alerta de confirmación
+    // Confirmation alert
     const result = await window.confirmDialog(
       'Guardar cambios',
       '¿Estás seguro que deseas guardar los cambios?'
@@ -54,7 +54,7 @@ export function ActualizarDoctor() {
     if (result.isConfirmed) {
       try {
 
-        // Verificar que el token existe
+        // Verify that the token exists
         const token = localStorage.getItem('token');
         if (!token) {
           window.notifyError(
@@ -64,7 +64,7 @@ export function ActualizarDoctor() {
           return;
         }
 
-        // Preparar datos para actualizar usuario (solo los campos que espera el backend)
+        // Prepare data to update user (only fields expected by the backend)
         const usuarioData = {
           dni: formData.dni,
           nombre: formData.nombre,
@@ -75,16 +75,16 @@ export function ActualizarDoctor() {
           idObraSocial: formData.idObraSocial,
         };
 
-        // Preparar datos para actualizar doctor
+        // Prepare data to update doctor
         const doctorData = {
           idDoctor: formData.idDoctor,
           duracionTurno: formData.duracionTurno,
           contra: formData.contra,
         };
 
-        const response = await actualizarUsuario(usuarioData);
+        const response = await updateUserData(usuarioData);
 
-        const responseDoctor = await actualizarDoctor(doctorData);
+        const responseDoctor = await updateDoctorData(doctorData);
 
         if (
           response &&
@@ -117,14 +117,14 @@ export function ActualizarDoctor() {
   };
 
   useEffect(() => {
-    ObtenerOS();
-    ObtenerDoctorPorId(idDoctor); // Llama a la función con el idDoctor obtenido de la URL
+    fetchHealthInsurance();
+    fetchDoctorById(idDoctor); // Call the function with idDoctor obtained from the URL
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [idDoctor]);
 
   // Set formData after all dependencies are loaded
   useEffect(() => {
-    if (obrasSociales.length > 0 && doctor.dni) {
+    if (healthInsuranceList.length > 0 && doctor.dni) {
       // Ensure all necessary data is available before setting formData
       setFormData((prevFormData) => ({
         ...prevFormData,
@@ -143,11 +143,11 @@ export function ActualizarDoctor() {
       setSelectedObraSociales({
         value: doctor.idObraSocial,
         label:
-          obrasSociales.find((os) => os.idObraSocial === doctor.idObraSocial)
+          healthInsuranceList.find((os) => os.idObraSocial === doctor.idObraSocial)
             ?.nombre || 'No asignada',
       });
 
-      // Guardar datos originales
+      // Save original data
       setOriginalData({
         idDoctor: idDoctor,
         dni: doctor.dni,
@@ -161,20 +161,20 @@ export function ActualizarDoctor() {
         contra: doctor.contra,
       });
     }
-  }, [obrasSociales, doctor]);
+  }, [healthInsuranceList, doctor]);
   const handleObraSocialChange = (selectedOption) => {
     setSelectedObraSociales(selectedOption);
     setFormData((prevFormData) => ({
       ...prevFormData,
       idObraSocial: selectedOption.value,
     }));
-    setHasChanges(true); // Marca como cambiado al modificar la obra social
+    setHasChanges(true); // Mark as changed when modifying health insurance
   };
 
-  // Función para manejar el regreso a la lista de doctores
+  // Function to handle going back to the doctor list
   const handleRegresar = async () => {
     if (hasChanges) {
-      // Si hay cambios, muestra advertencia
+      // If there are changes, show warning
       const result = await window.confirmDialog(
         'Cambios sin guardar',
         'Tienes cambios sin guardar. ¿Estás seguro de que quieres volver? Los cambios se perderán.'
@@ -184,7 +184,7 @@ export function ActualizarDoctor() {
         navigate('/admin/crearDoc');
       }
     } else {
-      // Si no hay cambios, navega de regreso directamente
+      // If no changes, navigate back directly
       navigate('/admin/crearDoc');
     }
   };
@@ -251,7 +251,7 @@ export function ActualizarDoctor() {
           <div>
             <p className="text-center text-gray-600 text-lg">Obra social</p>
             <Select
-              options={obrasSociales.map((obrasociales) => ({
+              options={healthInsuranceList.map((obrasociales) => ({
                 value: obrasociales.idObraSocial,
                 label: obrasociales.nombre,
               }))}

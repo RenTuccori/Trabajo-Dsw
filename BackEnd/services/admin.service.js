@@ -10,21 +10,21 @@ export const authenticateAdmin = async (usuario, contra) => {
   if (!admin) return null;
 
   const token = jwt.sign(
-    { idAdmin: admin.idAdmin, rol: USER_TYPES.ADMIN },
+    { idAdmin: admin.idAdmin, role: USER_TYPES.ADMIN },
     JWT_SECRET,
     { expiresIn: '30m' }
   );
   return { token };
 };
 
-export const createSedeDoctorEsp = async ({ idSede, idEspecialidad, idDoctor }) => {
+export const createNewCombination = async ({ idSede, idEspecialidad, idDoctor }) => {
   const existing = await SedeDoctorEsp.findOne({
     where: { idSede, idEspecialidad, idDoctor },
   });
 
   if (existing) {
     if (existing.estado === 'Habilitado') {
-      throw { status: 400, message: 'La combinación ya está habilitada.' };
+      throw { status: 400, message: 'The combination is already enabled.' };
     }
     await existing.update({ estado: 'Habilitado' });
     return existing;
@@ -39,7 +39,7 @@ export const createSedeDoctorEsp = async ({ idSede, idEspecialidad, idDoctor }) 
   return combo;
 };
 
-export const deleteSedeDoctorEsp = async ({ idSede, idDoctor, idEspecialidad }) => {
+export const softDeleteCombination = async ({ idSede, idDoctor, idEspecialidad }) => {
   const [affectedRows] = await SedeDoctorEsp.update(
     { estado: 'Deshabilitado' },
     { where: { idSede, idDoctor, idEspecialidad } }
@@ -47,8 +47,8 @@ export const deleteSedeDoctorEsp = async ({ idSede, idDoctor, idEspecialidad }) 
   return affectedRows > 0;
 };
 
-export const getAllCombinaciones = async () => {
-  const combinaciones = await SedeDoctorEsp.findAll({
+export const getAllCombinations = async () => {
+  const combinations = await SedeDoctorEsp.findAll({
     where: { estado: 'Habilitado' },
     include: [
       { model: Sede, as: 'sede', attributes: ['nombre', 'direccion'], where: { estado: 'Habilitado' } },
@@ -60,26 +60,26 @@ export const getAllCombinaciones = async () => {
       },
     ],
   });
-  return combinaciones.map(c => ({
+  return combinations.map(c => ({
     idSede: c.idSede,
     idDoctor: c.idDoctor,
     idEspecialidad: c.idEspecialidad,
-    nombreSede: c.sede?.nombre,
-    nombreEspecialidad: c.especialidad?.nombre,
-    nombreDoctor: c.doctor?.usuario?.nombre,
-    apellidoDoctor: c.doctor?.usuario?.apellido,
+    locationName: c.sede?.nombre,
+    specialtyName: c.especialidad?.nombre,
+    doctorName: c.doctor?.usuario?.nombre,
+    doctorLastName: c.doctor?.usuario?.apellido,
   }));
 };
 
-export const createNewHorario = async (horarioData) => {
-  const horario = await HorarioDisponible.create({
-    ...horarioData,
-    dia: horarioData.dia?.toLowerCase(),
+export const createNewSchedule = async (scheduleData) => {
+  const schedule = await HorarioDisponible.create({
+    ...scheduleData,
+    dia: scheduleData.dia?.toLowerCase(),
   });
-  return horario;
+  return schedule;
 };
 
-export const updateExistingHorario = async ({ idSede, idDoctor, idEspecialidad, dia, hora_inicio, hora_fin, estado }) => {
+export const updateExistingSchedule = async ({ idSede, idDoctor, idEspecialidad, dia, hora_inicio, hora_fin, estado }) => {
   const [affectedRows] = await HorarioDisponible.update(
     { hora_inicio, hora_fin, estado },
     { where: { idSede, idDoctor, idEspecialidad, [Op.and]: [seqWhere(fn('LOWER', col('dia')), dia.toLowerCase())] } }
@@ -87,8 +87,8 @@ export const updateExistingHorario = async ({ idSede, idDoctor, idEspecialidad, 
   return affectedRows > 0;
 };
 
-export const getHorariosByDoctor = async ({ idSede, idEspecialidad, idDoctor }) => {
-  const horarios = await HorarioDisponible.findAll({
+export const getSchedulesByDoctor = async ({ idSede, idEspecialidad, idDoctor }) => {
+  const schedules = await HorarioDisponible.findAll({
     where: { idSede, idEspecialidad, idDoctor, estado: 'Habilitado' },
     include: [
       { model: Sede, as: 'sede', attributes: ['nombre'] },
@@ -99,13 +99,13 @@ export const getHorariosByDoctor = async ({ idSede, idEspecialidad, idDoctor }) 
       },
     ],
   });
-  return horarios.map(h => ({
+  return schedules.map(h => ({
     dia: h.dia.toLowerCase(),
     hora_inicio: h.hora_inicio ? h.hora_inicio.substring(0, 5) : '',
     hora_fin: h.hora_fin ? h.hora_fin.substring(0, 5) : '',
-    nombreSede: h.sede?.nombre,
-    nombreEspecialidad: h.especialidad?.nombre,
-    nombreDoctor: h.doctor?.usuario?.nombre,
-    apellidoDoctor: h.doctor?.usuario?.apellido,
+    locationName: h.sede?.nombre,
+    specialtyName: h.especialidad?.nombre,
+    doctorName: h.doctor?.usuario?.nombre,
+    doctorLastName: h.doctor?.usuario?.apellido,
   }));
 };

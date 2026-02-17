@@ -1,43 +1,43 @@
 import * as obrasSocialesService from '../services/obrassociales.service.js';
 
-export const getObrasSociales = async (req, res) => {
+export const getHealthInsuranceList = async (req, res) => {
   try {
-    const obrasSociales = await obrasSocialesService.getAllObrasSociales();
-    if (obrasSociales.length === 0) {
-      return res.status(404).json({ message: 'No hay obras sociales' });
+    const insuranceList = await obrasSocialesService.getAllHealthInsurance();
+    if (insuranceList.length === 0) {
+      return res.status(404).json({ message: 'No health insurance found' });
     }
-    res.json(obrasSociales);
+    res.json(insuranceList);
   } catch (error) {
     return res.status(500).json({ message: error.message });
   }
 };
 
-export const getObraSocialById = async (req, res) => {
+export const getHealthInsuranceById = async (req, res) => {
   try {
-    const obraSocial = await obrasSocialesService.findObraSocialById(req.params.idObraSocial);
-    if (!obraSocial) {
-      return res.status(404).json({ message: 'Obra social no encontrada' });
+    const insurance = await obrasSocialesService.findHealthInsuranceById(req.params.idObraSocial);
+    if (!insurance) {
+      return res.status(404).json({ message: 'Health insurance not found' });
     }
-    res.json(obraSocial);
+    res.json(insurance);
   } catch (error) {
     return res.status(500).json({ message: error.message });
   }
 };
 
-export const createObraSocial = async (req, res) => {
+export const createHealthInsurance = async (req, res) => {
   try {
-    const obraSocial = await obrasSocialesService.createNewObraSocial(req.body);
-    res.status(201).json(obraSocial);
+    const insurance = await obrasSocialesService.createNewHealthInsurance(req.body);
+    res.status(201).json(insurance);
   } catch (error) {
     return res.status(500).json({ message: error.message });
   }
 };
 
-export const deleteObraSocial = async (req, res) => {
+export const deleteHealthInsurance = async (req, res) => {
   try {
-    const deleted = await obrasSocialesService.softDeleteObraSocial(req.params.idObraSocial);
+    const deleted = await obrasSocialesService.softDeleteHealthInsurance(req.params.idObraSocial);
     if (!deleted) {
-      return res.status(404).json({ message: 'Obra social no encontrada' });
+      return res.status(404).json({ message: 'Health insurance not found' });
     }
     return res.sendStatus(204);
   } catch (error) {
@@ -45,16 +45,16 @@ export const deleteObraSocial = async (req, res) => {
   }
 };
 
-export const updateObraSocial = async (req, res) => {
+export const updateHealthInsurance = async (req, res) => {
   try {
-    const updated = await obrasSocialesService.updateExistingObraSocial(
+    const updated = await obrasSocialesService.updateExistingHealthInsurance(
       req.params.idObraSocial,
       req.body
     );
     if (!updated) {
-      return res.status(404).json({ message: 'Obra social no encontrada' });
+      return res.status(404).json({ message: 'Health insurance not found' });
     }
-    res.json({ message: 'Obra social actualizada' });
+    res.json({ message: 'Health insurance updated' });
   } catch (error) {
     if (error.status) {
       return res.status(error.status).json({ message: error.message });

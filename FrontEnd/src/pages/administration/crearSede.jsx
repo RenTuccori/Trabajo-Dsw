@@ -4,29 +4,29 @@ import { useAdministracion } from '../../context/administracion/AdministracionPr
 
 export function CrearSede() {
   const navigate = useNavigate();
-  const { sedes, crearNuevaSede, ObtenerSedes, borrarSede } =
+  const { locations, createNewLocation, fetchLocations, removeLocation } =
     useAdministracion();
   const [nombreSede, setNombreSede] = useState('');
   const [direccionSede, setDireccionSede] = useState('');
 
-  // Obtener sedes al cargar el componente
+  // Fetch locations when the component mounts
   useEffect(() => {
-    ObtenerSedes();
+    fetchLocations();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // Manejar la creación de una nueva sede
+  // Handle creating a new location
   const handleCrearSede = async (e) => {
     e.preventDefault();
     if (nombreSede.trim() !== '' && direccionSede.trim() !== '') {
       try {
-        await crearNuevaSede({ nombre: nombreSede, direccion: direccionSede });
-        setNombreSede(''); // Reiniciar el campo de texto
+        await createNewLocation({ nombre: nombreSede, direccion: direccionSede });
+        setNombreSede(''); // Reset the text field
         setDireccionSede('');
-        window.notifySuccess('¡Sede creada con éxito!'); // Mostrar mensaje de éxito
-        ObtenerSedes(); // Actualizar la lista después de crear una sede
+        window.notifySuccess('¡Sede creada con éxito!'); // Show success message
+        fetchLocations(); // Refresh the list after creating a location
       } catch (error) {
-        window.notifyError('Error al crear la sede'); // Mostrar mensaje de error
+        window.notifyError('Error al crear la sede'); // Show error message
       }
     }
   };
@@ -39,11 +39,11 @@ export function CrearSede() {
 
     if (result.isConfirmed) {
       try {
-        await borrarSede(idSede);
-        window.notifySuccess('¡Sede eliminada con éxito!'); // Mostrar mensaje de éxito
-        ObtenerSedes(); // Actualizar la lista después de borrar una sede
+        await removeLocation(idSede);
+        window.notifySuccess('¡Sede eliminada con éxito!'); // Show success message
+        fetchLocations(); // Refresh the list after deleting a location
       } catch (error) {
-        window.notifyError('Error al eliminar la sede'); // Mostrar mensaje de error
+        window.notifyError('Error al eliminar la sede'); // Show error message
       }
     }
   };
@@ -90,8 +90,8 @@ export function CrearSede() {
           Sedes creadas
         </h3>
         <ul className="space-y-2">
-          {sedes.length > 0 ? (
-            sedes.map((sede) => (
+          {locations.length > 0 ? (
+            locations.map((sede) => (
               <li
                 key={sede.idSede}
                 className="bg-gray-100 p-4 rounded-lg flex justify-between items-center"

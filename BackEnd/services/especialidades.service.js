@@ -2,7 +2,7 @@ import { Especialidad, SedeDoctorEsp, HorarioDisponible } from '../models/index.
 import { sequelize } from '../models/index.js';
 import { Op } from 'sequelize';
 
-export const getSpecialtiesBySede = async (idSede) => {
+export const getSpecialtiesByLocation = async (idSede) => {
   const specialties = await Especialidad.findAll({
     where: { estado: 'Habilitado' },
     include: [{
@@ -16,14 +16,14 @@ export const getSpecialtiesBySede = async (idSede) => {
   return specialties;
 };
 
-export const getAllEnabledSpecialties = async () => {
+export const getAllSpecialties = async () => {
   const specialties = await Especialidad.findAll({
     where: { estado: 'Habilitado' },
   });
   return specialties;
 };
 
-export const getAvailableSpecialtiesForSede = async (idSede) => {
+export const getAvailableSpecialties = async (idSede) => {
   const assignedIds = await SedeDoctorEsp.findAll({
     where: { idSede, estado: 'Habilitado' },
     attributes: ['idEspecialidad'],
@@ -52,7 +52,7 @@ export const createNewSpecialty = async ({ nombre }) => {
     where: { nombre, estado: 'Habilitado' },
   });
   if (existing) {
-    throw { status: 400, message: 'Ya existe una especialidad habilitada con ese nombre.' };
+    throw { status: 400, message: 'An enabled specialty with that name already exists.' };
   }
   const specialty = await Especialidad.create({ nombre, estado: 'Habilitado' });
   return specialty;

@@ -1,10 +1,10 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useAuth } from '../../context/global/AuthProvider';
 import {
-  getEstudiosByPaciente,
-  downloadEstudio as downloadEstudioAPI,
+  getStudiesByPatient,
+  downloadStudy as downloadStudyAPI,
 } from '../../api/estudios.api';
-import { getPacienteDni } from '../../api/pacientes.api';
+import { getPatientByDni } from '../../api/pacientes.api';
 import { notifyError } from '../../components/ToastConfig';
 
 function VerEstudios() {
@@ -13,10 +13,10 @@ function VerEstudios() {
   const [pacienteData, setPacienteData] = useState(null);
   const [loading, setLoading] = useState(true);
 
-  // Cargar paciente por DNI
+  // Load patient by DNI
   const loadPaciente = useCallback(async () => {
     try {
-      const response = await getPacienteDni({ dni });
+      const response = await getPatientByDni({ dni });
       setPacienteData(response.data);
       return response.data.idPaciente;
     } catch (error) {
@@ -25,14 +25,14 @@ function VerEstudios() {
     }
   }, [dni]);
 
-  // Cargar estudios del paciente
+  // Load patient studies
   const loadEstudios = useCallback(async (idPaciente) => {
     try {
-      const response = await getEstudiosByPaciente(idPaciente);
+      const response = await getStudiesByPatient(idPaciente);
       setEstudios(response.data || []);
     } catch (error) {
       if (error.response?.status !== 404) {
-        notifyError('Error al cargar estudios');
+        notifyError('Error al cargar los estudios');
       }
       setEstudios([]);
     }
@@ -55,9 +55,9 @@ function VerEstudios() {
 
   const downloadEstudio = async (idEstudio, nombreArchivo) => {
     try {
-      const response = await downloadEstudioAPI(idEstudio);
+      const response = await downloadStudyAPI(idEstudio);
 
-      // Crear enlace de descarga
+      // Create download link
       const url = window.URL.createObjectURL(new Blob([response.data]));
       const link = document.createElement('a');
       link.href = url;
@@ -110,8 +110,8 @@ function VerEstudios() {
               Información del paciente
             </h2>
             <p className="text-gray-600">DNI: {dni}</p>
-            <p className="text-gray-600">Nombre: {pacienteData.nombre}</p>
-            <p className="text-gray-600">Apellido: {pacienteData.apellido}</p>
+            <p className="text-gray-600">Nombre: {pacienteData.usuario?.nombre}</p>
+            <p className="text-gray-600">Apellido: {pacienteData.usuario?.apellido}</p>
           </div>
         )}
 

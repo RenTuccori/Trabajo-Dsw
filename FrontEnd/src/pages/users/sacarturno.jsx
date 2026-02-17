@@ -8,23 +8,23 @@ import 'react-datepicker/dist/react-datepicker.css';
 export function SacarTurno() {
   const navigate = useNavigate();
   const {
-    sedes,
-    especialidades,
-    doctores,
-    ObtenerSedes,
-    ObtenerEspecialidades,
-    ObtenerDoctores,
-    fechas,
-    ObtenerFechas,
-    horarios,
-    ObtenerHorarios,
-    setFechaYHora,
+    locations,
+    specialties,
+    doctors,
+    fetchLocations,
+    fetchSpecialties,
+    fetchDoctors,
+    dates,
+    fetchAvailableDates,
+    schedules,
+    fetchAvailableSchedules,
+    setDateAndTime,
     setIdDoctor,
-    setIdEspecialidad,
-    setIdSede,
-    setEstado,
-    setFechaCancelacion,
-    setFechaConfirmacion,
+    setIdSpecialty,
+    setIdLocation,
+    setStatus,
+    setCancellationDate,
+    setConfirmationDate,
   } = usePacientes();
   const [selectedSede, setSelectedSede] = useState(null);
   const [selectedEspecialidad, setSelectedEspecialidad] = useState(null);
@@ -34,34 +34,34 @@ export function SacarTurno() {
   const [formatedFecha, setFormatedFecha] = useState(null);
 
   useEffect(() => {
-    ObtenerSedes();
+    fetchLocations();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const customStyles = {
     option: (provided, state) => ({
       ...provided,
-      backgroundColor: state.isFocused ? '#1e40af' : '#374151', // Ajusta los colores para que se alineen con el estilo
-      color: '#ffffff', // Texto blanco
-      padding: '10px', // Espaciado
+      backgroundColor: state.isFocused ? '#1e40af' : '#374151', // Adjust colors to align with the style
+      color: '#ffffff', // White text
+      padding: '10px', // Spacing
     }),
     control: (provided) => ({
       ...provided,
-      backgroundColor: 'white', // Fondo blanco del select
-      borderColor: '#1e40af', // Color del borde
-      borderRadius: '0.375rem', // Bordes redondeados (Tailwind: rounded-md)
-      boxShadow: '0 0 0 1px rgba(29, 78, 216, 0.1)', // Sombra sutil
-      padding: '5px', // Espaciado
+      backgroundColor: 'white', // White background for select
+      borderColor: '#1e40af', // Border color
+      borderRadius: '0.375rem', // Rounded borders (Tailwind: rounded-md)
+      boxShadow: '0 0 0 1px rgba(29, 78, 216, 0.1)', // Subtle shadow
+      padding: '5px', // Spacing
     }),
     menu: (provided) => ({
       ...provided,
-      border: '0.1rem solid #1e40af', // Borde del menú
-      borderRadius: '0.375rem', // Bordes redondeados
-      marginTop: '4px', // Espaciado superior
+      border: '0.1rem solid #1e40af', // Menu border
+      borderRadius: '0.375rem', // Rounded borders
+      marginTop: '4px', // Top spacing
     }),
     singleValue: (provided) => ({
       ...provided,
-      color: '#1e40af', // Color del valor seleccionado
+      color: '#1e40af', // Selected value color
     }),
   };
 
@@ -70,7 +70,7 @@ export function SacarTurno() {
     setSelectedEspecialidad(null);
     setSelectedDoctor(null);
     if (selectedOption) {
-      ObtenerEspecialidades({ idSede: selectedOption.value });
+      fetchSpecialties({ idSede: selectedOption.value });
     }
   };
 
@@ -78,7 +78,7 @@ export function SacarTurno() {
     setSelectedEspecialidad(selectedOption);
     setSelectedDoctor(null);
     if (selectedSede && selectedOption) {
-      ObtenerDoctores({
+      fetchDoctors({
         idSede: selectedSede.value,
         idEspecialidad: selectedOption.value,
       });
@@ -89,12 +89,12 @@ export function SacarTurno() {
     setSelectedDoctor(selectedOption);
     setSelectedFecha(null);
     if (selectedSede && selectedOption && selectedEspecialidad) {
-      ObtenerFechas({ selectedOption, selectedEspecialidad, selectedSede });
+      fetchAvailableDates({ selectedOption, selectedEspecialidad, selectedSede });
     }
   };
 
   /* const isDateAvailable = (date) => {
-        const result = fechas.some(f =>
+        const result = dates.some(f =>
             f.getFullYear() === date.getFullYear() &&
             f.getMonth() === date.getMonth() &&
             f.getDate() === (date.getDate() - 1)
@@ -105,22 +105,22 @@ export function SacarTurno() {
 
     const handleFechaChange = async (date) => {
         const year = date.getFullYear();
-        const month = (date.getMonth() + 1).toString().padStart(2, '0'); // Meses empiezan desde 0
+        const month = (date.getMonth() + 1).toString().padStart(2, '0'); // Months start from 0
         const day = (date.getDate()).toString().padStart(2, '0');
         date = `${year}-${month}-${day}`;
         setSelectedFecha(date);
         setSelectedHorario(null);
         if (selectedSede && date && selectedEspecialidad && selectedDoctor) {
-            ObtenerHorarios({ selectedDoctor, selectedEspecialidad, selectedSede, date });
+            fetchAvailableSchedules({ selectedDoctor, selectedEspecialidad, selectedSede, date });
         }
     };*/
 
   const isDateAvailable = (date) => {
-    // Aseguramos que la hora esté en 00:00 para evitar desfases invisibles
+    // Ensure time is set to 00:00 to avoid invisible offsets
     date.setHours(0, 0, 0, 0);
 
-    return fechas.some((f) => {
-      f.setHours(0, 0, 0, 0); // Aseguramos la misma hora en las fechas de comparación
+    return dates.some((f) => {
+      f.setHours(0, 0, 0, 0); // Ensure same time in comparison dates
       return (
         f.getFullYear() === date.getFullYear() &&
         f.getMonth() === date.getMonth() &&
@@ -129,16 +129,16 @@ export function SacarTurno() {
     });
   };
   const handleFechaChange = async (date) => {
-    // Aseguramos que la hora de la fecha seleccionada esté en 00:00 para evitar desfases
+    // Ensure selected date time is set to 00:00 to avoid offsets
     date.setHours(0, 0, 0, 0);
 
     const year = date.getFullYear();
-    const month = (date.getMonth() + 1).toString().padStart(2, '0'); // Meses empiezan desde 0
+    const month = (date.getMonth() + 1).toString().padStart(2, '0'); // Months start from 0
     const day = date.getDate().toString().padStart(2, '0');
 
     const formattedDate = `${year}-${month}-${day}`;
     setFormatedFecha(formattedDate);
-    setSelectedFecha(date); // Aquí mantenemos el objeto Date para el DatePicker
+    setSelectedFecha(date); // Keep the Date object for DatePicker
     setSelectedHorario(null);
 
     if (
@@ -147,7 +147,7 @@ export function SacarTurno() {
       selectedEspecialidad &&
       selectedDoctor
     ) {
-      await ObtenerHorarios({
+      await fetchAvailableSchedules({
         selectedDoctor,
         selectedEspecialidad,
         selectedSede,
@@ -158,13 +158,13 @@ export function SacarTurno() {
 
   const handleHorarioChange = (selectedOption) => {
     setSelectedHorario(selectedOption);
-    setFechaYHora(`${formatedFecha} ${selectedOption.value}`);
+    setDateAndTime(`${formatedFecha} ${selectedOption.value}`);
     setIdDoctor(selectedDoctor.value);
-    setIdEspecialidad(selectedEspecialidad.value);
-    setIdSede(selectedSede.value);
-    setEstado('Pendiente');
-    setFechaCancelacion(null);
-    setFechaConfirmacion(null);
+    setIdSpecialty(selectedEspecialidad.value);
+    setIdLocation(selectedSede.value);
+    setStatus('Pendiente');
+    setCancellationDate(null);
+    setConfirmationDate(null);
   };
 
   return (
@@ -174,7 +174,7 @@ export function SacarTurno() {
           <p className="text-center text-gray-600 text-lg">Sede</p>
           <Select
             className="react-select"
-            options={(sedes || []).map((sede) => ({
+            options={(locations || []).map((sede) => ({
               value: sede.idSede,
               label: sede.nombre,
             }))}
@@ -185,7 +185,7 @@ export function SacarTurno() {
           <p className="text-center text-gray-600 text-lg">Especialidad</p>
           <Select
             className="react-select"
-            options={(especialidades || []).map((especialidad) => ({
+            options={(specialties || []).map((especialidad) => ({
               value: especialidad.idEspecialidad,
               label: especialidad.nombre,
             }))}
@@ -197,9 +197,9 @@ export function SacarTurno() {
           <p className="text-center text-gray-600 text-lg">Doctores</p>
           <Select
             className="react-select"
-            options={(doctores || []).map((doctor) => ({
+            options={(doctors || []).map((doctor) => ({
               value: doctor.idDoctor,
-              label: doctor.nombreyapellido,
+              label: doctor.fullName,
             }))}
             value={selectedDoctor}
             onChange={handleDoctorChange}
@@ -213,13 +213,13 @@ export function SacarTurno() {
             filterDate={isDateAvailable}
             placeholderText="Selecciona una fecha"
             className="w-full border border-gray-300 rounded-lg p-2 focus:outline-none focus:border-blue-500"
-            disabled={!selectedDoctor} // Deshabilitar si no hay doctor seleccionado
-            dateFormat="yyyy-MM-dd" // Formato consistente
+            disabled={!selectedDoctor} // Disable if no doctor is selected
+            dateFormat="yyyy-MM-dd" // Consistent format
           />
           <p className="text-center text-gray-600 text-lg">Horario</p>
           <Select
             className="react-select"
-            options={(horarios || []).map((horario) => ({
+            options={(schedules || []).map((horario) => ({
               value: horario.hora_inicio,
               label: horario.hora_inicio,
             }))}

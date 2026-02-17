@@ -1,30 +1,30 @@
 import { AdministracionContext } from './AdministracionContext';
 import {
-  createSede,
-  deleteSede,
+  createLocation,
+  deleteLocation,
   createSpecialty,
   deleteSpecialty,
-  createObraSocial,
-  deleteObraSocial,
-  updateObraSocial,
-  createSeEspDoc,
+  createHealthInsurance,
+  deleteHealthInsurance,
+  updateHealthInsurance,
+  createCombination,
   createDoctor,
   updateDoctor,
   deleteDoctor,
-  deleteSeEspDoc,
-  getCombinaciones,
-  createHorarios,
-  getHorariosXDoctor,
-  updateHorarios,
-} from '../../api/admin.api.js'; // Asegúrate de tener una función para crear la sede en la API
+  deleteCombination,
+  getCombinations,
+  createSchedule,
+  getSchedulesByDoctor,
+  updateSchedule,
+} from '../../api/admin.api.js'; // Make sure to have a function to create the location in the API
 import { useContext, useState } from 'react';
-import { getSedes } from '../../api/sedes.api.js';
+import { getLocations } from '../../api/sedes.api.js';
 import {
-  getEspecialidades,
-  getAllSpecialities,
+  getSpecialties,
+  getAllSpecialties,
 } from '../../api/especialidades.api';
-import { getDoctores, getDoctorById } from '../../api/doctores.api';
-import { getObrasSociales } from '../../api/obrasociales.api.js';
+import { getAllDoctors, getDoctorById } from '../../api/doctores.api';
+import { getHealthInsuranceList } from '../../api/obrasociales.api.js';
 import { getUserDni, createUser, updateUser } from '../../api/usuarios.api.js';
 import PropTypes from 'prop-types';
 // eslint-disable-next-line react-refresh/only-export-components
@@ -39,57 +39,57 @@ export const useAdministracion = () => {
 };
 
 const AdministracionProvider = ({ children }) => {
-  const [sedes, setSedes] = useState([]); // Estado para almacenar las sedes
-  const [especialidades, setEspecialidades] = useState('');
-  const [obrasSociales, setObrasSociales] = useState('');
-  const [doctores, setDoctores] = useState('');
+  const [locations, setLocations] = useState([]); // State to store locations
+  const [specialties, setSpecialties] = useState('');
+  const [healthInsuranceList, setHealthInsuranceList] = useState('');
+  const [doctors, setDoctors] = useState('');
   const [doctor, setDoctor] = useState('');
-  const [usuario, setUsuario] = useState({});
+  const [user, setUser] = useState({});
   const [selectedDoctor, setSelectedDoctor] = useState(null);
-  const [selectedEspecialidad, setSelectedEspecialidad] = useState(null);
-  const [selectedSede, setSelectedSede] = useState(null);
-  const [combinaciones, setCombinaciones] = useState([]);
-  const [horariosDoctor, setHorariosDoctor] = useState([]);
+  const [selectedSpecialty, setSelectedSpecialty] = useState(null);
+  const [selectedLocation, setSelectedLocation] = useState(null);
+  const [combinations, setCombinations] = useState([]);
+  const [doctorSchedules, setDoctorSchedules] = useState([]);
 
-  async function crearNuevaSede({ nombre, direccion }) {
+  async function createNewLocation({ nombre, direccion }) {
     try {
-      await createSede({ nombre, direccion });
+      await createLocation({ nombre, direccion });
     } catch (error) {
       if (error.response) {
         if (error.response.status === 400) {
           window.notifyError('La sede ya está habilitada.');
         } else if (error.response.status === 500) {
-          window.notifyError('Error en el servidor. Inténtalo de nuevo más tarde.');
+          window.notifyError('Error del servidor. Intente nuevamente más tarde.');
         } else {
           window.notifyError('Ocurrió un error inesperado.');
         }
       } else {
-        window.notifyError('Error de red o de conexión.');
+        window.notifyError('Error de red o conexión.');
       }
       throw error;
     }
   }
 
-  async function ObtenerSedes() {
-    const response = await getSedes();
-    setSedes(response.data);
+  async function fetchLocations() {
+    const response = await getLocations();
+    setLocations(response.data);
   }
 
-  async function borrarSede(idSede) {
+  async function removeLocation(idSede) {
     try {
-      await deleteSede(idSede);
+      await deleteLocation(idSede);
     } catch (error) {
-      window.notifyError('Error al borrar la sede.');
+      window.notifyError('Error al eliminar la sede.');
       throw error;
     }
   }
 
-  //Especialidad
-  async function ObtenerEspecialidades({ idSede }) {
-    const response = await getEspecialidades({ idSede });
-    setEspecialidades(response.data);
+  // Specialty
+  async function fetchSpecialtiesByLocation({ idSede }) {
+    const response = await getSpecialties({ idSede });
+    setSpecialties(response.data);
   }
-  async function crearEspecialidad({ nombre }) {
+  async function createNewSpecialty({ nombre }) {
     try {
       await createSpecialty({ nombre });
     } catch (error) {
@@ -97,25 +97,25 @@ const AdministracionProvider = ({ children }) => {
       throw error;
     }
   }
-  async function borrarEspecialidad(idEspecialidad) {
+  async function removeSpecialty(idEspecialidad) {
     try {
       await deleteSpecialty(idEspecialidad);
     } catch (error) {
-      window.notifyError('Error al borrar la especialidad.');
+      window.notifyError('Error al eliminar la especialidad.');
       throw error;
     }
   }
-  async function ObtenerEspecialidadesDisponibles() {
-    const response = await getAllSpecialities();
-    setEspecialidades(response.data);
+  async function fetchAllSpecialties() {
+    const response = await getAllSpecialties();
+    setSpecialties(response.data);
   }
 
-  //Doctor
-  async function ObtenerDoctores() {
-    const response = await getDoctores();
-    setDoctores(response.data);
+  // Doctor
+  async function fetchDoctors() {
+    const response = await getAllDoctors();
+    setDoctors(response.data);
   }
-  async function ObtenerDoctorPorId(idDoctor) {
+  async function fetchDoctorById(idDoctor) {
     try {
       const response = await getDoctorById(idDoctor);
       setDoctor(response.data);
@@ -125,22 +125,22 @@ const AdministracionProvider = ({ children }) => {
     }
   }
 
-  async function CreaDoctor({ dni, duracionTurno, contra }) {
+  async function createNewDoctor({ dni, duracionTurno, contra }) {
     try {
       await createDoctor({ dni, duracionTurno, contra });
     } catch {
       window.notifyError('Error al crear el doctor.');
     }
   }
-  async function borrarDoctor(idDoctor) {
+  async function removeDoctor(idDoctor) {
     try {
       await deleteDoctor(idDoctor);
     } catch (error) {
-      window.notifyError('Error al borrar el doctor.');
+      window.notifyError('Error al eliminar el doctor.');
       throw error;
     }
   }
-  async function actualizarDoctor({ idDoctor, duracionTurno, contra }) {
+  async function updateDoctorData({ idDoctor, duracionTurno, contra }) {
     try {
       const response = await updateDoctor({ idDoctor, duracionTurno, contra });
       return response;
@@ -149,45 +149,45 @@ const AdministracionProvider = ({ children }) => {
     }
   }
 
-  //Obra Social
-  async function crearObraSocial({ nombre }) {
+  // Health Insurance
+  async function createNewHealthInsurance({ nombre }) {
     try {
-      await createObraSocial({ nombre });
+      await createHealthInsurance({ nombre });
     } catch {
       window.notifyError('Error al crear la obra social.');
     }
   }
 
-  async function ObtenerOS() {
+  async function fetchHealthInsurance() {
     try {
-      const response = await getObrasSociales();
-      setObrasSociales(response.data);
+      const response = await getHealthInsuranceList();
+      setHealthInsuranceList(response.data);
     } catch {
-      window.notifyError('Error al obtener las obras sociales.');
+      window.notifyError('Error al obtener la lista de obras sociales.');
     }
   }
 
-  async function borrarObraSocial(idObraSocial) {
+  async function removeHealthInsurance(idObraSocial) {
     try {
-      await deleteObraSocial(idObraSocial);
+      await deleteHealthInsurance(idObraSocial);
     } catch (error) {
-      window.notifyError('Error al borrar la obra social.');
+      window.notifyError('Error al eliminar la obra social.');
       throw error;
     }
   }
 
-  async function actualizarObraSocial({ idObraSocial, nombre }) {
+  async function updateHealthInsuranceData({ idObraSocial, nombre }) {
     try {
-      await updateObraSocial({ idObraSocial, nombre });
+      await updateHealthInsurance({ idObraSocial, nombre });
     } catch {
       window.notifyError('Error al actualizar la obra social.');
     }
   }
 
-  //Combinaciones de sede, especialidad y doctor
-  async function crearSedEspDoc({ idSede, idEspecialidad, idDoctor }) {
+  //Combinations of location, specialty and doctor
+  async function createNewCombination({ idSede, idEspecialidad, idDoctor }) {
     try {
-      await createSeEspDoc({
+      await createCombination({
         idSede,
         idEspecialidad,
         idDoctor,
@@ -198,31 +198,31 @@ const AdministracionProvider = ({ children }) => {
     }
   }
 
-  async function borrarSedEspDoc({ idSede, idDoctor, idEspecialidad }) {
+  async function removeCombination({ idSede, idDoctor, idEspecialidad }) {
     try {
-      await deleteSeEspDoc({
+      await deleteCombination({
         idSede,
         idDoctor,
         idEspecialidad,
       });
     } catch (error) {
-      window.notifyError('Error al borrar la combinación.');
+      window.notifyError('Error al eliminar la combinación.');
       throw error;
     }
   }
 
-  async function obtenerCombinaciones() {
+  async function fetchCombinations() {
     try {
-      const response = await getCombinaciones();
-      setCombinaciones(response.data);
+      const response = await getCombinations();
+      setCombinations(response.data);
     } catch (error) {
       window.notifyError('Error al obtener las combinaciones.');
       throw error;
     }
   }
 
-  //Horarios
-  async function crearHorarios({
+  // Schedules
+  async function createNewSchedule({
     idSede,
     idDoctor,
     idEspecialidad,
@@ -232,7 +232,7 @@ const AdministracionProvider = ({ children }) => {
     estado,
   }) {
     try {
-      await createHorarios({
+      await createSchedule({
         idSede,
         idDoctor,
         idEspecialidad,
@@ -245,7 +245,7 @@ const AdministracionProvider = ({ children }) => {
       window.notifyError('Error al crear el horario.');
     }
   }
-  async function actualizarHorarios({
+  async function updateScheduleData({
     idSede,
     idDoctor,
     idEspecialidad,
@@ -255,7 +255,7 @@ const AdministracionProvider = ({ children }) => {
     estado,
   }) {
     try {
-      await updateHorarios({
+      await updateSchedule({
         idSede,
         idDoctor,
         idEspecialidad,
@@ -268,39 +268,39 @@ const AdministracionProvider = ({ children }) => {
       window.notifyError('Error al actualizar el horario.');
     }
   }
-  async function obtenerHorariosXDoctor({ idSede, idEspecialidad, idDoctor }) {
+  async function fetchSchedulesByDoctor({ idSede, idEspecialidad, idDoctor }) {
     try {
-      const response = await getHorariosXDoctor({
+      const response = await getSchedulesByDoctor({
         idSede,
         idEspecialidad,
         idDoctor,
       });
-      setHorariosDoctor(response.data);
+      setDoctorSchedules(response.data);
     } catch (error) {
       if (error.response && error.response.status === 404) {
-        setHorariosDoctor([]);
+        setDoctorSchedules([]);
       }
       throw error;
     }
   }
 
-  //Usuario
+  // User
 
-  async function ObtenerUsuarioDni(dni) {
+  async function fetchUserByDni(dni) {
     try {
       const response = await getUserDni({ dni });
-      setUsuario(response.data);
+      setUser(response.data);
     } catch (error) {
       window.notifyError('Error al obtener el paciente.');
       throw error;
     }
   }
 
-  async function CrearUsuario(data) {
+  async function createNewUser(data) {
     const response = await createUser(data);
-    setUsuario(response.data);
+    setUser(response.data);
   }
-  async function actualizarUsuario(data) {
+  async function updateUserData(data) {
     try {
       const response = await updateUser(data);
       return response;
@@ -312,47 +312,47 @@ const AdministracionProvider = ({ children }) => {
   return (
     <AdministracionContext.Provider
       value={{
-        actualizarUsuario,
-        sedes,
-        crearNuevaSede,
-        ObtenerSedes,
-        borrarSede,
-        crearEspecialidad,
-        especialidades,
-        setEspecialidades,
-        borrarEspecialidad,
-        crearObraSocial,
-        ObtenerOS,
-        obrasSociales,
-        borrarObraSocial,
-        actualizarObraSocial,
-        crearSedEspDoc,
-        ObtenerEspecialidades,
-        ObtenerDoctores,
-        doctores,
+        updateUserData,
+        locations,
+        createNewLocation,
+        fetchLocations,
+        removeLocation,
+        createNewSpecialty,
+        specialties,
+        setSpecialties,
+        removeSpecialty,
+        createNewHealthInsurance,
+        fetchHealthInsurance,
+        healthInsuranceList,
+        removeHealthInsurance,
+        updateHealthInsuranceData,
+        createNewCombination,
+        fetchSpecialtiesByLocation,
+        fetchDoctors,
+        doctors,
         selectedDoctor,
         setSelectedDoctor,
-        selectedEspecialidad,
-        setSelectedEspecialidad,
-        selectedSede,
-        setSelectedSede,
-        ObtenerEspecialidadesDisponibles,
-        CreaDoctor,
-        borrarDoctor,
-        actualizarDoctor,
-        ObtenerUsuarioDni,
-        CrearUsuario,
-        setUsuario,
-        usuario,
-        borrarSedEspDoc,
-        obtenerCombinaciones,
-        combinaciones,
-        ObtenerDoctorPorId,
+        selectedSpecialty,
+        setSelectedSpecialty,
+        selectedLocation,
+        setSelectedLocation,
+        fetchAllSpecialties,
+        createNewDoctor,
+        removeDoctor,
+        updateDoctorData,
+        fetchUserByDni,
+        createNewUser,
+        setUser,
+        user,
+        removeCombination,
+        fetchCombinations,
+        combinations,
+        fetchDoctorById,
         doctor,
-        crearHorarios,
-        obtenerHorariosXDoctor,
-        horariosDoctor,
-        actualizarHorarios,
+        createNewSchedule,
+        fetchSchedulesByDoctor,
+        doctorSchedules,
+        updateScheduleData,
       }}
     >
       {children}

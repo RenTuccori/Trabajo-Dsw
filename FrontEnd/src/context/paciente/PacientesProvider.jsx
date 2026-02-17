@@ -3,22 +3,22 @@ import PropTypes from 'prop-types';
 import { useAuth } from '../global/AuthProvider';
 
 import { PacientesContext } from './PacientesContext';
-import { getSedes } from '../../api/sedes.api';
+import { getLocations } from '../../api/sedes.api';
 import {
-  getEspecialidades,
-  getEspecialidadById,
+  getSpecialties,
+  getSpecialtyById,
 } from '../../api/especialidades.api';
 import { getDoctors, getDoctorById } from '../../api/doctores.api';
-import { getFechasDispTodos, getHorariosDisp } from '../../api/horarios.api';
+import { getAvailableDates, getAvailableSchedules } from '../../api/horarios.api';
 import { createUser, getUserDni, updateUser } from '../../api/usuarios.api';
-import { getObrasSociales } from '../../api/obrasociales.api';
-import { createPaciente, getPacienteDni } from '../../api/pacientes.api';
-import { getSedeById } from '../../api/sedes.api';
+import { getHealthInsuranceList } from '../../api/obrasociales.api';
+import { createPatient, getPatientByDni } from '../../api/pacientes.api';
+import { getLocationById } from '../../api/sedes.api';
 import {
-  createTurno,
-  getTurnosPaciente,
-  confirmarTurno,
-  cancelarTurno,
+  createAppointment,
+  getAppointmentsByPatient,
+  confirmAppointment,
+  cancelAppointment,
 } from '../../api/turnos.api';
 import { sendEmail } from '../../api/email.api';
 
@@ -31,237 +31,237 @@ export const usePacientes = () => {
 };
 
 const PacientesProvider = ({ children }) => {
-  //proveedor para acceder a los datos de los empleados desde cualquier componente
-  const [sedes, setSedes] = useState([]);
-  const [especialidades, setEspecialidades] = useState([]);
-  const [doctores, setDoctores] = useState([]);
-  const [fechas, setFechas] = useState([]);
-  const [horarios, setHorarios] = useState([]);
-  const [obraSociales, setObraSociales] = useState([]);
-  const [usuario, setUsuario] = useState({});
-  const [idPacienteCreado, setidPacienteCreado] = useState('');
-  const [nombreEspecialidad, setNombreEspecialidad] = useState('');
-  const [nombreDoctor, setNombreDoctor] = useState('');
-  const [apellidoDoctor, setApellidoDoctor] = useState('');
-  const [nombreSede, setNombreSede] = useState('');
-  const [direccionSede, setDireccionSede] = useState('');
-  const [fechaYHora, setFechaYHora] = useState('');
+  // Provider to access patient data from any component
+  const [locations, setLocations] = useState([]);
+  const [specialties, setSpecialties] = useState([]);
+  const [doctors, setDoctors] = useState([]);
+  const [dates, setDates] = useState([]);
+  const [schedules, setSchedules] = useState([]);
+  const [healthInsuranceList, setHealthInsuranceList] = useState([]);
+  const [user, setUser] = useState({});
+  const [createdPatientId, setCreatedPatientId] = useState('');
+  const [specialtyName, setSpecialtyName] = useState('');
+  const [doctorName, setDoctorName] = useState('');
+  const [doctorLastName, setDoctorLastName] = useState('');
+  const [locationName, setLocationName] = useState('');
+  const [locationAddress, setLocationAddress] = useState('');
+  const [dateAndTime, setDateAndTime] = useState('');
   const [idDoctor, setIdDoctor] = useState('');
-  const [idEspecialidad, setIdEspecialidad] = useState('');
-  const [idSede, setIdSede] = useState('');
-  const [idPaciente, setIdPaciente] = useState('');
-  const [estado, setEstado] = useState('');
-  const [fechaCancelacion, setFechaCancelacion] = useState('');
-  const [fechaConfirmacion, setFechaConfirmacion] = useState('');
-  const [turnos, setTurnos] = useState([]);
-  const [usuarioDni, setUsuarioDni] = useState({});
-  const [mailUsuario, setMailUsuario] = useState('');
+  const [idSpecialty, setIdSpecialty] = useState('');
+  const [idLocation, setIdLocation] = useState('');
+  const [idPatient, setIdPatient] = useState('');
+  const [status, setStatus] = useState('');
+  const [cancellationDate, setCancellationDate] = useState('');
+  const [confirmationDate, setConfirmationDate] = useState('');
+  const [appointments, setAppointments] = useState([]);
+  const [userByDni, setUserByDni] = useState({});
+  const [userEmail, setUserEmail] = useState('');
 
   const { dni } = useAuth();
 
-  async function ActualizarUsuario(data) {
+  async function updateUserData(data) {
     const response = await updateUser(data);
     return response;
   }
 
-  async function ObtenerSedes() {
-    const response = await getSedes();
-    setSedes(response.data);
+  async function fetchLocations() {
+    const response = await getLocations();
+    setLocations(response.data);
   }
 
-  async function ObtenerEspecialidades({ idSede }) {
-    const response = await getEspecialidades({ idSede });
-    setEspecialidades(response.data);
+  async function fetchSpecialties({ idSede }) {
+    const response = await getSpecialties({ idSede });
+    setSpecialties(response.data);
   }
 
-  async function ObtenerDoctores({ idSede, idEspecialidad }) {
+  async function fetchDoctors({ idSede, idEspecialidad }) {
     const response = await getDoctors({ idSede, idEspecialidad });
-    setDoctores(response.data);
+    setDoctors(response.data);
   }
-  async function ObtenerFechas({
+  async function fetchAvailableDates({
     selectedOption,
     selectedEspecialidad,
     selectedSede,
   }) {
-    const response = await getFechasDispTodos({
+    const response = await getAvailableDates({
       idDoctor: selectedOption.value,
       idEspecialidad: selectedEspecialidad.value,
       idSede: selectedSede.value,
     });
-    const fechasFormateadas = response.data.map((item) => {
-      const [year, month, day] = item.fecha.split('-'); // Descomponer la fecha
-      return new Date(Number(year), Number(month) - 1, Number(day)); // Crear la fecha (mes empieza en 0)
+    const formattedDates = response.data.map((item) => {
+      const [year, month, day] = item.fecha.split('-'); // Parse the date
+      return new Date(Number(year), Number(month) - 1, Number(day)); // Create date (month starts at 0)
     });
 
-    setFechas(fechasFormateadas);
+    setDates(formattedDates);
   }
-  async function ObtenerHorarios({
+  async function fetchAvailableSchedules({
     selectedDoctor,
     selectedEspecialidad,
     selectedSede,
     date,
   }) {
-    const response = await getHorariosDisp({
+    const response = await getAvailableSchedules({
       idDoctor: selectedDoctor.value,
       idEspecialidad: selectedEspecialidad.value,
       idSede: selectedSede.value,
       fecha: date,
     });
-    setHorarios(response.data);
+    setSchedules(response.data);
   }
 
   useEffect(() => {
     if (dni) {
-      ObtenerPacienteDni();
+      fetchPatientByDni();
     }
   }, [dni]);
 
-  async function ObtenerObraSociales() {
-    const response = await getObrasSociales();
-    setObraSociales(response.data);
+  async function fetchHealthInsurance() {
+    const response = await getHealthInsuranceList();
+    setHealthInsuranceList(response.data);
   }
 
-  async function CrearUsuario(data) {
+  async function createNewUser(data) {
     const response = await createUser(data);
-    setUsuario(response.data);
-    createPaciente({ dni: data.dni });
+    setUser(response.data);
+    createPatient({ dni: data.dni });
   }
 
-  async function CrearPaciente({ dni }) {
-    const response = await createPaciente({ dni });
-    setidPacienteCreado(response.data.idPaciente);
+  async function createNewPatient({ dni }) {
+    const response = await createPatient({ dni });
+    setCreatedPatientId(response.data.idPaciente);
   }
 
-  async function ObtenerEspecialidadId() {
-    const response = await getEspecialidadById(idEspecialidad);
-    setNombreEspecialidad(response.data.nombre);
+  async function fetchSpecialtyById() {
+    const response = await getSpecialtyById(idSpecialty);
+    setSpecialtyName(response.data.nombre);
   }
 
-  async function ObtenerDoctorId() {
+  async function fetchDoctorById() {
     const response = await getDoctorById(idDoctor);
-    setNombreDoctor(response.data.nombre);
-    setApellidoDoctor(response.data.apellido);
+    setDoctorName(response.data.nombre);
+    setDoctorLastName(response.data.apellido);
   }
 
-  async function ObtenerSedeId() {
-    const response = await getSedeById(idSede);
-    setNombreSede(response.data.nombre);
-    setDireccionSede(response.data.direccion);
+  async function fetchLocationById() {
+    const response = await getLocationById(idLocation);
+    setLocationName(response.data.nombre);
+    setLocationAddress(response.data.direccion);
   }
 
-  async function CrearTurno() {
-    await createTurno({
-      idPaciente,
-      fechaYHora,
-      fechaCancelacion,
-      fechaConfirmacion,
-      estado,
-      idEspecialidad,
+  async function createNewAppointment() {
+    await createAppointment({
+      idPaciente: idPatient,
+      fechaYHora: dateAndTime,
+      fechaCancelacion: cancellationDate,
+      fechaConfirmacion: confirmationDate,
+      estado: status,
+      idEspecialidad: idSpecialty,
       idDoctor,
-      idSede,
+      idSede: idLocation,
     });
   }
 
-  async function ObtenerPacienteDni() {
-    const reponse = await getPacienteDni({ dni });
-    setIdPaciente(reponse.data.idPaciente);
+  async function fetchPatientByDni() {
+    const reponse = await getPatientByDni({ dni });
+    setIdPatient(reponse.data.idPaciente);
   }
 
-  async function ObtenerTurnosPaciente() {
+  async function fetchPatientAppointments() {
     try {
-      const response = await getTurnosPaciente({ dni });
+      const response = await getAppointmentsByPatient({ dni });
       if (response && response.data) {
-        setTurnos(response.data);
+        setAppointments(response.data);
       } else {
-        setTurnos([]);
+        setAppointments([]);
         window.notifyError('Error al obtener los turnos');
       }
     } catch {
-      setTurnos([]);
+      setAppointments([]);
       window.notifyError('Error al obtener los turnos');
     }
   }
 
-  async function ConfirmarTurno({ idTurno }) {
-    await confirmarTurno({ idTurno });
-    setTurnos((prevTurnos) =>
-      prevTurnos.map((turno) =>
+  async function confirmAppointmentAction({ idTurno }) {
+    await confirmAppointment({ idTurno });
+    setAppointments((prevAppointments) =>
+      prevAppointments.map((turno) =>
         turno.idTurno === idTurno ? { ...turno, estado: 'Confirmado' } : turno
       )
     );
   }
 
-  async function ObtenerUsuarioDni() {
+  async function fetchUserByDni() {
     try {
       const response = await getUserDni({ dni });
       if (response && response.data) {
-        setUsuarioDni(response.data);
-        setMailUsuario(response.data.email);
+        setUserByDni(response.data);
+        setUserEmail(response.data.email);
       } else {
-        window.notifyError('Error al obtener los datos del usuario');
+        window.notifyError('Error al obtener datos del usuario');
       }
     } catch {
-      window.notifyError('Error al obtener los datos del usuario');
+      window.notifyError('Error al obtener datos del usuario');
     }
   }
 
-  async function CancelarTurno({ idTurno }) {
-    await cancelarTurno({ idTurno });
-    setTurnos((prevTurnos) =>
-      prevTurnos.map((turno) =>
+  async function cancelAppointmentAction({ idTurno }) {
+    await cancelAppointment({ idTurno });
+    setAppointments((prevAppointments) =>
+      prevAppointments.map((turno) =>
         turno.idTurno === idTurno ? { ...turno, estado: 'Cancelado' } : turno
       )
     );
   }
-  async function MandarMail(data) {
+  async function sendEmailAction(data) {
     await sendEmail(data);
   }
   return (
     <PacientesContext.Provider
       value={{
-        sedes,
-        especialidades,
-        doctores,
-        ObtenerSedes,
-        ObtenerEspecialidades,
-        ObtenerDoctores,
-        fechas,
-        ObtenerFechas,
-        horarios,
-        ObtenerHorarios,
-        obraSociales,
-        ObtenerObraSociales,
-        idPacienteCreado,
-        ObtenerPacienteDni,
-        usuario,
-        CrearPaciente,
-        CrearUsuario,
-        ObtenerDoctorId,
-        ObtenerEspecialidadId,
-        ObtenerSedeId,
-        nombreDoctor,
-        nombreEspecialidad,
-        nombreSede,
-        apellidoDoctor,
-        direccionSede,
-        CrearTurno,
-        fechaYHora,
-        setFechaYHora,
+        locations,
+        specialties,
+        doctors,
+        fetchLocations,
+        fetchSpecialties,
+        fetchDoctors,
+        dates,
+        fetchAvailableDates,
+        schedules,
+        fetchAvailableSchedules,
+        healthInsuranceList,
+        fetchHealthInsurance,
+        createdPatientId,
+        fetchPatientByDni,
+        user,
+        createNewPatient,
+        createNewUser,
+        fetchDoctorById,
+        fetchSpecialtyById,
+        fetchLocationById,
+        doctorName,
+        specialtyName,
+        locationName,
+        doctorLastName,
+        locationAddress,
+        createNewAppointment,
+        dateAndTime,
+        setDateAndTime,
         setIdDoctor,
-        setIdEspecialidad,
-        setIdSede,
-        setEstado,
-        setFechaCancelacion,
-        setFechaConfirmacion,
-        ObtenerTurnosPaciente,
-        turnos,
-        ConfirmarTurno,
-        CancelarTurno,
-        ObtenerUsuarioDni,
-        usuarioDni,
-        ActualizarUsuario,
-        MandarMail,
-        mailUsuario,
+        setIdSpecialty,
+        setIdLocation,
+        setStatus,
+        setCancellationDate,
+        setConfirmationDate,
+        fetchPatientAppointments,
+        appointments,
+        confirmAppointmentAction,
+        cancelAppointmentAction,
+        fetchUserByDni,
+        userByDni,
+        updateUserData,
+        sendEmailAction,
+        userEmail,
       }}
     >
       {children}

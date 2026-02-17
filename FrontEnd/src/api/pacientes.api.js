@@ -2,7 +2,7 @@ import axios from 'axios';
 const dbUrl = import.meta.env.VITE_DB_URL;
 import axiosInstance from './axiosInstance';
 
-export const getPacientes = async () => {
+export const getPatients = async () => {
   try {
     const response = await axiosInstance.get(`patient`);
     return response;
@@ -11,7 +11,7 @@ export const getPacientes = async () => {
   }
 };
 
-export const getPacienteDni = async ({ dni }) => {
+export const getPatientByDni = async ({ dni }) => {
   try {
     const response = await axiosInstance.post(`patientdni`, { dni });
     return response;
@@ -20,6 +20,6 @@ export const getPacienteDni = async ({ dni }) => {
   }
 };
 
-export const createPaciente = async ({ dni }) => {
+export const createPatient = async ({ dni }) => {
   return await axios.post(`http://${dbUrl}/api/patientcreate`, { dni });
 };

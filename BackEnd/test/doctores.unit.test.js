@@ -1,9 +1,9 @@
 import { jest } from '@jest/globals';
 
 const mockService = {
-  getDoctorsBySedEsp: jest.fn(),
-  getAvailableDoctorsForSede: jest.fn(),
-  getAllEnabledDoctors: jest.fn(),
+  getDoctorsByLocationSpecialty: jest.fn(),
+  getAllAvailableDoctors: jest.fn(),
+  getAllDoctors: jest.fn(),
   findDoctorByDni: jest.fn(),
   findDoctorById: jest.fn(),
   authenticateDoctor: jest.fn(),
@@ -17,10 +17,10 @@ jest.unstable_mockModule('../services/doctores.service.js', () => mockService);
 const {
   getDoctors,
   getAvailableDoctors,
-  getDoctores,
+  getAllDoctors,
   getDoctorByDni,
   getDoctorById,
-  getDoctorByDniContra,
+  getDoctorByCredentials,
   createDoctor,
   deleteDoctor,
   updateDoctor,
@@ -43,17 +43,17 @@ describe('Doctores Controller – Unit Tests', () => {
     it('should return doctors for sede and especialidad', async () => {
       req.body = { idSede: 1, idEspecialidad: 2 };
       const docs = [{ idDoctor: 1 }];
-      mockService.getDoctorsBySedEsp.mockResolvedValue(docs);
+      mockService.getDoctorsByLocationSpecialty.mockResolvedValue(docs);
 
       await getDoctors(req, res);
 
-      expect(mockService.getDoctorsBySedEsp).toHaveBeenCalledWith(1, 2);
+      expect(mockService.getDoctorsByLocationSpecialty).toHaveBeenCalledWith(1, 2);
       expect(res.json).toHaveBeenCalledWith(docs);
     });
 
     it('should return 404 when no doctors found', async () => {
       req.body = { idSede: 1, idEspecialidad: 2 };
-      mockService.getDoctorsBySedEsp.mockResolvedValue([]);
+      mockService.getDoctorsByLocationSpecialty.mockResolvedValue([]);
 
       await getDoctors(req, res);
 
@@ -61,12 +61,12 @@ describe('Doctores Controller – Unit Tests', () => {
     });
   });
 
-  describe('getDoctorByDniContra', () => {
+  describe('getDoctorByCredentials', () => {
     it('should return JWT for valid credentials', async () => {
       req.body = { dni: 12345678, contra: 'pass' };
       mockService.authenticateDoctor.mockResolvedValue({ token: 'jwt.token' });
 
-      await getDoctorByDniContra(req, res);
+      await getDoctorByCredentials(req, res);
 
       expect(res.json).toHaveBeenCalledWith('jwt.token');
     });
@@ -75,7 +75,7 @@ describe('Doctores Controller – Unit Tests', () => {
       req.body = { dni: 99999999, contra: 'wrong' };
       mockService.authenticateDoctor.mockResolvedValue(null);
 
-      await getDoctorByDniContra(req, res);
+      await getDoctorByCredentials(req, res);
 
       expect(res.status).toHaveBeenCalledWith(404);
     });
@@ -121,7 +121,7 @@ describe('Doctores Controller – Unit Tests', () => {
 
       await updateDoctor(req, res);
 
-      expect(res.json).toHaveBeenCalledWith({ message: 'Doctor actualizado' });
+      expect(res.json).toHaveBeenCalledWith({ message: 'Doctor updated' });
     });
   });
 });

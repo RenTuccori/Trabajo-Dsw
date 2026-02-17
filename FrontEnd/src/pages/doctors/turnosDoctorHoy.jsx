@@ -6,11 +6,11 @@ import '../../estilos/home.css';
 import '../../estilos/verTurnos.css';
 
 export function TurnosDoctorHoy() {
-  const { turnosHoy, TurnosHoy } = useDoctores();
+  const { appointmentsToday, fetchToday } = useDoctores();
   const navigate = useNavigate();
 
   useEffect(() => {
-    TurnosHoy();
+    fetchToday();
   }, []);
 
   const formatFechaHora = (fechaYHora) => {
@@ -33,8 +33,8 @@ export function TurnosDoctorHoy() {
           Turnos de Hoy
         </h1>
         <div className="space-y-4">
-          {turnosHoy && turnosHoy.length > 0 ? (
-            turnosHoy.map((turno, index) => (
+          {appointmentsToday && appointmentsToday.length > 0 ? (
+            appointmentsToday.map((turno, index) => (
               <div
                 key={index}
                 className="bg-gray-50 rounded-lg p-4 shadow-sm mb-4"
@@ -56,7 +56,7 @@ export function TurnosDoctorHoy() {
                   <strong>DNI Paciente:</strong> {turno.dni}
                 </p>
                 <p>
-                  <strong>Apellido y Nombre:</strong> {turno.nomyapel}
+                  <strong>Apellido y Nombre:</strong> {turno.fullName}
                 </p>
               </div>
             ))

@@ -15,7 +15,7 @@ import jwt from 'jsonwebtoken';
 import config from 'dotenv';
 import { sequelize } from './models/index.js';
 
-import { startAutoCancelTurnos } from './autoCancelTurnos.js';
+import { startAutoCancelAppointments } from './autoCancelTurnos.js';
 import { startAutoReminderEmails } from './autoreminderEmails.js';
 
 config.config();
@@ -35,13 +35,13 @@ app.use((req, res, next) => {
     token = authHeader.split(' ')[1];
   }
 
-  req.session = { rol: null };
+  req.session = { role: null };
 
   try {
     data = jwt.verify(token, JWT_SECRET);
     Object.assign(req.session, data);
   } catch {
-    req.session.rol = null;
+    req.session.role = null;
   }
   next();
 });
@@ -58,7 +58,7 @@ app.use(adminRouter);
 app.use(emailRoutes);
 app.use(estudiosRouter);
 
-startAutoCancelTurnos();
+startAutoCancelAppointments();
 startAutoReminderEmails();
 
 const startServer = async () => {

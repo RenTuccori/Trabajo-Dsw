@@ -3,10 +3,10 @@ import { BrowserRouter } from 'react-router-dom';
 import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { ProtectedRoute } from '../components/ProtectedRoute.jsx';
 
-// Mock del AuthProvider
+// Mock of AuthProvider
 const mockComprobarToken = vi.fn();
 
-// Mock del contexto de autenticación
+// Mock of authentication context
 vi.mock('../context/global/AuthProvider', () => ({
   useAuth: () => ({
     comprobarToken: mockComprobarToken,

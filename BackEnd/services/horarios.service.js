@@ -1,7 +1,7 @@
 import { sequelize } from '../models/index.js';
 import { QueryTypes } from 'sequelize';
 
-export const getFechasDispDocEspSed = async (idDoctor, idEspecialidad, idSede) => {
+export const getAvailableDatesByDocSpecLoc = async (idDoctor, idEspecialidad, idSede) => {
   const [results] = await sequelize.query(`
     WITH RECURSIVE time_slots AS (
       SELECT 
@@ -47,7 +47,7 @@ export const getFechasDispDocEspSed = async (idDoctor, idEspecialidad, idSede) =
   return results;
 };
 
-export const getFechasDispEspSed = async (idEspecialidad, idSede) => {
+export const getAvailableDatesBySpecLoc = async (idEspecialidad, idSede) => {
   const [results] = await sequelize.query(`
     WITH RECURSIVE time_slots AS (
       SELECT 
@@ -92,7 +92,7 @@ export const getFechasDispEspSed = async (idEspecialidad, idSede) => {
   return results;
 };
 
-export const getHorariosDispDocEspSed = async (idDoctor, idEspecialidad, idSede, fecha) => {
+export const getAvailableSchedulesByDocSpecLoc = async (idDoctor, idEspecialidad, idSede, fecha) => {
   const [results] = await sequelize.query(`
     WITH RECURSIVE time_slots AS (
       SELECT hd.idSede, hd.idDoctor, hd.idEspecialidad, hd.dia,
@@ -135,7 +135,7 @@ export const getHorariosDispDocEspSed = async (idDoctor, idEspecialidad, idSede,
   return results;
 };
 
-export const getHorariosDispEspSed = async (idEspecialidad, idSede, fecha) => {
+export const getAvailableSchedulesBySpecLoc = async (idEspecialidad, idSede, fecha) => {
   const [results] = await sequelize.query(`
     WITH RECURSIVE time_slots AS (
       SELECT hd.idSede, hd.idDoctor, hd.idEspecialidad, hd.dia,

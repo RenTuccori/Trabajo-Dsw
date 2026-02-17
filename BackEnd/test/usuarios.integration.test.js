@@ -25,7 +25,7 @@ describe('Usuarios API – Integration Tests', () => {
 
     // Mock JWT session middleware
     app.use((req, res, next) => {
-      req.session = { rol: 'Patient' };
+      req.session = { role: 'Patient' };
       next();
     });
 

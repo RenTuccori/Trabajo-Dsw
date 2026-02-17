@@ -52,7 +52,7 @@ describe('Usuarios Controller – Unit Tests', () => {
       await getUsers(req, res);
 
       expect(res.status).toHaveBeenCalledWith(404);
-      expect(res.json).toHaveBeenCalledWith({ message: 'No hay usuarios cargados' });
+      expect(res.json).toHaveBeenCalledWith({ message: 'No users loaded' });
     });
 
     it('should return 500 on error', async () => {

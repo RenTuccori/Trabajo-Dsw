@@ -1,33 +1,33 @@
 import * as sedesService from '../services/sedes.service.js';
 
-export const getSedes = async (req, res) => {
+export const getLocations = async (req, res) => {
   try {
-    const sedes = await sedesService.getAllSedes();
-    if (sedes.length === 0) {
-      return res.status(404).json({ message: 'No hay sedes habilitadas' });
+    const locations = await sedesService.getAllLocations();
+    if (locations.length === 0) {
+      return res.status(404).json({ message: 'No enabled locations found' });
     }
-    res.json(sedes);
+    res.json(locations);
   } catch (error) {
     return res.status(500).json({ message: error.message });
   }
 };
 
-export const getSedeById = async (req, res) => {
+export const getLocationById = async (req, res) => {
   try {
-    const sede = await sedesService.findSedeById(req.params.idSede);
-    if (!sede) {
-      return res.status(404).json({ message: 'Sede no encontrada o no está habilitada' });
+    const location = await sedesService.findLocationById(req.params.idSede);
+    if (!location) {
+      return res.status(404).json({ message: 'Location not found or not enabled' });
     }
-    res.json(sede);
+    res.json(location);
   } catch (error) {
     return res.status(500).json({ message: error.message });
   }
 };
 
-export const createSede = async (req, res) => {
+export const createLocation = async (req, res) => {
   try {
-    const sede = await sedesService.createNewSede(req.body);
-    res.status(201).json(sede);
+    const location = await sedesService.createNewLocation(req.body);
+    res.status(201).json(location);
   } catch (error) {
     if (error.status) {
       return res.status(error.status).json({ message: error.message });
@@ -36,23 +36,23 @@ export const createSede = async (req, res) => {
   }
 };
 
-export const updateSede = async (req, res) => {
+export const updateLocation = async (req, res) => {
   try {
-    const updated = await sedesService.updateExistingSede(req.params.idSede, req.body);
+    const updated = await sedesService.updateExistingLocation(req.params.idSede, req.body);
     if (!updated) {
-      return res.status(404).json({ message: 'Sede no encontrada' });
+      return res.status(404).json({ message: 'Location not found' });
     }
-    res.json({ message: 'Sede actualizada' });
+    res.json({ message: 'Location updated' });
   } catch (error) {
     return res.status(500).json({ message: error.message });
   }
 };
 
-export const deleteSede = async (req, res) => {
+export const deleteLocation = async (req, res) => {
   try {
-    const deleted = await sedesService.softDeleteSede(req.params.idSede);
+    const deleted = await sedesService.softDeleteLocation(req.params.idSede);
     if (!deleted) {
-      return res.status(404).json({ message: 'Sede no encontrada' });
+      return res.status(404).json({ message: 'Location not found' });
     }
     return res.sendStatus(204);
   } catch (error) {

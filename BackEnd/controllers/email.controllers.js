@@ -1,33 +1,33 @@
 import nodemailer from 'nodemailer';
 const dbEmailPass = process.env.DB_EMAILPASS;
-// Configuración del transporte de nodemailer
+// Nodemailer transport configuration
 const transporter = nodemailer.createTransport({
-  host: "smtp.gmail.com", // Cambia esto por tu servicio de correo (e.g., Gmail, SendGrid, etc.)
-  port: 465, // Cambia según tu servicio (e.g., 587 para TLS, 465 para SSL)
-  secure: true, // true para port 465, false para otros puertos
+  host: "smtp.gmail.com", // Change this for your mail service (e.g., Gmail, SendGrid, etc.)
+  port: 465, // Change according to your service (e.g., 587 for TLS, 465 for SSL)
+  secure: true, // true for port 465, false for other ports
   auth: {
-    user: 'utnsanatorio@gmail.com', // Tu correo
-    pass: dbEmailPass, // Tu contraseña
+    user: 'utnsanatorio@gmail.com', // Your email
+    pass: dbEmailPass, // Your password
   },
 });
 
-// Función para enviar correo
+// Function to send email
 export const sendEmail = async (req, res) => {
   try {
     const { to, subject, html } = req.body;
 
     const mailOptions = {
-      from: 'Sanatorio UTN', // El correo desde el cual se envía
-      to: to, // Correo destino
-      subject: subject, // Asunto del correo
-      html: html, // Texto del correo
+      from: 'Sanatorio UTN', // The sender email address
+      to: to, // Destination email
+      subject: subject, // Email subject
+      html: html, // Email body
     };
 
-    // Enviar el correo
+    // Send the email
     let info = await transporter.sendMail(mailOptions);
 
-    res.json({ message: 'Correo enviado correctamente', info });
+    res.json({ message: 'Email sent successfully', info });
   } catch (error) {
-    res.status(500).json({ message: 'Error al enviar el correo', error: error.message });
+    res.status(500).json({ message: 'Error sending email', error: error.message });
   }
 };

@@ -2,17 +2,17 @@ import { USER_TYPES } from '../constants/userTypes.js';
 
 export const authorizeRole = (...allowedRoles) => {
   return (req, res, next) => {
-    const userRole = req.session.rol;
+    const userRole = req.session.role;
 
     if (!userRole) {
       return res
         .status(401)
-        .json({ message: 'No autorizado. Token inválido o inexistente.' });
+        .json({ message: 'Unauthorized. Invalid or missing token.' });
     }
 
     if (!allowedRoles.includes(userRole)) {
       return res.status(403).json({
-        message: `Acceso denegado. Se requiere uno de los roles: ${allowedRoles.join(
+        message: `Access denied. One of the following roles is required: ${allowedRoles.join(
           ', '
         )}.`,
       });

@@ -7,11 +7,11 @@ import { useNavigate } from 'react-router-dom';
 export function TurnosDoctorFecha() {
   const navigate = useNavigate();
   const [selectedFecha, setSelectedFecha] = useState(null);
-  const { fechas, Historico, turnosFecha, Fecha } = useDoctores();
+  const { dates, fetchHistory, appointmentsByDate, fetchByDate } = useDoctores();
 
   // Llamar a obtenerTurnos cuando se monta el componente
   useEffect(() => {
-    Historico();
+    fetchHistory();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -26,7 +26,7 @@ export function TurnosDoctorFecha() {
   };
 
   const isDateAvailable = (date) => {
-    return fechas.some(
+    return dates.some(
       (f) =>
         f.getFullYear() === date.getFullYear() &&
         f.getMonth() === date.getMonth() &&
@@ -36,7 +36,7 @@ export function TurnosDoctorFecha() {
   const handleDateChange = (date) => {
     setSelectedFecha(date);
     if (date) {
-      Fecha(date); // Llamar a la función Fecha con la fecha seleccionada
+      fetchByDate(date); // Call fetchByDate with the selected date
     }
   };
   return (
@@ -57,8 +57,8 @@ export function TurnosDoctorFecha() {
         )}
         {selectedFecha && (
           <div className="space-y-4">
-            {turnosFecha.length > 0 ? (
-              turnosFecha.map((turno, index) => (
+            {appointmentsByDate.length > 0 ? (
+              appointmentsByDate.map((turno, index) => (
                 <div
                   key={index}
                   className="bg-gray-50 rounded-lg p-4 shadow-sm mb-4"
@@ -79,7 +79,7 @@ export function TurnosDoctorFecha() {
                     <strong>DNI Paciente:</strong> {turno.dni}
                   </p>
                   <p>
-                    <strong>Apellido y Nombre:</strong> {turno.nomyapel}
+                    <strong>Apellido y Nombre:</strong> {turno.fullName}
                   </p>
                 </div>
               ))

@@ -5,10 +5,10 @@ import Select from 'react-select';
 import { useAdministracion } from '../../context/administracion/AdministracionProvider.jsx';
 
 export function DatosDoctor() {
-  const { obraSociales, ObtenerObraSociales, CrearUsuario, createDoctor } =
+  const { healthInsuranceList, fetchHealthInsurance, createNewUser, createNewDoctor } =
     useAdministracion();
   const [selectedObraSociales, setSelectedObraSociales] = useState(null);
-  const [usuarioCreado, setUsuarioCreado] = useState(false); // Para manejar el flujo de creación de usuario y doctor
+  const [usuarioCreado, setUsuarioCreado] = useState(false); // To manage the user and doctor creation flow
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
     dni: '',
@@ -45,8 +45,8 @@ export function DatosDoctor() {
   const handleSubmitUsuario = async (e) => {
     e.preventDefault();
     try {
-      await CrearUsuario(formData); // Crea el usuario
-      setUsuarioCreado(true); // Marca que el usuario ha sido creado
+      await createNewUser(formData); // Create the user
+      setUsuarioCreado(true); // Mark that the user has been created
       window.notifySuccess(
         'Usuario creado con éxito. Ahora complete los datos del doctor.'
       );
@@ -59,16 +59,16 @@ export function DatosDoctor() {
     e.preventDefault();
     try {
       const { dni } = formData;
-      await createDoctor({ dni, ...doctorData }); // Crea el doctor utilizando el DNI del usuario creado
+      await createNewDoctor({ dni, ...doctorData }); // Create the doctor using the created user's DNI
       window.notifySuccess('¡Doctor creado con éxito!');
-      navigate('/admin'); // Redirige después de crear el doctor
+      navigate('/admin'); // Redirect after creating the doctor
     } catch (error) {
       window.notifyError('Error al crear el doctor');
     }
   };
 
   useEffect(() => {
-    ObtenerObraSociales();
+    fetchHealthInsurance();
   }, []);
 
   const handleObraSocialChange = (selectedOption) => {
@@ -82,7 +82,7 @@ export function DatosDoctor() {
   return (
     <div className="min-h-screen bg-gradient-to-b from-blue-100 to-white flex items-center justify-center p-4">
       <div className="bg-white rounded-lg shadow-md w-full max-w-md p-6 space-y-4">
-        {/* Formulario para crear usuario */}
+        {/* Form to create user */}
         {!usuarioCreado && (
           <form onSubmit={handleSubmitUsuario} className="space-y-4">
             <div>
@@ -167,7 +167,7 @@ export function DatosDoctor() {
             <div>
               <p className="text-center text-gray-600 text-lg">Obra Social</p>
               <Select
-                options={obraSociales.map((obrasociales) => ({
+                options={healthInsuranceList.map((obrasociales) => ({
                   value: obrasociales.idObraSocial,
                   label: obrasociales.nombre,
                 }))}
@@ -185,7 +185,7 @@ export function DatosDoctor() {
           </form>
         )}
 
-        {/* Formulario para crear doctor después de crear el usuario */}
+        {/* Form to create doctor after creating the user */}
         {usuarioCreado && (
           <form onSubmit={handleSubmitDoctor} className="space-y-4">
             <div>

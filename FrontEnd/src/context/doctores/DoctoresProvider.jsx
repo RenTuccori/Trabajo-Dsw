@@ -1,8 +1,8 @@
 import { DoctoresContext } from './DoctoresContext';
 import {
-  getTurnosHistoricoDoctor,
-  getTurnosDoctorFecha,
-  getTurnosDoctorHoy,
+  getAppointmentHistoryByDoctor,
+  getAppointmentsByDoctorDate,
+  getAppointmentsByDoctorToday,
 } from '../../api/turnos.api.js';
 import { useContext,  useState } from 'react';
 import PropTypes from 'prop-types';
@@ -17,64 +17,64 @@ export const useDoctores = () => {
 import {useAuth} from '../global/AuthProvider';
 
 const DoctoresProvider = ({ children }) => {
-  //proveedor para acceder a los datos de los empleados desde cualquier componente
-  const [turnosHist, setTurnosHist] = useState([]);
-  const [turnosFecha, setTurnosFecha] = useState([]);
-  const [turnosHoy, setTurnosHoy] = useState([]);
-  const [fechas, setFechas] = useState([]);
+  // Provider to access employee data from any component
+  const [appointmentHistory, setAppointmentHistory] = useState([]);
+  const [appointmentsByDate, setAppointmentsByDate] = useState([]);
+  const [appointmentsToday, setAppointmentsToday] = useState([]);
+  const [dates, setDates] = useState([]);
 
   const {idDoctor} = useAuth();
 
 
-  async function Historico() {
+  async function fetchHistory() {
     try {
-      const response = await getTurnosHistoricoDoctor({ idDoctor : idDoctor });
+      const response = await getAppointmentHistoryByDoctor({ idDoctor: idDoctor });
       if (response.data && response.data.data.length > 0) {
-        setTurnosHist(response.data.data);
+        setAppointmentHistory(response.data.data);
         const fechasDisponibles = response.data.data.map(
           (turno) => new Date(turno.fechaYHora.split('T')[0])
         );
-        setFechas(fechasDisponibles);
+        setDates(fechasDisponibles);
       } else {
-        setTurnosHist([]);
-        setFechas([]);
+        setAppointmentHistory([]);
+        setDates([]);
       }
     } catch {
-      setTurnosHist([]);
-      setFechas([]);
+      setAppointmentHistory([]);
+      setDates([]);
     }
   }
 
-  async function Fecha(fecha) {
+  async function fetchByDate(fecha) {
     const formattedDate = `${fecha.getFullYear()}-${(fecha.getMonth() + 1)
       .toString()
       .padStart(2, '0')}-${fecha.getDate().toString().padStart(2, '0')}`;
-    const response = await getTurnosDoctorFecha({
+    const response = await getAppointmentsByDoctorDate({
       idDoctor,
       fechaYHora: formattedDate,
     });
-    setTurnosFecha(response.data);
+    setAppointmentsByDate(response.data);
   }
 
-  async function TurnosHoy() {
+  async function fetchToday() {
     try {
-      const response = await getTurnosDoctorHoy({ idDoctor });
-      setTurnosHoy(response.data || []);
+      const response = await getAppointmentsByDoctorToday({ idDoctor });
+      setAppointmentsToday(response.data || []);
     } catch {
-      setTurnosHoy([]);
+      setAppointmentsToday([]);
     }
   }
 
   return (
     <DoctoresContext.Provider
       value={{
-        Historico,
-        turnosHist,
-        fechas,
-        turnosFecha,
-        Fecha,
-        turnosHoy,
-        TurnosHoy,
+        fetchHistory,
+        appointmentHistory,
+        dates,
+        appointmentsByDate,
+        fetchByDate,
+        appointmentsToday,
+        fetchToday,
       }}
     >
       {children}

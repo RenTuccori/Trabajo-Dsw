@@ -1,31 +1,31 @@
 import * as pacientesService from '../services/pacientes.service.js';
 
-export const getPacientes = async (req, res) => {
+export const getPatients = async (req, res) => {
   try {
-    const pacientes = await pacientesService.getAllPacientes();
-    res.json(pacientes);
+    const patients = await pacientesService.getAllPatients();
+    res.json(patients);
   } catch (error) {
     return res.status(500).json({ message: error.message });
   }
 };
 
-export const getPacienteByDni = async (req, res) => {
+export const getPatientByDni = async (req, res) => {
   try {
     const { dni } = req.body;
-    const paciente = await pacientesService.findPacienteByDni(dni);
-    if (!paciente) {
-      return res.status(404).json({ message: 'Paciente no encontrado' });
+    const patient = await pacientesService.findPatientByDni(dni);
+    if (!patient) {
+      return res.status(404).json({ message: 'Patient not found' });
     }
-    res.json(paciente);
+    res.json(patient);
   } catch (error) {
     return res.status(500).json({ message: error.message });
   }
 };
 
-export const createPaciente = async (req, res) => {
+export const createPatient = async (req, res) => {
   try {
-    const paciente = await pacientesService.createNewPaciente(req.body);
-    res.status(201).json(paciente);
+    const patient = await pacientesService.createNewPatient(req.body);
+    res.status(201).json(patient);
   } catch (error) {
     return res.status(500).json({ message: error.message });
   }

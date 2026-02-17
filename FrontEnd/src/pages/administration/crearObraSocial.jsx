@@ -5,18 +5,18 @@ import { useAdministracion } from '../../context/administracion/AdministracionPr
 export function CrearObraSocial() {
   const navigate = useNavigate();
   const {
-    obrasSociales,
-    crearObraSocial,
-    ObtenerOS,
-    borrarObraSocial,
-    actualizarObraSocial,
+    healthInsuranceList,
+    createNewHealthInsurance,
+    fetchHealthInsurance,
+    removeHealthInsurance,
+    updateHealthInsuranceData,
   } = useAdministracion();
   const [nombreObraSocial, setNombreObraSocial] = useState('');
   const [nuevoNombreObraSocial, setNuevoNombreObraSocial] = useState('');
   const [obraSocialAEditar, setObraSocialAEditar] = useState(null);
 
   useEffect(() => {
-    ObtenerOS();
+    fetchHealthInsurance();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -24,10 +24,10 @@ export function CrearObraSocial() {
     e.preventDefault();
     if (nombreObraSocial.trim() !== '') {
       try {
-        await crearObraSocial({ nombre: nombreObraSocial });
+        await createNewHealthInsurance({ nombre: nombreObraSocial });
         setNombreObraSocial('');
         window.notifySuccess('¡Obra Social creada con éxito!');
-        ObtenerOS();
+        fetchHealthInsurance();
       } catch (error) {
         window.notifyError('Error al crear la obra social');
       }
@@ -42,9 +42,9 @@ export function CrearObraSocial() {
 
     if (result.isConfirmed) {
       try {
-        await borrarObraSocial(idObraSocial);
+        await removeHealthInsurance(idObraSocial);
         window.notifySuccess('¡Obra Social eliminada con éxito!');
-        ObtenerOS();
+        fetchHealthInsurance();
       } catch (error) {
         window.notifyError('No se puede eliminar esta obra social');
       }
@@ -55,14 +55,14 @@ export function CrearObraSocial() {
     e.preventDefault();
     if (obraSocialAEditar && nuevoNombreObraSocial.trim() !== '') {
       try {
-        await actualizarObraSocial({
+        await updateHealthInsuranceData({
           idObraSocial: obraSocialAEditar,
           nombre: nuevoNombreObraSocial,
         });
         window.notifySuccess('¡Obra Social actualizada con éxito!');
         setObraSocialAEditar(null);
         setNuevoNombreObraSocial('');
-        ObtenerOS();
+        fetchHealthInsurance();
       } catch (error) {
         window.notifyError('No se puede actualizar esta obra social');
       }
@@ -76,7 +76,7 @@ export function CrearObraSocial() {
           Crear nueva obra social
         </h2>
 
-        {/* Formulario para crear una nueva obra social */}
+        {/* Form to create a new health insurance */}
         {!obraSocialAEditar && (
           <form onSubmit={handleCrearObraSocial} className="space-y-4">
             <input
@@ -95,7 +95,7 @@ export function CrearObraSocial() {
           </form>
         )}
 
-        {/* Formulario para actualizar una obra social */}
+        {/* Form to update a health insurance */}
         {obraSocialAEditar && (
           <form onSubmit={handleActualizarObraSocial} className="space-y-4">
             <input
@@ -135,8 +135,8 @@ export function CrearObraSocial() {
           Obras sociales creadas
         </h3>
         <ul className="space-y-2">
-          {obrasSociales.length > 0 ? (
-            obrasSociales.map((obraSocial) => (
+          {healthInsuranceList.length > 0 ? (
+            healthInsuranceList.map((obraSocial) => (
               <li
                 key={obraSocial.idObraSocial}
                 className="bg-gray-100 p-4 rounded-lg flex justify-between items-center"

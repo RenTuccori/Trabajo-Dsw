@@ -1,13 +1,13 @@
 import { Router } from 'express';
 import { Admin } from '../middleware/authorizeRole.js';
 import {
-  getAdminByUserContra,
-  createCombinacion,
-  deleteCombinacion,
-  getCombinaciones,
-  createHorario,
-  getHorarios,
-  updateHorario,
+  getAdminByCredentials,
+  createCombination,
+  deleteCombination,
+  getCombinations,
+  createSchedule,
+  getSchedules,
+  updateSchedule,
 } from '../controllers/admin.controllers.js';
 import {
   createDoctor,
@@ -15,15 +15,15 @@ import {
   updateDoctor,
 } from '../controllers/doctores.controllers.js';
 import {
-  createSede,
-  updateSede,
-  deleteSede,
+  createLocation,
+  updateLocation,
+  deleteLocation,
 } from '../controllers/sedes.controllers.js';
 import {
-  createObraSocial,
-  getObrasSociales,
-  deleteObraSocial,
-  updateObraSocial,
+  createHealthInsurance,
+  getHealthInsuranceList,
+  deleteHealthInsurance,
+  updateHealthInsurance,
 } from '../controllers/obrassociales.controllers.js';
 import {
   createSpecialty,
@@ -34,51 +34,50 @@ import {
   validateCreateDoctor,
   validateDoctorId,
   validateUpdateDoctor,
-  validateCreateSede,
-  validateSedeId,
-  validateCreateObraSocial,
-  validateObraSocialId,
-  validateUpdateObraSocial,
-  validateCreateEspecialidad,
-  validateEspecialidadId,
-  validateCreateCombinacion,
-  validateCreateHorario,
-  validateDoctorIdBody,
+  validateCreateLocation,
+  validateLocationId,
+  validateCreateHealthInsurance,
+  validateHealthInsuranceId,
+  validateUpdateHealthInsurance,
+  validateCreateSpecialty,
+  validateSpecialtyId,
+  validateCreateCombination,
+  validateCreateSchedule,
 } from '../middleware/validators.js';
 import { validate } from '../middleware/validate.js';
 
 const router = Router();
 
-router.post('/api/admin', validateAdminLogin, validate, getAdminByUserContra);
+router.post('/api/admin', validateAdminLogin, validate, getAdminByCredentials);
 
 // Doctor
 router.post('/api/adminCreateDr', Admin, validateCreateDoctor, validate, createDoctor);
 router.put('/api/adminDeleteDr/:idDoctor', Admin, validateDoctorId, validate, deleteDoctor);
 router.put('/api/adminUpdateDr/:idDoctor', Admin, validateDoctorId, validate, updateDoctor);
 
-// Sede
-router.post('/api/adminCreateSede', Admin, validateCreateSede, validate, createSede);
-router.put('/api/adminUpdateSede/:idSede', Admin, validateSedeId, validate, updateSede);
-router.put('/api/adminDeleteSede/:idSede', Admin, validateSedeId, validate, deleteSede);
+// Location
+router.post('/api/adminCreateSede', Admin, validateCreateLocation, validate, createLocation);
+router.put('/api/adminUpdateSede/:idSede', Admin, validateLocationId, validate, updateLocation);
+router.put('/api/adminDeleteSede/:idSede', Admin, validateLocationId, validate, deleteLocation);
 
-// ObraSocial
-router.post('/api/adminCreateObraSocial', Admin, validateCreateObraSocial, validate, createObraSocial);
-router.get('/api/os', getObrasSociales);
-router.put('/api/adminDeleteOS/:idObraSocial', Admin, validateObraSocialId, validate, deleteObraSocial);
-router.put('/api/adminUpdateOS/:idObraSocial', Admin, validateObraSocialId, validate, updateObraSocial);
+// Health Insurance
+router.post('/api/adminCreateObraSocial', Admin, validateCreateHealthInsurance, validate, createHealthInsurance);
+router.get('/api/os', getHealthInsuranceList);
+router.put('/api/adminDeleteOS/:idObraSocial', Admin, validateHealthInsuranceId, validate, deleteHealthInsurance);
+router.put('/api/adminUpdateOS/:idObraSocial', Admin, validateHealthInsuranceId, validate, updateHealthInsurance);
 
-// Especialidad
-router.post('/api/adminCreateEsp', Admin, validateCreateEspecialidad, validate, createSpecialty);
-router.put('/api/deleteSpecialties/:idEspecialidad', Admin, validateEspecialidadId, validate, deleteSpecialty);
+// Specialty
+router.post('/api/adminCreateEsp', Admin, validateCreateSpecialty, validate, createSpecialty);
+router.put('/api/deleteSpecialties/:idEspecialidad', Admin, validateSpecialtyId, validate, deleteSpecialty);
 
-// Combinaciones
-router.post('/api/adminCreateSeEspDoc', Admin, validateCreateCombinacion, validate, createCombinacion);
-router.put('/api/adminDeleteSeEspDoc', Admin, validateCreateCombinacion, validate, deleteCombinacion);
-router.get('/api/adminGetCombinaciones', Admin, getCombinaciones);
+// Combinations
+router.post('/api/adminCreateSeEspDoc', Admin, validateCreateCombination, validate, createCombination);
+router.put('/api/adminDeleteSeEspDoc', Admin, validateCreateCombination, validate, deleteCombination);
+router.get('/api/adminGetCombinaciones', Admin, getCombinations);
 
-// Horarios
-router.post('/api/adminCreateHorario', Admin, validateCreateHorario, validate, createHorario);
-router.post('/api/adminGetHorariosXDoctor', Admin, validateCreateCombinacion, validate, getHorarios);
-router.put('/api/adminUpdateHorario', Admin, validateCreateHorario, validate, updateHorario);
+// Schedules
+router.post('/api/adminCreateHorario', Admin, validateCreateSchedule, validate, createSchedule);
+router.post('/api/adminGetHorariosXDoctor', Admin, validateCreateCombination, validate, getSchedules);
+router.put('/api/adminUpdateHorario', Admin, validateCreateSchedule, validate, updateSchedule);
 
 export default router;
