@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useAdministracion } from '../../context/administration/AdministrationProvider.jsx';
+import { useAdministration } from '../../context/administration/AdministrationProvider.jsx';
 
 export function CreateSpecialty() {
   const navigate = useNavigate();
@@ -9,7 +9,7 @@ export function CreateSpecialty() {
     createSpecialty,
     getAvailableSpecialties,
     deleteSpecialty,
-  } = useAdministracion();
+  } = useAdministration();
   const [specialtyName, setSpecialtyName] = useState('');
 
   // Obtener specialties al cargar el componente

@@ -68,7 +68,7 @@ function AdministrationHome() {
         Menú principal
       </h2>
       <button
-        onClick={() => navigate('/admin/createVenue')}
+        onClick={() => navigate('/admin/createLocation')}
         className="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition-colors"
       >
         Sedes

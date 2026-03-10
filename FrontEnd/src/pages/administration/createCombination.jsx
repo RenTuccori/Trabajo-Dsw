@@ -1,29 +1,29 @@
 import Select from 'react-select';
-import { useAdministracion } from '../../context/administration/AdministrationProvider.jsx';
+import { useAdministration } from '../../context/administration/AdministrationProvider.jsx';
 import { useNavigate } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 
 export function CreateCombination() {
   const navigate = useNavigate();
   const {
-    venues,
+    locations,
     specialties,
     doctors,
-    getVenues,
+    getLocations,
     getAvailableSpecialties,
     getDoctors,
-    createVenueSpecialtyDoctor,
-    deleteVenueSpecialtyDoctor,
+    createLocationSpecialtyDoctor,
+    deleteLocationSpecialtyDoctor,
     combinations, // Asume que tienes una lista de combinations en tu contexto
     getCombinations, // Asume que tienes una función para obtener combinations
-  } = useAdministracion();
+  } = useAdministration();
 
-  const [selectedVenue, setSelectedVenue] = useState(null);
+  const [selectedLocation, setSelectedLocation] = useState(null);
   const [selectedSpecialty, setSelectedSpecialty] = useState(null);
   const [selectedDoctor, setSelectedDoctor] = useState(null);
 
   useEffect(() => {
-    getVenues();
+    getLocations();
     getCombinations(); // Carga las combinations al montar el componente
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -53,13 +53,13 @@ export function CreateCombination() {
     }),
   };
 
-  const handleSedeChange = async (selectedOption) => {
-    setSelectedVenue(selectedOption);
+  const handleLocationChange = async (selectedOption) => {
+    setSelectedLocation(selectedOption);
     setSelectedSpecialty(null);
     setSelectedDoctor(null);
 
     if (selectedOption) {
-      await getAvailableSpecialties({ venueId: selectedOption.value });
+      await getAvailableSpecialties({ locationId: selectedOption.value });
     }
   };
 
@@ -67,7 +67,7 @@ export function CreateCombination() {
     setSelectedSpecialty(selectedOption);
     setSelectedDoctor(null);
 
-    if (selectedVenue && selectedOption) {
+    if (selectedLocation && selectedOption) {
       await getDoctors();
     }
   };
@@ -77,7 +77,7 @@ export function CreateCombination() {
   };
 
   const confirmarCombinacion = async () => {
-    if (selectedVenue && selectedSpecialty && selectedDoctor) {
+    if (selectedLocation && selectedSpecialty && selectedDoctor) {
       const result = await window.confirmDialog(
         '¿Está seguro?',
         'Esta acción no se puede deshacer.'
@@ -85,8 +85,8 @@ export function CreateCombination() {
 
       if (result.isConfirmed) {
         try {
-          await createVenueSpecialtyDoctor({
-            venueId: selectedVenue.value,
+          await createLocationSpecialtyDoctor({
+            locationId: selectedLocation.value,
             specialtyId: selectedSpecialty.value,
             doctorId: selectedDoctor.value,
           });
@@ -105,7 +105,7 @@ export function CreateCombination() {
     }
   };
 
-  const handleDeleteCombinacion = async (venueId, doctorId, specialtyId) => {
+  const handleDeleteCombinacion = async (locationId, doctorId, specialtyId) => {
     const result = await window.confirmDialog(
       '¿Estás seguro?',
       '¿Deseas eliminar esta combinación?'
@@ -113,7 +113,7 @@ export function CreateCombination() {
 
     if (result.isConfirmed) {
       try {
-        await deleteVenueSpecialtyDoctor({ venueId, doctorId, specialtyId });
+        await deleteLocationSpecialtyDoctor({ locationId, doctorId, specialtyId });
         window.notifySuccess('¡Combinación eliminada con éxito!');
         // Refresca las combinations después de la eliminación
         getCombinations();
@@ -130,21 +130,21 @@ export function CreateCombination() {
         <form className="bg-white rounded-lg shadow-md p-6 space-y-4">
           <h2 className="text-xl font-semibold mb-4">Asignar Combinación</h2>
 
-          {/* Selección de Sede */}
+          {/* Selección de Locality */}
           <div className="space-y-2">
-            <label className="text-gray-700">Sede</label>
+            <label className="text-gray-700">Localidad</label>
             <Select
               className="select"
               options={
-                Array.isArray(venues)
-                  ? venues.map((sede) => ({
-                      value: sede.venueId,
-                      label: sede.name,
+                Array.isArray(locations)
+                  ? locations.map((location) => ({
+                      value: location.idSite,
+                      label: location.name,
                     }))
                   : []
               }
-              onChange={handleSedeChange}
-              value={selectedVenue}
+              onChange={handleLocationChange}
+              value={selectedLocation}
               styles={customStyles}
             />
           </div>
@@ -164,7 +164,7 @@ export function CreateCombination() {
               }
               onChange={handleEspecilidadChange}
               value={selectedSpecialty}
-              isDisabled={!selectedVenue}
+              isDisabled={!selectedLocation}
               styles={customStyles}
             />
           </div>
@@ -222,14 +222,14 @@ export function CreateCombination() {
                   key={index}
                   className="flex justify-between items-center bg-gray-100 p-2 rounded-md"
                 >
-                  <span>{`Sede: ${combinacion.venueName}, Especialidad: ${combinacion.specialtyName}, Doctor: ${combinacion.doctorName} ${combinacion.doctorLastName}`}</span>
+                  <span>{`Localidad: ${combinacion.venueName}, Especialidad: ${combinacion.specialtyName}, Doctor: ${combinacion.doctorName} ${combinacion.doctorLastName}`}</span>
                   <div className="flex space-x-4">
                     {/* Botón de Eliminar */}
                     <button
                       className="text-red-600 hover:text-red-800"
                       onClick={() =>
                         handleDeleteCombinacion(
-                          combinacion.venueId,
+                          combinacion.locationId,
                           combinacion.doctorId,
                           combinacion.specialtyId
                         )
@@ -243,7 +243,7 @@ export function CreateCombination() {
                       className="text-blue-600 hover:text-blue-800"
                       onClick={() => {
                         const data = {
-                          venueId: combinacion.venueId,
+                          locationId: combinacion.locationId,
                           specialtyId: combinacion.specialtyId,
                           doctorId: combinacion.doctorId,
                         };

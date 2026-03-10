@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { usePacientes } from '../../context/patients/PatientsProvider.jsx';
+import { usePatients } from '../../context/patients/PatientsProvider.jsx';
 
 export function AppointmentConfirmation() {
   const navigate = useNavigate();
@@ -8,39 +8,38 @@ export function AppointmentConfirmation() {
     specialtyName,
     doctorName,
     doctorLastName,
-    venueName,
-    venueAddress,
+    locationName,
+    locationAddress,
     dateAndTime,
     createAppointment,
-    getDoctorByIdFunction,
-    getSpecialtyById,
-    getVenueById,
     userEmail,
-    getUserByDniFunction,
-    getPatientByDni,
+    getUserByNationalIdFunction,
     sendEmailFunction,
-  } = usePacientes();
+  } = usePatients();
 
-  const [turnoCreado, setTurnoCreado] = useState(false); // Estado para saber si el appointment fue creado
+  const [turnoCreado, setTurnoCreado] = useState(false);
+  const [error, setError] = useState(null);
 
   useEffect(() => {
     const confirmarTurno = async () => {
       try {
-        // Asegurarse de que todas las funciones asincrónicas se completen antes de continuar
-        await getUserByDniFunction();
-        await getPatientByDni(); // Añadir esta línea para obtener el patientId
-        await getDoctorByIdFunction();
-        await getSpecialtyById();
-        await getVenueById();
+        console.log('🎯 FRONTEND - appointmentConfirmation: Getting user data');
+        // Get user data first
+        await getUserByNationalIdFunction();
 
-        // Crear appointment
-        await createAppointment();
+        console.log('🎯 FRONTEND - appointmentConfirmation: Creating appointment');
+        // Create the appointment - all data should already be in context from bookAppointment
+        const result = await createAppointment();
+        console.log('✅ FRONTEND - appointmentConfirmation: Appointment created!', result);
         setTurnoCreado(true);
+        setError(null);
       } catch (error) {
         console.error(
           '💥 FRONTEND - appointmentConfirmation: Error al crear el appointment:',
           error
         );
+        setError(error.message || 'Error creating appointment');
+        setTurnoCreado(false);
       }
     };
 
@@ -59,7 +58,7 @@ export function AppointmentConfirmation() {
                     <p><strong>Fecha y Hora:</strong> ${dateAndTime}</p>
                     <p><strong>Especialidad:</strong> ${specialtyName}</p>
                     <p><strong>Doctor:</strong> ${doctorName} ${doctorLastName}</p>
-                    <p><strong>Sede:</strong> ${venueName}, ${venueAddress}</p>
+                    <p><strong>Sede:</strong> ${locationName}, ${locationAddress}</p>
                 </div>
                 <footer style="text-align: center;">
                     <p>Nos vemos pronto, ¡gracias por confiar en nosotros!</p>
@@ -87,47 +86,61 @@ export function AppointmentConfirmation() {
     doctorName,
     doctorLastName,
     specialtyName,
-    venueName,
-    venueAddress,
+    locationName,
+    locationAddress,
     sendEmailFunction,
   ]); // Este efecto se ejecuta solo cuando `userEmail` y `turnoCreado` están listos
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-blue-100 to-white flex flex-col items-center justify-center p-6">
       <div className="bg-white rounded-lg shadow-md w-full max-w-md p-6 space-y-4">
-        <h1 className="text-2xl font-bold text-blue-800 text-center">
-          Turno creado
-        </h1>
-        <p className="text-gray-700">
-          <strong>Fecha y Hora:</strong> {dateAndTime}
-        </p>
-        <p className="text-gray-700">
-          <strong>Especialidad:</strong> {specialtyName}
-        </p>
-        <p className="text-gray-700">
-          <strong>Doctor:</strong> {doctorName} {doctorLastName}
-        </p>
-        <p className="text-gray-700">
-          <strong>Sede:</strong> {venueName}, {venueAddress}
-        </p>
-        <p className="text-gray-700">
-          <strong>Estado:</strong> Pendiente
-        </p>
+        {error ? (
+          <>
+            <h1 className="text-2xl font-bold text-red-800 text-center">Error creando turno</h1>
+            <p className="text-red-600 text-center">{error}</p>
+            <button
+              className="w-full mt-6 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+              onClick={() => navigate('/patient/bookAppointment')}
+            >
+              Volver a intentar
+            </button>
+          </>
+        ) : turnoCreado ? (
+          <>
+            <h1 className="text-2xl font-bold text-green-800 text-center">✅ Turno creado exitosamente</h1>
+            <p className="text-gray-700">
+              <strong>Fecha y Hora:</strong> {dateAndTime}
+            </p>
+            <p className="text-gray-700">
+              <strong>Especialidad:</strong> {specialtyName}
+            </p>
+            <p className="text-gray-700">
+              <strong>Doctor:</strong> {doctorName} {doctorLastName}
+            </p>
+            <p className="text-gray-700">
+              <strong>Sede:</strong> {locationName}, {locationAddress}
+            </p>
+            <p className="text-gray-700">
+              <strong>Estado:</strong> Pendiente
+            </p>
+            <p className="text-sm text-gray-600 text-center mt-4">
+              Se ha enviado un email de confirmación a {userEmail}. Si no lo recibiste, verifica tu carpeta de spam.
+            </p>
+          </>
+        ) : (
+          <>
+            <h1 className="text-2xl font-bold text-blue-800 text-center">Creando turno...</h1>
+            <p className="text-gray-700 text-center">Por favor espera mientras se procesa tu appointment.</p>
+          </>
+        )}
 
-        {/* Aviso sobre el correo electrónico */}
-        <p className="text-sm text-gray-600 text-center mt-4">
-          Si no recibiste el correo de confirmación, por favor verifica tu
-          dirección de correo en la sección de <strong>Datos Personales</strong>{' '}
-          y asegúrate de que sea correcta.
-        </p>
+        <button
+          className="w-full mt-6 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+          onClick={() => navigate('/patient')}
+        >
+          Volver al inicio
+        </button>
       </div>
-
-      <button
-        className="mt-6 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
-        onClick={() => navigate('/patient')}
-      >
-        Volver
-      </button>
     </div>
   );
 }

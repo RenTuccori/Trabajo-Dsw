@@ -25,7 +25,7 @@ const translations = {
   'fechaNacimiento': 'birthDate',
   'contra': 'password',
   'dni': 'dni', // Se mantiene
-  'idSede': 'venueId',
+  'idSede': 'locationId',
   'idEspecialidad': 'specialtyId',
   'idDoctor': 'doctorId',
   'idPaciente': 'patientId',
@@ -104,7 +104,7 @@ const translations = {
   'setHorarios': 'setSchedules',
   'setObrasSociales': 'setHealthInsurances',
   'setUsuario': 'setUser',
-  'setIdSede': 'setVenueId',
+  'setIdSede': 'setlocationId',
   'setIdEspecialidad': 'setSpecialtyId',
   'setIdDoctor': 'setDoctorId',
   'setIdPaciente': 'setPatientId',

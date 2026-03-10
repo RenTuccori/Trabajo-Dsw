@@ -1,5 +1,5 @@
 import Select from 'react-select';
-import { usePacientes } from '../../context/patients/PatientsProvider';
+import { usePatients } from '../../context/patients/PatientsProvider';
 import DatePicker from 'react-datepicker';
 import { useNavigate } from 'react-router-dom';
 import { useEffect, useState } from 'react';
@@ -8,10 +8,10 @@ import 'react-datepicker/dist/react-datepicker.css';
 export function BookAppointment() {
   const navigate = useNavigate();
   const {
-    venues,
+    locations,
     specialties,
     doctors,
-    getVenues,
+    getLocations,
     getSpecialties,
     getDoctors,
     dates,
@@ -21,12 +21,12 @@ export function BookAppointment() {
     setDateAndTime,
     setDoctorId,
     setSpecialtyId,
-    setVenueId,
+    setLocationId,
     setStatus,
     setCancellationDate,
     setConfirmationDate,
-  } = usePacientes();
-  const [selectedVenue, setSelectedVenue] = useState(null);
+  } = usePatients();
+  const [selectedLocation, setSelectedLocation] = useState(null);
   const [selectedSpecialty, setSelectedSpecialty] = useState(null);
   const [selectedDoctor, setSelectedDoctor] = useState(null);
   const [selectedDate, setSelectedDate] = useState(null);
@@ -34,7 +34,7 @@ export function BookAppointment() {
   const [formattedDate, setFormattedDate] = useState(null);
 
   useEffect(() => {
-    getVenues();
+    getLocations();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -70,28 +70,28 @@ export function BookAppointment() {
     }),
   };
 
-  const handleSedeChange = async (selectedOption) => {
-    console.log('🏢 FRONTEND - handleSedeChange: Sede seleccionada:', selectedOption);
-    setSelectedVenue(selectedOption);
+  const handleLocationChange = async (selectedOption) => {
+    console.log('🏢 FRONTEND - handleLocationChange: Localidad seleccionada:', selectedOption);
+    setSelectedLocation(selectedOption);
     setSelectedSpecialty(null);
     setSelectedDoctor(null);
     
-    // Configurar el venueId cuando se selecciona la sede
+    // Configurar el locationId cuando se selecciona la localidad
     if (selectedOption) {
-      console.log('🆔 FRONTEND - Configurando venueId:', selectedOption.value);
-      setVenueId(selectedOption.value);
+      console.log('🆔 FRONTEND - Configurando locationId:', selectedOption.value);
+      setLocationId(selectedOption.value);
     }
     
     if (selectedOption) {
-      console.log('📞 FRONTEND - Obteniendo especialidades para sede:', selectedOption.value);
-      await getSpecialties({ venueId: selectedOption.value });
+      console.log('📞 FRONTEND - Obteniendo especialidades para localidad:', selectedOption.value);
+      await getSpecialties({ locationId: selectedOption.value });
       console.log('📋 FRONTEND - Especialidades después de la llamada:', specialties);
     }
   };
 
   const handleEspecilidadChange = async (selectedOption) => {
     console.log('🩺 FRONTEND - handleEspecilidadChange: Especialidad seleccionada:', selectedOption);
-    console.log('🏢 FRONTEND - Sede actual:', selectedVenue);
+    console.log('🏢 FRONTEND - Localidad actual:', selectedLocation);
     setSelectedSpecialty(selectedOption);
     setSelectedDoctor(null);
     
@@ -101,13 +101,13 @@ export function BookAppointment() {
       setSpecialtyId(selectedOption.value);
     }
     
-    if (selectedVenue && selectedOption) {
-      console.log('📞 FRONTEND - Obteniendo doctores para sede y especialidad:', {
-        venueId: selectedVenue.value,
+    if (selectedLocation && selectedOption) {
+      console.log('📞 FRONTEND - Obteniendo doctores para localidad y especialidad:', {
+        locationId: selectedLocation.value,
         specialtyId: selectedOption.value
       });
       await getDoctors({
-        venueId: selectedVenue.value,
+        locationId: selectedLocation.value,
         specialtyId: selectedOption.value,
       });
     }
@@ -115,7 +115,7 @@ export function BookAppointment() {
 
   const handleDoctorChange = async (selectedOption) => {
     console.log('👨‍⚕️ FRONTEND - handleDoctorChange: Doctor seleccionado:', selectedOption);
-    console.log('🏢 FRONTEND - Sede actual:', selectedVenue);
+    console.log('🏢 FRONTEND - Localidad actual:', selectedLocation);
     console.log('🩺 FRONTEND - Especialidad actual:', selectedSpecialty);
     setSelectedDoctor(selectedOption);
     setSelectedDate(null);
@@ -126,9 +126,9 @@ export function BookAppointment() {
       setDoctorId(selectedOption.value);
     }
     
-    if (selectedVenue && selectedOption && selectedSpecialty) {
-      console.log('📞 FRONTEND - Obteniendo fechas para doctor, especialidad y sede');
-      await getDates({ selectedOption, selectedSpecialty, selectedVenue });
+    if (selectedLocation && selectedOption && selectedSpecialty) {
+      console.log('📞 FRONTEND - Obteniendo fechas para doctor, especialidad y localidad');
+      await getDates({ selectedOption, selectedSpecialty, selectedLocation });
       console.log('📅 FRONTEND - Fechas obtenidas:', dates);
     }
   };
@@ -150,8 +150,8 @@ export function BookAppointment() {
         date = `${year}-${month}-${day}`;
         setSelectedDate(date);
         setSelectedSchedule(null);
-        if (selectedVenue && date && selectedSpecialty && selectedDoctor) {
-            getSchedules({ selectedDoctor, selectedSpecialty, selectedVenue, date });
+        if (selectedLocation && date && selectedSpecialty && selectedDoctor) {
+            getSchedules({ selectedDoctor, selectedSpecialty, selectedLocation, date });
         }
     };*/
 
@@ -182,7 +182,7 @@ export function BookAppointment() {
     setSelectedSchedule(null);
 
     if (
-      selectedVenue &&
+      selectedLocation &&
       formattedDate &&
       selectedSpecialty &&
       selectedDoctor
@@ -190,7 +190,7 @@ export function BookAppointment() {
       await getSchedules({
         selectedDoctor,
         selectedSpecialty,
-        selectedVenue,
+        selectedLocation,
         date: formattedDate,
       });
     }
@@ -202,7 +202,7 @@ export function BookAppointment() {
     console.log(`${formattedDate} ${selectedOption.value}`);
     setDoctorId(selectedDoctor.value);
     setSpecialtyId(selectedSpecialty.value);
-    setVenueId(selectedVenue.value);
+    setLocationId(selectedLocation.value);
     setStatus('Pendiente');
     setCancellationDate(null);
     setConfirmationDate(null);
@@ -212,18 +212,18 @@ export function BookAppointment() {
     <form className="min-h-screen bg-gradient-to-b from-blue-100 to-white flex items-center justify-center p-4">
       <div className="bg-white rounded-lg shadow-md w-full max-w-md p-6 space-y-4">
         <div className="space-y-4">
-          <p className="text-center text-gray-600 text-lg">Sede</p>
+          <p className="text-center text-gray-600 text-lg">Localidad</p>
           <Select
             className="react-select"
-            options={(venues || []).map((sede) => {
-              console.log('🏢 FRONTEND - Mapeando sede:', sede);
+            options={(locations || []).map((location) => {
+              console.log('🏢 FRONTEND - Mapeando localidad:', location);
               return {
-                value: sede.venueId || sede.idSite,
-                label: sede.name,
+                value: location.id || location.locationId || location.idSite,
+                label: location.name,
               };
             })}
-            onChange={handleSedeChange}
-            value={selectedVenue}
+            onChange={handleLocationChange}
+            value={selectedLocation}
             styles={customStyles}
           />
           <p className="text-center text-gray-600 text-lg">Especialidad</p>
@@ -232,13 +232,13 @@ export function BookAppointment() {
             options={(specialties || []).map((especialidad) => {
               console.log('🩺 FRONTEND - Mapeando especialidad:', especialidad);
               return {
-                value: especialidad.idSpecialty || especialidad.specialtyId,
+                value: especialidad.id || especialidad.specialtyId || especialidad.idSpecialty,
                 label: especialidad.name,
               };
             })}
             onChange={handleEspecilidadChange}
             value={selectedSpecialty}
-            isDisabled={!selectedVenue}
+            isDisabled={!selectedLocation}
             styles={customStyles}
           />
           <p className="text-center text-gray-600 text-lg">Doctores</p>
@@ -247,8 +247,8 @@ export function BookAppointment() {
             options={(doctors || []).map((doctor) => {
               console.log('👨‍⚕️ FRONTEND - Mapeando doctor:', doctor);
               return {
-                value: doctor.idDoctor || doctor.doctorId,
-                label: doctor.nombreyapellido,
+                value: doctor.doctorId || doctor.idDoctor,
+                label: doctor.fullName || doctor.nombreyapellido,
               };
             })}
             value={selectedDoctor}

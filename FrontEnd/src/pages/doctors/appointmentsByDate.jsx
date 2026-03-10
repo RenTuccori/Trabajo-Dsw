@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { useDoctores } from '../../context/doctors/DoctorsProvider.jsx';
+import { useDoctors } from '../../context/doctors/DoctorsProvider.jsx';
 import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import { useNavigate } from 'react-router-dom';
@@ -7,7 +7,7 @@ import { useNavigate } from 'react-router-dom';
 export function AppointmentsByDate() {
   const navigate = useNavigate();
   const [selectedDate, setSelectedDate] = useState(null);
-  const { dates, Historico, turnosFecha, Fecha } = useDoctores();
+  const { dates, Historico, turnosFecha, Fecha } = useDoctors();
 
   // Llamar a obtenerTurnos cuando se monta el componente
   useEffect(() => {
@@ -65,7 +65,7 @@ export function AppointmentsByDate() {
                   className="bg-gray-50 rounded-lg p-4 shadow-sm mb-4"
                 >
                   <p>
-                    <strong>Sede:</strong> {appointment.venue}
+                    <strong>Localidad:</strong> {appointment.location || appointment.venue}
                   </p>
                   <p>
                     <strong>Especialidad:</strong> {appointment.specialty}

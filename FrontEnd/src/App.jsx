@@ -5,9 +5,9 @@ import {
   Navigate,
 } from 'react-router-dom';
 import Navbar from './components/navbar';
-import { AdministracionRoutes } from './routes/administration.routes.jsx';
-import { DoctoresRoutes } from './routes/doctors.routes.jsx';
-import { PacientesRoutes } from './routes/patients.routes.jsx';
+import { AdministrationRoutes } from './routes/administration.routes.jsx';
+import { DoctorsRoutes } from './routes/doctors.routes.jsx';
+import { PatientsRoutes } from './routes/patients.routes.jsx';
 import { ToastContainer } from 'react-toastify';
 import AuthProvider from './context/global/AuthProvider.jsx';
 import 'react-toastify/dist/ReactToastify.css';
@@ -23,9 +23,9 @@ function App() {
           <Routes>
             {/* Redirige desde "/" a "/patient" */}
             <Route path="/" element={<Navigate to="/patient" />} />
-            <Route path="/patient/*" element={<PacientesRoutes />} />
-            <Route path="/doctor/*" element={<DoctoresRoutes />} />
-            <Route path="/admin/*" element={<AdministracionRoutes />} />
+            <Route path="/patient/*" element={<PatientsRoutes />} />
+            <Route path="/doctor/*" element={<DoctorsRoutes />} />
+            <Route path="/admin/*" element={<AdministrationRoutes />} />
           </Routes>
           <ToastContainer
             position="top-center" // Centrar el toast en la parte superior

@@ -13,7 +13,7 @@ export const getDoctorsByLocationSpecialty = async (locationId, specialtyId) => 
       {
         model: User,
         as: 'user',
-        attributes: ['name', 'lastName'],
+        attributes: ['firstName', 'lastName'],
       },
       {
         model: LocationDoctorSpecialty,
@@ -25,7 +25,7 @@ export const getDoctorsByLocationSpecialty = async (locationId, specialtyId) => 
   });
   return doctors.map(d => ({
     doctorId: d.id,
-    fullName: `${d.user.name} ${d.user.lastName}`,
+    fullName: `${d.user.firstName} ${d.user.lastName}`,
   }));
 };
 
@@ -45,12 +45,12 @@ export const getAllAvailableDoctors = async (locationId) => {
     include: [{
       model: User,
       as: 'user',
-      attributes: ['name', 'lastName'],
+      attributes: ['firstName', 'lastName'],
     }],
   });
   return doctors.map(d => ({
     doctorId: d.id,
-    fullName: `${d.user.name} ${d.user.lastName}`,
+    fullName: `${d.user.firstName} ${d.user.lastName}`,
   }));
 };
 
@@ -60,13 +60,13 @@ export const getAllDoctors = async () => {
     include: [{
       model: User,
       as: 'user',
-      attributes: ['name', 'lastName'],
+      attributes: ['firstName', 'lastName'],
     }],
     order: [[{ model: User, as: 'user' }, 'lastName', 'ASC']],
   });
   return doctors.map(d => ({
     doctorId: d.id,
-    fullName: `${d.user.name} ${d.user.lastName}`,
+    fullName: `${d.user.firstName} ${d.user.lastName}`,
   }));
 };
 
@@ -76,13 +76,13 @@ export const findDoctorByNationalId = async (nationalId) => {
     include: [{
       model: User,
       as: 'user',
-      attributes: ['nationalId', 'name', 'lastName', 'email'],
+      attributes: ['nationalId', 'firstName', 'lastName', 'email'],
     }],
   });
   if (!doctor) return null;
   return {
     nationalId: doctor.user.nationalId,
-    name: doctor.user.name,
+    firstName: doctor.user.firstName,
     lastName: doctor.user.lastName,
     email: doctor.user.email,
   };
@@ -105,7 +105,7 @@ export const findDoctorById = async (doctorId) => {
   return {
     doctorId: doctor.id,
     nationalId: doctor.user.nationalId,
-    name: doctor.user.name,
+    firstName: doctor.user.firstName,
     lastName: doctor.user.lastName,
     email: doctor.user.email,
     phone: doctor.user.phone,
@@ -121,13 +121,13 @@ export const authenticateDoctor = async (nationalId, password) => {
     include: [{
       model: User,
       as: 'user',
-      attributes: ['name', 'lastName'],
+      attributes: ['firstName', 'lastName'],
     }],
   });
   if (!doctor) return null;
 
   const token = jwt.sign(
-    { doctorId: doctor.id, nationalId: doctor.nationalId, name: doctor.user.name, lastName: doctor.user.lastName, role: USER_TYPES.DOCTOR },
+    { doctorId: doctor.id, nationalId: doctor.nationalId, firstName: doctor.user.firstName, lastName: doctor.user.lastName, role: USER_TYPES.DOCTOR },
     JWT_SECRET,
     { expiresIn: '8h' }
   );

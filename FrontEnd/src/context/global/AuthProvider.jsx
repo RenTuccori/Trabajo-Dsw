@@ -24,30 +24,30 @@ const AuthProvider = ({ children }) => {
   const [rol, setRol] = useState('');
   const navigate = useNavigate();
 
-  // Inicializar status desde localStorage al montar el componente
   useEffect(() => {
+    // Initialize status from localStorage when component mounts
     const token = localStorage.getItem('token');
     if (token) {
       try {
         const decoded = jwtDecode(token);
         if (decoded.exp > Date.now() / 1000) {
-          // Token válido, restaurar status según el rol del token
-          if (decoded.rol === 'Patient') {
-            setDni(decoded.dni);
-            setNombreUsuario(decoded.name || '');
+          // Valid token, restore status based on token role
+          if (decoded.role === 'Patient') {
+            setDni(decoded.nationalId);
+            setNombreUsuario(decoded.firstName || '');
             setApellidoUsuario(decoded.lastName || '');
             setRol('Patient');
-          } else if (decoded.rol === 'Doctor') {
+          } else if (decoded.role === 'Doctor') {
             setDoctorId(decoded.doctorId);
-            setNombreUsuario(decoded.name || '');
+            setNombreUsuario(decoded.firstName || '');
             setApellidoUsuario(decoded.lastName || '');
             setRol('Doctor');
-          } else if (decoded.rol === 'Admin') {
+          } else if (decoded.role === 'Admin') {
             setIdAdmin(decoded.idAdmin);
             setRol('Admin');
           }
         } else {
-          // Token expirado, limpiar
+          // Token expired, clear
           localStorage.removeItem('token');
         }
       } catch (error) {
@@ -76,10 +76,11 @@ const AuthProvider = ({ children }) => {
 
           const decodedPatient = jwtDecode(token);
 
-          setDni(decodedPatient.dni);
-          setNombreUsuario(decodedPatient.name || '');
+          setDni(decodedPatient.nationalId);
+          setNombreUsuario(decodedPatient.firstName || '');
           setApellidoUsuario(decodedPatient.lastName || '');
           setRol('Patient');
+          navigate('/patient');
           break;
         }
         case 'Doctor': {
@@ -92,9 +93,10 @@ const AuthProvider = ({ children }) => {
           localStorage.setItem('token', token);
           const decodedDoctor = jwtDecode(token);
           setDoctorId(decodedDoctor.doctorId);
-          setNombreUsuario(decodedDoctor.name || '');
+          setNombreUsuario(decodedDoctor.firstName || '');
           setApellidoUsuario(decodedDoctor.lastName || '');
           setRol('Doctor');
+          navigate('/doctor');
           break;
         }
         case 'Admin': {
@@ -108,6 +110,7 @@ const AuthProvider = ({ children }) => {
           const decodedAdmin = jwtDecode(token);
           setIdAdmin(decodedAdmin.idAdmin);
           setRol('Admin');
+          navigate('/admin');
           break;
         }
         default:
@@ -153,14 +156,14 @@ const AuthProvider = ({ children }) => {
         } else {
           switch (userType) {
             case 'Patient': // Paciente
-              setDni(decoded.dni);
-              setNombreUsuario(decoded.name || '');
+              setDni(decoded.nationalId);
+              setNombreUsuario(decoded.firstName || '');
               setApellidoUsuario(decoded.lastName || '');
               setRol('Patient');
               break;
             case 'Doctor': // Doctor
               setDoctorId(decoded.doctorId);
-              setNombreUsuario(decoded.name || '');
+              setNombreUsuario(decoded.firstName || '');
               setApellidoUsuario(decoded.lastName || '');
               setRol('Doctor');
               break;

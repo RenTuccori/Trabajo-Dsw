@@ -1,38 +1,38 @@
 import axiosInstance from './axiosInstance';
 
-export const getEspecialidades = async ({ venueId }) => {
-    console.log('🌐 FRONTEND - getEspecialidades: Enviando petición para sede:', venueId);
+export const getSpecialties = async ({ locationId }) => {
+    console.log('🌐 FRONTEND - getSpecialties: Getting specialties for location:', locationId);
     try {
-        const response = await axiosInstance.post(`allspecialties`, { venueId });
-        console.log('✅ FRONTEND - Respuesta especialidades:', response.data);
+        const response = await axiosInstance.post(`specialties`, { locationId });
+        console.log('✅ FRONTEND - Specialties response:', response.data);
         return response;
     } catch (error) {
-        console.error('❌ FRONTEND - Error en getEspecialidades:', error);
+        console.error('❌ FRONTEND - Error in getSpecialties:', error);
         return error.response.data.message;
     }
 };
 
-export const getEspecialidadById = async (specialtyId) => {
+export const getSpecialtyById = async (specialtyId) => {
     try {
-        const response = await axiosInstance.get(`idspecialties/${specialtyId}`);
-        return response;
-    } catch (error) {
-        return error.response.data.message;
-    }
-};
-
-export const getAvailableSpecialties = async ({ venueId }) => {
-    try {
-        const response = await axiosInstance.post(`availablespecialties`, { venueId });
+        const response = await axiosInstance.get(`specialties/${specialtyId}`);
         return response;
     } catch (error) {
         return error.response.data.message;
     }
 };
 
-export const getAllSpecialities = async () => {
+export const getAvailableSpecialties = async ({ locationId }) => {
     try {
-        const response = await axiosInstance.post(`allespecialties`);
+        const response = await axiosInstance.post(`specialties/available`, { locationId });
+        return response;
+    } catch (error) {
+        return error.response.data.message;
+    }
+};
+
+export const getAllSpecialties = async () => {
+    try {
+        const response = await axiosInstance.post(`specialties/all`);
         return response;
     } catch (error) {
         return error.response.data.message;

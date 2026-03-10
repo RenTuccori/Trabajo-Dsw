@@ -1,13 +1,13 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useDoctores } from '../../context/doctors/DoctorsProvider.jsx';
+import { useDoctors } from '../../context/doctors/DoctorsProvider.jsx';
 import '../../estilos/home.css';
 import '../../estilos/sacarturno.css';
 import '../../estilos/verTurnos.css';
 
 export function TodayAppointments() {
-  const { turnosHoy, TurnosHoy } = useDoctores();
+  const { turnosHoy, TurnosHoy } = useDoctors();
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -41,7 +41,7 @@ export function TodayAppointments() {
                 className="bg-gray-50 rounded-lg p-4 shadow-sm mb-4"
               >
                 <p>
-                  <strong>Sede:</strong> {appointment.venue}
+                  <strong>Localidad:</strong> {appointment.location || appointment.venue}
                 </p>
                 <p>
                   <strong>Especialidad:</strong> {appointment.specialty}

@@ -56,7 +56,7 @@ export const getAllCombinations = async () => {
       {
         model: Doctor, as: 'doctor',
         where: { status: 'Habilitado' },
-        include: [{ model: User, as: 'user', attributes: ['name', 'lastName'] }],
+        include: [{ model: User, as: 'user', attributes: ['firstName', 'lastName'] }],
       },
     ],
   });
@@ -66,7 +66,7 @@ export const getAllCombinations = async () => {
     specialtyId: c.specialtyId,
     locationName: c.location?.name,
     specialtyName: c.specialty?.name,
-    doctorName: c.doctor?.user?.name,
+    doctorName: c.doctor?.user?.firstName,
     doctorLastName: c.doctor?.user?.lastName,
   }));
 };
@@ -95,7 +95,7 @@ export const getSchedulesByDoctor = async ({ locationId, specialtyId, doctorId }
       { model: Specialty, as: 'specialty', attributes: ['name'] },
       {
         model: Doctor, as: 'doctor',
-        include: [{ model: User, as: 'user', attributes: ['name', 'lastName'] }],
+        include: [{ model: User, as: 'user', attributes: ['firstName', 'lastName'] }],
       },
     ],
   });
@@ -105,7 +105,7 @@ export const getSchedulesByDoctor = async ({ locationId, specialtyId, doctorId }
     endTime: h.endTime ? h.endTime.substring(0, 5) : '',
     locationName: h.location?.name,
     specialtyName: h.specialty?.name,
-    doctorName: h.doctor?.user?.name,
+    doctorName: h.doctor?.user?.firstName,
     doctorLastName: h.doctor?.user?.lastName,
   }));
 };

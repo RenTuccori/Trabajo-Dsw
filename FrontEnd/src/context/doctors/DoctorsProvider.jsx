@@ -1,16 +1,16 @@
 import { DoctorsContext } from './DoctorsContext';
 import {
-  getTurnosHistoricoDoctor,
-  getappointmentsByDate,
-  gettodayAppointments,
+  getHistoricalAppointmentsDoctor,
+  getAppointmentsByDate,
+  getTodayAppointments,
 } from '../../api/appointments.api.js';
 import { useContext,  useState } from 'react';
 import PropTypes from 'prop-types';
 // eslint-disable-next-line react-refresh/only-export-components
-export const useDoctores = () => {
+export const useDoctors = () => {
   const context = useContext(DoctorsContext);
   if (!context) {
-    throw new Error('useDoctores must be used within an DoctorsProvider');
+    throw new Error('useDoctors must be used within an DoctorsProvider');
   }
   return context;
 };
@@ -28,7 +28,7 @@ const DoctorsProvider = ({ children }) => {
 
   async function Historico() {
     try {
-      const response = await getTurnosHistoricoDoctor({ doctorId : doctorId });
+      const response = await getHistoricalAppointmentsDoctor({ doctorId : doctorId });
       console.log(response.data.data)
       console.log('length', response.data.data.length)
       if (response.data && response.data.data.length > 0) {
@@ -55,7 +55,7 @@ const DoctorsProvider = ({ children }) => {
     const formattedDate = `${fecha.getFullYear()}-${(fecha.getMonth() + 1)
       .toString()
       .padStart(2, '0')}-${fecha.getDate().toString().padStart(2, '0')}`;
-    const response = await getappointmentsByDate({
+    const response = await getAppointmentsByDate({
       doctorId,
       dateTime: formattedDate,
     });
@@ -64,7 +64,7 @@ const DoctorsProvider = ({ children }) => {
 
   async function TurnosHoy() {
     try {
-      const response = await gettodayAppointments({ doctorId });
+      const response = await getTodayAppointments({ doctorId });
       setTurnosHoy(response.data || []);
     } catch (error) {
       console.error('Error al obtener los appointments de hoy:', error);

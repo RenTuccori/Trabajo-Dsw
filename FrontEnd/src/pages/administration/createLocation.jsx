@@ -1,30 +1,30 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useAdministracion } from '../../context/administration/AdministrationProvider.jsx';
+import { useAdministration } from '../../context/administration/AdministrationProvider.jsx';
 
-export function CreateVenue() {
+export function CreateLocation() {
   const navigate = useNavigate();
-  const { venues, createNewVenue, getVenues, deleteVenue } =
-    useAdministracion();
-  const [venueName, setVenueName] = useState('');
-  const [venueAddress, setVenueAddress] = useState('');
+  const { locations, createNewLocation, getLocations, deleteLocation } =
+    useAdministration();
+  const [locationName, setLocationName] = useState('');
+  const [locationAddress, setLocationAddress] = useState('');
 
-  // Obtener venues al cargar el componente
+  // Obtener locations al cargar el componente
   useEffect(() => {
-    getVenues();
+    getLocations();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // Manejar la creación de una nueva sede
-  const handlecreateVenue = async (e) => {
+  // Manejar la creación de una nueva location
+  const handleCreateLocation = async (e) => {
     e.preventDefault();
-    if (venueName.trim() !== '' && venueAddress.trim() !== '') {
+    if (locationName.trim() !== '' && locationAddress.trim() !== '') {
       try {
-        await createNewVenue({ name: venueName, address: venueAddress });
-        setVenueName(''); // Reiniciar el campo de texto
-        setVenueAddress('');
+        await createNewLocation({ name: locationName, address: locationAddress });
+        setLocationName(''); // Reiniciar el campo de texto
+        setLocationAddress('');
         window.notifySuccess('¡Sede creada con éxito!'); // Mostrar mensaje de éxito
-        getVenues(); // Actualizar la lista después de crear una sede
+        getLocations(); // Actualizar la lista después de crear una sede
       } catch (error) {
         window.notifyError('Error al crear la sede'); // Mostrar mensaje de error
         console.error('Error al crear sede:', error);
@@ -32,7 +32,7 @@ export function CreateVenue() {
     }
   };
 
-  const handleBorrarSede = async (venueId) => {
+  const handleDeleteLocation = async (locationId) => {
     const result = await window.confirmDialog(
       '¿Estás seguro?',
       '¿Deseas eliminar esta sede?'
@@ -40,9 +40,9 @@ export function CreateVenue() {
 
     if (result.isConfirmed) {
       try {
-        await deleteVenue(venueId);
+        await deleteLocation(locationId);
         window.notifySuccess('¡Sede eliminada con éxito!'); // Mostrar mensaje de éxito
-        getVenues(); // Actualizar la lista después de borrar una sede
+        getLocations(); // Actualizar la lista después de borrar una sede
       } catch (error) {
         window.notifyError('Error al eliminar la sede'); // Mostrar mensaje de error
         console.error('Error al borrar sede:', error);
@@ -57,19 +57,19 @@ export function CreateVenue() {
           Crear nueva sede
         </h2>
 
-        <form onSubmit={handlecreateVenue} className="space-y-4">
+        <form onSubmit={handleCreateLocation} className="space-y-4">
           <input
             type="text"
             placeholder="Nombre de la sede"
-            value={venueName}
-            onChange={(e) => setVenueName(e.target.value)}
+            value={locationName}
+            onChange={(e) => setLocationName(e.target.value)}
             className="w-full p-2 border border-gray-300 rounded-lg"
           />
           <input
             type="text"
             placeholder="Dirección de la sede"
-            value={venueAddress}
-            onChange={(e) => setVenueAddress(e.target.value)}
+            value={locationAddress}
+            onChange={(e) => setLocationAddress(e.target.value)}
             className="w-full p-2 border border-gray-300 rounded-lg"
           />
           <button
@@ -92,17 +92,17 @@ export function CreateVenue() {
           Sedes creadas
         </h3>
         <ul className="space-y-2">
-          {venues.length > 0 ? (
-            venues.map((sede) => (
+          {locations.length > 0 ? (
+            locations.map((location) => (
               <li
-                key={sede.idSite}
+                key={location.idSite}
                 className="bg-gray-100 p-4 rounded-lg flex justify-between items-center"
               >
                 <span>
-                  <strong>{sede.name}</strong> - {sede.address}
+                  <strong>{location.name}</strong> - {location.address}
                 </span>
                 <button
-                  onClick={() => handleBorrarSede(sede.idSite)}
+                  onClick={() => handleDeleteLocation(location.idSite)}
                   className="text-red-600 hover:text-red-800"
                 >
                   Eliminar
@@ -111,7 +111,7 @@ export function CreateVenue() {
             ))
           ) : (
             <p className="text-center text-gray-600">
-              No hay venues creadas aún.
+              No hay locations creadas aún.
             </p>
           )}
         </ul>

@@ -4,7 +4,7 @@ import {
   getEstudiosByPaciente,
   downloadEstudio as downloadEstudioAPI,
 } from '../../api/studies.api';
-import { getPacienteDni } from '../../api/patients.api';
+import { getPatientbyNationalId } from '../../api/patients.api';
 import { notifyError } from '../../components/ToastConfig';
 
 function ViewStudies() {
@@ -17,7 +17,7 @@ function ViewStudies() {
   const loadPaciente = useCallback(async () => {
     console.log('🔍 FRONTEND - loadPaciente: Cargando paciente con DNI:', dni);
     try {
-      const response = await getPacienteDni({ dni });
+      const response = await getPatientbyNationalId({ nationalId: dni });
       console.log('✅ FRONTEND - loadPaciente: Respuesta recibida:', response);
       console.log('📊 FRONTEND - loadPaciente: Datos del paciente:', response.data);
       setPacienteData(response.data);

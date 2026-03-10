@@ -2,11 +2,11 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Select from 'react-select';
-import { useAdministracion } from '../../context/administration/AdministrationProvider.jsx';
+import { useAdministration } from '../../context/administration/AdministrationProvider.jsx';
 
 export function DoctorData() {
   const { healthInsurances, getHealthInsurances, createUser, createDoctor } =
-    useAdministracion();
+    useAdministration();
   const [selectedObraSociales, setSelectedObraSociales] = useState(null);
   const [usuarioCreado, setUsuarioCreado] = useState(false); // Para manejar el flujo de creación de user y doctor
   const navigate = useNavigate();

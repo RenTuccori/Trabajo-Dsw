@@ -26,7 +26,7 @@ export const authenticatePatient = async (nationalId, birthDate) => {
   if (!user) return null;
 
   const token = jwt.sign(
-    { nationalId: user.nationalId, name: user.name, lastName: user.lastName, role: USER_TYPES.PATIENT },
+    { nationalId: user.nationalId, firstName: user.firstName, lastName: user.lastName, role: USER_TYPES.PATIENT },
     JWT_SECRET,
     { expiresIn: '8h' }
   );

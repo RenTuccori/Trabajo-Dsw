@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Select from 'react-select';
-import { usePacientes } from '../../context/patients/PatientsProvider';
+import { usePatients } from '../../context/patients/PatientsProvider';
 
 export function UserModification() {
   const {
@@ -10,7 +10,7 @@ export function UserModification() {
     getHealthInsurances,
     healthInsurances,
     updateUserFunction,
-  } = usePacientes();
+  } = usePatients();
   const [selectedObraSociales, setSelectedObraSociales] = useState(null);
   const navigate = useNavigate();
   const [formData, setFormData] = useState({

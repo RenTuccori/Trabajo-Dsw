@@ -16,18 +16,18 @@ import {
   createHorarios,
   getHorariosXDoctor,
   updateHorarios,
-} from '../../api/admin.api.js'; // Asegúrate de tener una función para crear la sede en la API
+} from '../../api/admin.api.js';
 import { useContext, useState } from 'react';
-import { getSedes } from '../../api/venues.api.js';
+import { getLocations } from '../../api/venues.api.js';
 import {
-  getEspecialidades,
-  getAllSpecialities,
+  getSpecialties,
+  getAllSpecialties,
 } from '../../api/specialties.api';
 import {
-  getDoctores,
+  getAllDoctors,
   getDoctorById as getDoctorByIdAPI,
 } from '../../api/doctors.api';
-import { getObrasSociales } from '../../api/insurance.api.js';
+import { getInsurance } from '../../api/insurance.api.js';
 import {
   getUserDni,
   createUser as createUserAPI,
@@ -35,18 +35,18 @@ import {
 } from '../../api/users.api.js';
 import PropTypes from 'prop-types';
 // eslint-disable-next-line react-refresh/only-export-components
-export const useAdministracion = () => {
+export const useAdministration = () => {
   const context = useContext(AdministrationContext);
   if (!context) {
     throw new Error(
-      'useAdministracion must be used within an AdministrationProvider'
+      'useAdministration must be used within an AdministrationProvider'
     );
   }
   return context;
 };
 
 const AdministrationProvider = ({ children }) => {
-  const [venues, setVenues] = useState([]); // Estado para almacenar las venues
+  const [locations, setLocations] = useState([]); // Estado para almacenar las locations
   const [specialties, setSpecialties] = useState('');
   const [healthInsurances, setHealthInsurances] = useState('');
   const [doctors, setDoctors] = useState('');
@@ -54,11 +54,11 @@ const AdministrationProvider = ({ children }) => {
   const [user, setUser] = useState({});
   const [selectedDoctor, setSelectedDoctor] = useState(null);
   const [selectedSpecialty, setSelectedSpecialty] = useState(null);
-  const [selectedVenue, setSelectedVenue] = useState(null);
+  const [selectedLocation, setSelectedLocation] = useState(null);
   const [combinations, setCombinations] = useState([]);
   const [doctorSchedules, setDoctorSchedules] = useState([]);
 
-  async function createNewVenue({ name, address }) {
+  async function createNewLocation({ name, address }) {
     try {
       await createSede({ name, address }); // Llamada a la API
     } catch (error) {
@@ -80,14 +80,14 @@ const AdministrationProvider = ({ children }) => {
     }
   }
 
-  async function getVenues() {
-    const response = await getSedes();
-    setVenues(response.data);
+  async function getLocationsFunc() {
+    const response = await getLocations();
+    setLocations(response.data);
   }
 
-  async function deleteVenue(venueId) {
+  async function deleteLocation(locationId) {
     try {
-      await deleteSede(venueId); // Llamada a la API
+      await deleteSede(locationId); // Llamada a la API
     } catch (error) {
       console.error('Error al borrar la sede:', error);
       throw error;
@@ -95,8 +95,8 @@ const AdministrationProvider = ({ children }) => {
   }
 
   //Especialidad
-  async function getSpecialties({ venueId }) {
-    const response = await getEspecialidades({ venueId });
+  async function getSpecialtiesFunc({ locationId }) {
+    const response = await getSpecialties({ locationId });
     setSpecialties(response.data);
   }
   async function createSpecialtyFunction({ name }) {
@@ -115,14 +115,14 @@ const AdministrationProvider = ({ children }) => {
       throw error;
     }
   }
-  async function getAvailableSpecialties() {
-    const response = await getAllSpecialities();
+  async function getAvailableSpecialtiesFunc() {
+    const response = await getAllSpecialties();
     setSpecialties(response.data);
   }
 
   //Doctor
-  async function getDoctors() {
-    const response = await getDoctores();
+  async function getDoctorsFunc() {
+    const response = await getAllDoctors();
     setDoctors(response.data);
   }
   async function getDoctorById(doctorId) {
@@ -176,12 +176,12 @@ const AdministrationProvider = ({ children }) => {
     }
   }
 
-  async function getHealthInsurances() {
+  async function getHealthInsurancesFunc() {
     try {
-      const response = await getObrasSociales();
+      const response = await getInsurance();
       setHealthInsurances(response.data);
     } catch (error) {
-      console.error('Error al obtener las venues:', error);
+      console.error('Error getting health insurances:', error);
     }
   }
 
@@ -203,38 +203,38 @@ const AdministrationProvider = ({ children }) => {
     }
   }
 
-  //Combinaciones de sede, especialidad y doctor
-  async function createVenueSpecialtyDoctor({
-    venueId,
+  //Combinaciones de location, especialidad y doctor
+  async function createLocationSpecialtyDoctor({
+    locationId,
     specialtyId,
     doctorId,
   }) {
     try {
       await createSeEspDoc({
-        venueId,
+        locationId,
         specialtyId,
         doctorId,
       });
     } catch (error) {
-      console.error('Error al obtener las venues:', error);
+      console.error('Error al obtener las locations:', error);
       throw error;
     }
   }
 
-  async function deleteVenueSpecialtyDoctor({
-    venueId,
+  async function deleteLocationSpecialtyDoctor({
+    locationId,
     doctorId,
     specialtyId,
   }) {
     try {
       await deleteSeEspDoc({
-        venueId,
+        locationId,
         doctorId,
         specialtyId,
       });
     } catch (error) {
       console.error(
-        'Error al borrar la combinación de sede, especialidad y doctor:',
+        'Error al borrar la combinación de location, especialidad y doctor:',
         error
       );
       throw error;
@@ -256,7 +256,7 @@ const AdministrationProvider = ({ children }) => {
 
   //Horarios
   async function createSchedules({
-    venueId,
+    locationId,
     doctorId,
     specialtyId,
     dia,
@@ -267,7 +267,7 @@ const AdministrationProvider = ({ children }) => {
     try {
       console.log(
         'data:',
-        venueId,
+        locationId,
         doctorId,
         specialtyId,
         dia,
@@ -276,7 +276,7 @@ const AdministrationProvider = ({ children }) => {
         status
       );
       await createHorarios({
-        venueId,
+        locationId,
         doctorId,
         specialtyId,
         day: dia,
@@ -289,7 +289,7 @@ const AdministrationProvider = ({ children }) => {
     }
   }
   async function updateSchedules({
-    venueId,
+    locationId,
     doctorId,
     specialtyId,
     dia,
@@ -299,7 +299,7 @@ const AdministrationProvider = ({ children }) => {
   }) {
     try {
       await updateHorarios({
-        venueId,
+        locationId,
         doctorId,
         specialtyId,
         day: dia,
@@ -311,10 +311,10 @@ const AdministrationProvider = ({ children }) => {
       console.error('Error al actualizar el horario:', error);
     }
   }
-  async function getDoctorSchedules({ venueId, specialtyId, doctorId }) {
+  async function getDoctorSchedules({ locationId, specialtyId, doctorId }) {
     try {
       const response = await getHorariosXDoctor({
-        venueId,
+        locationId,
         specialtyId,
         doctorId,
       });
@@ -365,38 +365,44 @@ const AdministrationProvider = ({ children }) => {
     <AdministrationContext.Provider
       value={{
         updateUserFunction,
-        venues,
-        createNewVenue,
-        getVenues,
-        deleteVenue,
+        updateUser: updateUserFunction,
+        locations,
+        createNewLocation,
+        getLocationsFunc,
+        getLocations: getLocationsFunc,
+        deleteLocation,
         createSpecialty: createSpecialtyFunction,
         specialties,
         setSpecialties,
         deleteSpecialty: deleteSpecialtyFunction,
         createHealthInsurance,
-        getHealthInsurances,
+        getHealthInsurancesFunc,
+        getHealthInsurances: getHealthInsurancesFunc,
         healthInsurances,
         deleteHealthInsurance,
         updateHealthInsurance,
-        createVenueSpecialtyDoctor,
-        getSpecialties,
-        getDoctors,
+        createLocationSpecialtyDoctor,
+        getSpecialtiesFunc,
+        getDoctorsFunc,
         doctors,
         selectedDoctor,
         setSelectedDoctor,
         selectedSpecialty,
         setSelectedSpecialty,
-        selectedVenue,
-        setSelectedVenue,
-        getAvailableSpecialties,
+        selectedLocation,
+        setSelectedLocation,
+        getAvailableSpecialtiesFunc,
         createDoctorFunction,
+        createDoctor: createDoctorFunction,
         deleteDoctorFunction,
         updateDoctorFunction,
+        updateDoctor: updateDoctorFunction,
         getUserByDni,
         createUserFunction,
+        createUser: createUserFunction,
         setUser,
         user,
-        deleteVenueSpecialtyDoctor,
+        deleteLocationSpecialtyDoctor,
         getCombinations,
         combinations,
         getDoctorById,

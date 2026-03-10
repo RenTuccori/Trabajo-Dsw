@@ -1,17 +1,17 @@
 import axiosInstance from "./axiosInstance";
 
-export const getFechasDispTodos = async ({ doctorId, specialtyId, venueId }) => {
+export const getAvailableDatesByDocSpecLoc = async ({ doctorId, specialtyId, locationId }) => {
     try {
-        const response = await axiosInstance.post(`DispDocEspSed`, { doctorId, specialtyId, venueId });
+        const response = await axiosInstance.post(`schedules/available/doctor-specialty-location`, { doctorId, specialtyId, locationId });
         return response;
     } catch (error) {
         return error.response.data.message;
     }
 }
 
-export const getHorariosDisp = async ({ doctorId, specialtyId, venueId, date }) => {
+export const getAvailableSchedulesByDocSpecLoc = async ({ doctorId, specialtyId, locationId, fecha }) => {
     try {
-        const response = await axiosInstance.post(`HorariosDispDocEspSed`, { doctorId, specialtyId, venueId, date });
+        const response = await axiosInstance.post(`schedules/doctor-specialty-location`, { doctorId, specialtyId, locationId, fecha });
         return response;
     } catch (error) {
         return error.response.data.message;

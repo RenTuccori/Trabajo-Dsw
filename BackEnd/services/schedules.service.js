@@ -41,7 +41,7 @@ export const getAvailableDatesByDocSpecLoc = async (doctorId, specialtyId, locat
       AND CONCAT(ts.fecha, ' ', ts.start_time) = tur.dateTime
     WHERE (tur.id IS NULL OR tur.cancellationDate IS NOT NULL)
       AND ts.doctorId = ? AND ts.specialtyId = ? AND ts.locationId = ?
-    GROUP BY ts.fecha, ts.day, usu.name, usu.lastName
+    GROUP BY ts.fecha, ts.day, usu.firstName, usu.lastName
     ORDER BY ts.fecha
   `, { replacements: [doctorId, specialtyId, locationId, doctorId, specialtyId, locationId] });
   return results;
@@ -86,7 +86,7 @@ export const getAvailableDatesBySpecLoc = async (specialtyId, locationId) => {
       AND CONCAT(ts.fecha, ' ', ts.start_time) = tur.dateTime
     WHERE (tur.id IS NULL OR tur.cancellationDate IS NOT NULL)
       AND ts.specialtyId = ? AND ts.locationId = ?
-    GROUP BY ts.fecha, ts.day, usu.name, usu.lastName
+    GROUP BY ts.fecha, ts.day, usu.firstName, usu.lastName
     ORDER BY ts.fecha
   `, { replacements: [specialtyId, locationId, specialtyId, locationId] });
   return results;
@@ -110,7 +110,7 @@ export const getAvailableSchedulesByDocSpecLoc = async (doctorId, specialtyId, l
       FROM time_slots ts
       WHERE ADDTIME(ts.end_time, SEC_TO_TIME(ts.appointmentDuration * 60)) <= ts.endTime
     )
-    SELECT usu.name, usu.lastName, ts.start_time AS startTime, ts.day
+    SELECT usu.firstName, usu.lastName, ts.start_time AS startTime, ts.day
     FROM time_slots ts
     JOIN dates fe ON ts.day = CASE DAYNAME(fe.date)
       WHEN 'Monday' THEN 'Lunes' WHEN 'Tuesday' THEN 'Martes'
@@ -153,7 +153,7 @@ export const getAvailableSchedulesBySpecLoc = async (specialtyId, locationId, fe
       FROM time_slots ts
       WHERE ADDTIME(ts.end_time, SEC_TO_TIME(ts.appointmentDuration * 60)) <= ts.endTime
     )
-    SELECT usu.name, usu.lastName, ts.start_time AS startTime, ts.day
+    SELECT usu.firstName, usu.lastName, ts.start_time AS startTime, ts.day
     FROM time_slots ts
     JOIN dates fe ON ts.day = CASE DAYNAME(fe.date)
       WHEN 'Monday' THEN 'Lunes' WHEN 'Tuesday' THEN 'Martes'

@@ -6,7 +6,7 @@ import {
   getEstudiosByDoctor,
   downloadEstudio as downloadEstudioAPI,
 } from '../../api/studies.api';
-import { getPacientes } from '../../api/patients.api';
+import { getPatients } from '../../api/patients.api';
 
 function UploadStudy() {
   const { doctorId } = useAuth();
@@ -56,8 +56,8 @@ function UploadStudy() {
 
   const loadPacientes = async () => {
     try {
-      console.log('Llamando a getPacientes...');
-      const response = await getPacientes();
+      console.log('Llamando a getPatients...');
+      const response = await getPatients();
       console.log('Respuesta de patients:', response);
       setPacientes(response.data || []);
     } catch (error) {

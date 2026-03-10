@@ -1,18 +1,17 @@
 import axiosInstance from './axiosInstance';
 
 export const verifyDoctor = async ({ dni, password }) => {
-    return await axiosInstance.post(`doctorscontra`, { dni, password });
+    return await axiosInstance.post(`doctors/login`, { dni, password });
 }
 
-export const getDoctors = async ({ venueId, specialtyId }) => {
-    console.log('🌐 FRONTEND - getDoctors: Enviando petición para:', { venueId, specialtyId });
+export const getDoctors = async ({ locationId, specialtyId }) => {
+    console.log('🌐 FRONTEND - getDoctors: Sending request for:', { locationId, specialtyId });
     try {
-        // Cambiamos la ruta para usar la función correcta que filtra por sede y especialidad
-        const response = await axiosInstance.post(`availabledoctors`, { venueId, specialtyId });
-        console.log('✅ FRONTEND - Respuesta doctores:', response.data);
+        const response = await axiosInstance.post(`doctors`, { locationId, specialtyId });
+        console.log('✅ FRONTEND - Doctors response:', response.data);
         return response;
     } catch (error) {
-        console.error('❌ FRONTEND - Error en getDoctors:', error);
+        console.error('❌ FRONTEND - Error in getDoctors:', error);
         return error.response.data.message;
     }
 }
@@ -32,18 +31,18 @@ export const getDoctorById = async (doctorId) => {
     }
 }
 
-export const getDoctores = async () => {
+export const getAllDoctors = async () => {
     try {
-        const response = await axiosInstance.post(`alldoctors`);
+        const response = await axiosInstance.post(`doctors/all`);
         return response;
     } catch (error) {
         return error.response.data.message;
     }
 }
 
-export const getAvailableDoctors = async ({ venueId }) => {
+export const getAvailableDoctors = async ({ locationId }) => {
     try {
-        const response = await axiosInstance.post(`availabledoctors`, { venueId });
+        const response = await axiosInstance.post(`doctors/available`, { locationId });
         return response;
     } catch (error) {
         return error.response.data.message;

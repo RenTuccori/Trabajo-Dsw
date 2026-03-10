@@ -1,11 +1,11 @@
 import { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
-import { useAdministracion } from '../../context/administration/AdministrationProvider.jsx';
+import { useAdministration } from '../../context/administration/AdministrationProvider.jsx';
 
 export function CreateSchedules() {
   const navigate = useNavigate();
   const location = useLocation();
-  const { venueId, specialtyId, doctorId } = location.state || {};
+  const { locationId, specialtyId, doctorId } = location.state || {};
 
   const diasSemana = ['lunes', 'martes', 'miércoles', 'jueves', 'viernes'];
   const {
@@ -13,7 +13,7 @@ export function CreateSchedules() {
     createSchedules,
     doctorSchedules,
     updateSchedules,
-  } = useAdministracion();
+  } = useAdministration();
   const [schedules, setSchedules] = useState(
     diasSemana.map((dia) => ({ dia, hora_inicio: '', hora_fin: '' })) // Inicializar con días de la semana
   );
@@ -22,7 +22,7 @@ export function CreateSchedules() {
   useEffect(() => {
     const cargarHorarios = async () => {
       try {
-        await getDoctorSchedules({ venueId, specialtyId, doctorId });
+        await getDoctorSchedules({ locationId, specialtyId, doctorId });
       } catch (error) {
         if (error.response && error.response.status === 404) {
           // Manejo específico para el error 404
@@ -36,13 +36,13 @@ export function CreateSchedules() {
       }
     };
 
-    if (venueId && specialtyId && doctorId) {
+    if (locationId && specialtyId && doctorId) {
       console.log('cargando schedules');
       cargarHorarios();
     } else {
       window.notifyError('Faltan datos para cargar schedules');
     }
-  }, [venueId, specialtyId, doctorId]);
+  }, [locationId, specialtyId, doctorId]);
 
   useEffect(() => {
     if (doctorSchedules && doctorSchedules.length > 0) {
@@ -95,7 +95,7 @@ export function CreateSchedules() {
             // Usar PUT si el horario ya existe
             console.log('Actualizando horario:', horario);
             await updateSchedules({
-              venueId,
+              locationId,
               doctorId,
               specialtyId,
               dia: horario.dia,
@@ -113,7 +113,7 @@ export function CreateSchedules() {
               horario.hora_fin
             );
             await createSchedules({
-              venueId,
+              locationId,
               doctorId,
               specialtyId,
               dia: horario.dia,
@@ -138,7 +138,7 @@ export function CreateSchedules() {
 
         <div className="bg-white rounded-lg shadow-md p-6 space-y-4">
           <h3 className="text-lg font-medium">
-            Sede: {venueId}, Especialidad: {specialtyId}, Doctor: {doctorId}
+            Sede: {locationId}, Especialidad: {specialtyId}, Doctor: {doctorId}
           </h3>
 
           {/* Ingreso de nuevos schedules, con los schedules existentes ya pre-rellenados */}

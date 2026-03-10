@@ -1,7 +1,7 @@
 import { Routes, Route } from 'react-router-dom';
 import AdministrationProvider from '../context/administration/AdministrationProvider.jsx';
 import AdministrationHome from '../pages/administration/administrationHome.jsx';
-import { CreateVenue } from '../pages/administration/createVenue.jsx';
+import { CreateLocation } from '../pages/administration/createLocation.jsx';
 import { CreateSpecialty } from '../pages/administration/createSpecialty.jsx';
 import { CreateInsurance } from '../pages/administration/createInsurance.jsx';
 import { CreateCombination } from '../pages/administration/createCombination.jsx';
@@ -11,8 +11,9 @@ import { CreateSchedules } from '../pages/administration/createSchedules.jsx';
 import { Validation } from './validation.jsx';
 import { ProtectedRoute } from '../components/ProtectedRoute.jsx';
 import { useAuth } from '../context/global/AuthProvider.jsx';
+import { USER_TYPES } from '../constants/userTypes.js';
 
-export function AdministracionRoutes() {
+export function AdministrationRoutes() {
   const { rol } = useAuth();
 
   return (
@@ -20,70 +21,70 @@ export function AdministracionRoutes() {
       <Routes>
         <Route path="/" element={<AdministrationHome />} />
         <Route
-          path="/createVenue"
+          path="/createLocation"
           element={
-            <Validation rol={rol} esperado={'Admin'}>
-              <ProtectedRoute requiredRole="Admin">
-                <CreateVenue />
+            <Validation rol={rol} expected={USER_TYPES.ADMIN}>
+              <ProtectedRoute requiredRole={USER_TYPES.ADMIN}>
+                <CreateLocation />
               </ProtectedRoute>
             </Validation>
           }
         />
         <Route
-          path="/crearEsp"
+          path="/createSpecialty"
           element={
-            <Validation rol={rol} esperado={'Admin'}>
-              <ProtectedRoute requiredRole="Admin">
+            <Validation rol={rol} expected={USER_TYPES.ADMIN}>
+              <ProtectedRoute requiredRole={USER_TYPES.ADMIN}>
                 <CreateSpecialty />
               </ProtectedRoute>
             </Validation>
           }
         />
         <Route
-          path="/crearOS"
+          path="/createInsurance"
           element={
-            <Validation rol={rol} esperado={'Admin'}>
-              <ProtectedRoute requiredRole="Admin">
+            <Validation rol={rol} expected={USER_TYPES.ADMIN}>
+              <ProtectedRoute requiredRole={USER_TYPES.ADMIN}>
                 <CreateInsurance />
               </ProtectedRoute>
             </Validation>
           }
         />
         <Route
-          path="/combinacion"
+          path="/createCombination"
           element={
-            <Validation rol={rol} esperado={'Admin'}>
-              <ProtectedRoute requiredRole="Admin">
+            <Validation rol={rol} expected={USER_TYPES.ADMIN}>
+              <ProtectedRoute requiredRole={USER_TYPES.ADMIN}>
                 <CreateCombination />
               </ProtectedRoute>
             </Validation>
           }
         />
         <Route
-          path="/schedules"
+          path="/createSchedules"
           element={
-            <Validation rol={rol} esperado={'Admin'}>
-              <ProtectedRoute requiredRole="Admin">
+            <Validation rol={rol} expected={USER_TYPES.ADMIN}>
+              <ProtectedRoute requiredRole={USER_TYPES.ADMIN}>
                 <CreateSchedules />
               </ProtectedRoute>
             </Validation>
           }
         />
         <Route
-          path="/crearDoc"
+          path="/createDoctor"
           element={
-            <Validation rol={rol} esperado={'Admin'}>
-              <ProtectedRoute requiredRole="Admin">
+            <Validation rol={rol} expected={USER_TYPES.ADMIN}>
+              <ProtectedRoute requiredRole={USER_TYPES.ADMIN}>
                 <CreateDoctor />
               </ProtectedRoute>
             </Validation>
           }
         />
         <Route
-          path="/actualizarDoc/:doctorId"
+          path="/updateDoctor/:doctorId"
           element={
-            <Validation rol={rol} esperado={'Admin'}>
-              <ProtectedRoute requiredRole="Admin">
+            <Validation rol={rol} expected={USER_TYPES.ADMIN}>
+              <ProtectedRoute requiredRole={USER_TYPES.ADMIN}>
                 <UpdateDoctor />
               </ProtectedRoute>
             </Validation>

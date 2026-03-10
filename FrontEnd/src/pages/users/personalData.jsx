@@ -1,14 +1,14 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { usePacientes } from '../../context/patients/PatientsProvider';
+import { usePatients } from '../../context/patients/PatientsProvider';
 import { useAuth } from '../../context/global/AuthProvider';
 import Select from 'react-select';
 import { notifyError } from '../../components/ToastConfig';
 import { confirmDialog } from '../../components/SwalConfig';
 
 export function PersonalData() {
-  const { healthInsurances, getHealthInsurances, createUserFunction } = usePacientes();
+  const { healthInsurances, getHealthInsurances, createUserFunction } = usePatients();
   const { login } = useAuth();
   const [selectedObraSociales, setSelectedObraSociales] = useState(null);
   const navigate = useNavigate();

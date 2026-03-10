@@ -11,7 +11,7 @@ export const defineUser = (sequelize) => {
       type: DataTypes.DATEONLY,
       allowNull: false,
     },
-    name: {
+    firstName: {
       type: DataTypes.STRING(100),
       allowNull: false,
     },

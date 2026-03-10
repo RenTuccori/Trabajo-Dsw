@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { useAdministracion } from '../../context/administration/AdministrationProvider.jsx';
+import { useAdministration } from '../../context/administration/AdministrationProvider.jsx';
 
 export function CreateInsurance() {
   const navigate = useNavigate();
@@ -10,7 +10,7 @@ export function CreateInsurance() {
     getHealthInsurances,
     deleteHealthInsurance,
     updateHealthInsurance,
-  } = useAdministracion();
+  } = useAdministration();
   const [nombreObraSocial, setNombreObraSocial] = useState('');
   const [nuevoNombreObraSocial, setNuevoNombreObraSocial] = useState('');
   const [obraSocialAEditar, setObraSocialAEditar] = useState(null);

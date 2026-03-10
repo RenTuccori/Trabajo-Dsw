@@ -1,20 +1,20 @@
 import axiosInstance from './axiosInstance';
 
-export const getSedes = async () => {
-    console.log('🌐 FRONTEND - getSedes: Obteniendo sedes del backend');
+export const getLocations = async () => {
+    console.log('🌐 FRONTEND - getLocations: Getting locations from backend');
     try {
-        const response = await axiosInstance.get(`venues`);
-        console.log('✅ FRONTEND - Respuesta sedes:', response.data);
+        const response = await axiosInstance.get(`locations`);
+        console.log('✅ FRONTEND - Locations response:', response.data);
         return response;
     } catch (error) {
-        console.error('❌ FRONTEND - Error en getSedes:', error);
+        console.error('❌ FRONTEND - Error in getLocations:', error);
         return error.response.data.message;
     }
 }
 
-export const getSedeById = async (venueId) => {
+export const getLocationById = async (locationId) => {
     try {
-        const response = await axiosInstance.get(`venues/${venueId}`);
+        const response = await axiosInstance.get(`locations/${locationId}`);
         return response;
     } catch (error) {
         return error.response.data.message;

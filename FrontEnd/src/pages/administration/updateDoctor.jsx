@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom'; // Importa useParams
 import Select from 'react-select';
-import { useAdministracion } from '../../context/administration/AdministrationProvider';
+import { useAdministration } from '../../context/administration/AdministrationProvider';
 
 export function UpdateDoctor() {
   const {
@@ -11,7 +11,7 @@ export function UpdateDoctor() {
     getDoctorById,
     updateUser,
     updateDoctor,
-  } = useAdministracion();
+  } = useAdministration();
 
   const [selectedObraSociales, setSelectedObraSociales] = useState(null);
   const [hasChanges, setHasChanges] = useState(false); // Estado para rastrear cambios

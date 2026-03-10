@@ -8,48 +8,49 @@ import UploadStudy from '../pages/doctors/uploadStudy.jsx';
 import { Validation } from './validation.jsx';
 import { ProtectedRoute } from '../components/ProtectedRoute.jsx';
 import { useAuth } from '../context/global/AuthProvider.jsx';
+import { USER_TYPES } from '../constants/userTypes.js';
 
-export function DoctoresRoutes() {
+export function DoctorsRoutes() {
   const { rol } = useAuth();
   return (
     <DoctorsProvider>
       <Routes>
         <Route path="/" element={<DoctorHome />} />
         <Route
-          path="/turnoshist"
+          path="/appointmentHistory"
           element={
-            <Validation rol={rol} esperado={'Doctor'}>
-              <ProtectedRoute requiredRole="Doctor">
+            <Validation rol={rol} expected={USER_TYPES.DOCTOR}>
+              <ProtectedRoute requiredRole={USER_TYPES.DOCTOR}>
                 <HistoricalAppointments />
               </ProtectedRoute>
             </Validation>
           }
         />
         <Route
-          path="/turnoshoy"
+          path="/todayAppointments"
           element={
-            <Validation rol={rol} esperado={'Doctor'}>
-              <ProtectedRoute requiredRole="Doctor">
+            <Validation rol={rol} expected={USER_TYPES.DOCTOR}>
+              <ProtectedRoute requiredRole={USER_TYPES.DOCTOR}>
                 <TodayAppointments />
               </ProtectedRoute>
             </Validation>
           }
         />
         <Route
-          path="/turnosfecha"
+          path="/appointmentsByDate"
           element={
-            <Validation rol={rol} esperado={'Doctor'}>
-              <ProtectedRoute requiredRole="Doctor">
+            <Validation rol={rol} expected={USER_TYPES.DOCTOR}>
+              <ProtectedRoute requiredRole={USER_TYPES.DOCTOR}>
                 <AppointmentsByDate />
               </ProtectedRoute>
             </Validation>
           }
         />
         <Route
-          path="/estudios"
+          path="/uploadStudy"
           element={
-            <Validation rol={rol} esperado={'Doctor'}>
-              <ProtectedRoute requiredRole="Doctor">
+            <Validation rol={rol} expected={USER_TYPES.DOCTOR}>
+              <ProtectedRoute requiredRole={USER_TYPES.DOCTOR}>
                 <UploadStudy />
               </ProtectedRoute>
             </Validation>

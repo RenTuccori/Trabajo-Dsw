@@ -1,13 +1,13 @@
 import axiosInstance from './axiosInstance';
 
-export const getObrasSociales = async () => {
-    console.log('🌐 FRONTEND - getObrasSociales: Obteniendo obras sociales');
+export const getInsurance = async () => {
+    console.log('🌐 FRONTEND - getInsurance: Getting insurance options');
     try {
-        const response = await axiosInstance.get(`os`);
-        console.log('✅ FRONTEND - Respuesta obras sociales:', response.data);
+        const response = await axiosInstance.get(`health-insurance`);
+        console.log('✅ FRONTEND - Insurance response:', response.data);
         return response;
     } catch (error) {
-        console.error('❌ FRONTEND - Error en getObrasSociales:', error);
+        console.error('❌ FRONTEND - Error in getInsurance:', error);
         throw error;
     }
 }

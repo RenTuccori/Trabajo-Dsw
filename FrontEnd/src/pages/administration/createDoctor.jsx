@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import Select from 'react-select';
 import { useNavigate } from 'react-router-dom';
-import { useAdministracion } from '../../context/administration/AdministrationProvider.jsx';
+import { useAdministration } from '../../context/administration/AdministrationProvider.jsx';
 
 export function CreateDoctor() {
   const navigate = useNavigate();
@@ -15,7 +15,7 @@ export function CreateDoctor() {
     user,
     healthInsurances,
     deleteDoctor,
-  } = useAdministracion();
+  } = useAdministration();
 
   const [dni, setDni] = useState('');
   const [appointmentDuration, setDuracionTurno] = useState('');

@@ -13,7 +13,7 @@ export const validateUserNationalId = [
 export const validateCreateUser = [
   body('nationalId').isInt({ min: 1000000 }).withMessage('National ID must be a valid number.'),
   body('birthDate').isDate().withMessage('Date of birth is required.'),
-  body('name').trim().notEmpty().withMessage('Name is required.').isLength({ max: 100 }),
+  body('firstName').trim().notEmpty().withMessage('First name is required.').isLength({ max: 100 }),
   body('lastName').trim().notEmpty().withMessage('Last name is required.').isLength({ max: 100 }),
   body('email').optional({ nullable: true }).isEmail().withMessage('Email must be valid.'),
   body('phone').optional({ nullable: true }).isLength({ max: 20 }),
@@ -22,7 +22,7 @@ export const validateCreateUser = [
 
 export const validateUpdateUser = [
   body('nationalId').isInt({ min: 1000000 }).withMessage('National ID is required.'),
-  body('name').optional().trim().notEmpty().isLength({ max: 100 }),
+  body('firstName').optional().trim().notEmpty().isLength({ max: 100 }),
   body('lastName').optional().trim().notEmpty().isLength({ max: 100 }),
   body('email').optional({ nullable: true }).isEmail().withMessage('Email must be valid.'),
 ];

@@ -1,32 +1,32 @@
 import axiosInstance from './axiosInstance';
 
-export const getPacientes = async () => {
+export const getPatients = async () => {
   try {
-    const response = await axiosInstance.get(`patient`);
+    const response = await axiosInstance.get(`patients`);
     return response;
   } catch (error) {
     throw error.response?.data || error.message;
   }
 };
 
-export const getPacienteDni = async ({ dni }) => {
-  console.log('🌐 FRONTEND - getPacienteDni: Iniciando petición al backend');
-  console.log('📋 FRONTEND - DNI enviado:', dni);
+export const getPatientbyNationalId = async ({ nationalId }) => {
+  console.log('🌐 FRONTEND - getPatientbyNationalId: Starting request to backend');
+  console.log('📋 FRONTEND - National ID sent:', nationalId);
   
   try {
-    const response = await axiosInstance.post(`patientdni`, { dni });
-    console.log('✅ FRONTEND - getPacienteDni: Respuesta recibida:', response);
-    console.log('🆔 FRONTEND - idPatient en respuesta:', response.data?.idPatient);
+    const response = await axiosInstance.post(`patients/nationalId`, { nationalId });
+    console.log('✅ FRONTEND - getPatientbyNationalId: Response received:', response);
+    console.log('🆔 FRONTEND - idPatient in response:', response.data?.id);
     return response;
   } catch (error) {
-    console.error('❌ FRONTEND - getPacienteDni: Error:', error);
-    console.error('📄 FRONTEND - Detalles del error:', error.response?.data);
+    console.error('❌ FRONTEND - getPatientbyNationalId: Error:', error);
+    console.error('📄 FRONTEND - Error details:', error.response?.data);
     return error.response.data.message;
   }
 };
 
-export const createPaciente = async ({ dni }) => {
-  return await axiosInstance.post(`patientcreate`, { dni });
+export const createPatient = async ({ nationalId }) => {
+  return await axiosInstance.post(`patients`, { nationalId });
 };
 
 
