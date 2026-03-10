@@ -1,23 +1,18 @@
 import { DataTypes } from 'sequelize';
 
-export const defineDoctor = (sequelize) => {
-  return sequelize.define('Doctor', {
+export const defineLocation = (sequelize) => {
+  return sequelize.define('Location', {
     id: {
       type: DataTypes.INTEGER,
       primaryKey: true,
       autoIncrement: true,
     },
-    nationalId: {
-      type: DataTypes.INTEGER,
-      allowNull: false,
-      unique: true,
-    },
-    appointmentDuration: {
-      type: DataTypes.INTEGER,
+    name: {
+      type: DataTypes.STRING(100),
       allowNull: false,
     },
-    password: {
-      type: DataTypes.STRING(255),
+    address: {
+      type: DataTypes.STRING(100),
       allowNull: false,
     },
     status: {
@@ -26,7 +21,7 @@ export const defineDoctor = (sequelize) => {
       defaultValue: 'Habilitado',
     },
   }, {
-    tableName: 'doctors',
+    tableName: 'locations',
     timestamps: false,
   });
 };

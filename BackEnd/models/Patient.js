@@ -1,22 +1,23 @@
 import { DataTypes } from 'sequelize';
 
-export const defineAdmin = (sequelize) => {
-  return sequelize.define('Admin', {
+export const definePatient = (sequelize) => {
+  return sequelize.define('Patient', {
     id: {
       type: DataTypes.INTEGER,
       primaryKey: true,
       autoIncrement: true,
     },
-    username: {
-      type: DataTypes.STRING(50),
+    nationalId: {
+      type: DataTypes.INTEGER,
       allowNull: false,
     },
-    password: {
+    status: {
       type: DataTypes.STRING(45),
       allowNull: false,
+      defaultValue: 'Habilitado',
     },
   }, {
-    tableName: 'administrators',
+    tableName: 'patients',
     timestamps: false,
   });
 };

@@ -21,90 +21,90 @@ const sequelize = new Sequelize(
 );
 
 // Import models
-import { defineUsuario } from './Usuario.js';
+import { defineUser } from './User.js';
 import { defineDoctor } from './Doctor.js';
-import { definePaciente } from './Paciente.js';
-import { defineEspecialidad } from './Especialidad.js';
-import { defineSede } from './Sede.js';
-import { defineObraSocial } from './ObraSocial.js';
-import { defineTurno } from './Turno.js';
+import { definePatient } from './Patient.js';
+import { defineSpecialty } from './Specialty.js';
+import { defineLocation } from './Location.js';
+import { defineHealthInsurance } from './HealthInsurance.js';
+import { defineAppointment } from './Appointment.js';
 import { defineAdmin } from './Admin.js';
-import { defineEstudio } from './Estudio.js';
-import { defineFecha } from './Fecha.js';
-import { defineHorarioDisponible } from './HorarioDisponible.js';
-import { defineSedeDoctorEsp } from './SedeDoctorEsp.js';
+import { defineStudy } from './Study.js';
+import { defineDate } from './Date.js';
+import { defineAvailableSchedule } from './AvailableSchedule.js';
+import { defineLocationDoctorSpecialty } from './LocationDoctorSpecialty.js';
 
 // Initialize models
-const Usuario = defineUsuario(sequelize);
+const User = defineUser(sequelize);
 const Doctor = defineDoctor(sequelize);
-const Paciente = definePaciente(sequelize);
-const Especialidad = defineEspecialidad(sequelize);
-const Sede = defineSede(sequelize);
-const ObraSocial = defineObraSocial(sequelize);
-const Turno = defineTurno(sequelize);
+const Patient = definePatient(sequelize);
+const Specialty = defineSpecialty(sequelize);
+const Location = defineLocation(sequelize);
+const HealthInsurance = defineHealthInsurance(sequelize);
+const Appointment = defineAppointment(sequelize);
 const Admin = defineAdmin(sequelize);
-const Estudio = defineEstudio(sequelize);
-const Fecha = defineFecha(sequelize);
-const HorarioDisponible = defineHorarioDisponible(sequelize);
-const SedeDoctorEsp = defineSedeDoctorEsp(sequelize);
+const Study = defineStudy(sequelize);
+const Date = defineDate(sequelize);
+const AvailableSchedule = defineAvailableSchedule(sequelize);
+const LocationDoctorSpecialty = defineLocationDoctorSpecialty(sequelize);
 
 // Define associations
 
-// Usuario - ObraSocial
-Usuario.belongsTo(ObraSocial, { foreignKey: 'idObraSocial', as: 'obraSocial' });
-ObraSocial.hasMany(Usuario, { foreignKey: 'idObraSocial', as: 'usuarios' });
+// User - HealthInsurance
+User.belongsTo(HealthInsurance, { foreignKey: 'healthInsuranceId', as: 'healthInsurance' });
+HealthInsurance.hasMany(User, { foreignKey: 'healthInsuranceId', as: 'users' });
 
-// Doctor - Usuario
-Doctor.belongsTo(Usuario, { foreignKey: 'dni', targetKey: 'dni', as: 'usuario' });
-Usuario.hasOne(Doctor, { foreignKey: 'dni', sourceKey: 'dni', as: 'doctor' });
+// Doctor - User
+Doctor.belongsTo(User, { foreignKey: 'nationalId', targetKey: 'nationalId', as: 'user' });
+User.hasOne(Doctor, { foreignKey: 'nationalId', sourceKey: 'nationalId', as: 'doctor' });
 
-// Paciente - Usuario
-Paciente.belongsTo(Usuario, { foreignKey: 'dni', targetKey: 'dni', as: 'usuario' });
-Usuario.hasOne(Paciente, { foreignKey: 'dni', sourceKey: 'dni', as: 'paciente' });
+// Patient - User
+Patient.belongsTo(User, { foreignKey: 'nationalId', targetKey: 'nationalId', as: 'user' });
+User.hasOne(Patient, { foreignKey: 'nationalId', sourceKey: 'nationalId', as: 'patient' });
 
-// Turno associations
-Turno.belongsTo(Paciente, { foreignKey: 'idPaciente', as: 'paciente' });
-Turno.belongsTo(Doctor, { foreignKey: 'idDoctor', as: 'doctor' });
-Turno.belongsTo(Especialidad, { foreignKey: 'idEspecialidad', as: 'especialidad' });
-Turno.belongsTo(Sede, { foreignKey: 'idSede', as: 'sede' });
+// Appointment associations
+Appointment.belongsTo(Patient, { foreignKey: 'patientId', as: 'patient' });
+Appointment.belongsTo(Doctor, { foreignKey: 'doctorId', as: 'doctor' });
+Appointment.belongsTo(Specialty, { foreignKey: 'specialtyId', as: 'specialty' });
+Appointment.belongsTo(Location, { foreignKey: 'locationId', as: 'location' });
 
-Paciente.hasMany(Turno, { foreignKey: 'idPaciente', as: 'turnos' });
-Doctor.hasMany(Turno, { foreignKey: 'idDoctor', as: 'turnos' });
-Especialidad.hasMany(Turno, { foreignKey: 'idEspecialidad', as: 'turnos' });
-Sede.hasMany(Turno, { foreignKey: 'idSede', as: 'turnos' });
+Patient.hasMany(Appointment, { foreignKey: 'patientId', as: 'appointments' });
+Doctor.hasMany(Appointment, { foreignKey: 'doctorId', as: 'appointments' });
+Specialty.hasMany(Appointment, { foreignKey: 'specialtyId', as: 'appointments' });
+Location.hasMany(Appointment, { foreignKey: 'locationId', as: 'appointments' });
 
-// SedeDoctorEsp associations
-SedeDoctorEsp.belongsTo(Sede, { foreignKey: 'idSede', as: 'sede' });
-SedeDoctorEsp.belongsTo(Doctor, { foreignKey: 'idDoctor', as: 'doctor' });
-SedeDoctorEsp.belongsTo(Especialidad, { foreignKey: 'idEspecialidad', as: 'especialidad' });
+// LocationDoctorSpecialty associations
+LocationDoctorSpecialty.belongsTo(Location, { foreignKey: 'locationId', as: 'location' });
+LocationDoctorSpecialty.belongsTo(Doctor, { foreignKey: 'doctorId', as: 'doctor' });
+LocationDoctorSpecialty.belongsTo(Specialty, { foreignKey: 'specialtyId', as: 'specialty' });
 
-Sede.hasMany(SedeDoctorEsp, { foreignKey: 'idSede', as: 'combinaciones' });
-Doctor.hasMany(SedeDoctorEsp, { foreignKey: 'idDoctor', as: 'combinaciones' });
-Especialidad.hasMany(SedeDoctorEsp, { foreignKey: 'idEspecialidad', as: 'combinaciones' });
+Location.hasMany(LocationDoctorSpecialty, { foreignKey: 'locationId', as: 'combinations' });
+Doctor.hasMany(LocationDoctorSpecialty, { foreignKey: 'doctorId', as: 'combinations' });
+Specialty.hasMany(LocationDoctorSpecialty, { foreignKey: 'specialtyId', as: 'combinations' });
 
-// HorarioDisponible associations
-HorarioDisponible.belongsTo(Sede, { foreignKey: 'idSede', as: 'sede' });
-HorarioDisponible.belongsTo(Doctor, { foreignKey: 'idDoctor', as: 'doctor' });
-HorarioDisponible.belongsTo(Especialidad, { foreignKey: 'idEspecialidad', as: 'especialidad' });
+// AvailableSchedule associations
+AvailableSchedule.belongsTo(Location, { foreignKey: 'locationId', as: 'location' });
+AvailableSchedule.belongsTo(Doctor, { foreignKey: 'doctorId', as: 'doctor' });
+AvailableSchedule.belongsTo(Specialty, { foreignKey: 'specialtyId', as: 'specialty' });
 
-// Estudio associations
-Estudio.belongsTo(Paciente, { foreignKey: 'idPaciente', as: 'paciente' });
-Estudio.belongsTo(Doctor, { foreignKey: 'idDoctor', as: 'doctor' });
-Paciente.hasMany(Estudio, { foreignKey: 'idPaciente', as: 'estudios' });
-Doctor.hasMany(Estudio, { foreignKey: 'idDoctor', as: 'estudios' });
+// Study associations
+Study.belongsTo(Patient, { foreignKey: 'patientId', as: 'patient' });
+Study.belongsTo(Doctor, { foreignKey: 'doctorId', as: 'doctor' });
+Patient.hasMany(Study, { foreignKey: 'patientId', as: 'studies' });
+Doctor.hasMany(Study, { foreignKey: 'doctorId', as: 'studies' });
 
 export {
   sequelize,
-  Usuario,
+  User,
   Doctor,
-  Paciente,
-  Especialidad,
-  Sede,
-  ObraSocial,
-  Turno,
+  Patient,
+  Specialty,
+  Location,
+  HealthInsurance,
+  Appointment,
   Admin,
-  Estudio,
-  Fecha,
-  HorarioDisponible,
-  SedeDoctorEsp,
+  Study,
+  Date,
+  AvailableSchedule,
+  LocationDoctorSpecialty,
 };

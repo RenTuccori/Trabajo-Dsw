@@ -1,22 +1,22 @@
 import express from 'express';
-import usersRouter from './routes/usuarios.routes.js';
-import doctorsRouter from './routes/doctores.routes.js';
-import specialtiesRouter from './routes/especialidades.routes.js';
-import turnosRouter from './routes/turnos.routes.js';
-import horariosRouter from './routes/horarios.routes.js';
-import pacienteRouter from './routes/pacientes.routes.js';
-import obrassocialesRouter from './routes/obrassociales.routes.js';
-import sedesRouter from './routes/sedes.routes.js';
+import usersRouter from './routes/users.routes.js';
+import doctorsRouter from './routes/doctors.routes.js';
+import specialtiesRouter from './routes/specialties.routes.js';
+import appointmentsRouter from './routes/appointments.routes.js';
+import schedulesRouter from './routes/schedules.routes.js';
+import patientsRouter from './routes/patients.routes.js';
+import healthInsuranceRouter from './routes/health-insurance.routes.js';
+import locationsRouter from './routes/locations.routes.js';
 import adminRouter from './routes/admin.routes.js';
 import emailRoutes from './routes/email.routes.js';
-import estudiosRouter from './routes/estudios.routes.js';
+import studiesRouter from './routes/studies.routes.js';
 import cors from 'cors';
 import jwt from 'jsonwebtoken';
 import config from 'dotenv';
 import { sequelize } from './models/index.js';
 
-import { startAutoCancelAppointments } from './autoCancelTurnos.js';
-import { startAutoReminderEmails } from './autoreminderEmails.js';
+import { startAutoCancelAppointments } from './autoCancelAppointments.js';
+import { startAutoReminderEmails } from './autoReminderEmails.js';
 
 config.config();
 
@@ -49,14 +49,14 @@ app.use((req, res, next) => {
 app.use(usersRouter);
 app.use(doctorsRouter);
 app.use(specialtiesRouter);
-app.use(turnosRouter);
-app.use(horariosRouter);
-app.use(pacienteRouter);
-app.use(obrassocialesRouter);
-app.use(sedesRouter);
+app.use(appointmentsRouter);
+app.use(schedulesRouter);
+app.use(patientsRouter);
+app.use(healthInsuranceRouter);
+app.use(locationsRouter);
 app.use(adminRouter);
 app.use(emailRoutes);
-app.use(estudiosRouter);
+app.use(studiesRouter);
 
 startAutoCancelAppointments();
 startAutoReminderEmails();

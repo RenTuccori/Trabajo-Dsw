@@ -2,8 +2,8 @@ import * as adminService from '../services/admin.service.js';
 
 export const getAdminByCredentials = async (req, res) => {
   try {
-    const { usuario, contra } = req.body;
-    const result = await adminService.authenticateAdmin(usuario, contra);
+    const { username, password } = req.body;
+    const result = await adminService.authenticateAdmin(username, password);
     if (!result) {
       return res.status(404).json({ message: 'Administrator not found' });
     }
@@ -24,8 +24,8 @@ export const createCombination = async (req, res) => {
 
 export const deleteCombination = async (req, res) => {
   try {
-    const { idSede, idDoctor, idEspecialidad } = req.body;
-    const deleted = await adminService.softDeleteCombination(idSede, idDoctor, idEspecialidad);
+    const { locationId, doctorId, specialtyId } = req.body;
+    const deleted = await adminService.softDeleteCombination(locationId, doctorId, specialtyId);
     if (!deleted) {
       return res.status(404).json({ message: 'Combination not found' });
     }
@@ -70,8 +70,8 @@ export const updateSchedule = async (req, res) => {
 
 export const getSchedules = async (req, res) => {
   try {
-    const { idSede, idEspecialidad, idDoctor } = req.body;
-    const schedules = await adminService.getSchedulesByDoctor({ idSede, idEspecialidad, idDoctor });
+    const { locationId, specialtyId, doctorId } = req.body;
+    const schedules = await adminService.getSchedulesByDoctor({ locationId, specialtyId, doctorId });
     res.json(schedules);
   } catch (error) {
     return res.status(500).json({ message: error.message });

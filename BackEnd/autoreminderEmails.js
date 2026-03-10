@@ -1,4 +1,4 @@
-import { Turno, Paciente, Usuario } from './models/index.js';
+import { Appointment, Patient, User } from './models/index.js';
 import { Op, literal } from 'sequelize';
 import { sendEmail } from './controllers/email.controllers.js';
 
@@ -12,35 +12,35 @@ export const sendReminderEmails = async () => {
   isSendingEmails = true;
 
   try {
-    const appointments = await Turno.findAll({
-      attributes: ['idTurno'],
+    const appointments = await Appointment.findAll({
+      attributes: ['id'],
       include: [{
-        model: Paciente,
-        as: 'paciente',
+        model: Patient,
+        as: 'patient',
         attributes: [],
         include: [{
-          model: Usuario,
-          as: 'usuario',
+          model: User,
+          as: 'user',
           attributes: ['email'],
         }],
       }],
       where: {
-        fechaConfirmacion: null,
-        fechaCancelacion: null,
-        fechaYHora: {
+        confirmationDate: null,
+        cancellationDate: null,
+        dateTime: {
           [Op.between]: [
             literal('DATE_ADD(NOW(), INTERVAL 24 HOUR)'),
             literal('DATE_ADD(NOW(), INTERVAL 36 HOUR)'),
           ],
         },
-        mail: null,
+        hasSentReminder: null,
       },
       raw: true,
       nest: true,
     });
 
     for (const appointment of appointments) {
-      const email = appointment.paciente?.usuario?.email;
+      const email = appointment.patient?.user?.email;
       if (!email) continue;
 
       const mailBody = {
@@ -56,7 +56,7 @@ export const sendReminderEmails = async () => {
 
       await sendEmail({ body: mailBody }, { json: () => {} });
 
-      await Turno.update({ mail: 1 }, { where: { idTurno: appointment.idTurno } });
+      await Appointment.update({ hasSentReminder: 1 }, { where: { id: appointment.id } });
     }
   } catch (error) {
     // Error silenced

@@ -1,111 +1,111 @@
-import { Admin, SedeDoctorEsp, Sede, Doctor, Especialidad, Usuario, HorarioDisponible } from '../models/index.js';
+import { Admin, LocationDoctorSpecialty, Location, Doctor, Specialty, User, AvailableSchedule } from '../models/index.js';
 import { Op, fn, col, where as seqWhere } from 'sequelize';
 import jwt from 'jsonwebtoken';
 import { USER_TYPES } from '../constants/userTypes.js';
 
 const JWT_SECRET = process.env.JWT_SECRET;
 
-export const authenticateAdmin = async (usuario, contra) => {
-  const admin = await Admin.findOne({ where: { usuario, contra } });
+export const authenticateAdmin = async (username, password) => {
+  const admin = await Admin.findOne({ where: { username, password } });
   if (!admin) return null;
 
   const token = jwt.sign(
-    { idAdmin: admin.idAdmin, role: USER_TYPES.ADMIN },
+    { id: admin.id, role: USER_TYPES.ADMIN },
     JWT_SECRET,
     { expiresIn: '30m' }
   );
   return { token };
 };
 
-export const createNewCombination = async ({ idSede, idEspecialidad, idDoctor }) => {
-  const existing = await SedeDoctorEsp.findOne({
-    where: { idSede, idEspecialidad, idDoctor },
+export const createNewCombination = async ({ locationId, specialtyId, doctorId }) => {
+  const existing = await LocationDoctorSpecialty.findOne({
+    where: { locationId, specialtyId, doctorId },
   });
 
   if (existing) {
-    if (existing.estado === 'Habilitado') {
+    if (existing.status === 'Habilitado') {
       throw { status: 400, message: 'The combination is already enabled.' };
     }
-    await existing.update({ estado: 'Habilitado' });
+    await existing.update({ status: 'Habilitado' });
     return existing;
   }
 
-  const combo = await SedeDoctorEsp.create({
-    idSede,
-    idEspecialidad,
-    idDoctor,
-    estado: 'Habilitado',
+  const combo = await LocationDoctorSpecialty.create({
+    locationId,
+    specialtyId,
+    doctorId,
+    status: 'Habilitado',
   });
   return combo;
 };
 
-export const softDeleteCombination = async ({ idSede, idDoctor, idEspecialidad }) => {
-  const [affectedRows] = await SedeDoctorEsp.update(
-    { estado: 'Deshabilitado' },
-    { where: { idSede, idDoctor, idEspecialidad } }
+export const softDeleteCombination = async ({ locationId, doctorId, specialtyId }) => {
+  const [affectedRows] = await LocationDoctorSpecialty.update(
+    { status: 'Deshabilitado' },
+    { where: { locationId, doctorId, specialtyId } }
   );
   return affectedRows > 0;
 };
 
 export const getAllCombinations = async () => {
-  const combinations = await SedeDoctorEsp.findAll({
-    where: { estado: 'Habilitado' },
+  const combinations = await LocationDoctorSpecialty.findAll({
+    where: { status: 'Habilitado' },
     include: [
-      { model: Sede, as: 'sede', attributes: ['nombre', 'direccion'], where: { estado: 'Habilitado' } },
-      { model: Especialidad, as: 'especialidad', attributes: ['nombre'], where: { estado: 'Habilitado' } },
+      { model: Location, as: 'location', attributes: ['name', 'address'], where: { status: 'Habilitado' } },
+      { model: Specialty, as: 'specialty', attributes: ['name'], where: { status: 'Habilitado' } },
       {
         model: Doctor, as: 'doctor',
-        where: { estado: 'Habilitado' },
-        include: [{ model: Usuario, as: 'usuario', attributes: ['nombre', 'apellido'] }],
+        where: { status: 'Habilitado' },
+        include: [{ model: User, as: 'user', attributes: ['name', 'lastName'] }],
       },
     ],
   });
   return combinations.map(c => ({
-    idSede: c.idSede,
-    idDoctor: c.idDoctor,
-    idEspecialidad: c.idEspecialidad,
-    locationName: c.sede?.nombre,
-    specialtyName: c.especialidad?.nombre,
-    doctorName: c.doctor?.usuario?.nombre,
-    doctorLastName: c.doctor?.usuario?.apellido,
+    locationId: c.locationId,
+    doctorId: c.doctorId,
+    specialtyId: c.specialtyId,
+    locationName: c.location?.name,
+    specialtyName: c.specialty?.name,
+    doctorName: c.doctor?.user?.name,
+    doctorLastName: c.doctor?.user?.lastName,
   }));
 };
 
 export const createNewSchedule = async (scheduleData) => {
-  const schedule = await HorarioDisponible.create({
+  const schedule = await AvailableSchedule.create({
     ...scheduleData,
-    dia: scheduleData.dia?.toLowerCase(),
+    day: scheduleData.day?.toLowerCase(),
   });
   return schedule;
 };
 
-export const updateExistingSchedule = async ({ idSede, idDoctor, idEspecialidad, dia, hora_inicio, hora_fin, estado }) => {
-  const [affectedRows] = await HorarioDisponible.update(
-    { hora_inicio, hora_fin, estado },
-    { where: { idSede, idDoctor, idEspecialidad, [Op.and]: [seqWhere(fn('LOWER', col('dia')), dia.toLowerCase())] } }
+export const updateExistingSchedule = async ({ locationId, doctorId, specialtyId, day, startTime, endTime, status }) => {
+  const [affectedRows] = await AvailableSchedule.update(
+    { startTime, endTime, status },
+    { where: { locationId, doctorId, specialtyId, [Op.and]: [seqWhere(fn('LOWER', col('day')), day.toLowerCase())] } }
   );
   return affectedRows > 0;
 };
 
-export const getSchedulesByDoctor = async ({ idSede, idEspecialidad, idDoctor }) => {
-  const schedules = await HorarioDisponible.findAll({
-    where: { idSede, idEspecialidad, idDoctor, estado: 'Habilitado' },
+export const getSchedulesByDoctor = async ({ locationId, specialtyId, doctorId }) => {
+  const schedules = await AvailableSchedule.findAll({
+    where: { locationId, specialtyId, doctorId, status: 'Habilitado' },
     include: [
-      { model: Sede, as: 'sede', attributes: ['nombre'] },
-      { model: Especialidad, as: 'especialidad', attributes: ['nombre'] },
+      { model: Location, as: 'location', attributes: ['name'] },
+      { model: Specialty, as: 'specialty', attributes: ['name'] },
       {
         model: Doctor, as: 'doctor',
-        include: [{ model: Usuario, as: 'usuario', attributes: ['nombre', 'apellido'] }],
+        include: [{ model: User, as: 'user', attributes: ['name', 'lastName'] }],
       },
     ],
   });
   return schedules.map(h => ({
-    dia: h.dia.toLowerCase(),
-    hora_inicio: h.hora_inicio ? h.hora_inicio.substring(0, 5) : '',
-    hora_fin: h.hora_fin ? h.hora_fin.substring(0, 5) : '',
-    locationName: h.sede?.nombre,
-    specialtyName: h.especialidad?.nombre,
-    doctorName: h.doctor?.usuario?.nombre,
-    doctorLastName: h.doctor?.usuario?.apellido,
+    day: h.day.toLowerCase(),
+    startTime: h.startTime ? h.startTime.substring(0, 5) : '',
+    endTime: h.endTime ? h.endTime.substring(0, 5) : '',
+    locationName: h.location?.name,
+    specialtyName: h.specialty?.name,
+    doctorName: h.doctor?.user?.name,
+    doctorLastName: h.doctor?.user?.lastName,
   }));
 };
