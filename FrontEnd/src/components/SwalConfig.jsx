@@ -1,31 +1,31 @@
 // src/components/SwalConfig.jsx
 import Swal from 'sweetalert2';
 
-// Configuration for confirming actions
+// Configuración para confirmar acciones
 export const confirmDialog = async (title, text) => {
   return await Swal.fire({
-    title: title || 'Are you sure?',
-    text: text || 'This action cannot be undone.',
+    title: title || '¿Está seguro?',
+    text: text || 'Esta acción no se puede deshacer.',
     icon: 'warning',
     showCancelButton: true,
     confirmButtonColor: '#d33',
     cancelButtonColor: '#3085d6',
-    confirmButtonText: 'Yes, confirm',
-    cancelButtonText: 'Cancel',
+    confirmButtonText: 'Sí, confirmar',
+    cancelButtonText: 'Cancelar',
   });
 };
 
-// Configuration for showing success alerts
+// Configuración para mostrar alertas de éxito
 export const successAlert = async (title, text) => {
   return await Swal.fire({
     icon: 'success',
-    title: title || 'Success!',
+    title: title || '¡Éxito!',
     text: text || '',
     confirmButtonColor: '#3085d6',
   });
 };
 
-// Configuration for showing error alerts
+// Configuración para mostrar alertas de error
 export const errorAlert = async (title, text) => {
   return await Swal.fire({
     icon: 'error',
@@ -34,3 +34,5 @@ export const errorAlert = async (title, text) => {
     confirmButtonColor: '#d33',
   });
 };
+
+

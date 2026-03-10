@@ -2,7 +2,7 @@
 import { toast } from 'react-toastify';
 import Swal from 'sweetalert2';
 
-// Global Toast configuration
+// Configuración global de Toast
 export const notifySuccess = (message) => {
   toast.success(message, {
     position: 'top-center',
@@ -25,10 +25,10 @@ export const notifyError = (message) => {
   });
 };
 
-// Global SweetAlert2 configuration
+// Configuración global de SweetAlert2
 export const confirmDialog = async (title, text) => {
   return await Swal.fire({
-    title: title || '¿Estás seguro?',
+    title: title || '¿Está seguro?',
     text: text || 'Esta acción no se puede deshacer.',
     icon: 'warning',
     showCancelButton: true,
@@ -57,7 +57,7 @@ export const errorAlert = async (title, text) => {
   });
 };
 
-// Make available globally
+// Hacer disponibles globalmente
 if (typeof window !== 'undefined') {
   window.notifySuccess = notifySuccess;
   window.notifyError = notifyError;
@@ -65,3 +65,5 @@ if (typeof window !== 'undefined') {
   window.successAlert = successAlert;
   window.errorAlert = errorAlert;
 }
+
+
