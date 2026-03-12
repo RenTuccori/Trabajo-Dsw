@@ -95,14 +95,14 @@ export function CreateLocation() {
           {locations.length > 0 ? (
             locations.map((location) => (
               <li
-                key={location.idSite}
+                key={location.id}
                 className="bg-gray-100 p-4 rounded-lg flex justify-between items-center"
               >
                 <span>
                   <strong>{location.name}</strong> - {location.address}
                 </span>
                 <button
-                  onClick={() => handleDeleteLocation(location.idSite)}
+                  onClick={() => handleDeleteLocation(location.id)}
                   className="text-red-600 hover:text-red-800"
                 >
                   Eliminar

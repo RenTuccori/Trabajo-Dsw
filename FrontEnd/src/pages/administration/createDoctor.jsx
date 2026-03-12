@@ -237,10 +237,10 @@ export function CreateDoctor() {
                     Obra social
                   </p>
                   <Select
-                    options={healthInsurances.map((obrasocial) => ({
-                      value: obrasocial.idInsuranceCompany,
-                      label: obrasocial.name,
-                    }))}
+                      options={healthInsurances.map((obrasocial) => ({
+                        value: obrasocial.id,
+                        label: obrasocial.name,
+                      }))}
                     onChange={handleObraSocialChange}
                     value={selectedObraSociales}
                     className="react-select"
@@ -323,21 +323,21 @@ export function CreateDoctor() {
           {doctors.length > 0 ? (
             doctors.map((doctor) => (
               <li
-                key={doctor.idDoctor}
+                key={doctor.doctorId}
                 className="bg-gray-100 p-4 rounded-lg flex justify-between items-center"
               >
                 <span>
-                  <strong>{doctor.nombreyapellido}</strong>
+                  <strong>{doctor.fullName}</strong>
                 </span>
                 <div className="flex space-x-4">
                   <button
-                    onClick={() => handleDelete(doctor.idDoctor)}
+                    onClick={() => handleDelete(doctor.doctorId)}
                     className="text-red-600 hover:text-red-800"
                   >
                     Eliminar
                   </button>
                   <button
-                    onClick={() => handleUpdate(doctor.idDoctor)}
+                    onClick={() => handleUpdate(doctor.doctorId)}
                     className="text-blue-600 hover:text-blue-800"
                   >
                     Actualizar

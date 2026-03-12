@@ -74,25 +74,25 @@ function AdministrationHome() {
         Sedes
       </button>
       <button
-        onClick={() => navigate('/admin/crearEsp')}
+        onClick={() => navigate('/admin/createSpecialty')}
         className="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition-colors"
       >
         Especialidades
       </button>
       <button
-        onClick={() => navigate('/admin/crearDoc')}
+        onClick={() => navigate('/admin/createDoctor')}
         className="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition-colors"
       >
         Doctores
       </button>
       <button
-        onClick={() => navigate('/admin/combinacion')}
+        onClick={() => navigate('/admin/createCombination')}
         className="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition-colors"
       >
         Asignar combinación
       </button>
       <button
-        onClick={() => navigate('/admin/crearOS')}
+        onClick={() => navigate('/admin/createInsurance')}
         className="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition-colors"
       >
         Obras sociales

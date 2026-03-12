@@ -5,7 +5,7 @@ import { useAdministration } from '../../context/administration/AdministrationPr
 export function CreateSchedules() {
   const navigate = useNavigate();
   const location = useLocation();
-  const { locationId, specialtyId, doctorId } = location.state || {};
+  const { locationId, specialtyId, doctorId, locationName, specialtyName, doctorFullName } = location.state || {};
 
   const diasSemana = ['lunes', 'martes', 'miércoles', 'jueves', 'viernes'];
   const {
@@ -124,7 +124,7 @@ export function CreateSchedules() {
           }
         }
         window.notifySuccess('Horarios guardados exitosamente');
-        navigate('/admin/combinacion');
+        navigate('/admin/createCombination');
       } catch (error) {
         window.notifyError('Error al guardar los schedules.');
       }
@@ -134,11 +134,11 @@ export function CreateSchedules() {
   return (
     <div className="min-h-screen bg-gradient-to-b from-blue-100 to-white flex items-center justify-center p-4">
       <div className="w-full max-w-lg space-y-6">
-        <h2 className="text-xl font-semibold mb-4">Crear schedules</h2>
+        <h2 className="text-xl font-semibold mb-4">Crear horarios</h2>
 
         <div className="bg-white rounded-lg shadow-md p-6 space-y-4">
           <h3 className="text-lg font-medium">
-            Sede: {locationId}, Especialidad: {specialtyId}, Doctor: {doctorId}
+            Sede: {locationName || locationId}, Especialidad: {specialtyName || specialtyId}, Doctor: {doctorFullName || doctorId}
           </h3>
 
           {/* Ingreso de nuevos schedules, con los schedules existentes ya pre-rellenados */}
@@ -172,12 +172,12 @@ export function CreateSchedules() {
             onClick={agregarHorariosDisponibles}
             className="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition-colors"
           >
-            Confirmar schedules
+            Confirmar horarios
           </button>
 
           <button
             className="w-full bg-gray-200 text-gray-700 py-2 rounded-lg hover:bg-gray-300 transition-colors"
-            onClick={() => navigate('/admin/combinacion')}
+            onClick={() => navigate('/admin/createCombination')}
           >
             Volver
           </button>

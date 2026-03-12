@@ -18,7 +18,7 @@ import {
   updateHorarios,
 } from '../../api/admin.api.js';
 import { useContext, useState } from 'react';
-import { getLocations } from '../../api/venues.api.js';
+import { getLocations } from '../../api/locations.api.js';
 import {
   getSpecialties,
   getAllSpecialties,
@@ -47,9 +47,9 @@ export const useAdministration = () => {
 
 const AdministrationProvider = ({ children }) => {
   const [locations, setLocations] = useState([]); // Estado para almacenar las locations
-  const [specialties, setSpecialties] = useState('');
-  const [healthInsurances, setHealthInsurances] = useState('');
-  const [doctors, setDoctors] = useState('');
+  const [specialties, setSpecialties] = useState([]);
+  const [healthInsurances, setHealthInsurances] = useState([]);
+  const [doctors, setDoctors] = useState([]);
   const [doctor, setDoctor] = useState('');
   const [user, setUser] = useState({});
   const [selectedDoctor, setSelectedDoctor] = useState(null);
@@ -384,6 +384,7 @@ const AdministrationProvider = ({ children }) => {
         createLocationSpecialtyDoctor,
         getSpecialtiesFunc,
         getDoctorsFunc,
+        getDoctors: getDoctorsFunc,
         doctors,
         selectedDoctor,
         setSelectedDoctor,
@@ -392,6 +393,7 @@ const AdministrationProvider = ({ children }) => {
         selectedLocation,
         setSelectedLocation,
         getAvailableSpecialtiesFunc,
+        getAvailableSpecialties: getAvailableSpecialtiesFunc,
         createDoctorFunction,
         createDoctor: createDoctorFunction,
         deleteDoctorFunction,

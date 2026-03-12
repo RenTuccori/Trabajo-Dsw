@@ -138,7 +138,7 @@ export function CreateCombination() {
               options={
                 Array.isArray(locations)
                   ? locations.map((location) => ({
-                      value: location.idSite,
+                      value: location.id,
                       label: location.name,
                     }))
                   : []
@@ -157,7 +157,7 @@ export function CreateCombination() {
               options={
                 Array.isArray(specialties)
                   ? specialties.map((especialidad) => ({
-                      value: especialidad.specialtyId,
+                      value: especialidad.id,
                       label: especialidad.name,
                     }))
                   : []
@@ -178,7 +178,7 @@ export function CreateCombination() {
                 Array.isArray(doctors)
                   ? doctors.map((doctor) => ({
                       value: doctor.doctorId,
-                      label: doctor.nombreyapellido,
+                      label: doctor.fullName,
                     }))
                   : []
               }
@@ -217,12 +217,12 @@ export function CreateCombination() {
           </h2>
           <ul className="space-y-2 bg-white rounded-lg shadow-md p-4">
             {combinations &&
-              combinations.map((combinacion, index) => (
+              combinations.map((combinacion) => (
                 <li
-                  key={index}
+                  key={`${combinacion.locationId}-${combinacion.specialtyId}-${combinacion.doctorId}`}
                   className="flex justify-between items-center bg-gray-100 p-2 rounded-md"
                 >
-                  <span>{`Localidad: ${combinacion.venueName}, Especialidad: ${combinacion.specialtyName}, Doctor: ${combinacion.doctorName} ${combinacion.doctorLastName}`}</span>
+                  <span>{`Localidad: ${combinacion.locationName}, Especialidad: ${combinacion.specialtyName}, Doctor: ${combinacion.doctorName} ${combinacion.doctorLastName}`}</span>
                   <div className="flex space-x-4">
                     {/* Botón de Eliminar */}
                     <button
@@ -246,12 +246,15 @@ export function CreateCombination() {
                           locationId: combinacion.locationId,
                           specialtyId: combinacion.specialtyId,
                           doctorId: combinacion.doctorId,
+                          locationName: combinacion.locationName,
+                          specialtyName: combinacion.specialtyName,
+                          doctorFullName: `${combinacion.doctorName} ${combinacion.doctorLastName}`,
                         };
                         console.log(
                           'Datos a enviar para agregar schedules:',
                           data
                         ); // Log de los datos que se envían
-                        navigate(`/admin/schedules`, { state: data });
+                        navigate('/admin/createSchedules', { state: data });
                       }}
                     >
                       Agregar schedules

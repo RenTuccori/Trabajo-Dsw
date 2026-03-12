@@ -5,7 +5,7 @@ export const getUserDniFecha = async ({dni,birthDate}) => {
     console.log('📋 FRONTEND - Data sent:', { nationalId: dni, birthDate });
     
     try {
-        const response = await axiosInstance.post(`users/login`,{nationalId: dni, birthDate});
+        const response = await axiosInstance.post(`users/login`,{nationalId: Number(dni), birthDate});
         console.log('✅ FRONTEND - Backend response received:', response);
         console.log('🔑 FRONTEND - Token received:', response.data ? 'Present' : 'Not present');
         return response;
@@ -20,12 +20,15 @@ export const createUser = async ({dni,birthDate,firstName,lastName,phone,email,a
     console.log('📋 FRONTEND - Data:', { nationalId: dni, birthDate, firstName, lastName, phone, email, address });
     
     try {
-        const response = await axiosInstance.post(`users`,{nationalId: dni,birthDate,firstName,lastName,phone,email,address});
+        const response = await axiosInstance.post(`users`,{nationalId: Number(dni),birthDate,firstName,lastName,phone,email,address, insuranceCompanyId});
         console.log('✅ FRONTEND - createUser: User created successfully:', response);
         return response;
     } catch (error) {
         console.error('❌ FRONTEND - createUser: Error:', error);
         console.error('📄 FRONTEND - Error details:', error.response?.data);
+        if (error.response?.data?.errors) {
+            console.error('📌 Validation errors:', error.response.data.errors);
+        }
         throw error;
     }
 }
@@ -62,7 +65,7 @@ export const getUserDni = async ({ dni }) => {
     console.log('📋 FRONTEND - National ID sent:', dni);
     
     try {
-        const response = await axiosInstance.post(`users/nationalId`, { nationalId: dni });
+        const response = await axiosInstance.post(`users/nationalId`, { nationalId: Number(dni) });
         console.log('✅ FRONTEND - getUserByNationalId response received:', response);
         return response;
     } catch (error) {

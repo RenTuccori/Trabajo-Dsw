@@ -139,35 +139,36 @@ export function CreateInsurance() {
         </h3>
         <ul className="space-y-2">
           {healthInsurances.length > 0 ? (
-            healthInsurances.map((obraSocial) => (
-              <li
-                key={obraSocial.healthInsuranceId}
-                className="bg-gray-100 p-4 rounded-lg flex justify-between items-center"
-              >
-                <span>
-                  <strong>{obraSocial.name}</strong>
-                </span>
-                <div className="flex space-x-2">
-                  <button
-                    onClick={() =>
-                      handleBorrarObraSocial(obraSocial.healthInsuranceId)
-                    }
-                    className="text-red-600 hover:text-red-800"
-                  >
-                    Eliminar
-                  </button>
-                  <button
-                    onClick={() => {
-                      setObraSocialAEditar(obraSocial.healthInsuranceId);
-                      setNuevoNombreObraSocial(obraSocial.name);
-                    }}
-                    className="text-blue-600 hover:text-blue-800"
-                  >
-                    Actualizar
-                  </button>
-                </div>
-              </li>
-            ))
+            healthInsurances.map((obraSocial) => {
+              const id = obraSocial.id ?? obraSocial.healthInsuranceId;
+              return (
+                <li
+                  key={id}
+                  className="bg-gray-100 p-4 rounded-lg flex justify-between items-center"
+                >
+                  <span>
+                    <strong>{obraSocial.name}</strong>
+                  </span>
+                  <div className="flex space-x-2">
+                    <button
+                      onClick={() => handleBorrarObraSocial(id)}
+                      className="text-red-600 hover:text-red-800"
+                    >
+                      Eliminar
+                    </button>
+                    <button
+                      onClick={() => {
+                        setObraSocialAEditar(id);
+                        setNuevoNombreObraSocial(obraSocial.name);
+                      }}
+                      className="text-blue-600 hover:text-blue-800"
+                    >
+                      Actualizar
+                    </button>
+                  </div>
+                </li>
+              );
+            })
           ) : (
             <p className="text-center text-gray-600">
               No hay obras sociales creadas aún.

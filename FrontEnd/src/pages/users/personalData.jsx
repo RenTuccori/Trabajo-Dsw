@@ -6,6 +6,7 @@ import { useAuth } from '../../context/global/AuthProvider';
 import Select from 'react-select';
 import { notifyError } from '../../components/ToastConfig';
 import { confirmDialog } from '../../components/SwalConfig';
+import AddressAutocomplete from '../../components/AddressAutocomplete';
 
 export function PersonalData() {
   const { healthInsurances, getHealthInsurances, createUserFunction } = usePatients();
@@ -35,11 +36,26 @@ export function PersonalData() {
     e.preventDefault(); // Previene el comportamiento por defecto del formulario
     console.log('🎯 FRONTEND - handleSubmit: Iniciando registro de usuario');
     console.log('📋 FRONTEND - Datos del formulario:', formData);
-    
+    // Client-side validation to mirror backend validators
+    const nationalIdDigits = String(formData.dni).replace(/\D/g, '');
+    if (nationalIdDigits.length < 7) {
+      notifyError('El DNI debe tener al menos 7 dígitos.');
+      return;
+    }
+    const birthDatePattern = /^\d{4}-\d{2}-\d{2}$/;
+    if (!birthDatePattern.test(formData.birthDate)) {
+      notifyError('La fecha de nacimiento debe tener formato YYYY-MM-DD.');
+      return;
+    }
+    if (!formData.name.trim() || !formData.lastName.trim()) {
+      notifyError('Nombre y apellido son obligatorios.');
+      return;
+    }
+
     try {
       await createUserFunction(formData); // Asegura que la creación del user sea asíncrona
       console.log('✅ FRONTEND - Usuario registrado exitosamente');
-      
+
       login({
         identifier: formData.dni,
         credential: formData.birthDate,
@@ -52,7 +68,14 @@ export function PersonalData() {
       });
     } catch (error) {
       console.error('❌ FRONTEND - Error al registrar usuario:', error);
-      notifyError('Hubo un error al registrar el user. Intente nuevamente.');
+      // If validation details are available from backend, show them
+      const backendErrors = error?.response?.data?.errors;
+      if (backendErrors && backendErrors.length > 0) {
+        const messages = backendErrors.map((e) => `${e.field}: ${e.message}`).join('; ');
+        notifyError(messages);
+      } else {
+        notifyError('Hubo un error al registrar el user. Intente nuevamente.');
+      }
     }
   };
 
@@ -120,13 +143,16 @@ export function PersonalData() {
           </div>
           <div>
             <p className="text-center text-gray-600 text-lg">Dirección</p>
-            <input
-              type="text"
-              name="address"
-              value={formData.address}
-              onChange={handleInputChange}
-              required
-              className="w-full border border-gray-300 rounded-lg p-2 focus:outline-none focus:border-blue-500"
+            <AddressAutocomplete
+              initialValue={formData.address}
+              onSelect={(place) =>
+                setFormData((prev) => ({
+                  ...prev,
+                  address: place.address,
+                  addressLat: place.lat,
+                  addressLon: place.lon,
+                }))
+              }
             />
           </div>
           <div>

@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import { useAuth } from '../global/AuthProvider';
 
 import { PatientsContext } from './PatientsContext';
-import { getLocations, getLocationById } from '../../api/venues.api';
+import { getLocations, getLocationById } from '../../api/locations.api';
 import {
   getSpecialties,
   getSpecialtyById,
@@ -16,7 +16,6 @@ import { getAvailableDatesByDocSpecLoc, getAvailableSchedulesByDocSpecLoc } from
 import { createUser, getUserDni, updateUser } from '../../api/users.api';
 import { getInsurance } from '../../api/insurance.api';
 import { createPatient, getPatientbyNationalId } from '../../api/patients.api';
-import { getLocationById as getLocationByIdFunc } from '../../api/venues.api';
 import {
   createAppointment,
   getPatientAppointments,

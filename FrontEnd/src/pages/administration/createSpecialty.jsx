@@ -90,16 +90,14 @@ export function CreateSpecialty() {
           {specialties.length > 0 ? (
             specialties.map((especialidad) => (
               <li
-                key={especialidad.idSpecialty}
+                key={especialidad.id}
                 className="bg-gray-100 p-4 rounded-lg flex justify-between items-center"
               >
                 <span>
                   <strong>{especialidad.name}</strong>
                 </span>
                 <button
-                  onClick={() =>
-                    handleBorrarEspecialidad(especialidad.idSpecialty)
-                  }
+                  onClick={() => handleBorrarEspecialidad(especialidad.id)}
                   className="text-red-600 hover:text-red-800"
                 >
                   Eliminar

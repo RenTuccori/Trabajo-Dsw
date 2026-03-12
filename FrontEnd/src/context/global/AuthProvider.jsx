@@ -43,7 +43,8 @@ const AuthProvider = ({ children }) => {
             setApellidoUsuario(decoded.lastName || '');
             setRol('Doctor');
           } else if (decoded.role === 'Admin') {
-            setIdAdmin(decoded.idAdmin);
+            console.log('AuthProvider: restored admin from token, id=', decoded.id);
+            setIdAdmin(decoded.id);
             setRol('Admin');
           }
         } else {
@@ -108,7 +109,8 @@ const AuthProvider = ({ children }) => {
           token = response.data;
           localStorage.setItem('token', token);
           const decodedAdmin = jwtDecode(token);
-          setIdAdmin(decodedAdmin.idAdmin);
+          console.log('AuthProvider: login decoded admin id=', decodedAdmin.id);
+          setIdAdmin(decodedAdmin.id);
           setRol('Admin');
           navigate('/admin');
           break;
@@ -168,7 +170,7 @@ const AuthProvider = ({ children }) => {
               setRol('Doctor');
               break;
             case 'Admin': // Admin
-              setIdAdmin(decoded.idAdmin);
+              setIdAdmin(decoded.id);
               setRol('Admin');
               break;
             default:
