@@ -56,6 +56,8 @@ const PatientsProvider = ({ children }) => {
   const [cancellationDate, setCancellationDate] = useState('');
   const [confirmationDate, setConfirmationDate] = useState('');
   const [appointments, setAppointments] = useState([]);
+  const [loadingAppointments, setLoadingAppointments] = useState(false);
+  const [appointmentsError, setAppointmentsError] = useState(null);
   const [userByNationalId, setUserByNationalId] = useState({});
   const [userEmail, setUserEmail] = useState('');
 
@@ -148,10 +150,8 @@ const PatientsProvider = ({ children }) => {
   }
 
   async function getHealthInsurances() {
-    console.log('🏥 FRONTEND - getHealthInsurances: Getting insurance options');
     try {
       const response = await getInsurance();
-      console.log('✅ FRONTEND - Insurance options obtained:', response.data);
       setHealthInsurances(response.data);
     } catch (error) {
       console.error('❌ FRONTEND - Error getting insurance options:', error);
@@ -159,10 +159,7 @@ const PatientsProvider = ({ children }) => {
   }
 
   async function createUserFunction(data) {
-    console.log(
-      '🎯 FRONTEND - createUserFunction: Starting user creation'
-    );
-    console.log('📋 FRONTEND - Received data:', data);
+    // Create a new user and patient from form data
 
     // Mapear campos del frontend al backend
     const backendData = {
@@ -176,24 +173,10 @@ const PatientsProvider = ({ children }) => {
       insuranceCompanyId: data.healthInsuranceId, // Mapear healthInsuranceId a insuranceCompanyId
     };
 
-    console.log('🔄 FRONTEND - Data mapped for backend:', backendData);
-
     try {
       const response = await createUser(backendData);
-      console.log(
-        '✅ FRONTEND - createUserFunction: User created in DB:',
-        response
-      );
       setUser(response.data);
-
-      console.log(
-        '📝 FRONTEND - createUserFunction: Creating patient with DNI:',
-        data.dni
-      );
       await createPatient({ nationalId: data.dni });
-      console.log(
-        '✅ FRONTEND - createUserFunction: Patient created successfully'
-      );
     } catch (error) {
       console.error('❌ FRONTEND - createUserFunction: Error:', error);
       throw error;
@@ -315,6 +298,8 @@ const PatientsProvider = ({ children }) => {
       '🎯 FRONTEND - getPatientAppointments: Getting appointments for nationalId:',
       dni
     );
+    setLoadingAppointments(true);
+    setAppointmentsError(null);
     try {
       const response = await getPatientAppointments({ nationalId: dni });
       console.log(
@@ -322,7 +307,19 @@ const PatientsProvider = ({ children }) => {
         response
       );
 
-      if (response && response.data) {
+      // If API helper returned a string (error message), handle gracefully
+      if (typeof response === 'string') {
+        console.log('ℹ️ FRONTEND - getPatientAppointments: API returned message:', response);
+        // Known case: no upcoming appointments -> show empty list without error toast
+        if (response.includes('No upcoming appointments')) {
+          setAppointments([]);
+          setAppointmentsError(null);
+        } else {
+          setAppointments([]);
+          setAppointmentsError(response);
+          window.notifyError('Error getting appointments');
+        }
+      } else if (response && response.data) {
         console.log(
           '📊 FRONTEND - getPatientAppointments: Appointments data:',
           response.data
@@ -337,6 +334,7 @@ const PatientsProvider = ({ children }) => {
       } else {
         console.error('❌ FRONTEND - Could not get appointments');
         setAppointments([]);
+        setAppointmentsError('Could not get appointments');
         window.notifyError('Error getting appointments');
       }
     } catch (error) {
@@ -345,7 +343,10 @@ const PatientsProvider = ({ children }) => {
         error
       );
       setAppointments([]);
+      setAppointmentsError('Error getting appointments');
       window.notifyError('Error getting appointments');
+    } finally {
+      setLoadingAppointments(false);
     }
   }
 

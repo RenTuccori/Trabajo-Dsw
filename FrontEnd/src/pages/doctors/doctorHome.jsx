@@ -82,25 +82,25 @@ function DoctorHome() {
             </div>
             <div className="flex flex-col space-y-2">
               <button
-                onClick={() => navigate('turnoshoy')}
+                onClick={() => navigate('todayAppointments')}
                 className="bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition-colors"
               >
                 Turnos de hoy
               </button>
               <button
-                onClick={() => navigate('turnosfecha')}
+                onClick={() => navigate('appointmentsByDate')}
                 className="bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition-colors"
               >
                 Turnos por fecha
               </button>
               <button
-                onClick={() => navigate('turnoshist')}
+                onClick={() => navigate('appointmentHistory')}
                 className="bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition-colors"
               >
                 Historial appointments
               </button>
               <button
-                onClick={() => navigate('estudios')}
+                onClick={() => navigate('uploadStudy')}
                 className="bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition-colors"
               >
                 Gestión de estudios

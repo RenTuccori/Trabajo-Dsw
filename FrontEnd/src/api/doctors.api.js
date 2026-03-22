@@ -1,7 +1,14 @@
 import axiosInstance from './axiosInstance';
 
 export const verifyDoctor = async ({ dni, password }) => {
-    return await axiosInstance.post(`doctors/login`, { dni, password });
+    try {
+        // Backend expects `nationalId` and `password`
+        const response = await axiosInstance.post(`doctors/login`, { nationalId: Number(dni), password });
+        return response;
+    } catch (error) {
+        console.error('❌ FRONTEND - verifyDoctor error:', error?.response?.data || error);
+        throw error;
+    }
 }
 
 export const getDoctors = async ({ locationId, specialtyId }) => {

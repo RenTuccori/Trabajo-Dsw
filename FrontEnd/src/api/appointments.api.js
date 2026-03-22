@@ -40,15 +40,16 @@ export const createAppointment = async ({ patientId, dateAndTime, cancellationDa
     console.log('  - cancellationDate:', cancellationDate);
     console.log('  - confirmationDate:', confirmationDate);
     
-    const requestData = { 
-        patientId, 
-        dateAndTime, 
-        cancellationDate, 
-        confirmationDate, 
-        status, 
-        specialtyId, 
-        doctorId, 
-        locationId 
+    // Backend expects `dateTime` field name
+    const requestData = {
+        patientId,
+        dateTime: dateAndTime,
+        cancellationDate,
+        confirmationDate,
+        status,
+        specialtyId,
+        doctorId,
+        locationId,
     };
     
     console.log('📤 FRONTEND - Data sent to backend:', requestData);
@@ -60,7 +61,8 @@ export const createAppointment = async ({ patientId, dateAndTime, cancellationDa
     } catch (error) {
         console.error('❌ FRONTEND - createAppointment: Request error:', error);
         console.error('📄 FRONTEND - Error details:', error.response?.data);
-        return error.response.data.message;
+        // Throw backend validation payload so callers can handle it
+        throw error.response?.data || error;
     }
 }
 

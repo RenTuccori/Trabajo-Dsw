@@ -39,10 +39,7 @@ export const defineAppointment = (sequelize) => {
       type: DataTypes.INTEGER,
       allowNull: true,
     },
-    email: {
-      type: DataTypes.INTEGER,
-      allowNull: true,
-    },
+    // `email` removed: database schema does not include this column
   }, {
     tableName: 'appointments',
     timestamps: false,

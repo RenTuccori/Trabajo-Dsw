@@ -9,8 +9,8 @@ import { confirmDialog } from '../../components/SwalConfig';
 import AddressAutocomplete from '../../components/AddressAutocomplete';
 
 export function PersonalData() {
-  const { healthInsurances, getHealthInsurances, createUserFunction } = usePatients();
-  const { login } = useAuth();
+  const { healthInsurances, getHealthInsurances, createUserFunction, getUserByDniFunction, userByDni } = usePatients();
+  const { login, dni } = useAuth();
   const [selectedObraSociales, setSelectedObraSociales] = useState(null);
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
@@ -34,8 +34,6 @@ export function PersonalData() {
 
   const handleSubmit = async (e) => {
     e.preventDefault(); // Previene el comportamiento por defecto del formulario
-    console.log('🎯 FRONTEND - handleSubmit: Iniciando registro de usuario');
-    console.log('📋 FRONTEND - Datos del formulario:', formData);
     // Client-side validation to mirror backend validators
     const nationalIdDigits = String(formData.dni).replace(/\D/g, '');
     if (nationalIdDigits.length < 7) {
@@ -54,7 +52,6 @@ export function PersonalData() {
 
     try {
       await createUserFunction(formData); // Asegura que la creación del user sea asíncrona
-      console.log('✅ FRONTEND - Usuario registrado exitosamente');
 
       login({
         identifier: formData.dni,
@@ -62,10 +59,9 @@ export function PersonalData() {
         userType: 'Patient',
       });
 
-      // Muestra el mensaje de éxito con SweetAlert2
-      confirmDialog().then(() => {
-        navigate('/patient'); // Navega después de confirmar
-      });
+      // Show success toast and navigate directly
+      if (window.notifySuccess) window.notifySuccess('Usuario registrado correctamente');
+      navigate('/patient');
     } catch (error) {
       console.error('❌ FRONTEND - Error al registrar usuario:', error);
       // If validation details are available from backend, show them
@@ -82,6 +78,37 @@ export function PersonalData() {
   useEffect(() => {
     getHealthInsurances();
   }, []);
+
+  useEffect(() => {
+    if (dni) {
+      getUserByDniFunction();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [dni]);
+
+  useEffect(() => {
+    // When user data is fetched from backend, prefill the form
+    if (userByDni && Object.keys(userByDni).length > 0) {
+      setFormData((prev) => ({
+        ...prev,
+        dni: userByDni.nationalId || prev.dni,
+        birthDate: userByDni.birthDate || prev.birthDate,
+        name: userByDni.firstName || prev.name,
+        lastName: userByDni.lastName || prev.lastName,
+        phone: userByDni.phone || prev.phone,
+        email: userByDni.email || prev.email,
+        address: userByDni.address || prev.address,
+        healthInsuranceId: userByDni.insuranceCompanyId || prev.healthInsuranceId,
+      }));
+
+      // set selected option for obra social if available
+      if (userByDni.insuranceCompanyId) {
+        const option = (healthInsurances || []).find((h) => h.healthInsuranceId === userByDni.insuranceCompanyId);
+        if (option) setSelectedObraSociales({ value: option.healthInsuranceId, label: option.name });
+      }
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [userByDni, healthInsurances]);
 
   const handleObraSocialChange = (selectedOption) => {
     setSelectedObraSociales(selectedOption);

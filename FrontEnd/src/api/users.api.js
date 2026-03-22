@@ -38,8 +38,23 @@ export const updateUser = async ({ dni, name, lastName, phone, email, address, h
     console.log('🌐 FRONTEND - updateUser: Sending data:', { nationalId: dni, firstName: name, lastName, phone, email, address });
     
     // Map frontend fields to backend fields
+    // If `dni` is not provided, try to decode it from stored token
+    let nationalId = dni;
+    if (!nationalId) {
+        try {
+            const token = localStorage.getItem('token');
+            if (token) {
+                const payload = JSON.parse(atob(token.split('.')[1]));
+                // Try common fields
+                nationalId = payload.nationalId || payload.dni || payload.id || payload.userId;
+            }
+        } catch (e) {
+            console.warn('⚠️ FRONTEND - updateUser: Could not decode token to obtain nationalId', e);
+        }
+    }
+
     const backendData = {
-        nationalId: dni,
+        nationalId,
         firstName: name, 
         lastName,
         phone,
@@ -56,7 +71,7 @@ export const updateUser = async ({ dni, name, lastName, phone, email, address, h
     } catch (error) {
         console.error('❌ FRONTEND - updateUser: Error:', error);
         console.error('📄 FRONTEND - Error details:', error.response?.data);
-        return error.response.data.message;
+        throw error.response?.data || error;
     }
 }
 

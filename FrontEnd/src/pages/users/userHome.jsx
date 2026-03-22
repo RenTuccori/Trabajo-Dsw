@@ -97,19 +97,19 @@ function UserHome() {
               Sacar un turno
             </button>
             <button
-              onClick={() => navigate('/patient/verturnos')}
+              onClick={() => navigate('/patient/myAppointments')}
               className="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition-colors"
             >
               Ver mis turnos
             </button>
             <button
-              onClick={() => navigate('/patient/estudios')}
+              onClick={() => navigate('/patient/myStudies')}
               className="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition-colors"
             >
               Ver mis estudios
             </button>
             <button
-              onClick={() => navigate('/patient/editarpersonalData')}
+              onClick={() => navigate('/patient/editPersonalData')}
               className="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition-colors"
             >
               Modificar datos personales

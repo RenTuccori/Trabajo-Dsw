@@ -141,9 +141,9 @@ export const cancelAppointment = async (appointmentId) => {
 };
 
 export const createNewAppointment = async (appointmentData) => {
+  // don't set `email` here - appointments table doesn't include that column
   const appointment = await Appointment.create({
     ...appointmentData,
-    email: null,
   });
   return appointment;
 };

@@ -11,6 +11,8 @@ export function PatientAppointments() {
     appointments,
     sendEmailFunction,
     userEmail,
+    loadingAppointments,
+    appointmentsError,
     getUserByDniFunction,
   } = usePatients();
 
@@ -136,7 +138,11 @@ export function PatientAppointments() {
         >
           Volver
         </button>
-        {appointments && appointments.length > 0 ? (
+        {loadingAppointments ? (
+          <p className="text-center text-gray-600">Cargando turnos...</p>
+        ) : appointmentsError ? (
+          <p className="text-center text-red-600">{appointmentsError}</p>
+        ) : appointments && appointments.length > 0 ? (
           appointments.map((appointment, index) => (
             <div
               key={index}
@@ -189,9 +195,7 @@ export function PatientAppointments() {
             </div>
           ))
         ) : (
-          <p className="text-center text-gray-600">
-            No hay appointments para mostrar
-          </p>
+          <p className="text-center text-gray-600">No hay appointments para mostrar</p>
         )}
       </div>
     </div>

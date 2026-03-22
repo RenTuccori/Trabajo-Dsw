@@ -42,31 +42,30 @@ export function UserModification() {
     );
 
     if (result.isConfirmed) {
-      console.log('💾 FRONTEND - handleSubmit: Datos a enviar:', formData);
+      // Ensure we send a valid nationalId: prefer form dni, fallback to userByDni.nationalId
+      const payload = {
+        ...formData,
+        dni: formData.dni || userByDni?.nationalId || userByDni?.id || formData.dni,
+      };
+
+      console.log('💾 FRONTEND - handleSubmit: Datos a enviar:', payload);
       try {
-        const response = await updateUserFunction(formData);
+        const response = await updateUserFunction(payload);
         console.log('📨 FRONTEND - handleSubmit: Respuesta recibida:', response);
 
-        // Verificar si la respuesta indica éxito
         if (response && response.data && (response.status === 200 || response.data.message === 'User updated')) {
           console.log('✅ FRONTEND - Usuario actualizado con éxito');
           window.notifySuccess('Usuario actualizado con éxito');
           navigate('/patient');
         } else {
           console.log('❌ FRONTEND - Error al actualizar user - respuesta:', response);
-          window.confirmDialog(
-            'Error',
-            'No se pudo actualizar el usuario',
-            'error'
-          );
+          const msg = response?.data?.message || 'No se pudo actualizar el usuario';
+          await window.confirmDialog('Error', msg, 'error');
         }
       } catch (error) {
         console.error('💥 FRONTEND - Error en handleSubmit:', error);
-        window.confirmDialog(
-          'Error',
-          'Ocurrió un error al actualizar el usuario',
-          'error'
-        );
+        const backendMessage = error?.message || error?.data?.message || 'Ocurrió un error al actualizar el usuario';
+        await window.confirmDialog('Error', backendMessage, 'error');
       }
     }
   };
