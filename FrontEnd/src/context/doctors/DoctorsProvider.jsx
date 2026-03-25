@@ -32,9 +32,15 @@ const DoctorsProvider = ({ children }) => {
       console.log(response.data.data)
       console.log('length', response.data.data.length)
       if (response.data && response.data.data.length > 0) {
-        setTurnosHist(response.data.data);
+        // Map backend fields to frontend expected keys
+        const mapped = response.data.data.map((a) => ({
+          ...a,
+          dni: a.nationalId,
+          patientName: a.fullName,
+        }));
+        setTurnosHist(mapped);
         console.log('entre')
-        const fechasDisponibles = response.data.data.map(
+        const fechasDisponibles = mapped.map(
           (appointment) => new Date(appointment.dateTime.split('T')[0])
         );
         setDates(fechasDisponibles);
