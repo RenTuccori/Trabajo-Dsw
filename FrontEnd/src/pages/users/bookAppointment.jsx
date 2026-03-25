@@ -203,7 +203,7 @@ export function BookAppointment() {
     setDoctorId(selectedDoctor.value);
     setSpecialtyId(selectedSpecialty.value);
     setLocationId(selectedLocation.value);
-    setStatus('Pendiente');
+    setStatus('Pending');
     setCancellationDate(null);
     setConfirmationDate(null);
   };

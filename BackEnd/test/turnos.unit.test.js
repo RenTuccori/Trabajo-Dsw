@@ -39,7 +39,7 @@ describe('Turnos Controller – Unit Tests', () => {
   describe('getAppointmentByDni', () => {
     it('should return turnos for a patient', async () => {
       req.body.dni = 11111111;
-      const turnos = [{ idTurno: 1, estado: 'Pendiente' }];
+      const turnos = [{ idTurno: 1, estado: 'Pending' }];
       mockService.getAppointmentsByPatientDni.mockResolvedValue(turnos);
 
       await getAppointmentByDni(req, res);
@@ -70,7 +70,7 @@ describe('Turnos Controller – Unit Tests', () => {
 
     it('should return turnos wrapped in data', async () => {
       req.body.idDoctor = 1;
-      const turnos = [{ sede: 'Sede1', estado: 'Confirmado' }];
+      const turnos = [{ sede: 'Sede1', estado: 'Confirmed' }];
       mockService.getDoctorAppointmentHistory.mockResolvedValue(turnos);
 
       await getAppointmentsByDoctorHistory(req, res);
@@ -112,7 +112,7 @@ describe('Turnos Controller – Unit Tests', () => {
 
   describe('createAppointment', () => {
     it('should create turno and return 201', async () => {
-      const body = { idPaciente: 1, fechaYHora: '2025-01-01 10:00', estado: 'Pendiente', idEspecialidad: 1, idDoctor: 1, idSede: 1 };
+      const body = { idPaciente: 1, fechaYHora: '2025-01-01 10:00', estado: 'Pending', idEspecialidad: 1, idDoctor: 1, idSede: 1 };
       req.body = body;
       mockService.createNewAppointment.mockResolvedValue({ idTurno: 1, ...body });
 

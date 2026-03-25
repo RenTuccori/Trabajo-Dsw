@@ -12,6 +12,10 @@ export function AppointmentConfirmation() {
     locationAddress,
     dateAndTime,
     createAppointment,
+    getDoctorByIdFunction,
+    getSpecialtyByIdFunc,
+    getLocationByIdFunc,
+    status,
     userEmail,
     getUserByNationalIdFunction,
     sendEmailFunction,
@@ -26,6 +30,18 @@ export function AppointmentConfirmation() {
         console.log('🎯 FRONTEND - appointmentConfirmation: Getting user data');
         // Get user data first
         await getUserByNationalIdFunction();
+
+        // Ensure readable names are loaded into context before creating the appointment
+        try {
+          await Promise.all([
+            getDoctorByIdFunction(),
+            getSpecialtyByIdFunc(),
+            getLocationByIdFunc(),
+          ]);
+          console.log('✅ FRONTEND - appointmentConfirmation: Names loaded into context');
+        } catch (err) {
+          console.warn('⚠️ FRONTEND - appointmentConfirmation: Could not load all names', err);
+        }
 
         console.log('🎯 FRONTEND - appointmentConfirmation: Creating appointment');
         // Create the appointment - all data should already be in context from bookAppointment
@@ -121,7 +137,7 @@ export function AppointmentConfirmation() {
               <strong>Sede:</strong> {locationName}, {locationAddress}
             </p>
             <p className="text-gray-700">
-              <strong>Estado:</strong> Pendiente
+              <strong>Estado:</strong> {status || 'Pending'}
             </p>
             <p className="text-sm text-gray-600 text-center mt-4">
               Se ha enviado un email de confirmación a {userEmail}. Si no lo recibiste, verifica tu carpeta de spam.
