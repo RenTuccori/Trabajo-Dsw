@@ -7,7 +7,13 @@ export function CreateSchedules() {
   const location = useLocation();
   const { locationId, specialtyId, doctorId, locationName, specialtyName, doctorFullName } = location.state || {};
 
-  const diasSemana = ['lunes', 'martes', 'miércoles', 'jueves', 'viernes'];
+  const diasSemana = [
+    { label: 'Lunes', value: 'Monday' },
+    { label: 'Martes', value: 'Tuesday' },
+    { label: 'Miercoles', value: 'Wednesday' },
+    { label: 'Jueves', value: 'Thursday' },
+    { label: 'Viernes', value: 'Friday' },
+  ];
   const {
     getDoctorSchedules,
     createSchedules,
@@ -15,8 +21,14 @@ export function CreateSchedules() {
     updateSchedules,
   } = useAdministration();
   const [schedules, setSchedules] = useState(
-    diasSemana.map((dia) => ({ dia, hora_inicio: '', hora_fin: '' })) // Inicializar con días de la semana
+    diasSemana.map((dayOption) => ({ dia: dayOption.value, hora_inicio: '', hora_fin: '' }))
   );
+
+  const normalizeDay = (value) =>
+    (value || '')
+      .normalize('NFD')
+      .replace(/[\u0300-\u036f]/g, '')
+      .toLowerCase();
 
   // Comprobar token y cargar los schedules del doctor
   useEffect(() => {
@@ -47,13 +59,14 @@ export function CreateSchedules() {
   useEffect(() => {
     if (doctorSchedules && doctorSchedules.length > 0) {
       console.log('Horarios doctor:', doctorSchedules);
-      const nuevosHorarios = diasSemana.map((dia) => {
+      const nuevosHorarios = diasSemana.map((dayOption) => {
+        const dayValue = dayOption.value;
         const horarioExistente = doctorSchedules.find(
-          (horario) => horario.dia === dia // Convertir ambos a minúsculas
+          (horario) => normalizeDay(horario.dia) === normalizeDay(dayValue)
         );
         console.log('Horario existente:', horarioExistente);
         return {
-          dia,
+          dia: dayValue,
           hora_inicio: horarioExistente ? horarioExistente.hora_inicio : '',
           hora_fin: horarioExistente ? horarioExistente.hora_fin : '',
         };
@@ -88,7 +101,7 @@ export function CreateSchedules() {
       try {
         for (const horario of horariosValidos) {
           const horarioExistente = doctorSchedules.find(
-            (h) => h.dia === horario.dia
+            (h) => normalizeDay(h.dia) === normalizeDay(horario.dia)
           );
 
           if (horarioExistente) {
@@ -101,7 +114,7 @@ export function CreateSchedules() {
               dia: horario.dia,
               hora_inicio: horario.hora_inicio,
               hora_fin: horario.hora_fin,
-              status: 'Habilitado',
+              status: 'Available',
             });
           } else {
             // Usar POST si el horario no existe
@@ -119,7 +132,7 @@ export function CreateSchedules() {
               dia: horario.dia,
               hora_inicio: horario.hora_inicio,
               hora_fin: horario.hora_fin,
-              status: 'Habilitado',
+              status: 'Available',
             });
           }
         }
@@ -142,10 +155,10 @@ export function CreateSchedules() {
           </h3>
 
           {/* Ingreso de nuevos schedules, con los schedules existentes ya pre-rellenados */}
-          {diasSemana.map((dia, index) => (
+          {diasSemana.map((dayOption, index) => (
             <div key={index} className="flex items-center space-x-4">
               <span className="w-1/4">
-                {dia.charAt(0).toUpperCase() + dia.slice(1)}
+                {dayOption.label}
               </span>
               <input
                 type="time"

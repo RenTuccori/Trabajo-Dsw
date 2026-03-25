@@ -2,14 +2,14 @@ import { HealthInsurance } from '../models/index.js';
 
 export const getAllHealthInsurance = async () => {
   const insuranceList = await HealthInsurance.findAll({
-    where: { status: 'Habilitado' },
+    where: { status: 'Enabled' },
   });
   return insuranceList;
 };
 
 export const findHealthInsuranceById = async (healthInsuranceId) => {
   const insurance = await HealthInsurance.findOne({
-    where: { id: healthInsuranceId, status: 'Habilitado' },
+    where: { id: healthInsuranceId, status: 'Enabled' },
   });
   return insurance;
 };
@@ -17,14 +17,14 @@ export const findHealthInsuranceById = async (healthInsuranceId) => {
 export const createNewHealthInsurance = async ({ name }) => {
   const insurance = await HealthInsurance.create({
     name,
-    status: 'Habilitado',
+    status: 'Enabled',
   });
   return insurance;
 };
 
 export const softDeleteHealthInsurance = async (healthInsuranceId) => {
   const [affectedRows] = await HealthInsurance.update(
-    { status: 'Deshabilitado' },
+    { status: 'Disabled' },
     { where: { id: healthInsuranceId } }
   );
   return affectedRows > 0;

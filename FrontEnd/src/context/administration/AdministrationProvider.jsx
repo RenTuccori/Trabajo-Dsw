@@ -164,6 +164,7 @@ const AdministrationProvider = ({ children }) => {
       return response;
     } catch (error) {
       console.error('Error al actualizar el doctor:', error);
+      throw error;
     }
   }
 
@@ -197,9 +198,10 @@ const AdministrationProvider = ({ children }) => {
   async function updateHealthInsurance({ healthInsuranceId, name }) {
     try {
       console.log('healthInsuranceId:', healthInsuranceId, 'name:', name);
-      await updateObraSocial({ healthInsuranceId, name });
+      await updateObraSocial({ insuranceId: healthInsuranceId, name });
     } catch (error) {
       console.error('Error al actualizar la obra social:', error);
+      throw error;
     }
   }
 
@@ -318,7 +320,13 @@ const AdministrationProvider = ({ children }) => {
         specialtyId,
         doctorId,
       });
-      setDoctorSchedules(response.data); // Actualizar el status con los schedules obtenidos
+      const normalizedSchedules = (response?.data || []).map((schedule) => ({
+        ...schedule,
+        dia: schedule.dia ?? schedule.day,
+        hora_inicio: schedule.hora_inicio ?? schedule.startTime,
+        hora_fin: schedule.hora_fin ?? schedule.endTime,
+      }));
+      setDoctorSchedules(normalizedSchedules);
     } catch (error) {
       console.error('Error al obtener los schedules del doctor:', error);
       if (error.response && error.response.status === 404) {

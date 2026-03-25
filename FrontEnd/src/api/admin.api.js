@@ -92,9 +92,10 @@ export const createObraSocial = async ({ name }) => {
   }
 };
 
-export const updateObraSocial = async ({ insuranceId, name }) => {
+export const updateObraSocial = async ({ insuranceId, healthInsuranceId, name }) => {
+  const resolvedInsuranceId = insuranceId ?? healthInsuranceId;
   try {
-    const response = await axiosInstance.put(`admin/health-insurance/${insuranceId}`, {
+    const response = await axiosInstance.put(`admin/health-insurance/${resolvedInsuranceId}`, {
       name,
     });
     return response;
@@ -208,7 +209,7 @@ export const getHorariosXDoctor = async ({
     });
     return response;
   } catch (error) {
-    return error.response.data.message;
+    throw error;
   }
 };
 

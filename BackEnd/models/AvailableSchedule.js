@@ -35,7 +35,7 @@ export const defineAvailableSchedule = (sequelize) => {
     status: {
       type: DataTypes.STRING(45),
       allowNull: false,
-      defaultValue: 'Habilitado',
+      defaultValue: 'Available',
     },
   }, {
     tableName: 'availableschedules',

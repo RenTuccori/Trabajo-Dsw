@@ -24,6 +24,9 @@ export function PersonalData() {
     healthInsuranceId: '',
   });
 
+  const getInsuranceId = (insurance) =>
+    insurance?.id ?? insurance?.healthInsuranceId ?? insurance?.idInsuranceCompany;
+
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setFormData((prevFormData) => ({
@@ -98,13 +101,25 @@ export function PersonalData() {
         phone: userByDni.phone || prev.phone,
         email: userByDni.email || prev.email,
         address: userByDni.address || prev.address,
-        healthInsuranceId: userByDni.insuranceCompanyId || prev.healthInsuranceId,
+        healthInsuranceId:
+          userByDni.healthInsuranceId ||
+          userByDni.insuranceCompanyId ||
+          prev.healthInsuranceId,
       }));
 
       // set selected option for obra social if available
-      if (userByDni.insuranceCompanyId) {
-        const option = (healthInsurances || []).find((h) => h.healthInsuranceId === userByDni.insuranceCompanyId);
-        if (option) setSelectedObraSociales({ value: option.healthInsuranceId, label: option.name });
+      const selectedInsuranceId =
+        userByDni.healthInsuranceId || userByDni.insuranceCompanyId;
+      if (selectedInsuranceId) {
+        const option = (healthInsurances || []).find(
+          (h) => String(getInsuranceId(h)) === String(selectedInsuranceId)
+        );
+        if (option) {
+          setSelectedObraSociales({
+            value: getInsuranceId(option),
+            label: option.name,
+          });
+        }
       }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -208,12 +223,13 @@ export function PersonalData() {
             <p className="text-center text-gray-600 text-lg">Obra Social</p>
             <Select
               options={(healthInsurances || []).map((obrasocial) => ({
-                value: obrasocial.healthInsuranceId,
+                value: getInsuranceId(obrasocial),
                 label: obrasocial.name,
               }))}
               onChange={handleObraSocialChange}
               value={selectedObraSociales}
               className="react-select"
+              placeholder="Seleccione obra social..."
             />
           </div>
           <button

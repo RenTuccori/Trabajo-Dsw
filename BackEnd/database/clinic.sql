@@ -75,14 +75,14 @@ CREATE TABLE `appointments` (
 LOCK TABLES `appointments` WRITE;
 /*!40000 ALTER TABLE `appointments` DISABLE KEYS */;
 INSERT INTO `appointments` VALUES
-  (1,1,'2026-03-30 10:00:00',NULL,'2026-03-26 15:30:00','Confirmado',1,1,1,1),
-  (2,2,'2026-04-02 09:30:00',NULL,NULL,'Pendiente',2,2,1,0),
-  (3,3,'2026-04-07 14:00:00',NULL,NULL,'Pendiente',3,3,2,0),
-  (4,4,'2026-03-20 11:00:00',NULL,'2026-03-18 10:00:00','Confirmado',4,4,1,1),
-  (5,5,'2026-03-22 16:30:00',NULL,'2026-03-20 14:15:00','Confirmado',5,5,2,1),
-  (6,6,'2026-03-15 08:30:00',NULL,'2026-03-12 09:45:00','Confirmado',2,2,3,1),
-  (7,7,'2026-04-09 12:00:00','2026-04-07 18:10:00',NULL,'Cancelado',1,1,2,0),
-  (8,8,'2026-04-10 15:30:00',NULL,NULL,'Pendiente',3,3,3,0);
+  (1,1,'2026-03-30 10:00:00',NULL,'2026-03-26 15:30:00','Confirmed',1,1,1,1),
+  (2,2,'2026-04-02 09:30:00',NULL,NULL,'Pending',2,2,1,0),
+  (3,3,'2026-04-07 14:00:00',NULL,NULL,'Pending',3,3,2,0),
+  (4,4,'2026-03-20 11:00:00',NULL,'2026-03-18 10:00:00','Confirmed',4,4,1,1),
+  (5,5,'2026-03-22 16:30:00',NULL,'2026-03-20 14:15:00','Confirmed',5,5,2,1),
+  (6,6,'2026-03-15 08:30:00',NULL,'2026-03-12 09:45:00','Confirmed',2,2,3,1),
+  (7,7,'2026-04-09 12:00:00','2026-04-07 18:10:00',NULL,'Cancelled',1,1,2,0),
+  (8,8,'2026-04-10 15:30:00',NULL,NULL,'Pending',3,3,3,0);
 /*!40000 ALTER TABLE `appointments` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -118,16 +118,16 @@ CREATE TABLE `availableschedules` (
 LOCK TABLES `availableschedules` WRITE;
 /*!40000 ALTER TABLE `availableschedules` DISABLE KEYS */;
 INSERT INTO `availableschedules` VALUES
-  (1,1,1,'Lunes','08:00:00','12:00:00','Disponible'),
-  (1,1,1,'Miercoles','14:00:00','18:00:00','Disponible'),
-  (2,1,1,'Martes','09:00:00','13:00:00','Disponible'),
-  (1,2,2,'Lunes','09:00:00','12:00:00','Disponible'),
-  (1,2,2,'Jueves','15:00:00','18:00:00','Disponible'),
-  (3,2,2,'Viernes','08:00:00','11:00:00','Disponible'),
-  (2,3,3,'Martes','08:00:00','12:00:00','Disponible'),
-  (2,3,3,'Jueves','14:00:00','17:00:00','Disponible'),
-  (1,4,4,'Lunes','10:00:00','13:00:00','Disponible'),
-  (2,5,5,'Miercoles','13:00:00','17:00:00','Disponible');
+  (1,1,1,'Monday','08:00:00','12:00:00','Available'),
+  (1,1,1,'Wednesday','14:00:00','18:00:00','Available'),
+  (2,1,1,'Tuesday','09:00:00','13:00:00','Available'),
+  (1,2,2,'Monday','09:00:00','12:00:00','Available'),
+  (1,2,2,'Thursday','15:00:00','18:00:00','Available'),
+  (3,2,2,'Friday','08:00:00','11:00:00','Available'),
+  (2,3,3,'Tuesday','08:00:00','12:00:00','Available'),
+  (2,3,3,'Thursday','14:00:00','17:00:00','Available'),
+  (1,4,4,'Monday','10:00:00','13:00:00','Available'),
+  (2,5,5,'Wednesday','13:00:00','17:00:00','Available');
 /*!40000 ALTER TABLE `availableschedules` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -212,11 +212,11 @@ CREATE TABLE `doctors` (
 LOCK TABLES `doctors` WRITE;
 /*!40000 ALTER TABLE `doctors` DISABLE KEYS */;
 INSERT INTO `doctors` VALUES
-  (1,12345678,30,'password123','Habilitado'),
-  (2,23456789,45,'password123','Habilitado'),
-  (3,34567890,30,'password123','Habilitado'),
-  (4,45678901,60,'password123','Habilitado'),
-  (5,56789012,30,'password123','Habilitado');
+  (1,12345678,30,'password123','Enabled'),
+  (2,23456789,45,'password123','Enabled'),
+  (3,34567890,30,'password123','Enabled'),
+  (4,45678901,60,'password123','Enabled'),
+  (5,56789012,30,'password123','Enabled');
 /*!40000 ALTER TABLE `doctors` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -248,16 +248,16 @@ CREATE TABLE `doctorspecialtylocations` (
 LOCK TABLES `doctorspecialtylocations` WRITE;
 /*!40000 ALTER TABLE `doctorspecialtylocations` DISABLE KEYS */;
 INSERT INTO `doctorspecialtylocations` VALUES
-  (1,1,1,'Habilitado'),
-  (2,1,1,'Habilitado'),
-  (1,2,2,'Habilitado'),
-  (3,2,2,'Habilitado'),
-  (2,3,3,'Habilitado'),
-  (3,3,3,'Habilitado'),
-  (1,4,4,'Habilitado'),
-  (2,4,4,'Habilitado'),
-  (2,5,5,'Habilitado'),
-  (3,5,5,'Habilitado');
+  (1,1,1,'Enabled'),
+  (2,1,1,'Enabled'),
+  (1,2,2,'Enabled'),
+  (3,2,2,'Enabled'),
+  (2,3,3,'Enabled'),
+  (3,3,3,'Enabled'),
+  (1,4,4,'Enabled'),
+  (2,4,4,'Enabled'),
+  (2,5,5,'Enabled'),
+  (3,5,5,'Enabled');
 /*!40000 ALTER TABLE `doctorspecialtylocations` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -282,7 +282,7 @@ CREATE TABLE `healthinsurances` (
 
 LOCK TABLES `healthinsurances` WRITE;
 /*!40000 ALTER TABLE `healthinsurances` DISABLE KEYS */;
-INSERT INTO `healthinsurances` VALUES (1,'Particular','Habilitado'),(2,'OSDE','Habilitado'),(3,'Swiss Medical','Habilitado'),(4,'Galeno','Habilitado'),(5,'PAMI','Habilitado');
+INSERT INTO `healthinsurances` VALUES (1,'Particular','Enabled'),(2,'OSDE','Enabled'),(3,'Swiss Medical','Enabled'),(4,'Galeno','Enabled'),(5,'PAMI','Enabled');
 /*!40000 ALTER TABLE `healthinsurances` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -309,9 +309,9 @@ CREATE TABLE `locations` (
 LOCK TABLES `locations` WRITE;
 /*!40000 ALTER TABLE `locations` DISABLE KEYS */;
 INSERT INTO `locations` VALUES
-  (1,'Main Campus','Av. Cordoba 1234, CABA','Habilitado'),
-  (2,'North Campus','Av. Cabildo 5678, CABA','Habilitado'),
-  (3,'South Campus','Av. Rivadavia 9012, CABA','Habilitado');
+  (1,'Main Campus','Av. Cordoba 1234, CABA','Enabled'),
+  (2,'North Campus','Av. Cabildo 5678, CABA','Enabled'),
+  (3,'South Campus','Av. Rivadavia 9012, CABA','Enabled');
 /*!40000 ALTER TABLE `locations` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -339,14 +339,14 @@ CREATE TABLE `patients` (
 LOCK TABLES `patients` WRITE;
 /*!40000 ALTER TABLE `patients` DISABLE KEYS */;
 INSERT INTO `patients` VALUES
-  (1,87654321,'Habilitado'),
-  (2,76543210,'Habilitado'),
-  (3,65432109,'Habilitado'),
-  (4,54321098,'Habilitado'),
-  (5,43210987,'Habilitado'),
-  (6,32109876,'Habilitado'),
-  (7,21098765,'Habilitado'),
-  (8,10987654,'Habilitado');
+  (1,87654321,'Enabled'),
+  (2,76543210,'Enabled'),
+  (3,65432109,'Enabled'),
+  (4,54321098,'Enabled'),
+  (5,43210987,'Enabled'),
+  (6,32109876,'Enabled'),
+  (7,21098765,'Enabled'),
+  (8,10987654,'Enabled');
 /*!40000 ALTER TABLE `patients` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -372,11 +372,11 @@ CREATE TABLE `specialties` (
 LOCK TABLES `specialties` WRITE;
 /*!40000 ALTER TABLE `specialties` DISABLE KEYS */;
 INSERT INTO `specialties` VALUES
-  (1,'Cardiology','Habilitado'),
-  (2,'Neurology','Habilitado'),
-  (3,'Traumatology','Habilitado'),
-  (4,'Pediatrics','Habilitado'),
-  (5,'Gynecology','Habilitado');
+  (1,'Cardiology','Enabled'),
+  (2,'Neurology','Enabled'),
+  (3,'Traumatology','Enabled'),
+  (4,'Pediatrics','Enabled'),
+  (5,'Gynecology','Enabled');
 /*!40000 ALTER TABLE `specialties` ENABLE KEYS */;
 UNLOCK TABLES;
 

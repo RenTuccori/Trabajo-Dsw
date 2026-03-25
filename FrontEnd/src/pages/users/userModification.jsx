@@ -92,7 +92,7 @@ export function UserModification() {
       
       // Buscar la obra social correspondiente
       const matchingInsurance = (healthInsurances || []).find((os) =>
-        getInsuranceId(os) === insuranceId
+        String(getInsuranceId(os)) === String(insuranceId)
       );
       console.log('🔍 FRONTEND - Obra social encontrada:', matchingInsurance);
       

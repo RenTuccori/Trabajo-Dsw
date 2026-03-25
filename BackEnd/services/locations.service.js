@@ -3,26 +3,26 @@ import { sequelize } from '../models/index.js';
 
 export const getAllLocations = async () => {
   const locations = await Location.findAll({
-    where: { status: 'Habilitado' },
+    where: { status: 'Enabled' },
   });
   return locations;
 };
 
 export const findLocationById = async (locationId) => {
   const location = await Location.findOne({
-    where: { id: locationId, status: 'Habilitado' },
+    where: { id: locationId, status: 'Enabled' },
   });
   return location;
 };
 
 export const createNewLocation = async ({ name, address }) => {
   const existing = await Location.findOne({
-    where: { name, status: 'Habilitado' },
+    where: { name, status: 'Enabled' },
   });
   if (existing) {
     throw { status: 400, message: 'An enabled location with that name already exists.' };
   }
-  const location = await Location.create({ name, address, status: 'Habilitado' });
+  const location = await Location.create({ name, address, status: 'Enabled' });
   return location;
 };
 
@@ -38,7 +38,7 @@ export const softDeleteLocation = async (locationId) => {
   const transaction = await sequelize.transaction();
   try {
     const [affectedRows] = await Location.update(
-      { status: 'Deshabilitado' },
+      { status: 'Disabled' },
       { where: { id: locationId }, transaction }
     );
     if (affectedRows === 0) {
@@ -46,7 +46,7 @@ export const softDeleteLocation = async (locationId) => {
       return false;
     }
     await LocationDoctorSpecialty.update(
-      { status: 'Deshabilitado' },
+      { status: 'Disabled' },
       { where: { locationId }, transaction }
     );
     await transaction.commit();

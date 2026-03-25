@@ -37,6 +37,9 @@ export function UpdateDoctor() {
     password: '',
   });
 
+  const getInsuranceId = (insurance) =>
+    insurance?.id ?? insurance?.healthInsuranceId;
+
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setFormData((prevFormData) => ({
@@ -85,7 +88,9 @@ export function UpdateDoctor() {
         const doctorData = {
           doctorId: formData.doctorId,
           appointmentDuration: formData.appointmentDuration,
-          password: formData.password,
+          ...(formData.password?.trim()
+            ? { password: formData.password.trim() }
+            : {}),
         };
 
         console.log('Datos user:', usuarioData);
@@ -146,9 +151,14 @@ export function UpdateDoctor() {
   useEffect(() => {
     // Autocomplete when doctor data is available
     if (healthInsurances.length > 0 && doctor && doctor.doctorId) {
-      // Map backend fields to form fields
-      const matchedObra = healthInsurances.find((os) => os.name === doctor.healthInsurance);
-      const healthInsuranceId = matchedObra ? matchedObra.healthInsuranceId : '';
+      // Prefer direct id from backend, fallback to name matching for older payloads
+      const doctorInsuranceId = doctor.healthInsuranceId;
+      const matchedObra = doctorInsuranceId
+        ? healthInsurances.find(
+            (os) => String(getInsuranceId(os)) === String(doctorInsuranceId)
+          )
+        : healthInsurances.find((os) => os.name === doctor.healthInsurance);
+      const healthInsuranceId = matchedObra ? getInsuranceId(matchedObra) : '';
 
       setFormData((prevFormData) => ({
         ...prevFormData,
@@ -203,7 +213,7 @@ export function UpdateDoctor() {
     setSelectedObraSociales(selectedOption);
     setFormData((prevFormData) => ({
       ...prevFormData,
-      healthInsuranceId: selectedOption.value,
+      healthInsuranceId: selectedOption?.value ?? '',
     }));
     setHasChanges(true); // Marca como cambiado al modificar la obra social
   };
@@ -299,12 +309,13 @@ export function UpdateDoctor() {
             <p className="text-center text-gray-600 text-lg">Obra social</p>
             <Select
               options={healthInsurances.map((obrasociales) => ({
-                value: obrasociales.healthInsuranceId,
+                value: getInsuranceId(obrasociales),
                 label: obrasociales.name,
               }))}
               onChange={handleObraSocialChange}
               value={selectedObraSociales}
               className="react-select"
+              placeholder="Seleccione obra social..."
             />
           </div>
           <div>
@@ -327,7 +338,7 @@ export function UpdateDoctor() {
               name="password"
               value={formData.password}
               onChange={handleInputChange}
-              required
+              placeholder="Dejar vacio para mantener la actual"
               className="w-full border border-gray-300 rounded-lg p-2 focus:outline-none focus:border-blue-500"
             />
           </div>

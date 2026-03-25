@@ -18,7 +18,7 @@ export const defineLocation = (sequelize) => {
     status: {
       type: DataTypes.STRING(45),
       allowNull: false,
-      defaultValue: 'Habilitado',
+      defaultValue: 'Enabled',
     },
   }, {
     tableName: 'locations',

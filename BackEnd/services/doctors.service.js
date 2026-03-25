@@ -8,7 +8,7 @@ const JWT_SECRET = process.env.JWT_SECRET;
 
 export const getDoctorsByLocationSpecialty = async (locationId, specialtyId) => {
   const doctors = await Doctor.findAll({
-    where: { status: 'Habilitado' },
+    where: { status: 'Enabled' },
     include: [
       {
         model: User,
@@ -18,7 +18,7 @@ export const getDoctorsByLocationSpecialty = async (locationId, specialtyId) => 
       {
         model: LocationDoctorSpecialty,
         as: 'combinations',
-        where: { locationId, specialtyId, status: 'Habilitado' },
+        where: { locationId, specialtyId, status: 'Enabled' },
         attributes: [],
       },
     ],
@@ -31,7 +31,7 @@ export const getDoctorsByLocationSpecialty = async (locationId, specialtyId) => 
 
 export const getAllAvailableDoctors = async (locationId) => {
   const assignedIds = await LocationDoctorSpecialty.findAll({
-    where: { locationId, status: 'Habilitado' },
+    where: { locationId, status: 'Enabled' },
     attributes: ['doctorId'],
     raw: true,
   });
@@ -39,7 +39,7 @@ export const getAllAvailableDoctors = async (locationId) => {
 
   const doctors = await Doctor.findAll({
     where: {
-      status: 'Habilitado',
+      status: 'Enabled',
       ...(ids.length > 0 && { id: { [Op.notIn]: ids } }),
     },
     include: [{
@@ -56,7 +56,7 @@ export const getAllAvailableDoctors = async (locationId) => {
 
 export const getAllDoctors = async () => {
   const doctors = await Doctor.findAll({
-    where: { status: 'Habilitado' },
+    where: { status: 'Enabled' },
     include: [{
       model: User,
       as: 'user',
@@ -72,7 +72,7 @@ export const getAllDoctors = async () => {
 
 export const findDoctorByNationalId = async (nationalId) => {
   const doctor = await Doctor.findOne({
-    where: { nationalId, status: 'Habilitado' },
+    where: { nationalId, status: 'Enabled' },
     include: [{
       model: User,
       as: 'user',
@@ -90,14 +90,14 @@ export const findDoctorByNationalId = async (nationalId) => {
 
 export const findDoctorById = async (doctorId) => {
   const doctor = await Doctor.findOne({
-    where: { id: doctorId, status: 'Habilitado' },
+    where: { id: doctorId, status: 'Enabled' },
     include: [{
       model: User,
       as: 'user',
       include: [{
         model: HealthInsurance,
         as: 'healthInsurance',
-        attributes: ['name'],
+        attributes: ['id', 'name'],
       }],
     }],
   });
@@ -111,13 +111,14 @@ export const findDoctorById = async (doctorId) => {
     phone: doctor.user.phone,
     address: doctor.user.address,
     appointmentDuration: doctor.appointmentDuration,
+    healthInsuranceId: doctor.user.healthInsuranceId,
     healthInsurance: doctor.user.healthInsurance?.name || null,
   };
 };
 
 export const authenticateDoctor = async (nationalId, password) => {
   const doctor = await Doctor.findOne({
-    where: { nationalId, password, status: 'Habilitado' },
+    where: { nationalId, password, status: 'Enabled' },
     include: [{
       model: User,
       as: 'user',
@@ -139,7 +140,7 @@ export const createNewDoctor = async ({ nationalId, appointmentDuration, passwor
     nationalId,
     appointmentDuration,
     password,
-    status: 'Habilitado',
+    status: 'Enabled',
   });
   return doctor;
 };
@@ -148,7 +149,7 @@ export const softDeleteDoctor = async (doctorId) => {
   const transaction = await sequelize.transaction();
   try {
     const [affectedRows] = await Doctor.update(
-      { status: 'Deshabilitado' },
+      { status: 'Disabled' },
       { where: { id: doctorId }, transaction }
     );
     if (affectedRows === 0) {
@@ -156,11 +157,11 @@ export const softDeleteDoctor = async (doctorId) => {
       return false;
     }
     await LocationDoctorSpecialty.update(
-      { status: 'Deshabilitado' },
+      { status: 'Disabled' },
       { where: { doctorId }, transaction }
     );
     await AvailableSchedule.update(
-      { status: 'Deshabilitado' },
+      { status: 'Unavailable' },
       { where: { doctorId }, transaction }
     );
     await transaction.commit();
@@ -172,8 +173,13 @@ export const softDeleteDoctor = async (doctorId) => {
 };
 
 export const updateExistingDoctor = async (doctorId, { appointmentDuration, password }) => {
+  const updates = { appointmentDuration };
+  if (password !== undefined && password !== null && password !== '') {
+    updates.password = password;
+  }
+
   const [affectedRows] = await Doctor.update(
-    { appointmentDuration, password },
+    updates,
     { where: { id: doctorId } }
   );
   return affectedRows > 0;

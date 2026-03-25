@@ -14,7 +14,7 @@ export const defineHealthInsurance = (sequelize) => {
     status: {
       type: DataTypes.STRING(45),
       allowNull: false,
-      defaultValue: 'Habilitado',
+      defaultValue: 'Enabled',
     },
   }, {
     tableName: 'healthinsurances',

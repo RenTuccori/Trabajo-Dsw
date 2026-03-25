@@ -2,7 +2,7 @@ import { Patient, User, HealthInsurance } from '../models/index.js';
 
 export const getAllPatients = async () => {
   const patients = await Patient.findAll({
-    where: { status: 'Habilitado' },
+    where: { status: 'Enabled' },
     include: [{
       model: User,
       as: 'user',
@@ -25,7 +25,7 @@ export const getAllPatients = async () => {
 
 export const findPatientByNationalId = async (nationalId) => {
   const patient = await Patient.findOne({
-    where: { status: 'Habilitado' },
+    where: { status: 'Enabled' },
     include: [{
       model: User,
       as: 'user',
@@ -38,7 +38,7 @@ export const findPatientByNationalId = async (nationalId) => {
 export const createNewPatient = async ({ nationalId }) => {
   const patient = await Patient.create({
     nationalId,
-    status: 'Habilitado',
+    status: 'Enabled',
   });
   return patient;
 };

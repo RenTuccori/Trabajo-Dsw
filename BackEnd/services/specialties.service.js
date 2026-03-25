@@ -4,11 +4,11 @@ import { Op } from 'sequelize';
 
 export const getSpecialtiesByLocation = async (locationId) => {
   const specialties = await Specialty.findAll({
-    where: { status: 'Habilitado' },
+    where: { status: 'Enabled' },
     include: [{
       model: LocationDoctorSpecialty,
       as: 'combinations',
-      where: { locationId, status: 'Habilitado' },
+      where: { locationId, status: 'Enabled' },
       attributes: [],
     }],
     group: ['Specialty.id'],
@@ -18,14 +18,14 @@ export const getSpecialtiesByLocation = async (locationId) => {
 
 export const getAllSpecialties = async () => {
   const specialties = await Specialty.findAll({
-    where: { status: 'Habilitado' },
+    where: { status: 'Enabled' },
   });
   return specialties;
 };
 
 export const getAvailableSpecialties = async (locationId) => {
   const assignedIds = await LocationDoctorSpecialty.findAll({
-    where: { locationId, status: 'Habilitado' },
+    where: { locationId, status: 'Enabled' },
     attributes: ['specialtyId'],
     raw: true,
   });
@@ -33,7 +33,7 @@ export const getAvailableSpecialties = async (locationId) => {
 
   const specialties = await Specialty.findAll({
     where: {
-      status: 'Habilitado',
+      status: 'Enabled',
       ...(ids.length > 0 && { id: { [Op.notIn]: ids } }),
     },
   });
@@ -42,19 +42,19 @@ export const getAvailableSpecialties = async (locationId) => {
 
 export const findSpecialtyById = async (specialtyId) => {
   const specialty = await Specialty.findOne({
-    where: { id: specialtyId, status: 'Habilitado' },
+    where: { id: specialtyId, status: 'Enabled' },
   });
   return specialty;
 };
 
 export const createNewSpecialty = async ({ name }) => {
   const existing = await Specialty.findOne({
-    where: { name, status: 'Habilitado' },
+    where: { name, status: 'Enabled' },
   });
   if (existing) {
     throw { status: 400, message: 'An enabled specialty with that name already exists.' };
   }
-  const specialty = await Specialty.create({ name, status: 'Habilitado' });
+  const specialty = await Specialty.create({ name, status: 'Enabled' });
   return specialty;
 };
 
@@ -62,7 +62,7 @@ export const softDeleteSpecialty = async (specialtyId) => {
   const transaction = await sequelize.transaction();
   try {
     const [affectedRows] = await Specialty.update(
-      { status: 'Deshabilitado' },
+      { status: 'Disabled' },
       { where: { id: specialtyId }, transaction }
     );
     if (affectedRows === 0) {
@@ -70,11 +70,11 @@ export const softDeleteSpecialty = async (specialtyId) => {
       return false;
     }
     await LocationDoctorSpecialty.update(
-      { status: 'Deshabilitado' },
+      { status: 'Disabled' },
       { where: { specialtyId }, transaction }
     );
     await AvailableSchedule.update(
-      { status: 'Deshabilitado' },
+      { status: 'Unavailable' },
       { where: { specialtyId }, transaction }
     );
     await transaction.commit();

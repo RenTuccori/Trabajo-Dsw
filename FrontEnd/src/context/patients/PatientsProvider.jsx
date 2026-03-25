@@ -170,7 +170,7 @@ const PatientsProvider = ({ children }) => {
       phone: data.phone,
       email: data.email,
       address: data.address,
-      insuranceCompanyId: data.healthInsuranceId, // Mapear healthInsuranceId a insuranceCompanyId
+      healthInsuranceId: data.healthInsuranceId,
     };
 
     try {
