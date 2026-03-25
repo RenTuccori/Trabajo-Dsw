@@ -175,8 +175,8 @@ export function PatientAppointments() {
                   className="bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50"
                   onClick={() => handleConfirmarTurno(appointment)}
                   disabled={
-                    appointment.status === 'Confirmado' ||
-                    appointment.status === 'Cancelado'
+                    appointment.status === 'Confirmed' ||
+                    appointment.status === 'Cancelled'
                   }
                 >
                   Confirmar
@@ -185,8 +185,8 @@ export function PatientAppointments() {
                   className="bg-red-600 text-white py-2 px-4 rounded-lg hover:bg-red-700 transition-colors disabled:opacity-50"
                   onClick={() => handleCancelarTurno(appointment)}
                   disabled={
-                    appointment.status === 'Cancelado' ||
-                    appointment.status === 'Confirmado'
+                    appointment.status === 'Cancelled' ||
+                    appointment.status === 'Confirmed'
                   }
                 >
                   Cancelar
