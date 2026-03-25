@@ -17,77 +17,93 @@ export const useDoctors = () => {
 import {useAuth} from '../global/AuthProvider';
 
 const DoctorsProvider = ({ children }) => {
-  //proveedor para acceder a los datos de los empleados desde cualquier componente
-  const [turnosHist, setTurnosHist] = useState([]);
-  const [turnosFecha, setTurnosFecha] = useState([]);
-  const [turnosHoy, setTurnosHoy] = useState([]);
-  const [dates, setDates] = useState([]);
+  const [historicalAppointments, setHistoricalAppointments] = useState([]);
+  const [appointmentsByDate, setAppointmentsByDate] = useState([]);
+  const [todayAppointments, setTodayAppointments] = useState([]);
+  const [availableDates, setAvailableDates] = useState([]);
 
   const {doctorId} = useAuth();
 
 
-  async function Historico() {
+  async function loadHistoricalAppointments() {
     try {
       const response = await getHistoricalAppointmentsDoctor({ doctorId : doctorId });
       console.log(response.data.data)
       console.log('length', response.data.data.length)
       if (response.data && response.data.data.length > 0) {
-        // Map backend fields to frontend expected keys
-        const mapped = response.data.data.map((a) => ({
-          ...a,
-          dni: a.nationalId,
-          patientName: a.fullName,
+        const mapped = response.data.data.map((appointment) => ({
+          ...appointment,
+          dni: appointment.dni ?? appointment.nationalId,
+          patientName: appointment.patientName ?? appointment.fullName,
         }));
-        setTurnosHist(mapped);
+
+        setHistoricalAppointments(mapped);
         console.log('entre')
-        const fechasDisponibles = mapped.map(
-          (appointment) => new Date(appointment.dateTime.split('T')[0])
+        const uniqueDates = new Set(
+          mapped.map((appointment) => appointment.dateTime.split('T')[0])
         );
-        setDates(fechasDisponibles);
+
+        const normalizedAvailableDates = Array.from(uniqueDates).map((dateStr) => {
+          const [year, month, day] = dateStr.split('-').map(Number);
+          // Build local date to avoid UTC parsing offset issues.
+          return new Date(year, month - 1, day);
+        });
+
+        setAvailableDates(normalizedAvailableDates);
       } else {
         console.log('sali por else')
-        setTurnosHist([]);
-        setDates([]);
+        setHistoricalAppointments([]);
+        setAvailableDates([]);
       }
     } catch (error) {
       console.log('sali por catch')
       console.error('Error al obtener appointments históricos:', error);
-      setTurnosHist([]);
-      setDates([]);
+      setHistoricalAppointments([]);
+      setAvailableDates([]);
     }
   }
 
-  async function Fecha(fecha) {
-    const formattedDate = `${fecha.getFullYear()}-${(fecha.getMonth() + 1)
+  async function loadAppointmentsByDate(date) {
+    if (!date) {
+      setAppointmentsByDate([]);
+      return;
+    }
+
+    const formattedDate = `${date.getFullYear()}-${(date.getMonth() + 1)
       .toString()
-      .padStart(2, '0')}-${fecha.getDate().toString().padStart(2, '0')}`;
-    const response = await getAppointmentsByDate({
-      doctorId,
-      dateTime: formattedDate,
-    });
-    setTurnosFecha(response.data);
+      .padStart(2, '0')}-${date.getDate().toString().padStart(2, '0')}`;
+    try {
+      const response = await getAppointmentsByDate({
+        doctorId,
+        dateTime: formattedDate,
+      });
+      setAppointmentsByDate(response?.data || []);
+    } catch (error) {
+      console.error('Error al obtener appointments por fecha:', error);
+      setAppointmentsByDate([]);
+    }
   }
 
-  async function TurnosHoy() {
+  async function loadTodayAppointments() {
     try {
       const response = await getTodayAppointments({ doctorId });
-      setTurnosHoy(response.data || []);
+      setTodayAppointments(response.data || []);
     } catch (error) {
       console.error('Error al obtener los appointments de hoy:', error);
-      setTurnosHoy([]);
+      setTodayAppointments([]);
     }
   }
 
   return (
     <DoctorsContext.Provider
       value={{
-        Historico,
-        turnosHist,
-        dates,
-        turnosFecha,
-        Fecha,
-        turnosHoy,
-        TurnosHoy,
+        loadHistoricalAppointments,
+        historicalAppointments,
+        availableDates,
+        appointmentsByDate,
+        loadAppointmentsByDate,
+        todayAppointments,
+        loadTodayAppointments,
       }}
     >
       {children}

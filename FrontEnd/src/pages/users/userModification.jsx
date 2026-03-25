@@ -24,6 +24,8 @@ export function UserModification() {
     healthInsuranceId: '',
   });
 
+  const getInsuranceId = (insurance) => insurance?.id ?? insurance?.healthInsuranceId ?? insurance?.idInsuranceCompany;
+
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setFormData((prevFormData) => ({
@@ -85,27 +87,27 @@ export function UserModification() {
       console.log('🔧 FRONTEND - userModification: Mapeando datos del usuario:', userByDni);
       console.log('🏥 FRONTEND - Obras sociales disponibles:', healthInsurances);
       
-      const insuranceId = userByDni.idInsuranceCompany || userByDni.healthInsuranceId;
+      const insuranceId = userByDni.healthInsuranceId ?? userByDni.idInsuranceCompany;
       console.log('🆔 FRONTEND - ID de obra social del usuario:', insuranceId);
       
       // Buscar la obra social correspondiente
-      const matchingInsurance = healthInsurances.find((os) => 
-        (os.healthInsuranceId || os.idInsuranceCompany) === insuranceId
+      const matchingInsurance = (healthInsurances || []).find((os) =>
+        getInsuranceId(os) === insuranceId
       );
       console.log('🔍 FRONTEND - Obra social encontrada:', matchingInsurance);
       
       setFormData({
-        dni: userByDni.dni,
+        dni: userByDni.nationalId || userByDni.dni,
         name: userByDni.firstName || userByDni.name || '', // Mapear firstName a name
         lastName: userByDni.lastName,
         phone: userByDni.phone,
         email: userByDni.email,
         address: userByDni.address,
-        healthInsuranceId: insuranceId, // Mapear campo correcto
+        healthInsuranceId: insuranceId || '', // Mapear campo correcto
       });
 
       setSelectedObraSociales({
-        value: insuranceId,
+        value: insuranceId || '',
         label: matchingInsurance?.name || 'No asignada',
       });
       
@@ -189,7 +191,7 @@ export function UserModification() {
               options={(healthInsurances || []).map((obrasociales) => {
                 console.log('🏥 FRONTEND - Mapeando obra social:', obrasociales);
                 return {
-                  value: obrasociales.healthInsuranceId || obrasociales.idInsuranceCompany,
+                  value: getInsuranceId(obrasociales),
                   label: obrasociales.name,
                 };
               })}

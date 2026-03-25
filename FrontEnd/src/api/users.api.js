@@ -56,6 +56,11 @@ export const updateUser = async ({ dni, nationalId: nat, name, lastName, phone, 
     // Coerce to number when possible
     const numericNationalId = nationalId ? Number(nationalId) : undefined;
 
+    const normalizedHealthInsuranceId =
+      healthInsuranceId === '' || healthInsuranceId === undefined || healthInsuranceId === null
+        ? null
+        : Number(healthInsuranceId);
+
     const backendData = {
         nationalId: numericNationalId,
         firstName: name, 
@@ -63,7 +68,7 @@ export const updateUser = async ({ dni, nationalId: nat, name, lastName, phone, 
         phone,
         email,
         address,
-        healthInsuranceId
+        healthInsuranceId: normalizedHealthInsuranceId
     };
     
     console.log('🔄 FRONTEND - updateUser: Mapped data for backend:', backendData);

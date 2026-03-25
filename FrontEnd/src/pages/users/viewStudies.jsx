@@ -18,12 +18,22 @@ function ViewStudies() {
     console.log('🔍 FRONTEND - loadPaciente: Cargando paciente con DNI:', dni);
     try {
       const response = await getPatientbyNationalId({ nationalId: dni });
+      if (!response || !response.data) {
+        console.error('❌ FRONTEND - loadPaciente: Respuesta inválida del backend:', response);
+        return null;
+      }
       console.log('✅ FRONTEND - loadPaciente: Respuesta recibida:', response);
       console.log('📊 FRONTEND - loadPaciente: Datos del paciente:', response.data);
-      setPacienteData(response.data);
+      const patientData = response?.data || {};
+      const userData = patientData.user || {};
+
+      setPacienteData({
+        ...patientData,
+        firstName: patientData.firstName || userData.firstName || '',
+        lastName: patientData.lastName || userData.lastName || '',
+      });
       
-      // Usar idPatient en lugar de patientId
-      const patientId = response.data.idPatient;
+      const patientId = patientData.id || patientData.idPatient || patientData.patientId;
       console.log('🆔 FRONTEND - loadPaciente: patientId obtenido:', patientId);
       return patientId;
     } catch (error) {
@@ -85,6 +95,7 @@ function ViewStudies() {
   };
 
   const formatDate = (dateString) => {
+    if (!dateString) return '-';
     return new Date(dateString).toLocaleDateString('es-ES');
   };
 
@@ -168,34 +179,41 @@ function ViewStudies() {
                   </tr>
                 </thead>
                 <tbody>
-                  {(estudios || []).map((estudio) => (
+                  {(estudios || []).map((estudio) => {
+                    const studyId = estudio.idEstudio ?? estudio.idStudy ?? estudio.id;
+                    const performanceDate = estudio.fechaRealizacion ?? estudio.performanceDate;
+                    const uploadDate = estudio.fechaCarga ?? estudio.uploadDate;
+                    const fileName = estudio.nombreArchivo ?? estudio.fileName;
+                    const description = estudio.descripcion ?? estudio.description;
+
+                    return (
                     <tr
-                      key={estudio.idStudy}
+                      key={studyId}
                       className="border-t border-gray-200"
                     >
                       <td className="px-4 py-2 text-sm">
-                        Dr. {estudio.doctorName}
+                        Dr. {estudio.doctorName || '-'}
                       </td>
                       <td className="px-4 py-2 text-sm">
-                        {formatDate(estudio.performanceDate)}
+                        {formatDate(performanceDate)}
                       </td>
                       <td className="px-4 py-2 text-sm">
                         <span className="text-blue-600 font-medium">
-                          {estudio.fileName}
+                          {fileName || 'Archivo sin nombre'}
                         </span>
                       </td>
                       <td className="px-4 py-2 text-sm">
-                        {estudio.description || 'Sin descripción'}
+                        {description || 'Sin descripción'}
                       </td>
                       <td className="px-4 py-2 text-sm">
-                        {formatDate(estudio.uploadDate)}
+                        {formatDate(uploadDate)}
                       </td>
                       <td className="px-4 py-2 text-sm">
                         <button
                           onClick={() =>
                             downloadEstudio(
-                              estudio.idStudy,
-                              estudio.fileName
+                              studyId,
+                              fileName || 'estudio'
                             )
                           }
                           className="bg-blue-600 text-white px-3 py-1 rounded-md hover:bg-blue-700 transition-colors text-sm"
@@ -204,7 +222,8 @@ function ViewStudies() {
                         </button>
                       </td>
                     </tr>
-                  ))}
+                  );
+                  })}
                 </tbody>
               </table>
             </div>

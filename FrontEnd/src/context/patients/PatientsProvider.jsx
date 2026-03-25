@@ -238,21 +238,40 @@ const PatientsProvider = ({ children }) => {
     console.log('  - cancellationDate:', cancellationDate);
     console.log('  - confirmationDate:', confirmationDate);
 
+    let resolvedPatientId = patientId;
+
+    // Patient ID can still be empty if the lookup effect hasn't finished yet.
+    if (!resolvedPatientId && dni) {
+      try {
+        const patientResponse = await getPatientbyNationalId({ nationalId: dni });
+        resolvedPatientId = patientResponse?.data?.id;
+        if (resolvedPatientId) {
+          setPatientId(resolvedPatientId);
+        }
+      } catch (error) {
+        console.error('❌ FRONTEND - createAppointment: Could not resolve patientId by nationalId', error);
+      }
+    }
+
     const appointmentData = {
-      patientId,
+      patientId: Number(resolvedPatientId),
       dateAndTime,
-      cancellationDate,
-      confirmationDate,
+      cancellationDate: cancellationDate || null,
+      confirmationDate: confirmationDate || null,
       status,
-      specialtyId,
-      doctorId,
-      locationId,
+      specialtyId: Number(specialtyId),
+      doctorId: Number(doctorId),
+      locationId: Number(locationId),
     };
 
     console.log(
       '📤 FRONTEND - Data object sent to createAppointment:',
       appointmentData
     );
+
+    if (!appointmentData.patientId || !appointmentData.dateAndTime || !appointmentData.specialtyId || !appointmentData.doctorId || !appointmentData.locationId) {
+      throw new Error('Missing required appointment fields (patientId, dateAndTime, specialtyId, doctorId, locationId)');
+    }
 
     try {
       const result = await createAppointment(appointmentData);

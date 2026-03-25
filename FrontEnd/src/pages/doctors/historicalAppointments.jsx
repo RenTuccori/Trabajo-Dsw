@@ -6,11 +6,11 @@ import '../../estilos/home.css';
 import '../../estilos/sacarturno.css';
 
 export function HistoricalAppointments() {
-  const { turnosHist, Historico } = useDoctors();
+  const { historicalAppointments, loadHistoricalAppointments } = useDoctors();
   const navigate = useNavigate();
 
   useEffect(() => {
-    Historico();
+    loadHistoricalAppointments();
   }, []);
 
   const formatFechaHora = (dateAndTime) => {
@@ -38,8 +38,8 @@ export function HistoricalAppointments() {
           Volver
         </button>
         <div className="space-y-4">
-          {turnosHist && turnosHist.length > 0 ? (
-            turnosHist.map((appointment, index) => (
+          {historicalAppointments && historicalAppointments.length > 0 ? (
+            historicalAppointments.map((appointment, index) => (
               <div
                 key={index}
                 className="bg-gray-50 rounded-lg p-4 shadow-sm mb-4"

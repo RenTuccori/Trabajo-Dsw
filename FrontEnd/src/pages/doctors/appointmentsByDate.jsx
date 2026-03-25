@@ -7,11 +7,16 @@ import { useNavigate } from 'react-router-dom';
 export function AppointmentsByDate() {
   const navigate = useNavigate();
   const [selectedDate, setSelectedDate] = useState(null);
-  const { dates, Historico, turnosFecha, Fecha } = useDoctors();
+  const {
+    availableDates,
+    loadHistoricalAppointments,
+    appointmentsByDate,
+    loadAppointmentsByDate,
+  } = useDoctors();
 
   // Llamar a obtenerTurnos cuando se monta el componente
   useEffect(() => {
-    Historico();
+    loadHistoricalAppointments();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -26,40 +31,41 @@ export function AppointmentsByDate() {
   };
 
   const isDateAvailable = (date) => {
-    return dates.some(
+    return availableDates.some(
       (f) =>
         f.getFullYear() === date.getFullYear() &&
         f.getMonth() === date.getMonth() &&
-        f.getDate() === date.getDate() - 1
+        f.getDate() === date.getDate()
     );
   };
   const handleDateChange = (date) => {
     setSelectedDate(date);
     if (date) {
       console.log('Fecha seleccionada:', date);
-      Fecha(date); // Llamar a la función Fecha con la fecha seleccionada
+      loadAppointmentsByDate(date);
+    } else {
+      loadAppointmentsByDate(null);
     }
   };
   return (
     <div className="min-h-screen bg-gradient-to-b from-blue-100 to-white flex items-center justify-center p-4">
       <div className="bg-white rounded-lg shadow-md w-full max-w-md p-6 space-y-4">
         <h1 className="text-2xl font-bold text-blue-800 text-center">Turnos</h1>
-        {!selectedDate && (
-          <div className="space-y-4">
-            <p className="text-center text-gray-600">Fecha</p>
-            <DatePicker
-              selected={selectedDate}
-              onChange={handleDateChange}
-              filterDate={isDateAvailable}
-              placeholderText="Selecciona una fecha"
-              className="w-full border border-gray-300 rounded-lg p-2"
-            />
-          </div>
-        )}
+        <div className="space-y-4">
+          <p className="text-center text-gray-600">Fecha</p>
+          <DatePicker
+            selected={selectedDate}
+            onChange={handleDateChange}
+            filterDate={isDateAvailable}
+            isClearable
+            placeholderText="Selecciona una fecha"
+            className="w-full border border-gray-300 rounded-lg p-2"
+          />
+        </div>
         {selectedDate && (
           <div className="space-y-4">
-            {turnosFecha.length > 0 ? (
-              turnosFecha.map((appointment, index) => (
+            {appointmentsByDate.length > 0 ? (
+              appointmentsByDate.map((appointment, index) => (
                 <div
                   key={index}
                   className="bg-gray-50 rounded-lg p-4 shadow-sm mb-4"
@@ -77,10 +83,10 @@ export function AppointmentsByDate() {
                     <strong>Estado:</strong> {appointment.status}
                   </p>
                   <p>
-                    <strong>DNI Paciente:</strong> {appointment.dni}
+                    <strong>DNI Paciente:</strong> {appointment.dni || appointment.nationalId || '-'}
                   </p>
                   <p>
-                    <strong>Apellido y Nombre:</strong> {appointment.patientName}
+                    <strong>Apellido y Nombre:</strong> {appointment.patientName || appointment.fullName || '-'}
                   </p>
                 </div>
               ))

@@ -7,11 +7,11 @@ import '../../estilos/sacarturno.css';
 import '../../estilos/verTurnos.css';
 
 export function TodayAppointments() {
-  const { turnosHoy, TurnosHoy } = useDoctors();
+  const { todayAppointments, loadTodayAppointments } = useDoctors();
   const navigate = useNavigate();
 
   useEffect(() => {
-    TurnosHoy();
+    loadTodayAppointments();
   }, []);
 
   const formatFechaHora = (dateAndTime) => {
@@ -34,8 +34,8 @@ export function TodayAppointments() {
           Turnos de Hoy
         </h1>
         <div className="space-y-4">
-          {turnosHoy && turnosHoy.length > 0 ? (
-            turnosHoy.map((appointment, index) => (
+          {todayAppointments && todayAppointments.length > 0 ? (
+            todayAppointments.map((appointment, index) => (
               <div
                 key={index}
                 className="bg-gray-50 rounded-lg p-4 shadow-sm mb-4"

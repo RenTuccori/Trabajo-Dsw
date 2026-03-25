@@ -23,7 +23,10 @@ export const getAppointmentsByDate = async ({doctorId, dateTime}) => {
         const response = await axiosInstance.post(`appointments/doctor/date`, {doctorId, dateTime});
         return response;
     } catch (error) {
-        return (error.response.data.message);
+        if (error.response?.status === 404) {
+            return { data: [] };
+        }
+        throw error;
     }
 }
 
@@ -61,8 +64,17 @@ export const createAppointment = async ({ patientId, dateAndTime, cancellationDa
     } catch (error) {
         console.error('❌ FRONTEND - createAppointment: Request error:', error);
         console.error('📄 FRONTEND - Error details:', error.response?.data);
-        // Throw backend validation payload so callers can handle it
-        throw error.response?.data || error;
+        const backendPayload = error.response?.data;
+        const validationErrors = backendPayload?.errors;
+
+        if (Array.isArray(validationErrors) && validationErrors.length > 0) {
+            const message = validationErrors
+                .map((e) => `${e.field}: ${e.message}`)
+                .join(' | ');
+            throw new Error(message);
+        }
+
+        throw new Error(backendPayload?.message || error.message || 'Error creating appointment');
     }
 }
 

@@ -61,6 +61,8 @@ export const getDoctorAppointmentHistory = async (doctorId) => {
     status: t.status,
     nationalId: t.patient?.user?.nationalId,
     fullName: `${t.patient?.user?.firstName || ''} ${t.patient?.user?.lastName || ''}`,
+    dni: t.patient?.user?.nationalId,
+    patientName: `${t.patient?.user?.firstName || ''} ${t.patient?.user?.lastName || ''}`.trim(),
   }));
 };
 
@@ -92,7 +94,9 @@ export const getDoctorAppointmentsToday = async (doctorId) => {
     dateTime: t.dateTime,
     status: t.status,
     nationalId: t.patient?.user?.nationalId,
-    fullName: `${t.patient?.user?.firstName} ${t.patient?.user?.lastName}`,
+    fullName: `${t.patient?.user?.firstName || ''} ${t.patient?.user?.lastName || ''}`.trim(),
+    dni: t.patient?.user?.nationalId,
+    patientName: `${t.patient?.user?.firstName || ''} ${t.patient?.user?.lastName || ''}`.trim(),
   }));
 };
 
@@ -120,7 +124,9 @@ export const getDoctorAppointmentsByDate = async (doctorId, dateTime) => {
     dateTime: t.dateTime,
     status: t.status,
     nationalId: t.patient?.user?.nationalId,
-    fullName: `${t.patient?.user?.firstName} ${t.patient?.user?.lastName}`,
+    fullName: `${t.patient?.user?.firstName || ''} ${t.patient?.user?.lastName || ''}`.trim(),
+    dni: t.patient?.user?.nationalId,
+    patientName: `${t.patient?.user?.firstName || ''} ${t.patient?.user?.lastName || ''}`.trim(),
   }));
 };
 
