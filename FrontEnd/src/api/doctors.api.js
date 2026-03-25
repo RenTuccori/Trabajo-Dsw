@@ -26,7 +26,7 @@ export const getDoctors = async ({ locationId, specialtyId }) => {
 export const getDoctorById = async (doctorId) => {
     try {
         console.log('👨‍⚕️ FRONTEND - getDoctorById: Obteniendo doctor con ID:', doctorId);
-        const response = await axiosInstance.get(`doctorsId/${doctorId}`);
+        const response = await axiosInstance.get(`doctors/${doctorId}`);
         console.log('✅ FRONTEND - getDoctorById: Doctor obtenido:', response.data);
         return response;
     } catch (error) {

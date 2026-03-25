@@ -12,13 +12,13 @@ export const getAllPatients = async () => {
         attributes: ['name'],
       }],
     }],
-    order: [[{ model: User, as: 'user' }, 'name', 'ASC']],
+      order: [[{ model: User, as: 'user' }, 'lastName', 'ASC']],
   });
   return patients.map(p => ({
     patientId: p.id,
-    nationalId: p.user?.nationalId,
-    name: p.user?.name,
-    lastName: p.user?.lastName,
+      nationalId: p.user?.nationalId,
+      name: p.user?.firstName,
+      lastName: p.user?.lastName,
     healthInsurance: p.user?.healthInsurance?.name,
   }));
 };

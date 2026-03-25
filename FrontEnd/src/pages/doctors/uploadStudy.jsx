@@ -15,7 +15,7 @@ function UploadStudy() {
     patientId: '',
     fechaRealizacion: '',
     descripcion: '',
-    archivo: null,
+    file: null,
   });
   const [patients, setPacientes] = useState([]);
   const [estudios, setEstudios] = useState([]);
@@ -78,14 +78,14 @@ function UploadStudy() {
   const handleFileChange = (e) => {
     setFormData((prev) => ({
       ...prev,
-      archivo: e.target.files[0],
+      file: e.target.files[0],
     }));
   };
 
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (!formData.archivo) {
+    if (!formData.file) {
       window.notifyError('Por favor seleccione un archivo');
       return;
     }
@@ -99,10 +99,11 @@ function UploadStudy() {
 
     try {
       const data = new FormData();
-      data.append('archivo', formData.archivo);
+      data.append('file', formData.file);
       data.append('patientId', formData.patientId);
-      data.append('fechaRealizacion', formData.fechaRealizacion);
-      data.append('descripcion', formData.descripcion);
+      // Backend expects 'performanceDate' and 'description'
+      data.append('performanceDate', formData.fechaRealizacion);
+      data.append('description', formData.descripcion);
 
       await uploadEstudio(data);
 
@@ -113,11 +114,11 @@ function UploadStudy() {
         patientId: '',
         fechaRealizacion: '',
         descripcion: '',
-        archivo: null,
+        file: null,
       });
 
       // Limpiar input file
-      const fileInput = document.getElementById('archivo');
+      const fileInput = document.getElementById('file');
       if (fileInput) fileInput.value = '';
 
       // Recargar estudios
@@ -228,9 +229,8 @@ function UploadStudy() {
                 >
                   <option value="">Seleccione un patient</option>
                   {patients.map((patient) => (
-                    <option key={patient.dni} value={patient.patientId}>
-                      {patient.name} {patient.lastName} - DNI:{' '}
-                      {patient.dni}
+                    <option key={patient.patientId} value={patient.patientId}>
+                      {patient.name} {patient.lastName} - DNI: {patient.nationalId || patient.dni}
                     </option>
                   ))}
                 </select>
@@ -274,8 +274,8 @@ function UploadStudy() {
                 </label>
                 <input
                   type="file"
-                  id="archivo"
-                  name="archivo"
+                  id="file"
+                  name="file"
                   onChange={handleFileChange}
                   accept=".pdf,.jpg,.jpeg,.png,.doc,.docx"
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"

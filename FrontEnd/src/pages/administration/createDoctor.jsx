@@ -126,7 +126,7 @@ export function CreateDoctor() {
   const handleUpdate = async (doctorId) => {
     try {
       // Redirigir a un formulario de actualización de doctor con el ID del doctor
-      navigate(`/admin/actualizarDoc/${doctorId}`);
+      navigate(`/admin/updateDoctor/${doctorId}`);
       // Después de actualizar, recargar la lista de doctors
       await getDoctors();
     } catch (error) {

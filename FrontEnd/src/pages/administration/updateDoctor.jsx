@@ -13,11 +13,15 @@ export function UpdateDoctor() {
     updateDoctor,
   } = useAdministration();
 
+  const { doctors, getDoctors } = useAdministration();
+
   const [selectedObraSociales, setSelectedObraSociales] = useState(null);
   const [hasChanges, setHasChanges] = useState(false); // Estado para rastrear cambios
   const [, setOriginalData] = useState({}); // Datos originales para comparar
   const navigate = useNavigate();
   const { doctorId } = useParams(); // Usa useParams para obtener el doctorId desde la URL
+
+  const [selectedDoctorId, setSelectedDoctorId] = useState(doctorId || '');
 
   const [formData, setFormData] = useState({
     doctorId: '',
@@ -68,6 +72,7 @@ export function UpdateDoctor() {
         // Preparar datos para actualizar user (solo los campos que espera el backend)
         const usuarioData = {
           dni: formData.dni,
+          nationalId: formData.dni ? Number(formData.dni) : undefined,
           name: formData.name,
           lastName: formData.lastName,
           phone: formData.phone,
@@ -101,7 +106,7 @@ export function UpdateDoctor() {
           console.log('Usuario y doctor actualizados con éxito');
           window.notifySuccess('Usuario actualizado con éxito');
           setHasChanges(false);
-          navigate('/admin/crearDoc');
+          navigate('/admin/createDoctor');
         } else {
           console.log('Error: respuesta incompleta', {
             response,
@@ -130,50 +135,70 @@ export function UpdateDoctor() {
 
   useEffect(() => {
     getHealthInsurances();
-    getDoctorById(doctorId); // Llama a la función con el doctorId obtenido de la URL
+    // Cargar lista de doctors para el selector
+    getDoctors();
+    // Si viene doctorId en la URL, cargar datos de ese doctor
+    if (doctorId) getDoctorById(doctorId);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [doctorId]);
 
   // Set formData after all dependencies are loaded
   useEffect(() => {
-    if (healthInsurances.length > 0 && doctor.dni) {
-      // Ensure all necessary data is available before setting formData
+    // Autocomplete when doctor data is available
+    if (healthInsurances.length > 0 && doctor && doctor.doctorId) {
+      // Map backend fields to form fields
+      const matchedObra = healthInsurances.find((os) => os.name === doctor.healthInsurance);
+      const healthInsuranceId = matchedObra ? matchedObra.healthInsuranceId : '';
+
       setFormData((prevFormData) => ({
         ...prevFormData,
-        doctorId: doctorId,
-        dni: doctor.dni,
-        name: doctor.name,
-        lastName: doctor.lastName,
-        phone: doctor.phone,
-        email: doctor.email,
-        address: doctor.address,
-        healthInsuranceId: doctor.healthInsuranceId,
-        appointmentDuration: doctor.appointmentDuration,
-        password: doctor.password,
+        doctorId: doctor.doctorId || doctorId,
+        dni: doctor.nationalId || '',
+        name: doctor.firstName || '',
+        lastName: doctor.lastName || '',
+        phone: doctor.phone || '',
+        email: doctor.email || '',
+        address: doctor.address || '',
+        healthInsuranceId: healthInsuranceId,
+        appointmentDuration: doctor.appointmentDuration || '',
+        password: '',
       }));
 
-      setSelectedObraSociales({
-        value: doctor.healthInsuranceId,
-        label:
-          healthInsurances.find((os) => os.healthInsuranceId === doctor.healthInsuranceId)
-            ?.name || 'No asignada',
-      });
+      setSelectedObraSociales(
+        healthInsuranceId
+          ? { value: healthInsuranceId, label: matchedObra.name }
+          : null
+      );
 
       // Guardar datos originales
       setOriginalData({
-        doctorId: doctorId,
-        dni: doctor.dni,
-        name: doctor.name,
-        lastName: doctor.lastName,
-        phone: doctor.phone,
-        email: doctor.email,
-        address: doctor.address,
-        healthInsuranceId: doctor.healthInsuranceId,
-        appointmentDuration: doctor.appointmentDuration,
-        password: doctor.password,
+        doctorId: doctor.doctorId || doctorId,
+        dni: doctor.nationalId || '',
+        name: doctor.firstName || '',
+        lastName: doctor.lastName || '',
+        phone: doctor.phone || '',
+        email: doctor.email || '',
+        address: doctor.address || '',
+        healthInsuranceId: healthInsuranceId,
+        appointmentDuration: doctor.appointmentDuration || '',
+        password: '',
       });
     }
   }, [healthInsurances, doctor]);
+
+  // Manejar selección desde el selector de doctors
+  const handleDoctorSelect = async (selectedOption) => {
+    if (!selectedOption) return;
+    const id = selectedOption.value;
+    setSelectedDoctorId(id);
+    try {
+      await getDoctorById(Number(id));
+      setHasChanges(false);
+    } catch (error) {
+      window.notifyError('Error al cargar datos del doctor');
+      console.error('Error al cargar doctor seleccionado:', error);
+    }
+  };
   const handleObraSocialChange = (selectedOption) => {
     setSelectedObraSociales(selectedOption);
     setFormData((prevFormData) => ({
@@ -193,17 +218,27 @@ export function UpdateDoctor() {
       );
 
       if (result.isConfirmed) {
-        navigate('/admin/crearDoc');
+        navigate('/admin/createDoctor');
       }
     } else {
       // Si no hay cambios, navega de regreso directamente
-      navigate('/admin/crearDoc');
+      navigate('/admin/createDoctor');
     }
   };
 
   return (
     <div className="min-h-screen bg-gradient-to-b from-blue-100 to-white flex items-center justify-center p-4">
       <div className="bg-white rounded-lg shadow-md w-full max-w-md p-6 space-y-4">
+        <div>
+          <p className="text-center text-gray-600 text-lg">Seleccione doctor</p>
+          <Select
+            options={doctors.map((d) => ({ value: String(d.doctorId), label: d.fullName }))}
+            onChange={handleDoctorSelect}
+            value={doctors.find((d) => String(d.doctorId) === String(selectedDoctorId)) ? { value: String(selectedDoctorId), label: doctors.find((d) => String(d.doctorId) === String(selectedDoctorId)).fullName } : null}
+            className="react-select mb-4"
+            placeholder="Elija un doctor..."
+          />
+        </div>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
             <p className="text-center text-gray-600 text-lg">Nombre</p>

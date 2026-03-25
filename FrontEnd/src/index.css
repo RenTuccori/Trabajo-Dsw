@@ -5,3 +5,16 @@
 * {
   font-family: 'Poppins', sans-serif;
 }
+
+/* Ensure root fills viewport and avoid unexpected scrollbars */
+html, body, #root {
+  height: 100%;
+}
+
+/* Remove any default body margin and set sensible overflow */
+body {
+  margin: 0;
+  overflow-y: auto;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}

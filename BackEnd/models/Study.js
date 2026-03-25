@@ -18,6 +18,7 @@ export const defineStudy = (sequelize) => {
     performanceDate: {
       type: DataTypes.DATEONLY,
       allowNull: false,
+      field: 'performedDate',
     },
     uploadDate: {
       type: DataTypes.DATE,

@@ -1,55 +1,57 @@
 import { Study, Doctor, Patient, User } from '../models/index.js';
 
-export const createStudy = async ({ idPaciente, idDoctor, fechaRealizacion, fechaCarga, nombreArchivo, rutaArchivo, descripcion }) => {
-  return Estudio.create({ idPaciente, idDoctor, fechaRealizacion, fechaCarga, nombreArchivo, rutaArchivo, descripcion });
+export const createStudy = async ({ patientId, doctorId, performanceDate, uploadDate, fileName, filePath, description }) => {
+  return Study.create({ patientId, doctorId, performanceDate, uploadDate, fileName, filePath, description });
 };
 
-export const getStudiesByPatient = async (idPaciente) => {
-  const studies = await Estudio.findAll({
-    where: { idPaciente },
+export const getStudiesByPatient = async (patientId) => {
+  const studies = await Study.findAll({
+    where: { patientId },
     include: [{
-      model: Doctor, as: 'doctor',
-      include: [{ model: Usuario, as: 'usuario', attributes: ['nombre', 'apellido'] }],
+      model: Doctor,
+      as: 'doctor',
+      include: [{ model: User, as: 'user', attributes: ['firstName', 'lastName'] }],
     }],
-    order: [['fechaCarga', 'DESC']],
+    order: [['uploadDate', 'DESC']],
   });
 
-  return studies.map(e => ({
-    idEstudio: e.idEstudio,
-    fechaRealizacion: e.fechaRealizacion,
-    fechaCarga: e.fechaCarga,
-    nombreArchivo: e.nombreArchivo,
-    descripcion: e.descripcion,
-    doctorName: e.doctor?.usuario ? `${e.doctor.usuario.nombre} ${e.doctor.usuario.apellido}` : null,
+  return studies.map(s => ({
+    idEstudio: s.id,
+    fechaRealizacion: s.performanceDate,
+    fechaCarga: s.uploadDate,
+    nombreArchivo: s.fileName,
+    descripcion: s.description,
+    doctorName: s.doctor?.user ? `${s.doctor.user.firstName} ${s.doctor.user.lastName}` : null,
   }));
 };
 
-export const getStudiesByDoctor = async (idDoctor) => {
-  const studies = await Estudio.findAll({
-    where: { idDoctor },
+export const getStudiesByDoctor = async (doctorId) => {
+  const studies = await Study.findAll({
+    where: { doctorId },
     include: [{
-      model: Paciente, as: 'paciente',
-      include: [{ model: Usuario, as: 'usuario', attributes: ['nombre', 'apellido', 'dni'] }],
+      model: Patient,
+      as: 'patient',
+      include: [{ model: User, as: 'user', attributes: ['firstName', 'lastName', 'nationalId'] }],
     }],
-    order: [['fechaCarga', 'DESC']],
+    order: [['uploadDate', 'DESC']],
   });
 
-  return studies.map(e => ({
-    idEstudio: e.idEstudio,
-    fechaRealizacion: e.fechaRealizacion,
-    fechaCarga: e.fechaCarga,
-    nombreArchivo: e.nombreArchivo,
-    descripcion: e.descripcion,
-    patientName: e.paciente?.usuario ? `${e.paciente.usuario.nombre} ${e.paciente.usuario.apellido}` : null,
-    patientDni: e.paciente?.usuario?.dni,
+  return studies.map(s => ({
+    idEstudio: s.id,
+    fechaRealizacion: s.performanceDate,
+    fechaCarga: s.uploadDate,
+    nombreArchivo: s.fileName,
+    descripcion: s.description,
+    nombrePaciente: s.patient?.user ? `${s.patient.user.firstName} ${s.patient.user.lastName}` : null,
+    dniPaciente: s.patient?.user?.nationalId,
   }));
 };
 
-export const findStudyById = async (idEstudio) => {
-  return Estudio.findByPk(idEstudio);
+export const findStudyById = async (id) => {
+  return Study.findByPk(id);
 };
 
-export const deleteStudyById = async (idEstudio) => {
-  const affectedRows = await Estudio.destroy({ where: { idEstudio } });
+export const deleteStudyById = async (id) => {
+  const affectedRows = await Study.destroy({ where: { id } });
   return affectedRows > 0;
 };

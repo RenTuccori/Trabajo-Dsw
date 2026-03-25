@@ -62,6 +62,10 @@ export const validateDoctorId = [
   param('id').isInt({ min: 1 }).withMessage('Doctor ID must be a valid number.'),
 ];
 
+export const validateDoctorIdParam = [
+  param('doctorId').isInt({ min: 1 }).withMessage('Doctor ID must be a valid number.'),
+];
+
 export const validateUpdateDoctor = [
   param('id').isInt({ min: 1 }).withMessage('Doctor ID must be a valid number.'),
   body('appointmentDuration').isInt({ min: 1 }).withMessage('Appointment duration must be a positive number.'),

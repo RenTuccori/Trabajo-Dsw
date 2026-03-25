@@ -90,6 +90,16 @@ export function AdministrationRoutes() {
             </Validation>
           }
         />
+        <Route
+          path="/updateDoctor"
+          element={
+            <Validation rol={rol} expected={USER_TYPES.ADMIN}>
+              <ProtectedRoute requiredRole={USER_TYPES.ADMIN}>
+                <UpdateDoctor />
+              </ProtectedRoute>
+            </Validation>
+          }
+        />
       </Routes>
     </AdministrationProvider>
   );

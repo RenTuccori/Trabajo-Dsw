@@ -34,12 +34,12 @@ export const createUser = async ({dni,birthDate,firstName,lastName,phone,email,a
 }
 
 
-export const updateUser = async ({ dni, name, lastName, phone, email, address, healthInsuranceId }) => {
-    console.log('🌐 FRONTEND - updateUser: Sending data:', { nationalId: dni, firstName: name, lastName, phone, email, address });
+export const updateUser = async ({ dni, nationalId: nat, name, lastName, phone, email, address, healthInsuranceId }) => {
+    console.log('🌐 FRONTEND - updateUser: Sending data:', { dni, nationalId: nat, firstName: name, lastName, phone, email, address });
     
     // Map frontend fields to backend fields
-    // If `dni` is not provided, try to decode it from stored token
-    let nationalId = dni;
+    // Prefer explicit `nationalId` param, then `dni`, then token
+    let nationalId = nat || dni;
     if (!nationalId) {
         try {
             const token = localStorage.getItem('token');
@@ -53,13 +53,17 @@ export const updateUser = async ({ dni, name, lastName, phone, email, address, h
         }
     }
 
+    // Coerce to number when possible
+    const numericNationalId = nationalId ? Number(nationalId) : undefined;
+
     const backendData = {
-        nationalId,
+        nationalId: numericNationalId,
         firstName: name, 
         lastName,
         phone,
         email,
-        address
+        address,
+        healthInsuranceId
     };
     
     console.log('🔄 FRONTEND - updateUser: Mapped data for backend:', backendData);

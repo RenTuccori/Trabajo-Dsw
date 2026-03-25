@@ -48,7 +48,7 @@ export const getDoctorAppointmentHistory = async (doctorId) => {
       { model: Specialty, as: 'specialty', attributes: ['name'] },
       {
         model: Patient, as: 'patient',
-        include: [{ model: User, as: 'user', attributes: ['nationalId', 'name', 'lastName'] }],
+        include: [{ model: User, as: 'user', attributes: ['nationalId', 'firstName', 'lastName'] }],
       },
     ],
     order: [['dateTime', 'ASC']],
@@ -60,7 +60,7 @@ export const getDoctorAppointmentHistory = async (doctorId) => {
     dateTime: t.dateTime,
     status: t.status,
     nationalId: t.patient?.user?.nationalId,
-    fullName: `${t.patient?.user?.lastName} ${t.patient?.user?.name}`,
+    fullName: `${t.patient?.user?.firstName || ''} ${t.patient?.user?.lastName || ''}`,
   }));
 };
 
