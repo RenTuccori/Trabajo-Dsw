@@ -3,11 +3,11 @@ import nodemailer from 'nodemailer';
 // Function to create transporter. If SMTP credentials are not provided via
 // environment variables, create an Ethereal test account for development.
 async function createTransporter() {
-  const host = process.env.SMTP_HOST || 'smtp.gmail.com';
-  const port = process.env.SMTP_PORT ? Number(process.env.SMTP_PORT) : 465;
-  const secure = port === 465;
-  const user = process.env.SMTP_USER || 'utnsanatorio@gmail.com';
-  const pass = process.env.SMTP_PASS || process.env.DB_EMAILPASS;
+  const host = 'smtp.gmail.com';
+  const port = 465;
+  const secure = 465;
+  const user = 'utnsanatorio@gmail.com';
+  const pass = process.env.DB_EMAILPASS;
 
   if (!pass) {
     // No real credentials — create Ethereal test account
