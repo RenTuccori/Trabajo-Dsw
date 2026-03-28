@@ -3,8 +3,10 @@ import * as locationsService from '../services/locations.service.js';
 export const getLocations = async (req, res) => {
   try {
     const locations = await locationsService.getAllLocations();
+    // Devolver una lista vacía (200) si no hay ubicaciones habilitadas.
+    // Esto evita respuestas 404 que el frontend trata como errores.
     if (locations.length === 0) {
-      return res.status(404).json({ message: 'No enabled locations found' });
+      return res.json([]);
     }
     res.json(locations);
   } catch (error) {

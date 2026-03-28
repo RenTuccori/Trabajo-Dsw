@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 import { usePatients } from '../../context/patients/PatientsProvider.jsx';
 
@@ -20,6 +21,7 @@ export function AppointmentConfirmation() {
     getUserByNationalIdFunction,
     sendEmailFunction,
   } = usePatients();
+  const { t } = useTranslation();
 
   const [turnoCreado, setTurnoCreado] = useState(false);
   const [error, setError] = useState(null);
@@ -72,9 +74,9 @@ export function AppointmentConfirmation() {
                 <h1 style="color: #1c4e80; text-align: center;">¡Tu appointment ha sido creado con éxito!</h1>
                 <div style="background-color: #ffffff; padding: 20px; border-radius: 8px;">
                     <p><strong>Fecha y Hora:</strong> ${dateAndTime}</p>
-                    <p><strong>Especialidad:</strong> ${specialtyName}</p>
+                    <p><strong>Especialidad:</strong> ${t(`specialties.${specialtyName}`, { defaultValue: specialtyName })}</p>
                     <p><strong>Doctor:</strong> ${doctorName} ${doctorLastName}</p>
-                    <p><strong>Sede:</strong> ${locationName}, ${locationAddress}</p>
+                    <p><strong>Sede:</strong> ${t(`locations.${locationName}`, { defaultValue: locationName })}, ${locationAddress}</p>
                 </div>
                 <footer style="text-align: center;">
                     <p>Nos vemos pronto, ¡gracias por confiar en nosotros!</p>
@@ -128,16 +130,16 @@ export function AppointmentConfirmation() {
               <strong>Fecha y Hora:</strong> {dateAndTime}
             </p>
             <p className="text-gray-700">
-              <strong>Especialidad:</strong> {specialtyName}
+              <strong>Especialidad:</strong> {t(`specialties.${specialtyName}`, { defaultValue: specialtyName })}
             </p>
             <p className="text-gray-700">
               <strong>Doctor:</strong> {doctorName} {doctorLastName}
             </p>
             <p className="text-gray-700">
-              <strong>Sede:</strong> {locationName}, {locationAddress}
+              <strong>Sede:</strong> {t(`locations.${locationName}`, { defaultValue: locationName })}, {locationAddress}
             </p>
             <p className="text-gray-700">
-              <strong>Estado:</strong> {status || 'Pending'}
+              <strong>Estado:</strong> {t(`statuses.${status || 'Pending'}`, { defaultValue: status || 'Pending' })}
             </p>
             <p className="text-sm text-gray-600 text-center mt-4">
               Se ha enviado un email de confirmación a {userEmail}. Si no lo recibiste, verifica tu carpeta de spam.

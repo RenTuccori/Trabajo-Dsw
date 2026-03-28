@@ -14,7 +14,10 @@ export const getPatientByNationalId = async (req, res) => {
     const { nationalId } = req.body;
     const patient = await patientsService.findPatientByNationalId(nationalId);
     if (!patient) {
-      return res.status(404).json({ message: 'Patient not found' });
+      // Si no existe un registro en la tabla Patient pero el usuario puede iniciar sesión,
+      // creamos un registro mínimo de paciente para permitir operaciones posteriores.
+      const created = await patientsService.createNewPatient({ nationalId });
+      return res.status(201).json(created);
     }
     res.json(patient);
   } catch (error) {

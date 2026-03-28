@@ -70,9 +70,15 @@ const PatientsProvider = ({ children }) => {
   async function getLocationsFunc() {
     try {
       const response = await getLocations();
-      setLocations(response.data);
+      // `getLocations` ahora lanza en caso de error; asegurarse que la respuesta tiene `data`
+      if (response && response.data) {
+        setLocations(response.data);
+      } else {
+        setLocations([]);
+      }
     } catch (error) {
-      // Handle error silently or show user notification
+      console.error('❌ FRONTEND - getLocationsFunc: Error getting locations:', error);
+      setLocations([]);
     }
   }
 
@@ -302,7 +308,16 @@ const PatientsProvider = ({ children }) => {
       return response.data.id;
     } catch (error) {
       console.error('❌ FRONTEND - getPatientByNationalId: Error:', error);
-      throw error;
+      // Si el backend responde que no existe el paciente, evitar relanzar la excepción
+      // `patients.api` lanza `error.response?.data` que aquí será un objeto { message: 'Patient not found' }
+      if (error && error.message && error.message.includes('Patient not found')) {
+        console.log('ℹ️ FRONTEND - Patient not found, leaving patientId empty');
+        setPatientId('');
+        return null;
+      }
+      // Para otros errores, dejar patientId vacío y devolver null (no rethrow)
+      setPatientId('');
+      return null;
     }
   }, [dni]);
 

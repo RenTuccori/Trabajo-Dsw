@@ -68,13 +68,15 @@ export function PersonalData() {
     } catch (error) {
       console.error('❌ FRONTEND - Error al registrar usuario:', error);
       // If validation details are available from backend, show them
-      const backendErrors = error?.response?.data?.errors;
-      if (backendErrors && backendErrors.length > 0) {
-        const messages = backendErrors.map((e) => `${e.field}: ${e.message}`).join('; ');
-        notifyError(messages);
-      } else {
-        notifyError('Hubo un error al registrar el user. Intente nuevamente.');
-      }
+        const backendErrors = error?.response?.data?.errors || error?.errors || error?.data?.errors;
+        if (backendErrors && backendErrors.length > 0) {
+          const messages = backendErrors.map((e) => `${e.field || e.param || e.path || 'field'}: ${e.message || e.msg || e}`).join('; ');
+          notifyError(messages);
+        } else if (error?.message) {
+          notifyError(error.message);
+        } else {
+          notifyError('Hubo un error al registrar el usuario. Intente nuevamente.');
+        }
     }
   };
 

@@ -8,7 +8,7 @@ export const getLocations = async () => {
         return response;
     } catch (error) {
         console.error('❌ FRONTEND - Error in getLocations:', error);
-        return error.response.data.message;
+        throw error.response?.data || error;
     }
 }
 
@@ -17,7 +17,7 @@ export const getLocationById = async (locationId) => {
         const response = await axiosInstance.get(`locations/${locationId}`);
         return response;
     } catch (error) {
-        return error.response.data.message;
+        throw error.response?.data || error;
     }
 }
 
@@ -26,7 +26,7 @@ export const getDoctorById = async (doctorId) => {
         const response = await axiosInstance.get(`doctorsId/${doctorId}`);
         return response;
     } catch (error) {
-        return error.response.data.message;
+        throw error.response?.data || error;
     }
 }
 

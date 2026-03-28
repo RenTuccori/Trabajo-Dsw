@@ -21,7 +21,8 @@ export const getPatientbyNationalId = async ({ nationalId }) => {
   } catch (error) {
     console.error('❌ FRONTEND - getPatientbyNationalId: Error:', error);
     console.error('📄 FRONTEND - Error details:', error.response?.data);
-    return error.response.data.message;
+    // Propagar el objeto de error para que el consumidor pueda manejarlo
+    throw error.response?.data || error;
   }
 };
 

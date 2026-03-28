@@ -1,11 +1,13 @@
 import Select from 'react-select';
 import { usePatients } from '../../context/patients/PatientsProvider';
+import { useTranslation } from 'react-i18next';
 import DatePicker from 'react-datepicker';
 import { useNavigate } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import 'react-datepicker/dist/react-datepicker.css';
 
 export function BookAppointment() {
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const {
     locations,
@@ -212,28 +214,28 @@ export function BookAppointment() {
     <form className="min-h-screen bg-gradient-to-b from-blue-100 to-white flex items-center justify-center p-4">
       <div className="bg-white rounded-lg shadow-md w-full max-w-md p-6 space-y-4">
         <div className="space-y-4">
-          <p className="text-center text-gray-600 text-lg">Localidad</p>
+          <p className="text-center text-gray-600 text-lg">{t('labels.location', { defaultValue: 'Localidad' })}</p>
           <Select
             className="react-select"
             options={(locations || []).map((location) => {
               console.log('🏢 FRONTEND - Mapeando localidad:', location);
               return {
                 value: location.id || location.locationId || location.idSite,
-                label: location.name,
+                label: t(`locations.${location.name}`, { defaultValue: location.name }),
               };
             })}
             onChange={handleLocationChange}
             value={selectedLocation}
             styles={customStyles}
           />
-          <p className="text-center text-gray-600 text-lg">Especialidad</p>
+          <p className="text-center text-gray-600 text-lg">{t('labels.specialty', { defaultValue: 'Especialidad' })}</p>
           <Select
             className="react-select"
             options={(specialties || []).map((especialidad) => {
               console.log('🩺 FRONTEND - Mapeando especialidad:', especialidad);
               return {
                 value: especialidad.id || especialidad.specialtyId || especialidad.idSpecialty,
-                label: especialidad.name,
+                label: t(`specialties.${especialidad.name}`, { defaultValue: especialidad.name }),
               };
             })}
             onChange={handleEspecilidadChange}
@@ -241,7 +243,7 @@ export function BookAppointment() {
             isDisabled={!selectedLocation}
             styles={customStyles}
           />
-          <p className="text-center text-gray-600 text-lg">Doctores</p>
+          <p className="text-center text-gray-600 text-lg">{t('labels.doctors', { defaultValue: 'Doctores' })}</p>
           <Select
             className="react-select"
             options={(doctors || []).map((doctor) => {
@@ -256,7 +258,7 @@ export function BookAppointment() {
             isDisabled={!selectedSpecialty}
             styles={customStyles}
           />
-          <p className="text-center text-gray-600 text-lg">Fecha</p>
+          <p className="text-center text-gray-600 text-lg">{t('labels.date', { defaultValue: 'Fecha' })}</p>
           <DatePicker
             selected={selectedDate}
             onChange={handleFechaChange}
@@ -266,7 +268,7 @@ export function BookAppointment() {
             disabled={!selectedDoctor} // Deshabilitar si no hay doctor seleccionado
             dateFormat="yyyy-MM-dd" // Formato consistente
           />
-          <p className="text-center text-gray-600 text-lg">Horario</p>
+          <p className="text-center text-gray-600 text-lg">{t('labels.time', { defaultValue: 'Horario' })}</p>
           <Select
             className="react-select"
             options={(schedules || []).map((horario) => ({
@@ -285,14 +287,14 @@ export function BookAppointment() {
           onClick={() => navigate('/patient/appointmentConfirmation')}
           className="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50"
         >
-          Continuar
+          {t('labels.continue', { defaultValue: 'Continuar' })}
         </button>
         <button
           type="button"
           onClick={() => navigate('/patient')}
           className="w-full bg-gray-200 text-gray-700 py-2 rounded-lg hover:bg-gray-300 transition-colors"
         >
-          Volver
+          {t('labels.back', { defaultValue: 'Volver' })}
         </button>
       </div>
     </form>

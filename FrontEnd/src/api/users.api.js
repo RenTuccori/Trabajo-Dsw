@@ -15,12 +15,26 @@ export const getUserDniFecha = async ({dni,birthDate}) => {
         throw error;
     }
 }
-export const createUser = async ({dni,birthDate,firstName,lastName,phone,email,address,insuranceCompanyId}) => {
+export const createUser = async ({ dni, birthDate, firstName, lastName, phone, email, address, healthInsuranceId }) => {
     console.log('🌐 FRONTEND - createUser: Sending data to backend');
-    console.log('📋 FRONTEND - Data:', { nationalId: dni, birthDate, firstName, lastName, phone, email, address });
-    
+    console.log('📋 FRONTEND - Data (raw):', { dni, birthDate, firstName, lastName, phone, email, address, healthInsuranceId });
+
+    // Normalize optional fields: send null instead of empty strings to satisfy validators with optional nullable
+    const payload = {
+        nationalId: Number(dni),
+        birthDate,
+        firstName,
+        lastName,
+        phone: phone && String(phone).trim() !== '' ? phone : null,
+        email: email && String(email).trim() !== '' ? email : null,
+        address: address && String(address).trim() !== '' ? String(address).trim().slice(0, 100) : null,
+        healthInsuranceId: healthInsuranceId === '' || healthInsuranceId === undefined || healthInsuranceId === null ? null : Number(healthInsuranceId),
+    };
+
+    console.log('📋 FRONTEND - Data (normalized):', payload);
+
     try {
-        const response = await axiosInstance.post(`users`,{nationalId: Number(dni),birthDate,firstName,lastName,phone,email,address, insuranceCompanyId});
+        const response = await axiosInstance.post(`users`, payload);
         console.log('✅ FRONTEND - createUser: User created successfully:', response);
         return response;
     } catch (error) {
@@ -29,7 +43,8 @@ export const createUser = async ({dni,birthDate,firstName,lastName,phone,email,a
         if (error.response?.data?.errors) {
             console.error('📌 Validation errors:', error.response.data.errors);
         }
-        throw error;
+        // Throw the backend payload if present so callers can display validation messages cleanly
+        throw error.response?.data || error;
     }
 }
 
