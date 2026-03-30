@@ -1,8 +1,9 @@
 import axios from 'axios';
-const dbUrl = import.meta.env.VITE_DB_URL;
+const apiUrl = import.meta.env.VITE_API_URL || 'http://localhost:3000';
+const normalizedApiUrl = apiUrl.replace(/\/$/, '');
 
 const axiosInstance = axios.create({
-  baseURL: `http://${dbUrl}/api/`, //colocar la ip de la maquina donde se esta ejecutando el backend
+  baseURL: `${normalizedApiUrl}/api/`,
 });
 
 axiosInstance.interceptors.request.use(
