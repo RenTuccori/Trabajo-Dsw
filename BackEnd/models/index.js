@@ -7,9 +7,8 @@ config();
 let sequelize;
 const dbDialect = (process.env.DB_DIALECT || 'mysql').toLowerCase();
 const dbUrl = process.env.DATABASE_URL;
-const isPostgresUrl = dbUrl?.startsWith('postgres://') || dbUrl?.startsWith('postgresql://');
 
-if (dbUrl && (dbDialect === 'postgres' || dbDialect === 'postgresql' || isPostgresUrl)) {
+if (dbUrl && (dbDialect === 'postgres' || dbDialect === 'postgresql')) {
   sequelize = new Sequelize(process.env.DATABASE_URL, {
     dialect: 'postgres',
     protocol: 'postgres',
