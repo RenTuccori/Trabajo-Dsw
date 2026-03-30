@@ -5,7 +5,11 @@ config();
 
 // Prefer DATABASE_URL (e.g. Render Postgres). Fall back to individual DB_* vars (MySQL by default).
 let sequelize;
-if (process.env.DATABASE_URL) {
+const dbDialect = (process.env.DB_DIALECT || 'mysql').toLowerCase();
+const dbUrl = process.env.DATABASE_URL;
+const isPostgresUrl = dbUrl?.startsWith('postgres://') || dbUrl?.startsWith('postgresql://');
+
+if (dbUrl && (dbDialect === 'postgres' || dbDialect === 'postgresql' || isPostgresUrl)) {
   sequelize = new Sequelize(process.env.DATABASE_URL, {
     dialect: 'postgres',
     protocol: 'postgres',
@@ -25,7 +29,8 @@ if (process.env.DATABASE_URL) {
     process.env.DB_PASSWORD,
     {
       host: process.env.DB_HOST,
-      dialect: process.env.DB_DIALECT || 'mysql',
+      port: Number(process.env.DB_PORT || 3306),
+      dialect: 'mysql',
       logging: false,
       dialectOptions: process.env.DB_SSL === 'true' ? { ssl: { rejectUnauthorized: false } } : {},
       pool: {
