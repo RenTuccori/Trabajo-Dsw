@@ -1,0 +1,9 @@
+services:
+  - type: web
+    name: trabajo-dsw-backend
+    env: node
+    branch: ORM
+    root: BackEnd
+    plan: free
+    buildCommand: npm install
+    startCommand: npm start
