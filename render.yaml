@@ -7,7 +7,8 @@ services:
     plan: free
     buildCommand: npm install
     startCommand: npm start
-  - type: static
+  - type: web
+    runtime: static
     name: trabajo-dsw-frontend
     branch: ORM
     rootDir: FrontEnd
@@ -16,7 +17,4 @@ services:
     pullRequestPreviewsEnabled: false
     envVars:
       - key: VITE_API_URL
-        fromService:
-          type: web
-          name: trabajo-dsw-backend
-          property: url
+        sync: false
