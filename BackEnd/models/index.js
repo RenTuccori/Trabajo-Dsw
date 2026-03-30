@@ -27,6 +27,7 @@ if (process.env.DATABASE_URL) {
       host: process.env.DB_HOST,
       dialect: process.env.DB_DIALECT || 'mysql',
       logging: false,
+      dialectOptions: process.env.DB_SSL === 'true' ? { ssl: { rejectUnauthorized: false } } : {},
       pool: {
         max: 10,
         min: 0,
