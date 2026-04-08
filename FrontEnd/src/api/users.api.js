@@ -1,11 +1,11 @@
 import axiosInstance from './axiosInstance';
 
-export const getUserDniFecha = async ({dni,birthDate}) => {
-    console.log('🌐 FRONTEND - getUserByNationalIdBirthDate: Starting backend request');
-    console.log('📋 FRONTEND - Data sent:', { nationalId: dni, birthDate });
+export const getUserDniFecha = async ({dni, password}) => {
+    console.log('🌐 FRONTEND - getUserByNationalIdPassword: Starting backend request');
+    console.log('📋 FRONTEND - Data sent:', { nationalId: dni, password: '***' });
     
     try {
-        const response = await axiosInstance.post(`users/login`,{nationalId: Number(dni), birthDate});
+        const response = await axiosInstance.post(`users/login`,{nationalId: Number(dni), password});
         console.log('✅ FRONTEND - Backend response received:', response);
         console.log('🔑 FRONTEND - Token received:', response.data ? 'Present' : 'Not present');
         return response;
@@ -15,13 +15,14 @@ export const getUserDniFecha = async ({dni,birthDate}) => {
         throw error;
     }
 }
-export const createUser = async ({ dni, birthDate, firstName, lastName, phone, email, address, healthInsuranceId }) => {
+export const createUser = async ({ dni, password, birthDate, firstName, lastName, phone, email, address, healthInsuranceId }) => {
     console.log('🌐 FRONTEND - createUser: Sending data to backend');
-    console.log('📋 FRONTEND - Data (raw):', { dni, birthDate, firstName, lastName, phone, email, address, healthInsuranceId });
+    console.log('📋 FRONTEND - Data (raw):', { dni, password: '***', birthDate, firstName, lastName, phone, email, address, healthInsuranceId });
 
     // Normalize optional fields: send null instead of empty strings to satisfy validators with optional nullable
     const payload = {
         nationalId: Number(dni),
+        password,
         birthDate,
         firstName,
         lastName,
@@ -49,7 +50,7 @@ export const createUser = async ({ dni, birthDate, firstName, lastName, phone, e
 }
 
 
-export const updateUser = async ({ dni, nationalId: nat, name, lastName, phone, email, address, healthInsuranceId }) => {
+export const updateUser = async ({ dni, nationalId: nat, password, name, lastName, phone, email, address, healthInsuranceId }) => {
     console.log('🌐 FRONTEND - updateUser: Sending data:', { dni, nationalId: nat, firstName: name, lastName, phone, email, address });
     
     // Map frontend fields to backend fields
@@ -83,7 +84,8 @@ export const updateUser = async ({ dni, nationalId: nat, name, lastName, phone, 
         phone,
         email,
         address,
-        healthInsuranceId: normalizedHealthInsuranceId
+        healthInsuranceId: normalizedHealthInsuranceId,
+        ...(password?.trim() ? { password: password.trim() } : {}),
     };
     
     console.log('🔄 FRONTEND - updateUser: Mapped data for backend:', backendData);

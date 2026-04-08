@@ -118,10 +118,11 @@ export const findDoctorById = async (doctorId) => {
 
 export const authenticateDoctor = async (nationalId, password) => {
   const doctor = await Doctor.findOne({
-    where: { nationalId, password, status: 'Enabled' },
+    where: { nationalId, status: 'Enabled' },
     include: [{
       model: User,
       as: 'user',
+      where: { password },
       attributes: ['firstName', 'lastName'],
     }],
   });
@@ -135,11 +136,10 @@ export const authenticateDoctor = async (nationalId, password) => {
   return { token };
 };
 
-export const createNewDoctor = async ({ nationalId, appointmentDuration, password }) => {
+export const createNewDoctor = async ({ nationalId, appointmentDuration }) => {
   const doctor = await Doctor.create({
     nationalId,
     appointmentDuration,
-    password,
     status: 'Enabled',
   });
   return doctor;
@@ -172,11 +172,8 @@ export const softDeleteDoctor = async (doctorId) => {
   }
 };
 
-export const updateExistingDoctor = async (doctorId, { appointmentDuration, password }) => {
+export const updateExistingDoctor = async (doctorId, { appointmentDuration }) => {
   const updates = { appointmentDuration };
-  if (password !== undefined && password !== null && password !== '') {
-    updates.password = password;
-  }
 
   const [affectedRows] = await Doctor.update(
     updates,

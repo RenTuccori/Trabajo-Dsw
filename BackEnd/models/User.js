@@ -7,6 +7,10 @@ export const defineUser = (sequelize) => {
       primaryKey: true,
       allowNull: false,
     },
+    password: {
+      type: DataTypes.STRING(255),
+      allowNull: false,
+    },
     birthDate: {
       type: DataTypes.DATEONLY,
       allowNull: false,

@@ -3,7 +3,7 @@ import { body, param, query } from 'express-validator';
 // === USERS ===
 export const validateUserLogin = [
   body('nationalId').isInt({ min: 1000000 }).withMessage('National ID must be a valid number (minimum 7 digits).'),
-  body('birthDate').isDate().withMessage('Date of birth must be a valid date (YYYY-MM-DD).'),
+  body('password').notEmpty().withMessage('Password is required.'),
 ];
 
 export const validateUserNationalId = [
@@ -12,6 +12,7 @@ export const validateUserNationalId = [
 
 export const validateCreateUser = [
   body('nationalId').isInt({ min: 1000000 }).withMessage('National ID must be a valid number.'),
+  body('password').notEmpty().withMessage('Password is required.').isLength({ min: 3, max: 255 }),
   body('birthDate').isDate().withMessage('Date of birth is required.'),
   body('firstName').trim().notEmpty().withMessage('First name is required.').isLength({ max: 100 }),
   body('lastName').trim().notEmpty().withMessage('Last name is required.').isLength({ max: 100 }),
@@ -22,6 +23,7 @@ export const validateCreateUser = [
 
 export const validateUpdateUser = [
   body('nationalId').isInt({ min: 1000000 }).withMessage('National ID is required.'),
+  body('password').optional().notEmpty().isLength({ min: 3, max: 255 }),
   body('firstName').optional().trim().notEmpty().isLength({ max: 100 }),
   body('lastName').optional().trim().notEmpty().isLength({ max: 100 }),
   body('email').optional({ nullable: true }).isEmail().withMessage('Email must be valid.'),
@@ -55,7 +57,6 @@ export const validateDoctorLogin = [
 export const validateCreateDoctor = [
   body('nationalId').isInt({ min: 1000000 }).withMessage('National ID must be a valid number.'),
   body('appointmentDuration').isInt({ min: 1 }).withMessage('Appointment duration must be a positive number.'),
-  body('password').notEmpty().withMessage('Password is required.').isLength({ min: 3, max: 45 }),
 ];
 
 export const validateDoctorId = [
@@ -69,7 +70,6 @@ export const validateDoctorIdParam = [
 export const validateUpdateDoctor = [
   param('id').isInt({ min: 1 }).withMessage('Doctor ID must be a valid number.'),
   body('appointmentDuration').isInt({ min: 1 }).withMessage('Appointment duration must be a positive number.'),
-  body('password').notEmpty().withMessage('Password is required.'),
 ];
 
 // === APPOINTMENTS ===

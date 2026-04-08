@@ -16,10 +16,6 @@ export const defineDoctor = (sequelize) => {
       type: DataTypes.INTEGER,
       allowNull: false,
     },
-    password: {
-      type: DataTypes.STRING(255),
-      allowNull: false,
-    },
     status: {
       type: DataTypes.STRING(45),
       allowNull: false,

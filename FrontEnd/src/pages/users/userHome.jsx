@@ -8,15 +8,13 @@ function UserHome() {
   const { dni, login, comprobarToken, nombreUsuario, apellidoUsuario } =
     useAuth();
   const [dniform, setDni] = useState('');
-  const [fecha, setFecha] = useState('');
+  const [password, setPassword] = useState('');
 
   const handleLogin = async () => {
     try {
-      const parts = fecha.split('/');
-      const isoDate = parts.length === 3 ? `${parts[2]}-${parts[1]}-${parts[0]}` : fecha;
       await login({
         identifier: dniform,
-        credential: isoDate,
+        credential: password,
         userType: 'Patient',
       });
       window.notifySuccess('¡Login exitoso!'); // Muestra mensaje de éxito
@@ -33,18 +31,12 @@ function UserHome() {
     setDni(event.target.value);
   };
 
-  const handleFechaChange = (event) => {
-    let val = event.target.value.replace(/\D/g, '');
-    if (val.length >= 5) {
-      val = val.substring(0, 2) + '/' + val.substring(2, 4) + '/' + val.substring(4, 8);
-    } else if (val.length >= 3) {
-      val = val.substring(0, 2) + '/' + val.substring(2, 4);
-    }
-    setFecha(val);
+  const handlePasswordChange = (event) => {
+    setPassword(event.target.value);
   };
 
   const handleKeyDown = (e) => {
-    if (e.key === 'Enter' && dniform && fecha) {
+    if (e.key === 'Enter' && dniform && password) {
       handleLogin();
     }
   };
@@ -78,21 +70,20 @@ function UserHome() {
               className="w-full border border-gray-300 rounded-lg p-2 focus:outline-none focus:border-blue-500"
             />
             <p className="text-center text-gray-600 text-lg">
-              Ingrese su fecha de nacimiento
+              Ingrese su contraseña
             </p>
             <input
-              type="text"
-              value={fecha}
-              onChange={handleFechaChange}
+              type="password"
+              value={password}
+              onChange={handlePasswordChange}
               onKeyDown={handleKeyDown}
-              placeholder="Fecha Nacimiento (DD/MM/AAAA)"
-              maxLength={10}
+              placeholder="Contraseña"
               className="w-full border border-gray-300 rounded-lg p-2 focus:outline-none focus:border-blue-500"
             />
             <div className="space-y-4">
               <button
                 onClick={handleLogin}
-                disabled={!dniform || !fecha}
+                disabled={!dniform || !password}
                 className="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50"
               >
                 Verificar

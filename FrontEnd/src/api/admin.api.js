@@ -5,12 +5,11 @@ export const getAdmin = async ({ user, password }) => {
 };
 
 //Doctor
-export const createDoctor = async ({ dni, appointmentDuration, password }) => {
+export const createDoctor = async ({ dni, appointmentDuration }) => {
   try {
     const response = await axiosInstance.post(`admin/doctors`, {
       nationalId: dni,
       appointmentDuration,
-      password,
     });
     return response;
   } catch (error) {
@@ -30,12 +29,10 @@ export const deleteDoctor = async (doctorId) => {
 export const updateDoctor = async ({
   doctorId,
   appointmentDuration,
-  password,
 }) => {
   try {
     const response = await axiosInstance.put(`admin/doctors/${doctorId}`, {
       appointmentDuration,
-      password,
     });
     return response;
   } catch (error) {

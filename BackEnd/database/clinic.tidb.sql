@@ -129,8 +129,7 @@ CREATE TABLE `doctors` (
   `id` int NOT NULL AUTO_INCREMENT,
   `nationalId` int NOT NULL,
   `appointmentDuration` int NOT NULL,
-  `password` varchar(45) NOT NULL,
-  `status` varchar(45) NOT NULL,
+  `status` varchar(45) NOT NULL DEFAULT 'Enabled',
   PRIMARY KEY (`id`),
   KEY `nationalId` (`nationalId`),
   CONSTRAINT `doctors_ibfk_1` FOREIGN KEY (`nationalId`) REFERENCES `users` (`nationalId`)
@@ -276,6 +275,7 @@ INSERT INTO `studies` VALUES
 DROP TABLE IF EXISTS `users`;
 CREATE TABLE `users` (
   `nationalId` int NOT NULL,
+  `password` varchar(255) NOT NULL,
   `birthDate` date NOT NULL,
   `firstName` varchar(100) NOT NULL,
   `lastName` varchar(100) NOT NULL,

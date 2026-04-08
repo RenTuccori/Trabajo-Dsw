@@ -170,6 +170,7 @@ const PatientsProvider = ({ children }) => {
     // Mapear campos del frontend al backend
     const backendData = {
       dni: data.dni,
+      password: data.password,
       birthDate: data.birthDate,
       firstName: data.name, // Mapear name a firstName
       lastName: data.lastName,

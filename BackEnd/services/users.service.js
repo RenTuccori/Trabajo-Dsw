@@ -14,9 +14,9 @@ export const findUserByNationalId = async (nationalId) => {
   return user;
 };
 
-export const authenticatePatient = async (nationalId, birthDate) => {
+export const authenticatePatient = async (nationalId, password) => {
   const user = await User.findOne({
-    where: { nationalId, birthDate },
+    where: { nationalId, password },
     include: [{
       model: HealthInsurance,
       as: 'healthInsurance',

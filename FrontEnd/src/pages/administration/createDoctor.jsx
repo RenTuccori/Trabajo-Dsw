@@ -91,15 +91,20 @@ export function CreateDoctor() {
 
   const handlecreateDoctor = async (e) => {
     e.preventDefault();
-    if (appointmentDuration.trim() !== '' && password.trim() !== '') {
+    if (appointmentDuration.trim() !== '') {
+      if (!usuarioExistente && password.trim() === '') {
+        window.notifyError('Complete todos los campos');
+        return;
+      }
       try {
         if (!usuarioExistente) {
           await createUser({
             ...formData,
             dni, // Agregar el dni al nuevo user
+            password, // Password para el usuario
           });
         }
-        await createDoctor({ dni, appointmentDuration, password });
+        await createDoctor({ dni, appointmentDuration });
         window.notifySuccess('¡Doctor creado con éxito!');
         navigate('/admin');
       } catch (error) {
@@ -286,14 +291,6 @@ export function CreateDoctor() {
                   placeholder="Duración del appointment (en minutos)"
                   value={appointmentDuration}
                   onChange={(e) => setDuracionTurno(e.target.value)}
-                  className="w-full p-2 border border-gray-300 rounded-lg"
-                  required
-                />
-                <input
-                  type="password"
-                  placeholder="Contraseña"
-                  value={password}
-                  onChange={(e) => setContra(e.target.value)}
                   className="w-full p-2 border border-gray-300 rounded-lg"
                   required
                 />

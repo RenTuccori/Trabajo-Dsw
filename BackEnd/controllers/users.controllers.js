@@ -12,10 +12,10 @@ export const getUsers = async (req, res) => {
   }
 };
 
-export const getUserByNationalIdBirthDate = async (req, res) => {
+export const getUserByNationalIdPassword = async (req, res) => {
   try {
-    const { nationalId, birthDate } = req.body;
-    const result = await usersService.authenticatePatient(nationalId, birthDate);
+    const { nationalId, password } = req.body;
+    const result = await usersService.authenticatePatient(nationalId, password);
     if (!result) {
       return res.status(404).json({ message: 'User not found' });
     }

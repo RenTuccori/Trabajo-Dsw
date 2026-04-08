@@ -16,6 +16,7 @@ export function PersonalData() {
   const [formData, setFormData] = useState({
     dni: '',
     birthDate: '',
+    password: '',
     name: '',
     lastName: '',
     phone: '',
@@ -52,17 +53,20 @@ export function PersonalData() {
       notifyError('Nombre y apellido son obligatorios.');
       return;
     }
+      if (!formData.password.trim()) {
+        notifyError('Contraseña es obligatoria.');
+        return;
+      }
 
-    try {
-      await createUserFunction(formData); // Asegura que la creación del user sea asíncrona
+      try {
+        await createUserFunction(formData); // Asegura que la creación del user sea asíncrona
 
-      login({
-        identifier: formData.dni,
-        credential: formData.birthDate,
-        userType: 'Patient',
-      });
+        login({
+          identifier: formData.dni,
+          credential: formData.password,
+          userType: 'Patient',
+        });
 
-      // Show success toast and navigate directly
       if (window.notifySuccess) window.notifySuccess('Usuario registrado correctamente');
       navigate('/patient');
     } catch (error) {
@@ -158,6 +162,19 @@ export function PersonalData() {
               type="date"
               name="birthDate"
               value={formData.birthDate}
+              onChange={handleInputChange}
+              required
+              className="w-full border border-gray-300 rounded-lg p-2 focus:outline-none focus:border-blue-500"
+            />
+          </div>
+          <div>
+            <p className="text-center text-gray-600 text-lg">
+              Contraseña
+            </p>
+            <input
+              type="password"
+              name="password"
+              value={formData.password}
               onChange={handleInputChange}
               required
               className="w-full border border-gray-300 rounded-lg p-2 focus:outline-none focus:border-blue-500"

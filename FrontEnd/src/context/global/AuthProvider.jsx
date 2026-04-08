@@ -68,11 +68,10 @@ const AuthProvider = ({ children }) => {
           // Paciente
           response = await getUserDniFecha({
             dni: identifier,
-            birthDate: credential,
+            password: credential,
           });
 
           token = response.data;
-
           localStorage.setItem('token', token);
 
           const decodedPatient = jwtDecode(token);
