@@ -7,6 +7,7 @@ function DoctorHome() {
     useAuth();
   const [dni, setDni] = useState('');
   const [password, setContra] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate();
 
   // Manejo del login con toast de éxito
@@ -57,13 +58,22 @@ function DoctorHome() {
               <p className="text-center text-gray-600 text-lg">
                 Ingrese su contraseña
               </p>
-              <input
-                type="password"
-                value={password}
-                onChange={handleContraChange}
-                placeholder="Contraseña"
-                className="w-full border border-gray-300 rounded-lg p-2"
-              />
+              <div className="relative">
+                <input
+                  type={showPassword ? 'text' : 'password'}
+                  value={password}
+                  onChange={handleContraChange}
+                  placeholder="Contraseña"
+                  className="w-full border border-gray-300 rounded-lg p-2 pr-20"
+                />
+                <button
+                  type="button"
+                  onClick={() => setShowPassword(!showPassword)}
+                  className="absolute inset-y-0 right-0 px-3 flex items-center text-sm font-medium text-gray-600 hover:text-gray-800 focus:outline-none"
+                >
+                  {showPassword ? 'Ocultar' : 'Mostrar'}
+                </button>
+              </div>
             </div>
             <button
               onClick={handleLogin}
@@ -97,7 +107,7 @@ function DoctorHome() {
                 onClick={() => navigate('appointmentHistory')}
                 className="bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition-colors"
               >
-                Historial appointments
+                Historial de turnos
               </button>
               <button
                 onClick={() => navigate('uploadStudy')}

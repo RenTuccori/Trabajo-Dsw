@@ -12,9 +12,11 @@ function UserHome() {
 
   const handleLogin = async () => {
     try {
+      const parts = fecha.split('/');
+      const isoDate = parts.length === 3 ? `${parts[2]}-${parts[1]}-${parts[0]}` : fecha;
       await login({
         identifier: dniform,
-        credential: fecha,
+        credential: isoDate,
         userType: 'Patient',
       });
       window.notifySuccess('¡Login exitoso!'); // Muestra mensaje de éxito
@@ -32,7 +34,13 @@ function UserHome() {
   };
 
   const handleFechaChange = (event) => {
-    setFecha(event.target.value);
+    let val = event.target.value.replace(/\D/g, '');
+    if (val.length >= 5) {
+      val = val.substring(0, 2) + '/' + val.substring(2, 4) + '/' + val.substring(4, 8);
+    } else if (val.length >= 3) {
+      val = val.substring(0, 2) + '/' + val.substring(2, 4);
+    }
+    setFecha(val);
   };
 
   return (
@@ -66,10 +74,11 @@ function UserHome() {
               Ingrese su fecha de nacimiento
             </p>
             <input
-              type="date"
+              type="text"
               value={fecha}
               onChange={handleFechaChange}
-              placeholder="Fecha Nacimiento"
+              placeholder="Fecha Nacimiento (DD/MM/AAAA)"
+              maxLength={10}
               className="w-full border border-gray-300 rounded-lg p-2 focus:outline-none focus:border-blue-500"
             />
             <div className="space-y-4">

@@ -18,6 +18,9 @@ function UploadStudy() {
     file: null,
   });
   const [patients, setPacientes] = useState([]);
+  const [searchDni, setSearchDni] = useState('');
+  const [patientFound, setPatientFound] = useState(null);
+  const [searchError, setSearchError] = useState('');
   const [estudios, setEstudios] = useState([]);
   const [loading, setLoading] = useState(false);
   const [initialLoading, setInitialLoading] = useState(true);
@@ -82,6 +85,30 @@ function UploadStudy() {
     }));
   };
 
+  const handleSearchPatient = () => {
+    setSearchError('');
+    if (!searchDni.trim()) {
+      setSearchError('Por favor ingrese un DNI válido.');
+      setPatientFound(null);
+      setFormData((prev) => ({ ...prev, patientId: '' }));
+      return;
+    }
+
+    const found = patients.find(
+      (p) => String(p.nationalId) === searchDni || String(p.dni) === searchDni
+    );
+
+    if (found) {
+      setPatientFound(found);
+      setFormData((prev) => ({ ...prev, patientId: found.patientId }));
+      setSearchError('');
+    } else {
+      setPatientFound(null);
+      setFormData((prev) => ({ ...prev, patientId: '' }));
+      setSearchError('No se encontró ningún paciente con ese DNI.');
+    }
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -116,6 +143,8 @@ function UploadStudy() {
         descripcion: '',
         file: null,
       });
+      setSearchDni('');
+      setPatientFound(null);
 
       // Limpiar input file
       const fileInput = document.getElementById('file');
@@ -218,22 +247,32 @@ function UploadStudy() {
               {/* Selección de patient */}
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Paciente *
+                  Buscar Paciente por DNI *
                 </label>
-                <select
-                  name="patientId"
-                  value={formData.patientId}
-                  onChange={handleInputChange}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                  required
-                >
-                  <option value="">Seleccione un patient</option>
-                  {patients.map((patient) => (
-                    <option key={patient.patientId} value={patient.patientId}>
-                      {patient.name} {patient.lastName} - DNI: {patient.nationalId || patient.dni}
-                    </option>
-                  ))}
-                </select>
+                <div className="flex space-x-2">
+                  <input
+                    type="text"
+                    value={searchDni}
+                    onChange={(e) => setSearchDni(e.target.value)}
+                    placeholder="Ingrese el DNI del paciente"
+                    className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  />
+                  <button
+                    type="button"
+                    onClick={handleSearchPatient}
+                    className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+                  >
+                    Buscar
+                  </button>
+                </div>
+                {searchError && (
+                  <p className="text-red-500 text-sm mt-2">{searchError}</p>
+                )}
+                {patientFound && (
+                  <div className="mt-3 p-3 bg-green-50 text-green-800 rounded-lg border border-green-200">
+                    Paciente encontrado: <strong>{patientFound.name} {patientFound.lastName}</strong>
+                  </div>
+                )}
               </div>
 
               {/* Fecha de realización */}

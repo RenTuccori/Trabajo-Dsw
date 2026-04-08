@@ -63,7 +63,7 @@ export function TodayAppointments() {
             ))
           ) : (
             <p className="text-center text-gray-600">
-              No hay appointments para mostrar
+              No hay turnos para hoy
             </p>
           )}
         </div>

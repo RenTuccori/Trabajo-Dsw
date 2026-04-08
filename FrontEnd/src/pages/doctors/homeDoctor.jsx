@@ -95,7 +95,7 @@ function HomeDoctor() {
                 onClick={() => navigate('turnoshist')}
                 className="bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition-colors"
               >
-                Historial turnos
+                Historial de turnos
               </button>
               <button
                 onClick={() => navigate('estudios')}

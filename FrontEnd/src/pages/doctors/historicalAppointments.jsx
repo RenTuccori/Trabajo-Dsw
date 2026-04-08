@@ -2,11 +2,13 @@
 import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useDoctors } from '../../context/doctors/DoctorsProvider.jsx';
+import { useTranslation } from 'react-i18next';
 import '../../estilos/home.css';
 import '../../estilos/sacarturno.css';
 
 export function HistoricalAppointments() {
   const { historicalAppointments, loadHistoricalAppointments } = useDoctors();
+  const { t } = useTranslation();
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -45,17 +47,17 @@ export function HistoricalAppointments() {
                 className="bg-gray-50 rounded-lg p-4 shadow-sm mb-4"
               >
                 <p>
-                  <strong>Localidad:</strong> {appointment.location || appointment.venue}
+                  <strong>Localidad:</strong> {t(`locations.${appointment.location || appointment.venue}`)}
                 </p>
                 <p>
-                  <strong>Especialidad:</strong> {appointment.specialty}
+                  <strong>Especialidad:</strong> {t(`specialties.${appointment.specialty}`)}
                 </p>
                 <p>
                   <strong>Fecha y Hora:</strong>{' '}
                   {formatFechaHora(appointment.dateTime)}
                 </p>
                 <p>
-                  <strong>Estado:</strong> {appointment.status}
+                  <strong>Estado:</strong> {t(`statuses.${appointment.status}`)}
                 </p>
                 <p>
                   <strong>DNI Paciente:</strong> {appointment.dni}
@@ -67,7 +69,7 @@ export function HistoricalAppointments() {
             ))
           ) : (
             <p className="text-center text-gray-600">
-              No hay appointments para mostrar
+              No hay turnos para mostrar
             </p>
           )}
         </div>
