@@ -2,6 +2,7 @@ import { Doctor, User, HealthInsurance, LocationDoctorSpecialty, AvailableSchedu
 import { sequelize } from '../models/index.js';
 import { Op } from 'sequelize';
 import jwt from 'jsonwebtoken';
+import bcrypt from 'bcrypt';
 import { USER_TYPES } from '../constants/userTypes.js';
 
 const JWT_SECRET = process.env.JWT_SECRET;
@@ -122,11 +123,13 @@ export const authenticateDoctor = async (nationalId, password) => {
     include: [{
       model: User,
       as: 'user',
-      where: { password },
-      attributes: ['firstName', 'lastName'],
+      attributes: ['firstName', 'lastName', 'password'],
     }],
   });
-  if (!doctor) return null;
+  if (!doctor || !doctor.user) return null;
+
+  const isPasswordValid = await bcrypt.compare(password, doctor.user.password);
+  if (!isPasswordValid) return null;
 
   const token = jwt.sign(
     { doctorId: doctor.id, nationalId: doctor.nationalId, firstName: doctor.user.firstName, lastName: doctor.user.lastName, role: USER_TYPES.DOCTOR },

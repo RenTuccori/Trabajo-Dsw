@@ -1,5 +1,6 @@
 import { User, HealthInsurance } from '../models/index.js';
 import jwt from 'jsonwebtoken';
+import bcrypt from 'bcrypt';
 import { USER_TYPES } from '../constants/userTypes.js';
 
 const JWT_SECRET = process.env.JWT_SECRET;
@@ -16,7 +17,7 @@ export const findUserByNationalId = async (nationalId) => {
 
 export const authenticatePatient = async (nationalId, password) => {
   const user = await User.findOne({
-    where: { nationalId, password },
+    where: { nationalId },
     include: [{
       model: HealthInsurance,
       as: 'healthInsurance',
@@ -24,6 +25,9 @@ export const authenticatePatient = async (nationalId, password) => {
     }],
   });
   if (!user) return null;
+
+  const isPasswordValid = await bcrypt.compare(password, user.password);
+  if (!isPasswordValid) return null;
 
   const token = jwt.sign(
     { nationalId: user.nationalId, firstName: user.firstName, lastName: user.lastName, role: USER_TYPES.PATIENT },
@@ -34,12 +38,20 @@ export const authenticatePatient = async (nationalId, password) => {
 };
 
 export const createNewUser = async (userData) => {
-  const user = await User.create(userData);
+  const data = { ...userData };
+  if (data.password) {
+    data.password = await bcrypt.hash(data.password, 10);
+  }
+  const user = await User.create(data);
   return user;
 };
 
 export const updateExistingUser = async (nationalId, userData) => {
-  const [affectedRows] = await User.update(userData, {
+  const data = { ...userData };
+  if (data.password) {
+    data.password = await bcrypt.hash(data.password, 10);
+  }
+  const [affectedRows] = await User.update(data, {
     where: { nationalId },
   });
   return affectedRows > 0;
