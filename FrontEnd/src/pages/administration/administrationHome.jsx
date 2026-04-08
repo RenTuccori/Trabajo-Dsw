@@ -28,6 +28,12 @@ function AdministrationHome() {
   const handleUsuarioChange = (event) => setUser(event.target.value);
   const handleContraChange = (event) => setContra(event.target.value);
 
+  const handleKeyDown = (e) => {
+    if (e.key === 'Enter' && user && password) {
+      handleLogin();
+    }
+  };
+
   const renderLoginForm = () => (
     <div className="space-y-4">
       <div className="space-y-2">
@@ -38,6 +44,7 @@ function AdministrationHome() {
           type="text"
           value={user}
           onChange={handleUsuarioChange}
+          onKeyDown={handleKeyDown}
           placeholder="Usuario"
           className="w-full border border-gray-300 rounded-lg py-2 px-4"
         />
@@ -48,6 +55,7 @@ function AdministrationHome() {
           type="password"
           value={password}
           onChange={handleContraChange}
+          onKeyDown={handleKeyDown}
           placeholder="Contraseña"
           className="w-full border border-gray-300 rounded-lg py-2 px-4"
         />
@@ -110,7 +118,7 @@ function AdministrationHome() {
   );
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-blue-100 to-white flex items-center justify-center p-4">
+    <div className="min-h-[calc(100vh-88px)] bg-gradient-to-b from-blue-100 to-white flex items-center justify-center p-4">
       <div className="bg-white rounded-lg shadow-md w-full max-w-md p-6 space-y-4">
         {!idAdmin ? renderLoginForm() : renderMenu()}
       </div>

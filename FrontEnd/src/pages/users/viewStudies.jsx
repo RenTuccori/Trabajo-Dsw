@@ -101,7 +101,7 @@ function ViewStudies() {
 
   if (!dni) {
     return (
-      <div className="min-h-screen bg-gradient-to-b from-blue-100 to-white flex items-center justify-center">
+      <div className="min-h-[calc(100vh-88px)] bg-gradient-to-b from-blue-100 to-white flex items-center justify-center">
         <div className="text-center">
           <p className="text-xl text-gray-600">
             Debe iniciar sesión como patient
@@ -113,7 +113,7 @@ function ViewStudies() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gradient-to-b from-blue-100 to-white flex items-center justify-center">
+      <div className="min-h-[calc(100vh-88px)] bg-gradient-to-b from-blue-100 to-white flex items-center justify-center">
         <div className="text-center">
           <p className="text-xl text-gray-600">Cargando estudios...</p>
         </div>
@@ -122,7 +122,7 @@ function ViewStudies() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-blue-100 to-white p-4">
+    <div className="min-h-[calc(100vh-88px)] bg-gradient-to-b from-blue-100 to-white p-4">
       <div className="max-w-4xl mx-auto">
         <h1 className="text-3xl font-bold text-center text-gray-800 mb-8">
           Mis estudios médicos

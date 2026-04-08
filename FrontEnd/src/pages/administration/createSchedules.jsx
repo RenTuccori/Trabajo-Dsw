@@ -145,7 +145,7 @@ export function CreateSchedules() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-blue-100 to-white flex items-center justify-center p-4">
+    <div className="min-h-[calc(100vh-88px)] bg-gradient-to-b from-blue-100 to-white flex items-center justify-center p-4">
       <div className="w-full max-w-lg space-y-6">
         <h2 className="text-xl font-semibold mb-4">Crear horarios</h2>
 

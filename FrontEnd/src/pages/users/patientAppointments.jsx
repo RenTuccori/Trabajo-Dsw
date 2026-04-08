@@ -132,7 +132,7 @@ export function PatientAppointments() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-blue-100 to-white flex items-center justify-center p-4">
+    <div className="min-h-[calc(100vh-88px)] bg-gradient-to-b from-blue-100 to-white flex items-center justify-center p-4">
       <div className="bg-white rounded-lg shadow-md w-full max-w-md p-6 space-y-4">
         <h1 className="text-2xl font-bold text-gray-800 text-center">Mis turnos</h1>
         <button

@@ -43,8 +43,14 @@ function UserHome() {
     setFecha(val);
   };
 
+  const handleKeyDown = (e) => {
+    if (e.key === 'Enter' && dniform && fecha) {
+      handleLogin();
+    }
+  };
+
   return (
-    <div className="relative min-h-screen bg-gradient-to-b from-blue-100 to-white flex items-center justify-center p-4">
+    <div className="relative min-h-[calc(100vh-88px)] bg-gradient-to-b from-blue-100 to-white flex items-center justify-center p-4">
       {/* Fondo de imagen */}
       <div
         className="absolute inset-0 bg-cover bg-center z-0"
@@ -67,6 +73,7 @@ function UserHome() {
               type="text"
               value={dniform}
               onChange={handleDniChange}
+              onKeyDown={handleKeyDown}
               placeholder="DNI"
               className="w-full border border-gray-300 rounded-lg p-2 focus:outline-none focus:border-blue-500"
             />
@@ -77,6 +84,7 @@ function UserHome() {
               type="text"
               value={fecha}
               onChange={handleFechaChange}
+              onKeyDown={handleKeyDown}
               placeholder="Fecha Nacimiento (DD/MM/AAAA)"
               maxLength={10}
               className="w-full border border-gray-300 rounded-lg p-2 focus:outline-none focus:border-blue-500"

@@ -110,7 +110,7 @@ export function AppointmentConfirmation() {
   ]); // Este efecto se ejecuta solo cuando `userEmail` y `turnoCreado` están listos
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-blue-100 to-white flex flex-col items-center justify-center p-6">
+    <div className="min-h-[calc(100vh-88px)] bg-gradient-to-b from-blue-100 to-white flex flex-col items-center justify-center p-6">
       <div className="bg-white rounded-lg shadow-md w-full max-w-md p-6 space-y-4">
         {error ? (
           <>

@@ -9,7 +9,7 @@ export default function Home() {
   }, []);
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-4 relative">
+    <div className="min-h-[calc(100vh-88px)] flex items-center justify-center p-4 relative">
       <div
         className="absolute inset-0 bg-cover bg-center"
         style={{ backgroundImage: "url('../src/components/image.png')" }}

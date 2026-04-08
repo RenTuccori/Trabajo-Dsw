@@ -2,9 +2,11 @@ import Select from 'react-select';
 import { useAdministration } from '../../context/administration/AdministrationProvider.jsx';
 import { useNavigate } from 'react-router-dom';
 import { useEffect, useState } from 'react';
+import { useTranslation } from 'react-i18next';
 
 export function CreateCombination() {
   const navigate = useNavigate();
+  const { t } = useTranslation();
   const {
     locations,
     specialties,
@@ -14,8 +16,8 @@ export function CreateCombination() {
     getDoctors,
     createLocationSpecialtyDoctor,
     deleteLocationSpecialtyDoctor,
-    combinations, // Asume que tienes una lista de combinations en tu contexto
-    getCombinations, // Asume que tienes una función para obtener combinations
+    combinations, 
+    getCombinations, 
   } = useAdministration();
 
   const [selectedLocation, setSelectedLocation] = useState(null);
@@ -124,11 +126,22 @@ export function CreateCombination() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-blue-100 to-white flex items-center justify-center p-4">
+    <div className="min-h-[calc(100vh-88px)] bg-gradient-to-b from-blue-100 to-white flex items-center justify-center p-4">
       <div className="w-full max-w-md space-y-6">
         {/* Formulario para crear combinations */}
         <form className="bg-white rounded-lg shadow-md p-6 space-y-4">
-          <h2 className="text-xl font-semibold mb-4">Asignar Combinación</h2>
+          <div className="flex items-center mb-4 space-x-2">
+            <h2 className="text-xl font-semibold">Asignar Combinación</h2>
+            <div className="relative group cursor-pointer flex-shrink-0">
+              <div className="text-blue-600 bg-blue-100 rounded-full w-5 h-5 flex items-center justify-center text-xs font-bold border border-blue-200">
+                ?
+              </div>
+              <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 hidden group-hover:block w-48 p-2 bg-gray-800 text-white text-xs rounded-md shadow-lg z-10 text-center font-normal">
+                Esta sección es para asociar una sede con un doctor y su respectiva especialidad.
+                <div className="absolute top-full left-1/2 transform -translate-x-1/2 border-[5px] border-transparent border-t-gray-800"></div>
+              </div>
+            </div>
+          </div>
 
           {/* Selección de Locality */}
           <div className="space-y-2">
@@ -139,7 +152,7 @@ export function CreateCombination() {
                 Array.isArray(locations)
                   ? locations.map((location) => ({
                       value: location.id,
-                      label: location.name,
+                      label: t(`locations.${location.name}`, { defaultValue: location.name }),
                     }))
                   : []
               }
@@ -158,7 +171,7 @@ export function CreateCombination() {
                 Array.isArray(specialties)
                   ? specialties.map((especialidad) => ({
                       value: especialidad.id,
-                      label: especialidad.name,
+                      label: t(`specialties.${especialidad.name}`, { defaultValue: especialidad.name }),
                     }))
                   : []
               }
@@ -222,7 +235,7 @@ export function CreateCombination() {
                   key={`${combinacion.locationId}-${combinacion.specialtyId}-${combinacion.doctorId}`}
                   className="flex justify-between items-center bg-gray-100 p-2 rounded-md"
                 >
-                  <span>{`Localidad: ${combinacion.locationName}, Especialidad: ${combinacion.specialtyName}, Doctor: ${combinacion.doctorName} ${combinacion.doctorLastName}`}</span>
+                  <span>{`Localidad: ${t(`locations.${combinacion.locationName}`, { defaultValue: combinacion.locationName })}, Especialidad: ${t(`specialties.${combinacion.specialtyName}`, { defaultValue: combinacion.specialtyName })}, Doctor: ${combinacion.doctorName} ${combinacion.doctorLastName}`}</span>
                   <div className="flex space-x-4">
                     {/* Botón de Eliminar */}
                     <button
@@ -257,7 +270,7 @@ export function CreateCombination() {
                         navigate('/admin/createSchedules', { state: data });
                       }}
                     >
-                      Agregar schedules
+                      Agregar horarios
                     </button>
                   </div>
                 </li>

@@ -9,7 +9,7 @@ export function Validation({ rol, children, expected }) {
     return <>{children}</>;
   } else {
     return (
-      <div className="min-h-screen flex items-center justify-center bg-gray-100">
+      <div className="min-h-[calc(100vh-88px)] flex items-center justify-center bg-gray-100">
         <div className="max-w-md w-full bg-white shadow-lg rounded-lg overflow-hidden">
           <div className="bg-red-500 px-4 py-2 flex items-center justify-center">
             <svg

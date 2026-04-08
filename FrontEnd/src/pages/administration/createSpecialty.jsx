@@ -1,9 +1,11 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAdministration } from '../../context/administration/AdministrationProvider.jsx';
+import { useTranslation } from 'react-i18next';
 
 export function CreateSpecialty() {
   const navigate = useNavigate();
+  const { t } = useTranslation();
   const {
     specialties,
     createSpecialty,
@@ -53,7 +55,7 @@ export function CreateSpecialty() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-blue-100 to-white flex items-center justify-center p-4">
+    <div className="min-h-[calc(100vh-88px)] bg-gradient-to-b from-blue-100 to-white flex items-center justify-center p-4">
       <div className="bg-white rounded-lg shadow-md w-full max-w-md p-6 space-y-4">
         <h2 className="text-xl font-semibold text-center text-gray-800">
           Crear nueva especialidad
@@ -94,7 +96,7 @@ export function CreateSpecialty() {
                 className="bg-gray-100 p-4 rounded-lg flex justify-between items-center"
               >
                 <span>
-                  <strong>{especialidad.name}</strong>
+                  <strong>{t(`specialties.${especialidad.name}`, especialidad.name)}</strong>
                 </span>
                 <button
                   onClick={() => handleBorrarEspecialidad(especialidad.id)}
@@ -106,7 +108,7 @@ export function CreateSpecialty() {
             ))
           ) : (
             <p className="text-center text-gray-600">
-              No hay specialties creadas aún.
+              No hay especialidades creadas aún.
             </p>
           )}
         </ul>
