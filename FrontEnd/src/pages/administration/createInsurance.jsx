@@ -37,7 +37,7 @@ export function CreateInsurance() {
 
   const handleBorrarObraSocial = async (healthInsuranceId) => {
     const result = await window.confirmDialog(
-      'Are you sure?',
+      '¿Está seguro?',
       '¿Deseas eliminar esta obra social?'
     );
 

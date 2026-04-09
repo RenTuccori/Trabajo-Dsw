@@ -59,7 +59,7 @@ function UploadStudy() {
       setPatients(response.data || []);
     } catch (error) {
       console.error('Error loading patients:', error);
-      window.notifyError('Error loading patient list');
+      window.notifyError('Error al cargar la lista de pacientes');
       setPatients([]);
     }
   };
@@ -82,7 +82,7 @@ function UploadStudy() {
   const handleSearchPatient = () => {
     setSearchError('');
     if (!searchNationalId.trim()) {
-      setSearchError('Please enter a valid national ID.');
+      setSearchError('Por favor ingrese un DNI válido.');
       setPatientFound(null);
       setFormData((prev) => ({ ...prev, patientId: '' }));
       return;
@@ -99,7 +99,7 @@ function UploadStudy() {
     } else {
       setPatientFound(null);
       setFormData((prev) => ({ ...prev, patientId: '' }));
-      setSearchError('No patient found with that national ID.');
+      setSearchError('No se encontró ningún paciente con ese DNI.');
     }
   };
 
@@ -107,17 +107,17 @@ function UploadStudy() {
     e.preventDefault();
 
     if (!formData.file) {
-      window.notifyError('Please select a file');
+      window.notifyError('Por favor seleccione un archivo');
       return;
     }
 
     if (!formData.patientId) {
-      window.notifyError('Please search and select a patient first using their national ID');
+      window.notifyError('Por favor busque y seleccione un paciente primero usando su DNI');
       return;
     }
 
     if (!formData.performanceDate) {
-      window.notifyError('Please fill in the performance date');
+      window.notifyError('Por favor complete la fecha de realización');
       return;
     }
 
@@ -133,7 +133,7 @@ function UploadStudy() {
 
       await uploadStudy(data);
 
-      window.notifySuccess('Study uploaded successfully');
+      window.notifySuccess('Estudio subido exitosamente');
 
       // Clear form
       setFormData({
@@ -153,7 +153,7 @@ function UploadStudy() {
       loadStudies();
     } catch (error) {
       console.error('Error uploading study:', error);
-      window.notifyError(error.message || 'Error uploading study');
+      window.notifyError(error.message || 'Error al subir el estudio');
     } finally {
       setLoading(false);
     }
@@ -174,12 +174,12 @@ function UploadStudy() {
       window.URL.revokeObjectURL(url);
     } catch (error) {
       console.error('Error downloading study:', error);
-      window.notifyError('Error downloading file');
+      window.notifyError('Error al descargar el archivo');
     }
   };
 
   const formatDate = (dateString) => {
-    return new Date(dateString).toLocaleDateString('en-US');
+    return new Date(dateString).toLocaleDateString('es-ES');
   };
 
   if (!doctorId) {
@@ -187,7 +187,7 @@ function UploadStudy() {
       <div className="min-h-[calc(100vh-88px)] bg-gradient-to-b from-blue-100 to-white flex items-center justify-center">
         <div className="text-center">
           <p className="text-xl text-gray-600">
-            You must log in as a doctor
+            Debe iniciar sesión como médico
           </p>
         </div>
       </div>
@@ -208,7 +208,7 @@ function UploadStudy() {
     <div className="min-h-[calc(100vh-88px)] bg-gradient-to-b from-blue-100 to-white p-4">
       <div className="max-w-4xl mx-auto">
         <h1 className="text-3xl font-bold text-center text-gray-800 mb-8">
-          Medical Studies Management
+          Gestión de Estudios Médicos
         </h1>
 
         {/* Navigation buttons */}
@@ -221,7 +221,7 @@ function UploadStudy() {
                 : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
             }`}
           >
-            Upload Study
+            Subir Estudio
           </button>
           <button
             onClick={() => setShowStudies(true)}
@@ -231,7 +231,7 @@ function UploadStudy() {
                 : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
             }`}
           >
-            My Studies ({studies.length})
+            Mis Estudios ({studies.length})
           </button>
         </div>
 
@@ -239,17 +239,17 @@ function UploadStudy() {
           /* Upload study form */
           <div className="bg-white rounded-lg shadow-md p-6">
             <h2 className="text-xl font-semibold text-gray-800 mb-4">
-              Upload New Study
+              Subir Nuevo Estudio
             </h2>
 
             <form onSubmit={handleSubmit} className="space-y-4">
               {/* Patient selection */}
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Search Patient by National ID *
+                  Buscar Paciente por DNI *
                   {!patientFound && (
                     <span className="text-red-500 font-normal ml-2 text-xs">
-                      (You must click the "Search" button to select them before uploading)
+                      (Debe hacer clic en el botón "Buscar" para seleccionarlo antes de subir)
                     </span>
                   )}
                 </label>
@@ -258,7 +258,7 @@ function UploadStudy() {
                     type="text"
                     value={searchNationalId}
                     onChange={(e) => setSearchNationalId(e.target.value)}
-                    placeholder="Enter patient national ID"
+                    placeholder="Ingrese el DNI del paciente"
                     className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                   />
                   <button
@@ -266,7 +266,7 @@ function UploadStudy() {
                     onClick={handleSearchPatient}
                     className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
                   >
-                    Search
+                    Buscar
                   </button>
                 </div>
                 {searchError && (
@@ -274,7 +274,7 @@ function UploadStudy() {
                 )}
                 {patientFound && (
                   <div className="mt-3 p-3 bg-green-50 text-green-800 rounded-lg border border-green-200">
-                    Patient found: <strong>{patientFound.name} {patientFound.lastName}</strong>
+                    Paciente encontrado: <strong>{patientFound.name} {patientFound.lastName}</strong>
                   </div>
                 )}
               </div>
@@ -282,7 +282,7 @@ function UploadStudy() {
               {/* Performance date */}
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Performance Date *
+                  Fecha de realización *
                 </label>
                 <input
                   type="date"
@@ -298,7 +298,7 @@ function UploadStudy() {
               {/* Description */}
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Description
+                  Descripción
                 </label>
                 <textarea
                   name="description"
@@ -306,14 +306,14 @@ function UploadStudy() {
                   onChange={handleInputChange}
                   rows="3"
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                  placeholder="Study description (optional)"
+                  placeholder="Descripción del estudio (opcional)"
                 />
               </div>
 
               {/* File */}
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Study File *
+                  Archivo del estudio *
                 </label>
                 <input
                   type="file"
@@ -325,7 +325,7 @@ function UploadStudy() {
                   required
                 />
                 <p className="text-sm text-gray-500 mt-1">
-                  Allowed formats: PDF, JPG, JPEG, PNG, DOC, DOCX (max. 10MB)
+                  Formatos permitidos: PDF, JPG, JPEG, PNG, DOC, DOCX (máx. 10MB)
                 </p>
               </div>
 
@@ -339,7 +339,7 @@ function UploadStudy() {
                     : 'bg-blue-600 hover:bg-blue-700 text-white'
                 }`}
               >
-                {loading ? 'Uploading...' : 'Upload Study'}
+                {loading ? 'Subiendo...' : 'Subir Estudio'}
               </button>
 
               {/* Back to menu button */}
@@ -348,7 +348,7 @@ function UploadStudy() {
                 onClick={() => navigate('/doctor')}
                 className="w-full py-2 px-4 rounded-lg font-medium transition-colors bg-gray-200 text-gray-700 hover:bg-gray-300"
               >
-                Back to Menu
+                Volver al Menú
               </button>
             </form>
           </div>
@@ -356,12 +356,12 @@ function UploadStudy() {
           /* Studies list */
           <div className="bg-white rounded-lg shadow-md p-6">
             <h2 className="text-xl font-semibold text-gray-800 mb-4">
-              Uploaded Studies
+              Estudios Subidos
             </h2>
 
             {studies.length === 0 ? (
               <p className="text-gray-500 text-center py-8">
-                You have not uploaded any studies yet
+                Aún no subiste ningún estudio
               </p>
             ) : (
               <div className="overflow-x-auto">
@@ -369,22 +369,22 @@ function UploadStudy() {
                   <thead>
                     <tr className="bg-gray-50">
                       <th className="px-4 py-2 text-left text-sm font-medium text-gray-700">
-                        Patient
+                        Paciente
                       </th>
                       <th className="px-4 py-2 text-left text-sm font-medium text-gray-700">
-                        Performance Date
+                        Fecha de realización
                       </th>
                       <th className="px-4 py-2 text-left text-sm font-medium text-gray-700">
-                        File
+                        Archivo
                       </th>
                       <th className="px-4 py-2 text-left text-sm font-medium text-gray-700">
-                        Description
+                        Descripción
                       </th>
                       <th className="px-4 py-2 text-left text-sm font-medium text-gray-700">
-                        Upload Date
+                        Fecha de carga
                       </th>
                       <th className="px-4 py-2 text-left text-sm font-medium text-gray-700">
-                        Actions
+                        Acciones
                       </th>
                     </tr>
                   </thead>
@@ -398,7 +398,7 @@ function UploadStudy() {
                           {study.patientName}
                           <br />
                           <span className="text-gray-500">
-                            National ID: {study.patientNationalId}
+                            DNI: {study.patientNationalId}
                           </span>
                         </td>
                         <td className="px-4 py-2 text-sm">
@@ -408,7 +408,7 @@ function UploadStudy() {
                           {study.fileName}
                         </td>
                         <td className="px-4 py-2 text-sm">
-                          {study.description || 'No description'}
+                          {study.description || 'Sin descripción'}
                         </td>
                         <td className="px-4 py-2 text-sm">
                           {formatDate(study.uploadDate)}
@@ -423,7 +423,7 @@ function UploadStudy() {
                             }
                             className="text-blue-600 hover:text-blue-800 font-medium"
                           >
-                            Download
+                            Descargar
                           </button>
                         </td>
                       </tr>

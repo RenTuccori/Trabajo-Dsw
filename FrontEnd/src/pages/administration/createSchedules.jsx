@@ -8,11 +8,11 @@ export function CreateSchedules() {
   const { locationId, specialtyId, doctorId, locationName, specialtyName, doctorFullName } = location.state || {};
 
   const weekDays = [
-    { label: 'Monday', value: 'Monday' },
-    { label: 'Tuesday', value: 'Tuesday' },
-    { label: 'Wednesday', value: 'Wednesday' },
-    { label: 'Thursday', value: 'Thursday' },
-    { label: 'Friday', value: 'Friday' },
+    { label: 'Lunes', value: 'Monday' },
+    { label: 'Martes', value: 'Tuesday' },
+    { label: 'Miércoles', value: 'Wednesday' },
+    { label: 'Jueves', value: 'Thursday' },
+    { label: 'Viernes', value: 'Friday' },
   ];
   const {
     getDoctorSchedules,
@@ -50,7 +50,7 @@ export function CreateSchedules() {
     if (locationId && specialtyId && doctorId) {
       loadSchedules();
     } else {
-      window.notifyError('Missing data to load schedules');
+      window.notifyError('Faltan datos para cargar los horarios');
     }
   }, [locationId, specialtyId, doctorId]);
 
@@ -124,7 +124,7 @@ export function CreateSchedules() {
 
     for (const sched of schedulesWithData) {
       if (!sched.startTime || !sched.endTime) {
-        window.notifyError(`For ${sched.day} you must fill in both start and end time, or leave both empty.`);
+        window.notifyError(`Para ${sched.day} debe completar tanto la hora de inicio como la de fin, o dejar ambas vacías.`);
         return;
       }
       
@@ -169,13 +169,13 @@ export function CreateSchedules() {
     );
 
     if (validSchedules.length === 0) {
-      window.notifyError('You must enter at least one complete valid schedule.');
+      window.notifyError('Debe ingresar al menos un horario completo válido.');
       return;
     }
 
     const result = await window.confirmDialog(
-      'Are you sure?',
-      'Do you want to confirm the entered schedules?'
+      '¿Está seguro?',
+      '¿Desea confirmar los horarios ingresados?'
     );
 
     if (result.isConfirmed) {
@@ -206,11 +206,11 @@ export function CreateSchedules() {
   return (
     <div className="min-h-[calc(100vh-88px)] bg-gradient-to-b from-blue-100 to-white flex items-center justify-center p-4">
       <div className="w-full max-w-lg space-y-6">
-        <h2 className="text-xl font-semibold mb-4">Create schedules</h2>
+        <h2 className="text-xl font-semibold mb-4">Crear horarios</h2>
 
         <div className="bg-white rounded-lg shadow-md p-6 space-y-4">
           <h3 className="text-lg font-medium">
-            Location: {locationName || locationId}, Specialty: {specialtyName || specialtyId}, Doctor: {doctorFullName || doctorId}
+            Localidad: {locationName || locationId}, Especialidad: {specialtyName || specialtyId}, Médico: {doctorFullName || doctorId}
           </h3>
 
           {/* Schedule input grouped by day */}
@@ -230,7 +230,7 @@ export function CreateSchedules() {
                       onClick={() => addRowForDay(dayOption.value)}
                       className="text-sm px-3 py-1 bg-blue-100 text-blue-600 rounded-md hover:bg-blue-200 font-medium transition-colors"
                     >
-                      + Add slot
+                      + Agregar franja
                     </button>
                   </div>
                   
@@ -245,7 +245,7 @@ export function CreateSchedules() {
                             handleInputChange(sched.originalIndex, 'startTime', e.target.value)
                           }
                         />
-                        <span className="text-gray-500 font-medium">to</span>
+                        <span className="text-gray-500 font-medium">a</span>
                         <input
                           type="time"
                           className="flex-1 border border-gray-300 rounded-md p-2 text-sm bg-white focus:ring-blue-500 focus:border-blue-500"
@@ -273,14 +273,14 @@ export function CreateSchedules() {
             onClick={saveSchedules}
             className="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition-colors"
           >
-            Confirm schedules
+            Confirmar horarios
           </button>
 
           <button
             className="w-full bg-gray-200 text-gray-700 py-2 rounded-lg hover:bg-gray-300 transition-colors"
             onClick={() => navigate('/admin/createCombination')}
           >
-            Back
+            Volver
           </button>
         </div>
       </div>

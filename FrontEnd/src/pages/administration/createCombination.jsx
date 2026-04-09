@@ -72,15 +72,18 @@ export function CreateCombination() {
 
     if (selectedLocation && selectedOption) {
       await getDoctors();
-    } = (selectedOption) => {
+    }
+  };
+
+  const handleDoctorChange = (selectedOption) => {
     setSelectedDoctor(selectedOption);
   };
 
   const confirmCombination = async () => {
     if (selectedLocation && selectedSpecialty && selectedDoctor) {
       const result = await window.confirmDialog(
-        'Are you sure?',
-        'This action cannot be undone.'
+        '¿Está seguro?',
+        'Esta acción no se puede deshacer.'
       );
 
       if (result.isConfirmed) {
@@ -127,13 +130,13 @@ export function CreateCombination() {
         {/* Formulario para crear combinations */}
         <form className="bg-white rounded-lg shadow-md p-6 space-y-4">
           <div className="flex items-center mb-4 space-x-2">
-            <h2 className="text-xl font-semibold">Assign Combination</h2>
+            <h2 className="text-xl font-semibold">Asignar Combinación</h2>
             <div className="relative group cursor-pointer flex-shrink-0">
               <div className="text-blue-600 bg-blue-100 rounded-full w-5 h-5 flex items-center justify-center text-xs font-bold border border-blue-200">
                 ?
               </div>
               <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 hidden group-hover:block w-48 p-2 bg-gray-800 text-white text-xs rounded-md shadow-lg z-10 text-center font-normal">
-                This section is for associating a location with a doctor and their specialty.
+                Esta sección es para asociar una localidad con un médico y su especialidad.
                 <div className="absolute top-full left-1/2 transform -translate-x-1/2 border-[5px] border-transparent border-t-gray-800"></div>
               </div>
             </div>
@@ -141,7 +144,7 @@ export function CreateCombination() {
 
           {/* Location selection */}
           <div className="space-y-2">
-            <label className="text-gray-700">Location</label>
+            <label className="text-gray-700">Localidad</label>
             <Select
               className="select"
               options={
@@ -160,7 +163,7 @@ export function CreateCombination() {
 
           {/* Specialty selection */}
           <div className="space-y-2">
-            <label className="text-gray-700">Specialty</label>
+            <label className="text-gray-700">Especialidad</label>
             <Select
               className="select"
               options={
@@ -180,7 +183,7 @@ export function CreateCombination() {
 
           {/* Doctor selection */}
           <div className="space-y-2">
-            <label className="text-gray-700">Doctor</label>
+            <label className="text-gray-700">Médico</label>
             <Select
               className="select"
               options={

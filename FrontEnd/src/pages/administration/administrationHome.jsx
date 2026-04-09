@@ -19,9 +19,9 @@ function AdministrationHome() {
         credential: password,
         userType: 'Admin',
       });
-      window.notifySuccess('Login successful!');
+      window.notifySuccess('¡Inicio de sesión exitoso!');
     } catch (error) {
-      window.notifyError('Error: Invalid username or password');
+      window.notifyError('Error: Usuario o contraseña inválidos');
     }
   };
 
@@ -36,22 +36,22 @@ function AdministrationHome() {
 
   const renderLoginForm = () => (
     <div className="space-y-4">
-      <p className="text-center text-gray-600 text-lg">Enter your username</p>
+      <p className="text-center text-gray-600 text-lg">Ingrese su usuario</p>
       <input
         type="text"
         value={user}
         onChange={handleUserChange}
         onKeyDown={handleKeyDown}
-        placeholder="Username"
+        placeholder="Usuario"
         className="w-full border border-gray-300 rounded-lg p-2 focus:outline-none focus:border-blue-500"
       />
-      <p className="text-center text-gray-600 text-lg">Enter your password</p>
+      <p className="text-center text-gray-600 text-lg">Ingrese su contraseña</p>
       <input
         type="password"
         value={password}
         onChange={handleContraChange}
         onKeyDown={handleKeyDown}
-        placeholder="Password"
+        placeholder="Contraseña"
         className="w-full border border-gray-300 rounded-lg p-2 focus:outline-none focus:border-blue-500"
       />
       <button
@@ -59,7 +59,7 @@ function AdministrationHome() {
         disabled={!user || !password}
         className="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50"
       >
-        Verify
+        Ingresar
       </button>
     </div>
   );
@@ -70,31 +70,31 @@ function AdministrationHome() {
         onClick={() => navigate('/admin/createLocation')}
         className="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition-colors"
       >
-        Locations
+        Localidades
       </button>
       <button
         onClick={() => navigate('/admin/createSpecialty')}
         className="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition-colors"
       >
-        Specialties
+        Especialidades
       </button>
       <button
         onClick={() => navigate('/admin/createDoctor')}
         className="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition-colors"
       >
-        Doctors
+        Médicos
       </button>
       <button
         onClick={() => navigate('/admin/createCombination')}
         className="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition-colors"
       >
-        Assign combination
+        Asignar combinación
       </button>
       <button
         onClick={() => navigate('/admin/createInsurance')}
         className="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition-colors"
       >
-        Health Insurances
+        Obras Sociales
       </button>
       <button
         onClick={() => {
@@ -103,7 +103,7 @@ function AdministrationHome() {
         }}
         className="w-full bg-gray-200 text-gray-700 py-2 rounded-lg hover:bg-gray-300 transition-colors"
       >
-        Log out
+        Cerrar sesión
       </button>
     </div>
   );
@@ -120,7 +120,7 @@ function AdministrationHome() {
       {/* Content */}
       <div className="relative z-10 bg-white rounded-lg shadow-md w-full max-w-md p-6 space-y-4">
         <h1 className="text-center text-2xl font-semibold text-gray-800">
-          Administration Portal
+          Portal de Administración
         </h1>
         {!idAdmin ? renderLoginForm() : renderMenu()}
       </div>

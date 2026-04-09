@@ -34,7 +34,7 @@ function ViewStudies() {
       return patientId;
     } catch (error) {
       console.error('FRONTEND - Error loading patient data:', error);
-      notifyError('Error loading patient data');
+      notifyError('Error al cargar datos del paciente');
       return null;
     }
   }, [nationalId]);
@@ -47,7 +47,7 @@ function ViewStudies() {
     } catch (error) {
       console.error('FRONTEND - Error loading studies:', error);
       if (error.response?.status !== 404) {
-        notifyError('Error loading studies');
+        notifyError('Error al cargar estudios');
       }
       setStudies([]);
     }
@@ -83,13 +83,13 @@ function ViewStudies() {
       window.URL.revokeObjectURL(url);
     } catch (error) {
       console.error('Error downloading study:', error);
-      notifyError('Error downloading file');
+      notifyError('Error al descargar el archivo');
     }
   };
 
   const formatDate = (dateString) => {
     if (!dateString) return '-';
-    return new Date(dateString).toLocaleDateString('en-US');
+    return new Date(dateString).toLocaleDateString('es-ES');
   };
 
   if (!nationalId) {
@@ -97,7 +97,7 @@ function ViewStudies() {
       <div className="min-h-[calc(100vh-88px)] bg-gradient-to-b from-blue-100 to-white flex items-center justify-center">
         <div className="text-center">
           <p className="text-xl text-gray-600">
-            You must log in as a patient
+            Debe iniciar sesión como paciente
           </p>
         </div>
       </div>
@@ -118,32 +118,32 @@ function ViewStudies() {
     <div className="min-h-[calc(100vh-88px)] bg-gradient-to-b from-blue-100 to-white p-4">
       <div className="max-w-4xl mx-auto">
         <h1 className="text-3xl font-bold text-center text-gray-800 mb-8">
-          My Medical Studies
+          Mis Estudios Médicos
         </h1>
 
         {patientData && (
           <div className="bg-white rounded-lg shadow-md p-4 mb-6">
             <h2 className="text-lg font-semibold text-gray-800 mb-2">
-              Patient Information
+              Información del paciente
             </h2>
-            <p className="text-gray-600">National ID: {nationalId}</p>
-            <p className="text-gray-600">First Name: {patientData.firstName}</p>
-            <p className="text-gray-600">Last Name: {patientData.lastName}</p>
+            <p className="text-gray-600">DNI: {nationalId}</p>
+            <p className="text-gray-600">Nombre: {patientData.firstName}</p>
+            <p className="text-gray-600">Apellido: {patientData.lastName}</p>
           </div>
         )}
 
         <div className="bg-white rounded-lg shadow-md p-6">
           <h2 className="text-xl font-semibold text-gray-800 mb-4">
-            Studies History ({studies.length})
+              Historial de estudios ({studies.length})
           </h2>
 
           {studies.length === 0 ? (
             <div className="text-center py-8">
               <p className="text-gray-500 text-lg">
-                No medical studies registered
+                No hay estudios médicos registrados
               </p>
               <p className="text-gray-400 text-sm mt-2">
-                Studies performed by doctors will appear here
+                Los estudios realizados por médicos aparecerán aquí
               </p>
             </div>
           ) : (
@@ -152,22 +152,22 @@ function ViewStudies() {
                 <thead>
                   <tr className="bg-gray-50">
                     <th className="px-4 py-2 text-left text-sm font-medium text-gray-700">
-                      Doctor
+                      Médico
                     </th>
                     <th className="px-4 py-2 text-left text-sm font-medium text-gray-700">
-                      Performance Date
+                      Fecha de realización
                     </th>
                     <th className="px-4 py-2 text-left text-sm font-medium text-gray-700">
-                      File
+                      Archivo
                     </th>
                     <th className="px-4 py-2 text-left text-sm font-medium text-gray-700">
-                      Description
+                      Descripción
                     </th>
                     <th className="px-4 py-2 text-left text-sm font-medium text-gray-700">
-                      Upload Date
+                      Fecha de carga
                     </th>
                     <th className="px-4 py-2 text-left text-sm font-medium text-gray-700">
-                      Actions
+                      Acciones
                     </th>
                   </tr>
                 </thead>
@@ -192,11 +192,11 @@ function ViewStudies() {
                       </td>
                       <td className="px-4 py-2 text-sm">
                         <span className="text-blue-600 font-medium">
-                          {fileName || 'Unnamed file'}
+                          {fileName || 'Archivo sin nombre'}
                         </span>
                       </td>
                       <td className="px-4 py-2 text-sm">
-                        {description || 'No description'}
+                        {description || 'Sin descripción'}
                       </td>
                       <td className="px-4 py-2 text-sm">
                         {formatDate(uploadDate)}
@@ -211,7 +211,7 @@ function ViewStudies() {
                           }
                           className="bg-blue-600 text-white px-3 py-1 rounded-md hover:bg-blue-700 transition-colors text-sm"
                         >
-                          Download
+                          Descargar
                         </button>
                       </td>
                     </tr>
@@ -228,7 +228,7 @@ function ViewStudies() {
             onClick={() => window.history.back()}
             className="bg-gray-200 text-gray-700 px-6 py-2 rounded-lg hover:bg-gray-300 transition-colors"
           >
-            Go back
+            Volver
           </button>
         </div>
       </div>
