@@ -26,7 +26,7 @@ export const getAvailableDatesByDocSpecLoc = async (doctorId, specialtyId, locat
     )
     SELECT DISTINCT ts.fecha
     FROM time_slots ts
-    JOIN users usu ON usu.nationalId = (SELECT nationalId FROM doctors WHERE id = ts.doctorId)
+    JOIN doctors doc_ts ON doc_ts.id = ts.doctorId JOIN users usu ON usu.nationalId = doc_ts.nationalId
     LEFT JOIN appointments tur
       ON tur.doctorId = ts.doctorId AND tur.specialtyId = ts.specialtyId
       AND tur.locationId = ts.locationId
@@ -64,7 +64,7 @@ export const getAvailableDatesBySpecLoc = async (specialtyId, locationId) => {
     )
     SELECT DISTINCT ts.fecha
     FROM time_slots ts
-    JOIN users usu ON usu.nationalId = (SELECT nationalId FROM doctors WHERE id = ts.doctorId)
+    JOIN doctors doc_ts ON doc_ts.id = ts.doctorId JOIN users usu ON usu.nationalId = doc_ts.nationalId
     LEFT JOIN appointments tur
       ON tur.doctorId = ts.doctorId AND tur.specialtyId = ts.specialtyId
       AND tur.locationId = ts.locationId
@@ -105,7 +105,7 @@ export const getAvailableSchedulesByDocSpecLoc = async (doctorId, specialtyId, l
       AND tur.locationId = ts.locationId
       AND ts.day = DAYNAME(tur.dateTime)
       AND CONCAT(fe.date, ' ', ts.start_time) = tur.dateTime
-    JOIN users usu ON usu.nationalId = (SELECT nationalId FROM doctors WHERE id = ts.doctorId)
+    JOIN doctors doc_ts ON doc_ts.id = ts.doctorId JOIN users usu ON usu.nationalId = doc_ts.nationalId
     WHERE (tur.id IS NULL OR tur.cancellationDate IS NOT NULL)
       AND ts.doctorId = ? AND ts.specialtyId = ? AND ts.locationId = ?
       AND fe.date = ?
@@ -141,7 +141,7 @@ export const getAvailableSchedulesBySpecLoc = async (specialtyId, locationId, fe
       AND tur.locationId = ts.locationId
       AND ts.day = DAYNAME(tur.dateTime)
       AND CONCAT(fe.date, ' ', ts.start_time) = tur.dateTime
-    JOIN users usu ON usu.nationalId = (SELECT nationalId FROM doctors WHERE id = ts.doctorId)
+    JOIN doctors doc_ts ON doc_ts.id = ts.doctorId JOIN users usu ON usu.nationalId = doc_ts.nationalId
     WHERE (tur.id IS NULL OR tur.cancellationDate IS NOT NULL)
       AND ts.specialtyId = ? AND ts.locationId = ?
       AND fe.date = ?
