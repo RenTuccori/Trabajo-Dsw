@@ -6,7 +6,7 @@ describe('Backend Unit Tests - Simple', () => {
   describe('JWT Token Validation', () => {
     it('should validate JWT token structure', async () => {
       const jwt = await import('jsonwebtoken');
-      const payload = { dni: '12345678', nombre: 'Juan', rol: 'Patient' };
+      const payload = { nationalId: '12345678', firstName: 'Juan', role: 'Patient' };
       const token = jwt.default.sign(payload, TEST_SECRET, {
         expiresIn: '5m',
       });
@@ -15,38 +15,38 @@ describe('Backend Unit Tests - Simple', () => {
       expect(typeof token).toBe('string');
 
       const decoded = jwt.default.verify(token, TEST_SECRET);
-      expect(decoded.dni).toBe('12345678');
-      expect(decoded.nombre).toBe('Juan');
-      expect(decoded.rol).toBe('Patient');
+      expect(decoded.nationalId).toBe('12345678');
+      expect(decoded.firstName).toBe('Juan');
+      expect(decoded.role).toBe('Patient');
     });
   });
 
   describe('Helper Functions', () => {
     it('should validate data structures', () => {
       const mockUser = {
-        dni: '12345678',
-        nombre: 'Juan',
-        apellido: 'Pérez',
-        fechaNacimiento: '1990-01-01',
+        nationalId: '12345678',
+        firstName: 'Juan',
+        lastName: 'Perez',
+        birthDate: '1990-01-01',
       };
 
-      expect(mockUser).toHaveProperty('dni');
-      expect(mockUser).toHaveProperty('nombre');
-      expect(mockUser).toHaveProperty('apellido');
-      expect(mockUser).toHaveProperty('fechaNacimiento');
+      expect(mockUser).toHaveProperty('nationalId');
+      expect(mockUser).toHaveProperty('firstName');
+      expect(mockUser).toHaveProperty('lastName');
+      expect(mockUser).toHaveProperty('birthDate');
 
-      // Validate DNI format
-      expect(mockUser.dni).toMatch(/^\d{8}$/);
+      // Validate national ID format
+      expect(mockUser.nationalId).toMatch(/^\d{8}$/);
     });
 
     it('should validate date formats', () => {
-      const fechaNacimiento = '1990-01-01';
+      const birthDate = '1990-01-01';
 
       // Validate ISO format
-      expect(fechaNacimiento).toMatch(/^\d{4}-\d{2}-\d{2}$/);
+      expect(birthDate).toMatch(/^\d{4}-\d{2}-\d{2}$/);
 
       // Validate that it's a valid date
-      const date = new Date(fechaNacimiento + 'T00:00:00.000Z');
+      const date = new Date(birthDate + 'T00:00:00.000Z');
       expect(date.getUTCFullYear()).toBe(1990);
       expect(date.getUTCMonth()).toBe(0); // January is 0
       expect(date.getUTCDate()).toBe(1);
@@ -63,17 +63,17 @@ describe('Backend Unit Tests - Simple', () => {
 
     it('should validate success response patterns', () => {
       const users = [
-        { dni: '12345678', nombre: 'Juan', apellido: 'Pérez' },
-        { dni: '87654321', nombre: 'María', apellido: 'García' },
+        { nationalId: '12345678', firstName: 'Juan', lastName: 'Perez' },
+        { nationalId: '87654321', firstName: 'Maria', lastName: 'Garcia' },
       ];
 
       expect(Array.isArray(users)).toBe(true);
       expect(users.length).toBeGreaterThan(0);
 
       users.forEach((user) => {
-        expect(user).toHaveProperty('dni');
-        expect(user).toHaveProperty('nombre');
-        expect(user).toHaveProperty('apellido');
+        expect(user).toHaveProperty('nationalId');
+        expect(user).toHaveProperty('firstName');
+        expect(user).toHaveProperty('lastName');
       });
     });
   });

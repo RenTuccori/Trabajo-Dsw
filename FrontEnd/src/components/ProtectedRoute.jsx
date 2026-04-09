@@ -3,13 +3,13 @@ import { useAuth } from '../context/global/AuthProvider';
 import PropTypes from 'prop-types';
 
 export function ProtectedRoute({ children, requiredRole }) {
-  const { comprobarToken } = useAuth();
+  const { checkToken } = useAuth();
 
   useEffect(() => {
     if (requiredRole) {
-      comprobarToken(requiredRole);
+      checkToken(requiredRole);
     }
-  }, [comprobarToken, requiredRole]);
+  }, [checkToken, requiredRole]);
 
   return children;
 }

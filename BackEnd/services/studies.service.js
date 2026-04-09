@@ -16,11 +16,11 @@ export const getStudiesByPatient = async (patientId) => {
   });
 
   return studies.map(s => ({
-    idEstudio: s.id,
-    fechaRealizacion: s.performanceDate,
-    fechaCarga: s.uploadDate,
-    nombreArchivo: s.fileName,
-    descripcion: s.description,
+    id: s.id,
+    performanceDate: s.performanceDate,
+    uploadDate: s.uploadDate,
+    fileName: s.fileName,
+    description: s.description,
     doctorName: s.doctor?.user ? `${s.doctor.user.firstName} ${s.doctor.user.lastName}` : null,
   }));
 };
@@ -37,13 +37,13 @@ export const getStudiesByDoctor = async (doctorId) => {
   });
 
   return studies.map(s => ({
-    idEstudio: s.id,
-    fechaRealizacion: s.performanceDate,
-    fechaCarga: s.uploadDate,
-    nombreArchivo: s.fileName,
-    descripcion: s.description,
-    nombrePaciente: s.patient?.user ? `${s.patient.user.firstName} ${s.patient.user.lastName}` : null,
-    dniPaciente: s.patient?.user?.nationalId,
+    id: s.id,
+    performanceDate: s.performanceDate,
+    uploadDate: s.uploadDate,
+    fileName: s.fileName,
+    description: s.description,
+    patientName: s.patient?.user ? `${s.patient.user.firstName} ${s.patient.user.lastName}` : null,
+    patientNationalId: s.patient?.user?.nationalId,
   }));
 };
 

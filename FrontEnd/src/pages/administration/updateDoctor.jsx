@@ -15,9 +15,9 @@ export function UpdateDoctor() {
 
   const { doctors, getDoctors } = useAdministration();
 
-  const [selectedObraSociales, setSelectedObraSociales] = useState(null);
-  const [hasChanges, setHasChanges] = useState(false); // Estado para rastrear cambios
-  const [, setOriginalData] = useState({}); // Datos originales para comparar
+  const [selectedInsurance, setSelectedInsurance] = useState(null);
+  const [hasChanges, setHasChanges] = useState(false);
+  const [, setOriginalData] = useState({});
   const navigate = useNavigate();
   const { doctorId } = useParams(); // Usa useParams para obtener el doctorId desde la URL
 
@@ -25,7 +25,7 @@ export function UpdateDoctor() {
 
   const [formData, setFormData] = useState({
     doctorId: '',
-    dni: '',
+    nationalId: '',
     birthDate: '',
     name: '',
     lastName: '',
@@ -52,30 +52,24 @@ export function UpdateDoctor() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // Alerta de confirmación
     const result = await window.confirmDialog(
       'Guardar cambios',
-      '¿Estás seguro que deseas guardar los cambios?'
+      '¿Estás seguro de que deseas guardar los cambios?'
     );
 
     if (result.isConfirmed) {
       try {
-        console.log('Datos a enviar:', formData);
-
-        // Verificar que el token existe
         const token = localStorage.getItem('token');
         if (!token) {
           window.notifyError(
-            'Error de autenticación. Por favor, inicia sesión nuevamente.'
+            'Error de autenticación. Por favor inicie sesión nuevamente.'
           );
           navigate('/login');
           return;
         }
 
-        // Preparar datos para actualizar user (solo los campos que espera el backend)
         const usuarioData = {
-          dni: formData.dni,
-          nationalId: formData.dni ? Number(formData.dni) : undefined,
+          nationalId: formData.nationalId ? Number(formData.nationalId) : undefined,
           name: formData.name,
           lastName: formData.lastName,
           phone: formData.phone,
@@ -93,14 +87,9 @@ export function UpdateDoctor() {
           appointmentDuration: formData.appointmentDuration,
         };
 
-        console.log('Datos user:', usuarioData);
-        console.log('Datos doctor:', doctorData);
-
         const response = await updateUser(usuarioData);
-        console.log('Respuesta de actualización user:', response);
 
         const responseDoctor = await updateDoctor(doctorData);
-        console.log('Respuesta de actualización doctor:', responseDoctor);
 
         if (
           response &&
@@ -108,29 +97,24 @@ export function UpdateDoctor() {
           responseDoctor &&
           responseDoctor.data
         ) {
-          console.log('Usuario y doctor actualizados con éxito');
-          window.notifySuccess('Usuario actualizado con éxito');
+          window.notifySuccess('Usuario actualizado exitosamente');
           setHasChanges(false);
           navigate('/admin/createDoctor');
         } else {
-          console.log('Error: respuesta incompleta', {
-            response,
-            responseDoctor,
-          });
-          window.notifyError('Error al actualizar el user o doctor');
+          window.notifyError('Error al actualizar el usuario o doctor');
         }
       } catch (error) {
-        console.error('Error completo al actualizar:', error);
+        console.error('Error updating:', error);
         if (error.response?.status === 403) {
-          window.notifyError('No tienes permisos para realizar esta acción');
+          window.notifyError('No tiene permisos para realizar esta acción');
         } else if (error.response?.status === 401) {
           window.notifyError(
-            'Sesión expirada. Por favor, inicia sesión nuevamente.'
+            'Sesión expirada. Por favor inicie sesión nuevamente.'
           );
           navigate('/login');
         } else {
           window.notifyError(
-            'Error al actualizar el user: ' +
+            'Error al actualizar el usuario: ' +
               (error.message || 'Error desconocido')
           );
         }
@@ -140,9 +124,7 @@ export function UpdateDoctor() {
 
   useEffect(() => {
     getHealthInsurances();
-    // Cargar lista de doctors para el selector
     getDoctors();
-    // Si viene doctorId en la URL, cargar datos de ese doctor
     if (doctorId) getDoctorById(doctorId);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [doctorId]);
@@ -163,7 +145,7 @@ export function UpdateDoctor() {
       setFormData((prevFormData) => ({
         ...prevFormData,
         doctorId: doctor.doctorId || doctorId,
-        dni: doctor.nationalId || '',
+        nationalId: doctor.nationalId || '',
         name: doctor.firstName || '',
         lastName: doctor.lastName || '',
         phone: doctor.phone || '',
@@ -174,16 +156,15 @@ export function UpdateDoctor() {
         password: '',
       }));
 
-      setSelectedObraSociales(
+      setSelectedInsurance(
         healthInsuranceId
           ? { value: healthInsuranceId, label: matchedObra.name }
           : null
       );
 
-      // Guardar datos originales
       setOriginalData({
         doctorId: doctor.doctorId || doctorId,
-        dni: doctor.nationalId || '',
+        nationalId: doctor.nationalId || '',
         name: doctor.firstName || '',
         lastName: doctor.lastName || '',
         phone: doctor.phone || '',
@@ -224,7 +205,7 @@ export function UpdateDoctor() {
       // Si hay cambios, muestra advertencia
       const result = await window.confirmDialog(
         'Cambios sin guardar',
-        'Tienes cambios sin guardar. ¿Estás seguro de que quieres volver? Los cambios se perderán.'
+          'Tiene cambios sin guardar. ¿Está seguro de que desea volver? Los cambios se perderán.'
       );
 
       if (result.isConfirmed) {
@@ -240,13 +221,13 @@ export function UpdateDoctor() {
     <div className="min-h-[calc(100vh-88px)] bg-gradient-to-b from-blue-100 to-white flex items-center justify-center p-4">
       <div className="bg-white rounded-lg shadow-md w-full max-w-md p-6 space-y-4">
         <div>
-          <p className="text-center text-gray-600 text-lg">Seleccione doctor</p>
+          <p className="text-center text-gray-600 text-lg">Seleccionar médico</p>
           <Select
             options={doctors.map((d) => ({ value: String(d.doctorId), label: d.fullName }))}
             onChange={handleDoctorSelect}
             value={doctors.find((d) => String(d.doctorId) === String(selectedDoctorId)) ? { value: String(selectedDoctorId), label: doctors.find((d) => String(d.doctorId) === String(selectedDoctorId)).fullName } : null}
             className="react-select mb-4"
-            placeholder="Elija un doctor..."
+            placeholder="Elegir un médico..."
           />
         </div>
         <form onSubmit={handleSubmit} className="space-y-4">
@@ -306,21 +287,21 @@ export function UpdateDoctor() {
             />
           </div>{' '}
           <div>
-            <p className="text-center text-gray-600 text-lg">Obra social</p>
+            <p className="text-center text-gray-600 text-lg">Obra Social</p>
             <Select
-              options={healthInsurances.map((obrasociales) => ({
-                value: getInsuranceId(obrasociales),
-                label: obrasociales.name,
+              options={healthInsurances.map((insurance) => ({
+                value: getInsuranceId(insurance),
+                label: insurance.name,
               }))}
-              onChange={handleObraSocialChange}
-              value={selectedObraSociales}
+              onChange={handleInsuranceChange}
+              value={selectedInsurance}
               className="react-select"
-              placeholder="Seleccione obra social..."
+              placeholder="Seleccionar obra social..."
             />
           </div>
           <div>
             <p className="text-center text-gray-600 text-lg">
-              Duración del appointment (minutos)
+              Duración del turno (minutos)
             </p>
             <input
               type="number"
@@ -338,7 +319,7 @@ export function UpdateDoctor() {
               name="password"
               value={formData.password}
               onChange={handleInputChange}
-              placeholder="Dejar vacio para mantener la actual"
+              placeholder="Dejar en blanco para mantener la contraseña actual"
               className="w-full border border-gray-300 rounded-lg p-2 focus:outline-none focus:border-blue-500"
             />
           </div>
@@ -352,7 +333,7 @@ export function UpdateDoctor() {
 
         <button
           type="button"
-          onClick={handleRegresar}
+          onClick={handleGoBack}
           className="w-full bg-gray-200 text-gray-700 py-2 rounded-lg hover:bg-gray-300 transition-colors mt-4"
         >
           Volver

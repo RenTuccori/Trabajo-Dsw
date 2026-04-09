@@ -1,9 +1,9 @@
 import { Link } from 'react-router-dom';
 import PropTypes from 'prop-types';
 
-export function Validation({ rol, children, expected }) {
+export function Validation({ role, children, expected }) {
   // Handle both strings and arrays
-  const roles = Array.isArray(rol) ? rol : [rol];
+  const roles = Array.isArray(role) ? role : [role];
 
   if (roles.includes(expected)) {
     return <>{children}</>;
@@ -53,7 +53,7 @@ export function Validation({ rol, children, expected }) {
   }
 }
 Validation.propTypes = {
-  rol: PropTypes.oneOfType([
+  role: PropTypes.oneOfType([
     PropTypes.string,
     PropTypes.arrayOf(PropTypes.string),
   ]).isRequired, // Can be a string or an array of strings

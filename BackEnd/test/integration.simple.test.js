@@ -32,7 +32,7 @@ describe('Backend Integration Tests - Simple', () => {
     });
 
     it('should handle POST requests with JSON', async () => {
-      const testData = { dni: '12345678', nombre: 'Test User' };
+      const testData = { nationalId: '12345678', firstName: 'Test User' };
 
       const response = await request(app)
         .post('/api/test/echo')

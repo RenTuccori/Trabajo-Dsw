@@ -4,8 +4,8 @@
 describe('Backend Test Suite', () => {
   it('should have comprehensive test coverage', () => {
     const testFiles = [
-      'usuarios.unit.test.js - Unit tests for user controllers',
-      'usuarios.integration.test.js - Integration tests for user endpoints',
+      'users.unit.test.js - Unit tests for user controllers',
+      'users.integration.test.js - Integration tests for user endpoints',
       'authorization.unit.test.js - Tests for authorization middleware',
     ];
 

@@ -3,8 +3,8 @@ import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useDoctors } from '../../context/doctors/DoctorsProvider.jsx';
 import { useTranslation } from 'react-i18next';
-import '../../estilos/home.css';
-import '../../estilos/sacarturno.css';
+import '../../styles/home.css';
+import '../../styles/bookAppointment.css';
 
 export function HistoricalAppointments() {
   const { historicalAppointments, loadHistoricalAppointments } = useDoctors();
@@ -31,7 +31,7 @@ export function HistoricalAppointments() {
     <div className="min-h-[calc(100vh-88px)] bg-gradient-to-b from-blue-100 to-white flex items-center justify-center p-4">
       <div className="bg-white rounded-lg shadow-md w-full max-w-md p-6 space-y-4">
         <h1 className="text-2xl font-bold text-blue-800 text-center">
-          Historial de Turnos
+          Historial de turnos
         </h1>
         <button
           className="w-full bg-gray-200 text-gray-700 py-2 rounded-lg hover:bg-gray-300 transition-colors"
@@ -53,17 +53,17 @@ export function HistoricalAppointments() {
                   <strong>Especialidad:</strong> {t(`specialties.${appointment.specialty}`)}
                 </p>
                 <p>
-                  <strong>Fecha y Hora:</strong>{' '}
+                  <strong>Fecha y hora:</strong>{' '}
                   {formatFechaHora(appointment.dateTime)}
                 </p>
                 <p>
                   <strong>Estado:</strong> {t(`statuses.${appointment.status}`)}
                 </p>
                 <p>
-                  <strong>DNI Paciente:</strong> {appointment.dni}
+                  <strong>DNI del paciente:</strong> {appointment.nationalId}
                 </p>
                 <p>
-                  <strong>Apellido y Nombre:</strong> {appointment.patientName}
+                  <strong>Nombre completo:</strong> {appointment.patientName}
                 </p>
               </div>
             ))

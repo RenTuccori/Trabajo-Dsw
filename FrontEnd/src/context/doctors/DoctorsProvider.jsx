@@ -28,17 +28,14 @@ const DoctorsProvider = ({ children }) => {
   async function loadHistoricalAppointments() {
     try {
       const response = await getHistoricalAppointmentsDoctor({ doctorId : doctorId });
-      console.log(response.data.data)
-      console.log('length', response.data.data.length)
       if (response.data && response.data.data.length > 0) {
         const mapped = response.data.data.map((appointment) => ({
           ...appointment,
-          dni: appointment.dni ?? appointment.nationalId,
+          nationalId: appointment.nationalId,
           patientName: appointment.patientName ?? appointment.fullName,
         }));
 
         setHistoricalAppointments(mapped);
-        console.log('entre')
         const uniqueDates = new Set(
           mapped.map((appointment) => appointment.dateTime.split('T')[0])
         );
@@ -51,13 +48,11 @@ const DoctorsProvider = ({ children }) => {
 
         setAvailableDates(normalizedAvailableDates);
       } else {
-        console.log('sali por else')
         setHistoricalAppointments([]);
         setAvailableDates([]);
       }
     } catch (error) {
-      console.log('sali por catch')
-      console.error('Error al obtener appointments históricos:', error);
+      console.error('Error getting historical appointments:', error);
       setHistoricalAppointments([]);
       setAvailableDates([]);
     }
@@ -79,7 +74,7 @@ const DoctorsProvider = ({ children }) => {
       });
       setAppointmentsByDate(response?.data || []);
     } catch (error) {
-      console.error('Error al obtener appointments por fecha:', error);
+      console.error('Error getting appointments by date:', error);
       setAppointmentsByDate([]);
     }
   }
@@ -89,7 +84,7 @@ const DoctorsProvider = ({ children }) => {
       const response = await getTodayAppointments({ doctorId });
       setTodayAppointments(response.data || []);
     } catch (error) {
-      console.error('Error al obtener los appointments de hoy:', error);
+      console.error('Error getting today appointments:', error);
       setTodayAppointments([]);
     }
   }

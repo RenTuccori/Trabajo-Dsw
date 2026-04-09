@@ -11,33 +11,33 @@ export function CreateInsurance() {
     deleteHealthInsurance,
     updateHealthInsurance,
   } = useAdministration();
-  const [nombreObraSocial, setNombreObraSocial] = useState('');
-  const [nuevoNombreObraSocial, setNuevoNombreObraSocial] = useState('');
-  const [obraSocialAEditar, setObraSocialAEditar] = useState(null);
+  const [insuranceName, setInsuranceName] = useState('');
+  const [newInsuranceName, setNewInsuranceName] = useState('');
+  const [editingInsuranceId, setEditingInsuranceId] = useState(null);
 
   useEffect(() => {
     getHealthInsurances();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const handlecreateInsurance = async (e) => {
+  const handleCreateInsurance = async (e) => {
     e.preventDefault();
-    if (nombreObraSocial.trim() !== '') {
+    if (insuranceName.trim() !== '') {
       try {
-        await createHealthInsurance({ name: nombreObraSocial });
-        setNombreObraSocial('');
+        await createHealthInsurance({ name: insuranceName });
+        setInsuranceName('');
         window.notifySuccess('¡Obra Social creada con éxito!');
         getHealthInsurances();
       } catch (error) {
         window.notifyError('Error al crear la obra social');
-        console.error('Error al crear obra social:', error);
+        console.error('Error creating health insurance:', error);
       }
     }
   };
 
   const handleBorrarObraSocial = async (healthInsuranceId) => {
     const result = await window.confirmDialog(
-      '¿Estás seguro?',
+      'Are you sure?',
       '¿Deseas eliminar esta obra social?'
     );
 
@@ -79,14 +79,14 @@ export function CreateInsurance() {
           Crear nueva obra social
         </h2>
 
-        {/* Formulario para crear una nueva obra social */}
-        {!obraSocialAEditar && (
-          <form onSubmit={handlecreateInsurance} className="space-y-4">
+        {/* Form to create a new health insurance */}
+        {!editingInsuranceId && (
+          <form onSubmit={handleCreateInsurance} className="space-y-4">
             <input
               type="text"
               placeholder="Nombre de la obra social"
-              value={nombreObraSocial}
-              onChange={(e) => setNombreObraSocial(e.target.value)}
+              value={insuranceName}
+              onChange={(e) => setInsuranceName(e.target.value)}
               className="w-full p-2 border border-gray-300 rounded-lg"
             />
             <button
@@ -98,14 +98,14 @@ export function CreateInsurance() {
           </form>
         )}
 
-        {/* Formulario para actualizar una obra social */}
-        {obraSocialAEditar && (
-          <form onSubmit={handleActualizarObraSocial} className="space-y-4">
+        {/* Form to update an existing health insurance */}
+        {editingInsuranceId && (
+          <form onSubmit={handleUpdateInsurance} className="space-y-4">
             <input
               type="text"
-              placeholder="Nuevo name de la obra social"
-              value={nuevoNombreObraSocial}
-              onChange={(e) => setNuevoNombreObraSocial(e.target.value)}
+              placeholder="Nuevo nombre de la obra social"
+              value={newInsuranceName}
+              onChange={(e) => setNewInsuranceName(e.target.value)}
               className="w-full p-2 border border-gray-300 rounded-lg"
             />
             <div className="flex justify-between space-x-2">
@@ -117,7 +117,7 @@ export function CreateInsurance() {
               </button>
               <button
                 type="button"
-                onClick={() => setObraSocialAEditar(null)}
+                onClick={() => setEditingInsuranceId(null)}
                 className="w-full bg-gray-200 text-gray-700 py-2 rounded-lg hover:bg-gray-300 transition-colors"
               >
                 Cancelar
@@ -139,27 +139,27 @@ export function CreateInsurance() {
         </h3>
         <ul className="space-y-2">
           {healthInsurances.length > 0 ? (
-            healthInsurances.map((obraSocial) => {
-              const id = obraSocial.id ?? obraSocial.healthInsuranceId;
+            healthInsurances.map((insurance) => {
+              const id = insurance.id ?? insurance.healthInsuranceId;
               return (
                 <li
                   key={id}
                   className="bg-gray-100 p-4 rounded-lg flex justify-between items-center"
                 >
                   <span>
-                    <strong>{obraSocial.name}</strong>
+                    <strong>{insurance.name}</strong>
                   </span>
                   <div className="flex space-x-2">
                     <button
-                      onClick={() => handleBorrarObraSocial(id)}
+                      onClick={() => handleDeleteInsurance(id)}
                       className="text-red-600 hover:text-red-800"
                     >
                       Eliminar
                     </button>
                     <button
                       onClick={() => {
-                        setObraSocialAEditar(id);
-                        setNuevoNombreObraSocial(obraSocial.name);
+                        setEditingInsuranceId(id);
+                        setNewInsuranceName(insurance.name);
                       }}
                       className="text-blue-600 hover:text-blue-800"
                     >

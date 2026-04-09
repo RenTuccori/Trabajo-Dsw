@@ -13,7 +13,7 @@ import { useAuth } from '../context/global/AuthProvider.jsx';
 import { USER_TYPES } from '../constants/userTypes.js';
 
 export function PatientsRoutes() {
-  const { rol } = useAuth();
+  const { role } = useAuth();
   return (
     <PatientsProvider>
       <Routes>
@@ -22,7 +22,7 @@ export function PatientsRoutes() {
         <Route
           path="/bookAppointment"
           element={
-            <Validation rol={rol} expected={USER_TYPES.PATIENT}>
+            <Validation role={role} expected={USER_TYPES.PATIENT}>
               <ProtectedRoute requiredRole={USER_TYPES.PATIENT}>
                 <BookAppointment />
               </ProtectedRoute>
@@ -32,7 +32,7 @@ export function PatientsRoutes() {
         <Route
           path="/editPersonalData"
           element={
-            <Validation rol={rol} expected={USER_TYPES.PATIENT}>
+            <Validation role={role} expected={USER_TYPES.PATIENT}>
               <ProtectedRoute requiredRole={USER_TYPES.PATIENT}>
                 <UserModification />
               </ProtectedRoute>
@@ -42,7 +42,7 @@ export function PatientsRoutes() {
         <Route
           path="/appointmentConfirmation"
           element={
-            <Validation rol={rol} expected={USER_TYPES.PATIENT}>
+            <Validation role={role} expected={USER_TYPES.PATIENT}>
               <ProtectedRoute requiredRole={USER_TYPES.PATIENT}>
                 <AppointmentConfirmation />
               </ProtectedRoute>
@@ -52,7 +52,7 @@ export function PatientsRoutes() {
         <Route
           path="/myAppointments"
           element={
-            <Validation rol={rol} expected={USER_TYPES.PATIENT}>
+            <Validation role={role} expected={USER_TYPES.PATIENT}>
               <ProtectedRoute requiredRole={USER_TYPES.PATIENT}>
                 <PatientAppointments />
               </ProtectedRoute>
@@ -62,7 +62,7 @@ export function PatientsRoutes() {
         <Route
           path="/myStudies"
           element={
-            <Validation rol={rol} expected={USER_TYPES.PATIENT}>
+            <Validation role={role} expected={USER_TYPES.PATIENT}>
               <ProtectedRoute requiredRole={USER_TYPES.PATIENT}>
                 <ViewStudies />
               </ProtectedRoute>

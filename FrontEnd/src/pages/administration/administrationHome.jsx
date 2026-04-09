@@ -3,14 +3,14 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/global/AuthProvider';
 
 function AdministrationHome() {
-  const { login, idAdmin, comprobarToken } = useAuth();
+  const { login, idAdmin, checkToken } = useAuth();
   const [user, setUser] = useState('');
   const [password, setContra] = useState('');
   const navigate = useNavigate();
 
   useEffect(() => {
-    comprobarToken('Admin');
-  }, [comprobarToken]);
+    checkToken('Admin');
+  }, [checkToken]);
 
   const handleLogin = async () => {
     try {
@@ -19,13 +19,13 @@ function AdministrationHome() {
         credential: password,
         userType: 'Admin',
       });
-      window.notifySuccess('¡Login exitoso!');
+      window.notifySuccess('Login successful!');
     } catch (error) {
-      window.notifyError('Error: Usuario o contraseña incorrectos');
+      window.notifyError('Error: Invalid username or password');
     }
   };
 
-  const handleUsuarioChange = (event) => setUser(event.target.value);
+  const handleUserChange = (event) => setUser(event.target.value);
   const handleContraChange = (event) => setContra(event.target.value);
 
   const handleKeyDown = (e) => {
@@ -36,22 +36,22 @@ function AdministrationHome() {
 
   const renderLoginForm = () => (
     <div className="space-y-4">
-      <p className="text-center text-gray-600 text-lg">Ingrese su usuario</p>
+      <p className="text-center text-gray-600 text-lg">Enter your username</p>
       <input
         type="text"
         value={user}
-        onChange={handleUsuarioChange}
+        onChange={handleUserChange}
         onKeyDown={handleKeyDown}
-        placeholder="Usuario"
+        placeholder="Username"
         className="w-full border border-gray-300 rounded-lg p-2 focus:outline-none focus:border-blue-500"
       />
-      <p className="text-center text-gray-600 text-lg">Ingrese su contraseña</p>
+      <p className="text-center text-gray-600 text-lg">Enter your password</p>
       <input
         type="password"
         value={password}
         onChange={handleContraChange}
         onKeyDown={handleKeyDown}
-        placeholder="Contraseña"
+        placeholder="Password"
         className="w-full border border-gray-300 rounded-lg p-2 focus:outline-none focus:border-blue-500"
       />
       <button
@@ -59,7 +59,7 @@ function AdministrationHome() {
         disabled={!user || !password}
         className="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50"
       >
-        Verificar
+        Verify
       </button>
     </div>
   );
@@ -70,31 +70,31 @@ function AdministrationHome() {
         onClick={() => navigate('/admin/createLocation')}
         className="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition-colors"
       >
-        Sedes
+        Locations
       </button>
       <button
         onClick={() => navigate('/admin/createSpecialty')}
         className="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition-colors"
       >
-        Especialidades
+        Specialties
       </button>
       <button
         onClick={() => navigate('/admin/createDoctor')}
         className="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition-colors"
       >
-        Doctores
+        Doctors
       </button>
       <button
         onClick={() => navigate('/admin/createCombination')}
         className="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition-colors"
       >
-        Asignar combinación
+        Assign combination
       </button>
       <button
         onClick={() => navigate('/admin/createInsurance')}
         className="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition-colors"
       >
-        Obras sociales
+        Health Insurances
       </button>
       <button
         onClick={() => {
@@ -103,24 +103,24 @@ function AdministrationHome() {
         }}
         className="w-full bg-gray-200 text-gray-700 py-2 rounded-lg hover:bg-gray-300 transition-colors"
       >
-        Cerrar sesión
+        Log out
       </button>
     </div>
   );
 
   return (
     <div className="relative min-h-[calc(100vh-88px)] bg-gradient-to-b from-blue-100 to-white flex items-center justify-center p-4">
-      {/* Fondo de imagen */}
+      {/* Background image */}
       <div
         className="absolute inset-0 bg-cover bg-center z-0"
         style={{ backgroundImage: "url('/src/components/fondo2.png')" }}
       ></div>
       <div className="absolute inset-0 bg-gradient-to-b from-transparent to-white z-0"></div>
 
-      {/* Contenido */}
+      {/* Content */}
       <div className="relative z-10 bg-white rounded-lg shadow-md w-full max-w-md p-6 space-y-4">
         <h1 className="text-center text-2xl font-semibold text-gray-800">
-          Portal de Administración
+          Administration Portal
         </h1>
         {!idAdmin ? renderLoginForm() : renderMenu()}
       </div>

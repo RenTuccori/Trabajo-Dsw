@@ -10,13 +10,9 @@ export const getPatients = async () => {
 };
 
 export const getPatientbyNationalId = async ({ nationalId }) => {
-  console.log('🌐 FRONTEND - getPatientbyNationalId: Starting request to backend');
-  console.log('📋 FRONTEND - National ID sent:', nationalId);
   
   try {
     const response = await axiosInstance.post(`patients/nationalId`, { nationalId });
-    console.log('✅ FRONTEND - getPatientbyNationalId: Response received:', response);
-    console.log('🆔 FRONTEND - idPatient in response:', response.data?.id);
     return response;
   } catch (error) {
     console.error('❌ FRONTEND - getPatientbyNationalId: Error:', error);

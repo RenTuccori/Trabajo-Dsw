@@ -20,26 +20,26 @@ describe('Frontend Test Suite', () => {
 
   it('should validate object manipulation', () => {
     const user = {
-      dni: '12345678',
-      nombre: 'Juan',
-      apellido: 'Pérez',
-      rol: 'Patient',
+      nationalId: '12345678',
+      name: 'Juan',
+      lastName: 'Pérez',
+      role: 'Patient',
     };
 
-    expect(user).toHaveProperty('dni');
-    expect(user).toHaveProperty('nombre');
-    expect(user).toHaveProperty('rol');
-    expect(user.rol).toBe('Patient');
+    expect(user).toHaveProperty('nationalId');
+    expect(user).toHaveProperty('name');
+    expect(user).toHaveProperty('role');
+    expect(user.role).toBe('Patient');
   });
 
   it('should validate date handling', () => {
-    const fechaNacimiento = '1990-01-01';
+    const birthDate = '1990-01-01';
 
     // Validate ISO format
-    expect(fechaNacimiento).toMatch(/^\d{4}-\d{2}-\d{2}$/);
+    expect(birthDate).toMatch(/^\d{4}-\d{2}-\d{2}$/);
 
     // Validate that it's a valid date using UTC to avoid timezone issues
-    const date = new Date(fechaNacimiento + 'T00:00:00.000Z');
+    const date = new Date(birthDate + 'T00:00:00.000Z');
     expect(date.getUTCFullYear()).toBe(1990);
   });
 });

@@ -2,9 +2,9 @@ import { useState, useEffect, useCallback } from 'react';
 import { useAuth } from '../../context/global/AuthProvider';
 import { useNavigate } from 'react-router-dom';
 import {
-  uploadEstudio,
-  getEstudiosByDoctor,
-  downloadEstudio as downloadEstudioAPI,
+  uploadStudy,
+  getStudiesByDoctor,
+  downloadStudy as downloadStudyAPI,
 } from '../../api/studies.api';
 import { getPatients } from '../../api/patients.api';
 
@@ -13,60 +13,54 @@ function UploadStudy() {
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
     patientId: '',
-    fechaRealizacion: '',
-    descripcion: '',
+    performanceDate: '',
+    description: '',
     file: null,
   });
-  const [patients, setPacientes] = useState([]);
-  const [searchDni, setSearchDni] = useState('');
+  const [patients, setPatients] = useState([]);
+  const [searchNationalId, setSearchNationalId] = useState('');
   const [patientFound, setPatientFound] = useState(null);
   const [searchError, setSearchError] = useState('');
-  const [estudios, setEstudios] = useState([]);
+  const [studies, setStudies] = useState([]);
   const [loading, setLoading] = useState(false);
   const [initialLoading, setInitialLoading] = useState(true);
-  const [showEstudios, setShowEstudios] = useState(false);
+  const [showStudies, setShowStudies] = useState(false);
 
-  // Cargar patients al montar el componente
+  // Load patients on component mount
   useEffect(() => {
-    console.log('Cargando patients...');
     const initializeData = async () => {
       setInitialLoading(true);
-      await loadPacientes();
+      await loadPatients();
       setInitialLoading(false);
     };
     initializeData();
   }, []);
 
-  const loadEstudios = useCallback(async () => {
+  const loadStudies = useCallback(async () => {
     try {
-      console.log('Cargando estudios para doctor:', doctorId);
-      const response = await getEstudiosByDoctor(doctorId);
-      console.log('Respuesta de estudios:', response);
-      setEstudios(response.data || []);
+      const response = await getStudiesByDoctor(doctorId);
+      setStudies(response.data || []);
     } catch (error) {
-      console.error('Error al cargar estudios:', error);
-      setEstudios([]); // Asegurar que estudios esté definido
+      console.error('Error loading studies:', error);
+      setStudies([]);
     }
   }, [doctorId]);
 
-  // Cargar estudios cuando cambie el doctorId
+  // Load studies when doctorId changes
   useEffect(() => {
-    console.log('ID Doctor:', doctorId);
     if (doctorId) {
-      loadEstudios();
+      loadStudies();
     }
-  }, [doctorId, loadEstudios]);
+  }, [doctorId, loadStudies]);
 
-  const loadPacientes = async () => {
+  const loadPatients = async () => {
     try {
-      console.log('Llamando a getPatients...');
       const response = await getPatients();
-      console.log('Respuesta de patients:', response);
-      setPacientes(response.data || []);
+      setPatients(response.data || []);
     } catch (error) {
-      console.error('Error al cargar patients:', error);
-      window.notifyError('Error al cargar la lista de patients');
-      setPacientes([]); // Asegurar que patients esté definido
+      console.error('Error loading patients:', error);
+      window.notifyError('Error loading patient list');
+      setPatients([]);
     }
   };
 
@@ -87,15 +81,15 @@ function UploadStudy() {
 
   const handleSearchPatient = () => {
     setSearchError('');
-    if (!searchDni.trim()) {
-      setSearchError('Por favor ingrese un DNI válido.');
+    if (!searchNationalId.trim()) {
+      setSearchError('Please enter a valid national ID.');
       setPatientFound(null);
       setFormData((prev) => ({ ...prev, patientId: '' }));
       return;
     }
 
     const found = patients.find(
-      (p) => String(p.nationalId) === searchDni || String(p.dni) === searchDni
+      (p) => String(p.nationalId) === searchNationalId
     );
 
     if (found) {
@@ -105,7 +99,7 @@ function UploadStudy() {
     } else {
       setPatientFound(null);
       setFormData((prev) => ({ ...prev, patientId: '' }));
-      setSearchError('No se encontró ningún paciente con ese DNI.');
+      setSearchError('No patient found with that national ID.');
     }
   };
 
@@ -113,17 +107,17 @@ function UploadStudy() {
     e.preventDefault();
 
     if (!formData.file) {
-      window.notifyError('Por favor seleccione un archivo');
+      window.notifyError('Please select a file');
       return;
     }
 
     if (!formData.patientId) {
-      window.notifyError('Por favor busque y seleccione un paciente primero utilizando su DNI');
+      window.notifyError('Please search and select a patient first using their national ID');
       return;
     }
 
-    if (!formData.fechaRealizacion) {
-      window.notifyError('Por favor complete la fecha de realización');
+    if (!formData.performanceDate) {
+      window.notifyError('Please fill in the performance date');
       return;
     }
 
@@ -134,58 +128,58 @@ function UploadStudy() {
       data.append('file', formData.file);
       data.append('patientId', formData.patientId);
       // Backend expects 'performanceDate' and 'description'
-      data.append('performanceDate', formData.fechaRealizacion);
-      data.append('description', formData.descripcion);
+      data.append('performanceDate', formData.performanceDate);
+      data.append('description', formData.description);
 
-      await uploadEstudio(data);
+      await uploadStudy(data);
 
-      window.notifySuccess('Estudio subido exitosamente');
+      window.notifySuccess('Study uploaded successfully');
 
-      // Limpiar formulario
+      // Clear form
       setFormData({
         patientId: '',
-        fechaRealizacion: '',
-        descripcion: '',
+        performanceDate: '',
+        description: '',
         file: null,
       });
-      setSearchDni('');
+      setSearchNationalId('');
       setPatientFound(null);
 
-      // Limpiar input file
+      // Clear file input
       const fileInput = document.getElementById('file');
       if (fileInput) fileInput.value = '';
 
-      // Recargar estudios
-      loadEstudios();
+      // Reload studies
+      loadStudies();
     } catch (error) {
-      console.error('Error al subir estudio:', error);
-      window.notifyError(error.message || 'Error al subir el estudio');
+      console.error('Error uploading study:', error);
+      window.notifyError(error.message || 'Error uploading study');
     } finally {
       setLoading(false);
     }
   };
 
-  const downloadEstudio = async (idEstudio, nombreArchivo) => {
+  const downloadStudy = async (studyId, fileName) => {
     try {
-      const response = await downloadEstudioAPI(idEstudio);
+      const response = await downloadStudyAPI(studyId);
 
-      // Crear enlace de descarga
+      // Create download link
       const url = window.URL.createObjectURL(new Blob([response.data]));
       const link = document.createElement('a');
       link.href = url;
-      link.setAttribute('download', nombreArchivo);
+      link.setAttribute('download', fileName);
       document.body.appendChild(link);
       link.click();
       link.remove();
       window.URL.revokeObjectURL(url);
     } catch (error) {
-      console.error('Error al descargar estudio:', error);
-      window.notifyError('Error al descargar el archivo');
+      console.error('Error downloading study:', error);
+      window.notifyError('Error downloading file');
     }
   };
 
   const formatDate = (dateString) => {
-    return new Date(dateString).toLocaleDateString('es-ES');
+    return new Date(dateString).toLocaleDateString('en-US');
   };
 
   if (!doctorId) {
@@ -193,7 +187,7 @@ function UploadStudy() {
       <div className="min-h-[calc(100vh-88px)] bg-gradient-to-b from-blue-100 to-white flex items-center justify-center">
         <div className="text-center">
           <p className="text-xl text-gray-600">
-            Debe iniciar sesión como doctor
+            You must log in as a doctor
           </p>
         </div>
       </div>
@@ -204,7 +198,7 @@ function UploadStudy() {
     return (
       <div className="min-h-[calc(100vh-88px)] bg-gradient-to-b from-blue-100 to-white flex items-center justify-center">
         <div className="text-center">
-          <p className="text-xl text-gray-600">Cargando...</p>
+          <p className="text-xl text-gray-600">Loading...</p>
         </div>
       </div>
     );
@@ -214,57 +208,57 @@ function UploadStudy() {
     <div className="min-h-[calc(100vh-88px)] bg-gradient-to-b from-blue-100 to-white p-4">
       <div className="max-w-4xl mx-auto">
         <h1 className="text-3xl font-bold text-center text-gray-800 mb-8">
-          Gestión de Estudios Médicos
+          Medical Studies Management
         </h1>
 
-        {/* Botones de navegación */}
+        {/* Navigation buttons */}
         <div className="flex justify-center mb-6 space-x-4">
           <button
-            onClick={() => setShowEstudios(false)}
+            onClick={() => setShowStudies(false)}
             className={`px-6 py-2 rounded-lg font-medium transition-colors ${
-              !showEstudios
+              !showStudies
                 ? 'bg-blue-600 text-white'
                 : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
             }`}
           >
-            Subir Estudio
+            Upload Study
           </button>
           <button
-            onClick={() => setShowEstudios(true)}
+            onClick={() => setShowStudies(true)}
             className={`px-6 py-2 rounded-lg font-medium transition-colors ${
-              showEstudios
+              showStudies
                 ? 'bg-blue-600 text-white'
                 : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
             }`}
           >
-            Mis Estudios ({estudios.length})
+            My Studies ({studies.length})
           </button>
         </div>
 
-        {!showEstudios ? (
-          /* Formulario para subir estudios */
+        {!showStudies ? (
+          /* Upload study form */
           <div className="bg-white rounded-lg shadow-md p-6">
             <h2 className="text-xl font-semibold text-gray-800 mb-4">
-              Subir Nuevo Estudio
+              Upload New Study
             </h2>
 
             <form onSubmit={handleSubmit} className="space-y-4">
-              {/* Selección de patient */}
+              {/* Patient selection */}
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Buscar Paciente por DNI *
+                  Search Patient by National ID *
                   {!patientFound && (
                     <span className="text-red-500 font-normal ml-2 text-xs">
-                      (Debe presionar el botón "Buscar" para seleccionarlo antes de subir)
+                      (You must click the "Search" button to select them before uploading)
                     </span>
                   )}
                 </label>
                 <div className="flex space-x-2">
                   <input
                     type="text"
-                    value={searchDni}
-                    onChange={(e) => setSearchDni(e.target.value)}
-                    placeholder="Ingrese el DNI del paciente"
+                    value={searchNationalId}
+                    onChange={(e) => setSearchNationalId(e.target.value)}
+                    placeholder="Enter patient national ID"
                     className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
                   />
                   <button
@@ -272,7 +266,7 @@ function UploadStudy() {
                     onClick={handleSearchPatient}
                     className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
                   >
-                    Buscar
+                    Search
                   </button>
                 </div>
                 {searchError && (
@@ -280,20 +274,20 @@ function UploadStudy() {
                 )}
                 {patientFound && (
                   <div className="mt-3 p-3 bg-green-50 text-green-800 rounded-lg border border-green-200">
-                    Paciente encontrado: <strong>{patientFound.name} {patientFound.lastName}</strong>
+                    Patient found: <strong>{patientFound.name} {patientFound.lastName}</strong>
                   </div>
                 )}
               </div>
 
-              {/* Fecha de realización */}
+              {/* Performance date */}
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Fecha de Realización *
+                  Performance Date *
                 </label>
                 <input
                   type="date"
-                  name="fechaRealizacion"
-                  value={formData.fechaRealizacion}
+                  name="performanceDate"
+                  value={formData.performanceDate}
                   onChange={handleInputChange}
                   max={new Date().toISOString().split('T')[0]}
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
@@ -301,25 +295,25 @@ function UploadStudy() {
                 />
               </div>
 
-              {/* Descripción */}
+              {/* Description */}
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Descripción
+                  Description
                 </label>
                 <textarea
-                  name="descripcion"
-                  value={formData.descripcion}
+                  name="description"
+                  value={formData.description}
                   onChange={handleInputChange}
                   rows="3"
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
-                  placeholder="Descripción del estudio (opcional)"
+                  placeholder="Study description (optional)"
                 />
               </div>
 
-              {/* Archivo */}
+              {/* File */}
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
-                  Archivo del Estudio *
+                  Study File *
                 </label>
                 <input
                   type="file"
@@ -331,12 +325,11 @@ function UploadStudy() {
                   required
                 />
                 <p className="text-sm text-gray-500 mt-1">
-                  Formatos permitidos: PDF, JPG, JPEG, PNG, DOC, DOCX (máx.
-                  10MB)
+                  Allowed formats: PDF, JPG, JPEG, PNG, DOC, DOCX (max. 10MB)
                 </p>
               </div>
 
-              {/* Botón de envío */}
+              {/* Submit button */}
               <button
                 type="submit"
                 disabled={loading || !patientFound}
@@ -346,29 +339,29 @@ function UploadStudy() {
                     : 'bg-blue-600 hover:bg-blue-700 text-white'
                 }`}
               >
-                {loading ? 'Subiendo...' : 'Subir Estudio'}
+                {loading ? 'Uploading...' : 'Upload Study'}
               </button>
 
-              {/* Botón de volver al menú */}
+              {/* Back to menu button */}
               <button
                 type="button"
                 onClick={() => navigate('/doctor')}
                 className="w-full py-2 px-4 rounded-lg font-medium transition-colors bg-gray-200 text-gray-700 hover:bg-gray-300"
               >
-                Volver al Menú
+                Back to Menu
               </button>
             </form>
           </div>
         ) : (
-          /* Lista de estudios */
+          /* Studies list */
           <div className="bg-white rounded-lg shadow-md p-6">
             <h2 className="text-xl font-semibold text-gray-800 mb-4">
-              Estudios Subidos
+              Uploaded Studies
             </h2>
 
-            {estudios.length === 0 ? (
+            {studies.length === 0 ? (
               <p className="text-gray-500 text-center py-8">
-                No has subido ningún estudio aún
+                You have not uploaded any studies yet
               </p>
             ) : (
               <div className="overflow-x-auto">
@@ -376,61 +369,61 @@ function UploadStudy() {
                   <thead>
                     <tr className="bg-gray-50">
                       <th className="px-4 py-2 text-left text-sm font-medium text-gray-700">
-                        Paciente
+                        Patient
                       </th>
                       <th className="px-4 py-2 text-left text-sm font-medium text-gray-700">
-                        Fecha Realización
+                        Performance Date
                       </th>
                       <th className="px-4 py-2 text-left text-sm font-medium text-gray-700">
-                        Archivo
+                        File
                       </th>
                       <th className="px-4 py-2 text-left text-sm font-medium text-gray-700">
-                        Descripción
+                        Description
                       </th>
                       <th className="px-4 py-2 text-left text-sm font-medium text-gray-700">
-                        Fecha Carga
+                        Upload Date
                       </th>
                       <th className="px-4 py-2 text-left text-sm font-medium text-gray-700">
-                        Acciones
+                        Actions
                       </th>
                     </tr>
                   </thead>
                   <tbody>
-                    {estudios.map((estudio) => (
+                    {studies.map((study) => (
                       <tr
-                        key={estudio.idEstudio}
+                        key={study.id}
                         className="border-t border-gray-200"
                       >
                         <td className="px-4 py-2 text-sm">
-                          {estudio.nombrePaciente}
+                          {study.patientName}
                           <br />
                           <span className="text-gray-500">
-                            DNI: {estudio.dniPaciente}
+                            National ID: {study.patientNationalId}
                           </span>
                         </td>
                         <td className="px-4 py-2 text-sm">
-                          {formatDate(estudio.fechaRealizacion)}
+                          {formatDate(study.performanceDate)}
                         </td>
                         <td className="px-4 py-2 text-sm">
-                          {estudio.nombreArchivo}
+                          {study.fileName}
                         </td>
                         <td className="px-4 py-2 text-sm">
-                          {estudio.descripcion || 'Sin descripción'}
+                          {study.description || 'No description'}
                         </td>
                         <td className="px-4 py-2 text-sm">
-                          {formatDate(estudio.fechaCarga)}
+                          {formatDate(study.uploadDate)}
                         </td>
                         <td className="px-4 py-2 text-sm">
                           <button
                             onClick={() =>
-                              downloadEstudio(
-                                estudio.idEstudio,
-                                estudio.nombreArchivo
+                              downloadStudy(
+                                study.id,
+                                study.fileName
                               )
                             }
                             className="text-blue-600 hover:text-blue-800 font-medium"
                           >
-                            Descargar
+                            Download
                           </button>
                         </td>
                       </tr>

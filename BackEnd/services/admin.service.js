@@ -84,7 +84,7 @@ export const getAllCombinations = async () => {
 };
 
 export const replaceSchedules = async (locationId, doctorId, specialtyId, schedulesData) => {
-  // Primero eliminamos todos los horarios existentes de esa combinación exacta
+  // First we delete all existing schedules for that exact combination
   await AvailableSchedule.destroy({
     where: {
       locationId,
@@ -93,7 +93,7 @@ export const replaceSchedules = async (locationId, doctorId, specialtyId, schedu
     }
   });
 
-  // Luego hacemos insert de todos los horarios recibidos
+  // Then we insert all received schedules
   if (schedulesData && schedulesData.length > 0) {
     const schedulesToInsert = schedulesData.map(schedule => ({
       locationId,

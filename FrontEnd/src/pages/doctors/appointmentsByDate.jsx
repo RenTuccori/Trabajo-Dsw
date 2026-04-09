@@ -16,7 +16,7 @@ export function AppointmentsByDate() {
     loadAppointmentsByDate,
   } = useDoctors();
 
-  // Llamar a obtenerTurnos cuando se monta el componente
+  // Load appointments when component mounts
   useEffect(() => {
     loadHistoricalAppointments();
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -43,7 +43,6 @@ export function AppointmentsByDate() {
   const handleDateChange = (date) => {
     setSelectedDate(date);
     if (date) {
-      console.log('Fecha seleccionada:', date);
       loadAppointmentsByDate(date);
     } else {
       loadAppointmentsByDate(null);
@@ -54,7 +53,7 @@ export function AppointmentsByDate() {
       <div className="bg-white rounded-lg shadow-md w-full max-w-md p-6 space-y-4">
         <h1 className="text-2xl font-bold text-blue-800 text-center">Turnos por Fecha</h1>
         <div className="space-y-2">
-          <label className="block text-sm font-medium text-gray-700">Seleccione una Fecha</label>
+          <label className="block text-sm font-medium text-gray-700">Seleccionar una fecha</label>
           <div className="w-full">
             <DatePicker
               selected={selectedDate}
@@ -89,10 +88,10 @@ export function AppointmentsByDate() {
                     <strong>Estado:</strong> {t(`statuses.${appointment.status}`)}
                   </p>
                   <p>
-                    <strong>DNI Paciente:</strong> {appointment.dni || appointment.nationalId || '-'}
+                    <strong>DNI del paciente:</strong> {appointment.nationalId || '-'}
                   </p>
                   <p>
-                    <strong>Apellido y Nombre:</strong> {appointment.patientName || appointment.fullName || '-'}
+                    <strong>Nombre completo:</strong> {appointment.patientName || appointment.fullName || '-'}
                   </p>
                 </div>
               ))

@@ -7,11 +7,11 @@ import { useAdministration } from '../../context/administration/AdministrationPr
 export function DoctorData() {
   const { healthInsurances, getHealthInsurances, createUser, createDoctor } =
     useAdministration();
-  const [selectedObraSociales, setSelectedObraSociales] = useState(null);
-  const [usuarioCreado, setUsuarioCreado] = useState(false); // Para manejar el flujo de creación de user y doctor
+  const [selectedInsurance, setSelectedInsurance] = useState(null);
+  const [userCreated, setUserCreated] = useState(false);
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
-    dni: '',
+    nationalId: '',
     birthDate: '',
     name: '',
     lastName: '',
@@ -42,30 +42,30 @@ export function DoctorData() {
     }));
   };
 
-  const handleSubmitUsuario = async (e) => {
+  const handleSubmitUser = async (e) => {
     e.preventDefault();
     try {
-      await createUser(formData); // Crea el user
-      setUsuarioCreado(true); // Marca que el user ha sido creado
+      await createUser(formData);
+      setUserCreated(true);
       window.notifySuccess(
-        'Usuario creado con éxito. Ahora complete los datos del doctor.'
+        'Usuario creado exitosamente. Ahora complete los datos del médico.'
       );
     } catch (error) {
-      window.notifyError('Error al crear el user');
-      console.error('Error al crear user:', error);
+      window.notifyError('Error al crear el usuario');
+      console.error('Error al crear el usuario:', error);
     }
   };
 
   const handleSubmitDoctor = async (e) => {
     e.preventDefault();
     try {
-      const { dni } = formData;
-      await createDoctor({ dni, ...doctorData }); // Crea el doctor utilizando el DNI del user creado
-      window.notifySuccess('¡Doctor creado con éxito!');
-      navigate('/admin'); // Redirige después de crear el doctor
+      const { nationalId } = formData;
+      await createDoctor({ nationalId, ...doctorData });
+      window.notifySuccess('¡Doctor creado exitosamente!');
+      navigate('/admin');
     } catch (error) {
       window.notifyError('Error al crear el doctor');
-      console.error('Error al crear doctor:', error);
+      console.error('Error al crear el doctor:', error);
     }
   };
 
@@ -73,8 +73,8 @@ export function DoctorData() {
     getHealthInsurances();
   }, []);
 
-  const handleObraSocialChange = (selectedOption) => {
-    setSelectedObraSociales(selectedOption);
+  const handleInsuranceChange = (selectedOption) => {
+    setSelectedInsurance(selectedOption);
     setFormData((prevFormData) => ({
       ...prevFormData,
       healthInsuranceId: selectedOption.value,
@@ -85,14 +85,14 @@ export function DoctorData() {
     <div className="min-h-[calc(100vh-88px)] bg-gradient-to-b from-blue-100 to-white flex items-center justify-center p-4">
       <div className="bg-white rounded-lg shadow-md w-full max-w-md p-6 space-y-4">
         {/* Formulario para crear user */}
-        {!usuarioCreado && (
-          <form onSubmit={handleSubmitUsuario} className="space-y-4">
+        {!userCreated && (
+          <form onSubmit={handleSubmitUser} className="space-y-4">
             <div>
               <p className="text-center text-gray-600 text-lg">DNI</p>
               <input
                 type="text"
-                name="dni"
-                value={formData.dni}
+                name="nationalId"
+                value={formData.nationalId}
                 onChange={handleInputChange}
                 required
                 className="w-full border border-gray-300 rounded-lg p-2 focus:outline-none focus:border-blue-500"
@@ -169,12 +169,12 @@ export function DoctorData() {
             <div>
               <p className="text-center text-gray-600 text-lg">Obra Social</p>
               <Select
-                options={healthInsurances.map((obrasociales) => ({
-                  value: obrasociales.healthInsuranceId,
-                  label: obrasociales.name,
+                options={healthInsurances.map((insurance) => ({
+                  value: insurance.healthInsuranceId,
+                  label: insurance.name,
                 }))}
-                onChange={handleObraSocialChange}
-                value={selectedObraSociales}
+                onChange={handleInsuranceChange}
+                value={selectedInsurance}
                 className="react-select"
               />
             </div>
@@ -182,17 +182,17 @@ export function DoctorData() {
               type="submit"
               className="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition-colors"
             >
-              Crear user
+              Crear usuario
             </button>
           </form>
         )}
 
-        {/* Formulario para crear doctor después de crear el user */}
-        {usuarioCreado && (
+        {/* Form to create doctor after creating the user */}
+        {userCreated && (
           <form onSubmit={handleSubmitDoctor} className="space-y-4">
             <div>
               <p className="text-center text-gray-600 text-lg">
-                Duración del appointment (minutos)
+                Duración del turno (minutos)
               </p>
               <input
                 type="text"
@@ -218,7 +218,7 @@ export function DoctorData() {
               type="submit"
               className="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition-colors"
             >
-              Crear doctor
+              Crear médico
             </button>
           </form>
         )}

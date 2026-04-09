@@ -23,29 +23,29 @@ export function CreateLocation() {
         await createNewLocation({ name: locationName, address: locationAddress });
         setLocationName(''); // Reiniciar el campo de texto
         setLocationAddress('');
-        window.notifySuccess('¡Sede creada con éxito!'); // Mostrar mensaje de éxito
-        getLocations(); // Actualizar la lista después de crear una sede
+        window.notifySuccess('¡Sede creada con éxito!');
+        getLocations();
       } catch (error) {
-        window.notifyError('Error al crear la sede'); // Mostrar mensaje de error
-        console.error('Error al crear sede:', error);
+        window.notifyError('Error al crear la sede');
+        console.error('Error creating location:', error);
       }
     }
   };
 
   const handleDeleteLocation = async (locationId) => {
     const result = await window.confirmDialog(
-      '¿Estás seguro?',
+      'Are you sure?',
       '¿Deseas eliminar esta sede?'
     );
 
     if (result.isConfirmed) {
       try {
         await deleteLocation(locationId);
-        window.notifySuccess('¡Sede eliminada con éxito!'); // Mostrar mensaje de éxito
-        getLocations(); // Actualizar la lista después de borrar una sede
+        window.notifySuccess('¡Sede eliminada con éxito!');
+        getLocations();
       } catch (error) {
-        window.notifyError('Error al eliminar la sede'); // Mostrar mensaje de error
-        console.error('Error al borrar sede:', error);
+        window.notifyError('Error al eliminar la sede');
+        console.error('Error deleting location:', error);
       }
     }
   };
@@ -60,14 +60,14 @@ export function CreateLocation() {
         <form onSubmit={handleCreateLocation} className="space-y-4">
           <input
             type="text"
-            placeholder="Nombre de la sede"
+              placeholder="Nombre de la sede"
             value={locationName}
             onChange={(e) => setLocationName(e.target.value)}
             className="w-full p-2 border border-gray-300 rounded-lg"
           />
           <input
             type="text"
-            placeholder="Dirección de la sede"
+              placeholder="Dirección de la sede"
             value={locationAddress}
             onChange={(e) => setLocationAddress(e.target.value)}
             className="w-full p-2 border border-gray-300 rounded-lg"
@@ -111,7 +111,7 @@ export function CreateLocation() {
             ))
           ) : (
             <p className="text-center text-gray-600">
-              No hay locations creadas aún.
+            No hay sedes creadas aún.
             </p>
           )}
         </ul>

@@ -10,11 +10,11 @@ import AddressAutocomplete from '../../components/AddressAutocomplete';
 
 export function PersonalData() {
   const { healthInsurances, getHealthInsurances, createUserFunction, getUserByDniFunction, userByDni } = usePatients();
-  const { login, dni } = useAuth();
-  const [selectedObraSociales, setSelectedObraSociales] = useState(null);
+  const { login, nationalId } = useAuth();
+  const [selectedHealthInsurance, setSelectedHealthInsurance] = useState(null);
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
-    dni: '',
+    nationalId: '',
     birthDate: '',
     password: '',
     name: '',
@@ -37,9 +37,9 @@ export function PersonalData() {
   };
 
   const handleSubmit = async (e) => {
-    e.preventDefault(); // Previene el comportamiento por defecto del formulario
+    e.preventDefault();
     // Client-side validation to mirror backend validators
-    const nationalIdDigits = String(formData.dni).replace(/\D/g, '');
+    const nationalIdDigits = String(formData.nationalId).replace(/\D/g, '');
     if (nationalIdDigits.length < 7) {
       notifyError('El DNI debe tener al menos 7 dígitos.');
       return;
@@ -50,27 +50,27 @@ export function PersonalData() {
       return;
     }
     if (!formData.name.trim() || !formData.lastName.trim()) {
-      notifyError('Nombre y apellido son obligatorios.');
+      notifyError('El nombre y apellido son requeridos.');
       return;
     }
       if (!formData.password.trim()) {
-        notifyError('Contraseña es obligatoria.');
+        notifyError('La contraseña es requerida.');
         return;
       }
 
       try {
-        await createUserFunction(formData); // Asegura que la creación del user sea asíncrona
+        await createUserFunction(formData);
 
         login({
-          identifier: formData.dni,
+          identifier: formData.nationalId,
           credential: formData.password,
           userType: 'Patient',
         });
 
-      if (window.notifySuccess) window.notifySuccess('Usuario registrado correctamente');
+      if (window.notifySuccess) window.notifySuccess('Usuario registrado exitosamente');
       navigate('/patient');
     } catch (error) {
-      console.error('❌ FRONTEND - Error al registrar usuario:', error);
+      console.error('FRONTEND - Error registering user:', error);
       // If validation details are available from backend, show them
         const backendErrors = error?.response?.data?.errors || error?.errors || error?.data?.errors;
         if (backendErrors && backendErrors.length > 0) {
@@ -79,7 +79,7 @@ export function PersonalData() {
         } else if (error?.message) {
           notifyError(error.message);
         } else {
-          notifyError('Hubo un error al registrar el usuario. Intente nuevamente.');
+          notifyError('Ocurrió un error al registrar el usuario. Por favor intente nuevamente.');
         }
     }
   };
@@ -89,18 +89,18 @@ export function PersonalData() {
   }, []);
 
   useEffect(() => {
-    if (dni) {
+    if (nationalId) {
       getUserByDniFunction();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [dni]);
+  }, [nationalId]);
 
   useEffect(() => {
     // When user data is fetched from backend, prefill the form
     if (userByDni && Object.keys(userByDni).length > 0) {
       setFormData((prev) => ({
         ...prev,
-        dni: userByDni.nationalId || prev.dni,
+        nationalId: userByDni.nationalId || prev.nationalId,
         birthDate: userByDni.birthDate || prev.birthDate,
         name: userByDni.firstName || prev.name,
         lastName: userByDni.lastName || prev.lastName,
@@ -113,7 +113,7 @@ export function PersonalData() {
           prev.healthInsuranceId,
       }));
 
-      // set selected option for obra social if available
+      // set selected option for health insurance if available
       const selectedInsuranceId =
         userByDni.healthInsuranceId || userByDni.insuranceCompanyId;
       if (selectedInsuranceId) {
@@ -121,7 +121,7 @@ export function PersonalData() {
           (h) => String(getInsuranceId(h)) === String(selectedInsuranceId)
         );
         if (option) {
-          setSelectedObraSociales({
+          setSelectedHealthInsurance({
             value: getInsuranceId(option),
             label: option.name,
           });
@@ -131,8 +131,8 @@ export function PersonalData() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [userByDni, healthInsurances]);
 
-  const handleObraSocialChange = (selectedOption) => {
-    setSelectedObraSociales(selectedOption);
+  const handleHealthInsuranceChange = (selectedOption) => {
+    setSelectedHealthInsurance(selectedOption);
     setFormData((prevFormData) => ({
       ...prevFormData,
       healthInsuranceId: selectedOption.value,
@@ -147,8 +147,8 @@ export function PersonalData() {
             <p className="text-center text-gray-600 text-lg">DNI</p>
             <input
               type="text"
-              name="dni"
-              value={formData.dni}
+              name="nationalId"
+              value={formData.nationalId}
               onChange={handleInputChange}
               required
               className="w-full border border-gray-300 rounded-lg p-2 focus:outline-none focus:border-blue-500"
@@ -156,7 +156,7 @@ export function PersonalData() {
           </div>
           <div>
             <p className="text-center text-gray-600 text-lg">
-              Fecha de Nacimiento
+              Fecha de nacimiento
             </p>
             <input
               type="date"
@@ -241,21 +241,21 @@ export function PersonalData() {
           <div>
             <p className="text-center text-gray-600 text-lg">Obra Social</p>
             <Select
-              options={(healthInsurances || []).map((obrasocial) => ({
-                value: getInsuranceId(obrasocial),
-                label: obrasocial.name,
+              options={(healthInsurances || []).map((insurance) => ({
+                value: getInsuranceId(insurance),
+                label: insurance.name,
               }))}
-              onChange={handleObraSocialChange}
-              value={selectedObraSociales}
+              onChange={handleHealthInsuranceChange}
+              value={selectedHealthInsurance}
               className="react-select"
-              placeholder="Seleccione obra social..."
+              placeholder="Seleccionar obra social..."
             />
           </div>
           <button
             type="submit"
             className="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition-colors"
           >
-            Enviar
+            Registrarse
           </button>
         </form>
       </div>

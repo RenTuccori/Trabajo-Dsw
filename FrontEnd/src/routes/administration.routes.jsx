@@ -14,7 +14,7 @@ import { useAuth } from '../context/global/AuthProvider.jsx';
 import { USER_TYPES } from '../constants/userTypes.js';
 
 export function AdministrationRoutes() {
-  const { rol } = useAuth();
+  const { role } = useAuth();
 
   return (
     <AdministrationProvider>
@@ -23,7 +23,7 @@ export function AdministrationRoutes() {
         <Route
           path="/createLocation"
           element={
-            <Validation rol={rol} expected={USER_TYPES.ADMIN}>
+            <Validation role={role} expected={USER_TYPES.ADMIN}>
               <ProtectedRoute requiredRole={USER_TYPES.ADMIN}>
                 <CreateLocation />
               </ProtectedRoute>
@@ -33,7 +33,7 @@ export function AdministrationRoutes() {
         <Route
           path="/createSpecialty"
           element={
-            <Validation rol={rol} expected={USER_TYPES.ADMIN}>
+            <Validation role={role} expected={USER_TYPES.ADMIN}>
               <ProtectedRoute requiredRole={USER_TYPES.ADMIN}>
                 <CreateSpecialty />
               </ProtectedRoute>
@@ -43,7 +43,7 @@ export function AdministrationRoutes() {
         <Route
           path="/createInsurance"
           element={
-            <Validation rol={rol} expected={USER_TYPES.ADMIN}>
+            <Validation role={role} expected={USER_TYPES.ADMIN}>
               <ProtectedRoute requiredRole={USER_TYPES.ADMIN}>
                 <CreateInsurance />
               </ProtectedRoute>
@@ -53,7 +53,7 @@ export function AdministrationRoutes() {
         <Route
           path="/createCombination"
           element={
-            <Validation rol={rol} expected={USER_TYPES.ADMIN}>
+            <Validation role={role} expected={USER_TYPES.ADMIN}>
               <ProtectedRoute requiredRole={USER_TYPES.ADMIN}>
                 <CreateCombination />
               </ProtectedRoute>
@@ -63,7 +63,7 @@ export function AdministrationRoutes() {
         <Route
           path="/createSchedules"
           element={
-            <Validation rol={rol} expected={USER_TYPES.ADMIN}>
+            <Validation role={role} expected={USER_TYPES.ADMIN}>
               <ProtectedRoute requiredRole={USER_TYPES.ADMIN}>
                 <CreateSchedules />
               </ProtectedRoute>
@@ -73,7 +73,7 @@ export function AdministrationRoutes() {
         <Route
           path="/createDoctor"
           element={
-            <Validation rol={rol} expected={USER_TYPES.ADMIN}>
+            <Validation role={role} expected={USER_TYPES.ADMIN}>
               <ProtectedRoute requiredRole={USER_TYPES.ADMIN}>
                 <CreateDoctor />
               </ProtectedRoute>
@@ -83,7 +83,7 @@ export function AdministrationRoutes() {
         <Route
           path="/updateDoctor/:doctorId"
           element={
-            <Validation rol={rol} expected={USER_TYPES.ADMIN}>
+            <Validation role={role} expected={USER_TYPES.ADMIN}>
               <ProtectedRoute requiredRole={USER_TYPES.ADMIN}>
                 <UpdateDoctor />
               </ProtectedRoute>
@@ -93,7 +93,7 @@ export function AdministrationRoutes() {
         <Route
           path="/updateDoctor"
           element={
-            <Validation rol={rol} expected={USER_TYPES.ADMIN}>
+            <Validation role={role} expected={USER_TYPES.ADMIN}>
               <ProtectedRoute requiredRole={USER_TYPES.ADMIN}>
                 <UpdateDoctor />
               </ProtectedRoute>

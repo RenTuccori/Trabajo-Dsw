@@ -1,7 +1,7 @@
 import { jest } from '@jest/globals';
 
 const mockService = {
-  getAppointmentsByPatientDni: jest.fn(),
+  getAppointmentsByPatientNationalId: jest.fn(),
   getDoctorAppointmentHistory: jest.fn(),
   getDoctorAppointmentsToday: jest.fn(),
   getDoctorAppointmentsByDate: jest.fn(),
@@ -11,19 +11,19 @@ const mockService = {
   deleteExistingAppointment: jest.fn(),
 };
 
-jest.unstable_mockModule('../services/turnos.service.js', () => mockService);
+jest.unstable_mockModule('../services/appointments.service.js', () => mockService);
 
 const {
-  getAppointmentByDni,
+  getAppointmentByNationalId,
   getAppointmentsByDoctorHistory,
   getAppointmentsByDoctorToday,
   confirmAppointment,
   cancelAppointment,
   createAppointment,
   deleteAppointment,
-} = await import('../controllers/turnos.controllers.js');
+} = await import('../controllers/appointments.controllers.js');
 
-describe('Turnos Controller – Unit Tests', () => {
+describe('Appointments Controller – Unit Tests', () => {
   let req, res;
 
   beforeEach(() => {
@@ -36,30 +36,30 @@ describe('Turnos Controller – Unit Tests', () => {
     jest.clearAllMocks();
   });
 
-  describe('getAppointmentByDni', () => {
-    it('should return turnos for a patient', async () => {
-      req.body.dni = 11111111;
-      const turnos = [{ idTurno: 1, estado: 'Pending' }];
-      mockService.getAppointmentsByPatientDni.mockResolvedValue(turnos);
+  describe('getAppointmentByNationalId', () => {
+    it('should return appointments for a patient', async () => {
+      req.body.nationalId = 11111111;
+      const appointments = [{ id: 1, status: 'Pending' }];
+      mockService.getAppointmentsByPatientNationalId.mockResolvedValue(appointments);
 
-      await getAppointmentByDni(req, res);
+      await getAppointmentByNationalId(req, res);
 
-      expect(res.json).toHaveBeenCalledWith(turnos);
+      expect(res.json).toHaveBeenCalledWith(appointments);
     });
 
-    it('should return 404 when no turnos', async () => {
-      req.body.dni = 11111111;
-      mockService.getAppointmentsByPatientDni.mockResolvedValue([]);
+    it('should return 404 when no appointments', async () => {
+      req.body.nationalId = 11111111;
+      mockService.getAppointmentsByPatientNationalId.mockResolvedValue([]);
 
-      await getAppointmentByDni(req, res);
+      await getAppointmentByNationalId(req, res);
 
       expect(res.status).toHaveBeenCalledWith(404);
     });
   });
 
   describe('getAppointmentsByDoctorHistory', () => {
-    it('should return 200 with empty data when no turnos', async () => {
-      req.body.idDoctor = 1;
+    it('should return 200 with empty data when no appointments', async () => {
+      req.body.doctorId = 1;
       mockService.getDoctorAppointmentHistory.mockResolvedValue([]);
 
       await getAppointmentsByDoctorHistory(req, res);
@@ -68,20 +68,20 @@ describe('Turnos Controller – Unit Tests', () => {
       expect(res.json).toHaveBeenCalledWith({ message: 'No appointment history', data: [] });
     });
 
-    it('should return turnos wrapped in data', async () => {
-      req.body.idDoctor = 1;
-      const turnos = [{ sede: 'Sede1', estado: 'Confirmed' }];
-      mockService.getDoctorAppointmentHistory.mockResolvedValue(turnos);
+    it('should return appointments wrapped in data', async () => {
+      req.body.doctorId = 1;
+      const appointments = [{ location: 'Branch1', status: 'Confirmed' }];
+      mockService.getDoctorAppointmentHistory.mockResolvedValue(appointments);
 
       await getAppointmentsByDoctorHistory(req, res);
 
-      expect(res.json).toHaveBeenCalledWith({ data: turnos });
+      expect(res.json).toHaveBeenCalledWith({ data: appointments });
     });
   });
 
   describe('confirmAppointment', () => {
-    it('should confirm turno', async () => {
-      req.body.idTurno = 1;
+    it('should confirm appointment', async () => {
+      req.body.id = 1;
       mockService.confirmAppointment.mockResolvedValue(true);
 
       await confirmAppointment(req, res);
@@ -89,8 +89,8 @@ describe('Turnos Controller – Unit Tests', () => {
       expect(res.json).toHaveBeenCalledWith({ message: 'Appointment status updated to "Confirmed"' });
     });
 
-    it('should return 404 when turno not found', async () => {
-      req.body.idTurno = 999;
+    it('should return 404 when appointment not found', async () => {
+      req.body.id = 999;
       mockService.confirmAppointment.mockResolvedValue(false);
 
       await confirmAppointment(req, res);
@@ -100,8 +100,8 @@ describe('Turnos Controller – Unit Tests', () => {
   });
 
   describe('cancelAppointment', () => {
-    it('should cancel turno', async () => {
-      req.body.idTurno = 1;
+    it('should cancel appointment', async () => {
+      req.body.id = 1;
       mockService.cancelAppointment.mockResolvedValue(true);
 
       await cancelAppointment(req, res);
@@ -111,10 +111,10 @@ describe('Turnos Controller – Unit Tests', () => {
   });
 
   describe('createAppointment', () => {
-    it('should create turno and return 201', async () => {
-      const body = { idPaciente: 1, fechaYHora: '2025-01-01 10:00', estado: 'Pending', idEspecialidad: 1, idDoctor: 1, idSede: 1 };
+    it('should create appointment and return 201', async () => {
+      const body = { patientId: 1, dateTime: '2025-01-01 10:00', status: 'Pending', specialtyId: 1, doctorId: 1, locationId: 1 };
       req.body = body;
-      mockService.createNewAppointment.mockResolvedValue({ idTurno: 1, ...body });
+      mockService.createNewAppointment.mockResolvedValue({ id: 1, ...body });
 
       await createAppointment(req, res);
 
@@ -123,7 +123,7 @@ describe('Turnos Controller – Unit Tests', () => {
   });
 
   describe('deleteAppointment', () => {
-    it('should delete turno and return 204', async () => {
+    it('should delete appointment and return 204', async () => {
       req.params.id = 1;
       mockService.deleteExistingAppointment.mockResolvedValue(true);
 
@@ -132,7 +132,7 @@ describe('Turnos Controller – Unit Tests', () => {
       expect(res.sendStatus).toHaveBeenCalledWith(204);
     });
 
-    it('should return 404 when turno not found', async () => {
+    it('should return 404 when appointment not found', async () => {
       req.params.id = 999;
       mockService.deleteExistingAppointment.mockResolvedValue(false);
 

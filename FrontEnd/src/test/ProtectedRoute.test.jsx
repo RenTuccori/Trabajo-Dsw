@@ -4,12 +4,12 @@ import { describe, it, expect, vi, beforeEach } from 'vitest';
 import { ProtectedRoute } from '../components/ProtectedRoute.jsx';
 
 // Mock of AuthProvider
-const mockComprobarToken = vi.fn();
+const mockCheckToken = vi.fn();
 
 // Mock of authentication context
 vi.mock('../context/global/AuthProvider', () => ({
   useAuth: () => ({
-    comprobarToken: mockComprobarToken,
+    checkToken: mockCheckToken,
   }),
 }));
 
@@ -32,24 +32,24 @@ describe('ProtectedRoute Component', () => {
     expect(screen.getByText('Protected Content')).toBeInTheDocument();
   });
 
-  it('should call comprobarToken with required role', () => {
+  it('should call checkToken with required role', () => {
     const testContent = <div>Test Content</div>;
 
     renderWithRouter(
       <ProtectedRoute requiredRole="Doctor">{testContent}</ProtectedRoute>
     );
 
-    expect(mockComprobarToken).toHaveBeenCalledWith('Doctor');
+    expect(mockCheckToken).toHaveBeenCalledWith('Doctor');
   });
 
-  it('should call comprobarToken with Patient role', () => {
+  it('should call checkToken with Patient role', () => {
     const testContent = <div>Patient Area</div>;
 
     renderWithRouter(
       <ProtectedRoute requiredRole="Patient">{testContent}</ProtectedRoute>
     );
 
-    expect(mockComprobarToken).toHaveBeenCalledWith('Patient');
+    expect(mockCheckToken).toHaveBeenCalledWith('Patient');
   });
 
   it('should render multiple children correctly', () => {

@@ -66,24 +66,21 @@ export function CreateCombination() {
     }
   };
 
-  const handleEspecilidadChange = async (selectedOption) => {
+  const handleSpecialtyChange = async (selectedOption) => {
     setSelectedSpecialty(selectedOption);
     setSelectedDoctor(null);
 
     if (selectedLocation && selectedOption) {
       await getDoctors();
-    }
-  };
-
-  const handleDoctorChange = (selectedOption) => {
+    } = (selectedOption) => {
     setSelectedDoctor(selectedOption);
   };
 
-  const confirmarCombinacion = async () => {
+  const confirmCombination = async () => {
     if (selectedLocation && selectedSpecialty && selectedDoctor) {
       const result = await window.confirmDialog(
-        '¿Está seguro?',
-        'Esta acción no se puede deshacer.'
+        'Are you sure?',
+        'This action cannot be undone.'
       );
 
       if (result.isConfirmed) {
@@ -95,7 +92,6 @@ export function CreateCombination() {
           });
 
           window.notifySuccess('¡Combinación creada con éxito!');
-          // Refresca las combinations después de la creación
           getCombinations();
         } catch (error) {
           if (error.response && error.response.status === 400) {
@@ -108,20 +104,19 @@ export function CreateCombination() {
     }
   };
 
-  const handleDeleteCombinacion = async (locationId, doctorId, specialtyId) => {
+  const handleDeleteCombination = async (locationId, doctorId, specialtyId) => {
     const result = await window.confirmDialog(
-      '¿Estás seguro?',
-      '¿Deseas eliminar esta combinación?'
+      'Are you sure?',
+      'Do you want to delete this combination?'
     );
 
     if (result.isConfirmed) {
       try {
         await deleteLocationSpecialtyDoctor({ locationId, doctorId, specialtyId });
         window.notifySuccess('¡Combinación eliminada con éxito!');
-        // Refresca las combinations después de la eliminación
         getCombinations();
       } catch (error) {
-        window.notifySuccess('Error al eliminar la combinación');
+        window.notifyError('Error al eliminar la combinación');
       }
     }
   };
@@ -132,21 +127,21 @@ export function CreateCombination() {
         {/* Formulario para crear combinations */}
         <form className="bg-white rounded-lg shadow-md p-6 space-y-4">
           <div className="flex items-center mb-4 space-x-2">
-            <h2 className="text-xl font-semibold">Asignar Combinación</h2>
+            <h2 className="text-xl font-semibold">Assign Combination</h2>
             <div className="relative group cursor-pointer flex-shrink-0">
               <div className="text-blue-600 bg-blue-100 rounded-full w-5 h-5 flex items-center justify-center text-xs font-bold border border-blue-200">
                 ?
               </div>
               <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 hidden group-hover:block w-48 p-2 bg-gray-800 text-white text-xs rounded-md shadow-lg z-10 text-center font-normal">
-                Esta sección es para asociar una sede con un doctor y su respectiva especialidad.
+                This section is for associating a location with a doctor and their specialty.
                 <div className="absolute top-full left-1/2 transform -translate-x-1/2 border-[5px] border-transparent border-t-gray-800"></div>
               </div>
             </div>
           </div>
 
-          {/* Selección de Locality */}
+          {/* Location selection */}
           <div className="space-y-2">
-            <label className="text-gray-700">Localidad</label>
+            <label className="text-gray-700">Location</label>
             <Select
               className="select"
               options={
@@ -163,27 +158,27 @@ export function CreateCombination() {
             />
           </div>
 
-          {/* Selección de Especialidad */}
+          {/* Specialty selection */}
           <div className="space-y-2">
-            <label className="text-gray-700">Especialidad</label>
+            <label className="text-gray-700">Specialty</label>
             <Select
               className="select"
               options={
                 Array.isArray(specialties)
-                  ? specialties.map((especialidad) => ({
-                      value: especialidad.id,
-                      label: t(`specialties.${especialidad.name}`, { defaultValue: especialidad.name }),
+                  ? specialties.map((specialty) => ({
+                      value: specialty.id,
+                      label: t(`specialties.${specialty.name}`, { defaultValue: specialty.name }),
                     }))
                   : []
               }
-              onChange={handleEspecilidadChange}
+              onChange={handleSpecialtyChange}
               value={selectedSpecialty}
               isDisabled={!selectedLocation}
               styles={customStyles}
             />
           </div>
 
-          {/* Selección de Doctor */}
+          {/* Doctor selection */}
           <div className="space-y-2">
             <label className="text-gray-700">Doctor</label>
             <Select
@@ -203,12 +198,12 @@ export function CreateCombination() {
             />
           </div>
 
-          {/* Botón para confirmar la asignación */}
+          {/* Confirm button */}
           <button
             type="button"
             className="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50"
             disabled={!selectedDoctor}
-            onClick={confirmarCombinacion}
+            onClick={confirmCombination}
           >
             Confirmar
           </button>
@@ -224,10 +219,10 @@ export function CreateCombination() {
         {/* Separador */}
         <hr className="my-4 border-gray-300" />
 
-        {/* Lista de combinations */}
+        {/* Combinations list */}
         <div className="bg-white rounded-lg shadow-md p-6">
           <h2 className="text-xl font-semibold mb-4 text-center">
-            Combinaciones Asignadas
+            Asignar Combinación
           </h2>
           
           <div className="mb-4">
@@ -243,32 +238,32 @@ export function CreateCombination() {
           <ul className="space-y-2 max-h-[300px] overflow-y-auto pr-2">
             {combinations &&
               combinations
-                .filter((combinacion) => {
+                .filter((combination) => {
                   const searchTerm = searchFilter.toLowerCase();
-                  const locName = t(`locations.${combinacion.locationName}`, { defaultValue: combinacion.locationName }).toLowerCase();
-                  const specName = t(`specialties.${combinacion.specialtyName}`, { defaultValue: combinacion.specialtyName }).toLowerCase();
-                  const docFullName = `${combinacion.doctorName} ${combinacion.doctorLastName}`.toLowerCase();
+                  const locName = t(`locations.${combination.locationName}`, { defaultValue: combination.locationName }).toLowerCase();
+                  const specName = t(`specialties.${combination.specialtyName}`, { defaultValue: combination.specialtyName }).toLowerCase();
+                  const docFullName = `${combination.doctorName} ${combination.doctorLastName}`.toLowerCase();
                   
                   return locName.includes(searchTerm) || specName.includes(searchTerm) || docFullName.includes(searchTerm);
                 })
-                .map((combinacion) => (
+                .map((combination) => (
                   <li
-                    key={`${combinacion.locationId}-${combinacion.specialtyId}-${combinacion.doctorId}`}
+                    key={`${combination.locationId}-${combination.specialtyId}-${combination.doctorId}`}
                     className="flex justify-between items-center bg-gray-50 border border-gray-200 p-3 rounded-md"
                   >
                     <span className="text-sm text-gray-700">
-                      <strong>{t(`locations.${combinacion.locationName}`, { defaultValue: combinacion.locationName })}</strong> - {t(`specialties.${combinacion.specialtyName}`, { defaultValue: combinacion.specialtyName })} <br/>
-                      <span className="text-gray-500">Doc: {combinacion.doctorName} {combinacion.doctorLastName}</span>
+                      <strong>{t(`locations.${combination.locationName}`, { defaultValue: combination.locationName })}</strong> - {t(`specialties.${combination.specialtyName}`, { defaultValue: combination.specialtyName })} <br/>
+                      <span className="text-gray-500">Doc: {combination.doctorName} {combination.doctorLastName}</span>
                     </span>
                     <div className="flex space-x-4">
-                      {/* Botón de Eliminar */}
+                      {/* Delete button */}
                       <button
                         className="text-red-600 hover:text-red-800"
                         onClick={() =>
-                          handleDeleteCombinacion(
-                            combinacion.locationId,
-                            combinacion.doctorId,
-                            combinacion.specialtyId
+                          handleDeleteCombination(
+                            combination.locationId,
+                            combination.doctorId,
+                            combination.specialtyId
                           )
                         }
                       >
@@ -277,17 +272,17 @@ export function CreateCombination() {
                         </svg>
                       </button>
 
-                      {/* Botón de Agregar Horarios */}
+                      {/* Add/Edit schedules button */}
                       <button
                         className="text-blue-600 hover:text-blue-800"
                         onClick={() => {
                           const data = {
-                            locationId: combinacion.locationId,
-                            specialtyId: combinacion.specialtyId,
-                            doctorId: combinacion.doctorId,
-                            locationName: combinacion.locationName,
-                            specialtyName: combinacion.specialtyName,
-                            doctorFullName: `${combinacion.doctorName} ${combinacion.doctorLastName}`,
+                            locationId: combination.locationId,
+                            specialtyId: combination.specialtyId,
+                            doctorId: combination.doctorId,
+                            locationName: combination.locationName,
+                            specialtyName: combination.specialtyName,
+                            doctorFullName: `${combination.doctorName} ${combination.doctorLastName}`,
                           };
                           navigate('/admin/createSchedules', { state: data });
                         }}
@@ -300,7 +295,7 @@ export function CreateCombination() {
                   </li>
                 ))}
             {combinations && combinations.length === 0 && (
-              <li className="text-center text-gray-500 py-4">No hay combinaciones asignadas.</li>
+              <li className="text-center text-gray-500 py-4">No hay combinaciones asignadas aún.</li>
             )}
           </ul>
         </div>

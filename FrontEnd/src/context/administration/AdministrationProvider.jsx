@@ -1,22 +1,22 @@
 import { AdministrationContext } from './AdministrationContext';
 import {
-  createSede,
-  deleteSede,
+  createLocation as createLocationAPI,
+  deleteLocation as deleteLocationAPI,
   createSpecialty,
   deleteSpecialty,
-  createObraSocial,
-  deleteObraSocial,
-  updateObraSocial,
+  createHealthInsurance as createHealthInsuranceAPI,
+  deleteHealthInsurance as deleteHealthInsuranceAPI,
+  updateHealthInsurance as updateHealthInsuranceAPI,
   createSeEspDoc,
   createDoctor,
   updateDoctor,
   deleteDoctor,
   deleteSeEspDoc,
-  getCombinaciones,
-  createHorarios,
-  replaceHorarios,
-  getHorariosXDoctor,
-  updateHorarios,
+  getCombinations as getCombinationsAPI,
+  createSchedule as createScheduleAPI,
+  replaceSchedules as replaceSchedulesAPI,
+  getSchedulesByDoctor as getSchedulesByDoctorAPI,
+  updateSchedule as updateScheduleAPI,
 } from '../../api/admin.api.js';
 import { useContext, useState } from 'react';
 import { getLocations } from '../../api/locations.api.js';
@@ -47,7 +47,7 @@ export const useAdministration = () => {
 };
 
 const AdministrationProvider = ({ children }) => {
-  const [locations, setLocations] = useState([]); // Estado para almacenar las locations
+  const [locations, setLocations] = useState([]);
   const [specialties, setSpecialties] = useState([]);
   const [healthInsurances, setHealthInsurances] = useState([]);
   const [doctors, setDoctors] = useState([]);
@@ -61,21 +61,19 @@ const AdministrationProvider = ({ children }) => {
 
   async function createNewLocation({ name, address }) {
     try {
-      await createSede({ name, address }); // Llamada a la API
+      await createLocationAPI({ name, address });
     } catch (error) {
       if (error.response) {
-        // Error del servidor o del cliente
         if (error.response.status === 400) {
-          console.error('La sede ya está habilitada.');
+          console.error('Location already exists.');
         } else if (error.response.status === 500) {
-          console.error('Error en el servidor. Inténtalo de nuevo más tarde.');
+          console.error('Server error. Please try again later.');
         } else {
-          console.error('Ocurrió un error inesperado:', error.response.data);
+          console.error('Unexpected error:', error.response.data);
         }
         throw error;
       } else {
-        // Error que no es de respuesta, como problemas de red
-        console.error('Error de red o de conexión:', error);
+        console.error('Network or connection error:', error);
       }
       throw error;
     }
@@ -88,14 +86,14 @@ const AdministrationProvider = ({ children }) => {
 
   async function deleteLocation(locationId) {
     try {
-      await deleteSede(locationId); // Llamada a la API
+      await deleteLocationAPI(locationId);
     } catch (error) {
-      console.error('Error al borrar la sede:', error);
+      console.error('Error deleting location:', error);
       throw error;
     }
   }
 
-  //Especialidad
+  // Specialty
   async function getSpecialtiesFunc({ locationId }) {
     const response = await getSpecialties({ locationId });
     setSpecialties(response.data);
@@ -110,9 +108,9 @@ const AdministrationProvider = ({ children }) => {
   }
   async function deleteSpecialtyFunction(specialtyId) {
     try {
-      await deleteSpecialty(specialtyId); // Llamada a la API
+      await deleteSpecialty(specialtyId);
     } catch (error) {
-      console.error('Error al borrar la especialidad:', error);
+      console.error('Error deleting specialty:', error);
       throw error;
     }
   }
@@ -121,7 +119,7 @@ const AdministrationProvider = ({ children }) => {
     setSpecialties(response.data);
   }
 
-  //Doctor
+  // Doctor
   async function getDoctorsFunc() {
     const response = await getAllDoctors();
     setDoctors(response.data);
@@ -131,23 +129,23 @@ const AdministrationProvider = ({ children }) => {
       const response = await getDoctorByIdAPI(doctorId);
       setDoctor(response.data);
     } catch (error) {
-      console.error('Error al obtener el doctor por ID:', error);
+      console.error('Error fetching doctor by ID:', error);
       throw error;
     }
   }
 
-  async function createDoctorFunction({ dni, appointmentDuration, password }) {
+  async function createDoctorFunction({ nationalId, appointmentDuration, password }) {
     try {
-      await createDoctor({ dni, appointmentDuration, password });
+      await createDoctor({ nationalId, appointmentDuration, password });
     } catch (error) {
-      console.error('Error al obtener las venues:', error);
+      console.error('Error creating doctor:', error);
     }
   }
   async function deleteDoctorFunction(doctorId) {
     try {
       await deleteDoctor(doctorId);
     } catch (error) {
-      console.error('Error al borrar el doctor:', error);
+      console.error('Error deleting doctor:', error);
       throw error;
     }
   }
@@ -164,17 +162,18 @@ const AdministrationProvider = ({ children }) => {
       });
       return response;
     } catch (error) {
-      console.error('Error al actualizar el doctor:', error);
+      console.error('Error updating doctor:', error);
       throw error;
     }
   }
 
-  //Obra Social
+  // Health Insurance
   async function createHealthInsurance({ name }) {
     try {
-      await createObraSocial({ name });
+      await createHealthInsuranceAPI({ name });
     } catch (error) {
-      console.error('Error al obtener las venues:', error);
+      console.error('Error creating health insurance:', error);
+      throw error;
     }
   }
 
@@ -189,24 +188,23 @@ const AdministrationProvider = ({ children }) => {
 
   async function deleteHealthInsurance(healthInsuranceId) {
     try {
-      await deleteObraSocial(healthInsuranceId);
+      await deleteHealthInsuranceAPI(healthInsuranceId);
     } catch (error) {
-      console.error('Error al borrar la obra social:', error);
+      console.error('Error deleting health insurance:', error);
       throw error;
     }
   }
 
   async function updateHealthInsurance({ healthInsuranceId, name }) {
     try {
-      console.log('healthInsuranceId:', healthInsuranceId, 'name:', name);
-      await updateObraSocial({ insuranceId: healthInsuranceId, name });
+      await updateHealthInsuranceAPI({ insuranceId: healthInsuranceId, name });
     } catch (error) {
-      console.error('Error al actualizar la obra social:', error);
+      console.error('Error updating health insurance:', error);
       throw error;
     }
   }
 
-  //Combinaciones de location, especialidad y doctor
+  // Location-specialty-doctor combinations
   async function createLocationSpecialtyDoctor({
     locationId,
     specialtyId,
@@ -219,7 +217,7 @@ const AdministrationProvider = ({ children }) => {
         doctorId,
       });
     } catch (error) {
-      console.error('Error al obtener las locations:', error);
+      console.error('Error creating combination:', error);
       throw error;
     }
   }
@@ -236,33 +234,27 @@ const AdministrationProvider = ({ children }) => {
         specialtyId,
       });
     } catch (error) {
-      console.error(
-        'Error al borrar la combinación de location, especialidad y doctor:',
-        error
-      );
+      console.error('Error deleting location-specialty-doctor combination:', error);
       throw error;
     }
   }
 
   async function getCombinations() {
     try {
-      const response = await getCombinaciones();
+      const response = await getCombinationsAPI();
       setCombinations(response.data);
     } catch (error) {
-      console.error(
-        'Error al obtener las combinations de sede, especialidad y doctor:',
-        error
-      );
+      console.error('Error fetching combinations:', error);
       throw error;
     }
   }
 
-  //Horarios
+  // Schedules
   async function replaceSchedules({ locationId, doctorId, specialtyId, schedules }) {
     try {
-      await replaceHorarios({ locationId, doctorId, specialtyId, schedules });
+      await replaceSchedulesAPI({ locationId, doctorId, specialtyId, schedules });
     } catch (error) {
-      console.error('Error al reemplazar los horarios del doctor:', error);
+      console.error('Error replacing doctor schedules:', error);
       throw error;
     }
   }
@@ -271,112 +263,96 @@ const AdministrationProvider = ({ children }) => {
     locationId,
     doctorId,
     specialtyId,
-    dia,
-    hora_inicio,
-    hora_fin,
+    day,
+    startTime,
+    endTime,
     status,
   }) {
     try {
-      console.log(
-        'data:',
+      await createScheduleAPI({
         locationId,
         doctorId,
         specialtyId,
-        dia,
-        hora_inicio,
-        hora_fin,
-        status
-      );
-      await createHorarios({
-        locationId,
-        doctorId,
-        specialtyId,
-        day: dia,
-        startTime: hora_inicio,
-        endTime: hora_fin,
+        day,
+        startTime,
+        endTime,
         status,
       });
     } catch (error) {
-      console.error('Error al crear el horario:', error);
+      console.error('Error creating schedule:', error);
     }
   }
   async function updateSchedules({
     locationId,
     doctorId,
     specialtyId,
-    dia,
-    hora_inicio,
-    hora_fin,
+    day,
+    startTime,
+    endTime,
     status,
   }) {
     try {
-      await updateHorarios({
+      await updateScheduleAPI({
         locationId,
         doctorId,
         specialtyId,
-        day: dia,
-        startTime: hora_inicio,
-        endTime: hora_fin,
+        day,
+        startTime,
+        endTime,
         status,
       });
     } catch (error) {
-      console.error('Error al actualizar el horario:', error);
+      console.error('Error updating schedule:', error);
     }
   }
   async function getDoctorSchedules({ locationId, specialtyId, doctorId }) {
     try {
-      const response = await getHorariosXDoctor({
+      const response = await getSchedulesByDoctorAPI({
         locationId,
         specialtyId,
         doctorId,
       });
       const normalizedSchedules = (response?.data || []).map((schedule) => ({
         ...schedule,
-        dia: schedule.dia ?? schedule.day,
-        hora_inicio: schedule.hora_inicio ?? schedule.startTime,
-        hora_fin: schedule.hora_fin ?? schedule.endTime,
+        day: schedule.day ?? schedule.dia,
+        startTime: schedule.startTime ?? schedule.hora_inicio,
+        endTime: schedule.endTime ?? schedule.hora_fin,
       }));
       setDoctorSchedules(normalizedSchedules);
     } catch (error) {
-      console.error('Error al obtener los schedules del doctor:', error);
+      console.error('Error fetching doctor schedules:', error);
       if (error.response && error.response.status === 404) {
-        setDoctorSchedules([]); // Establecer schedules a vacío
+        setDoctorSchedules([]);
       }
-
-      // Si hay otro tipo de error, lo lanzamos para que se maneje más arriba
       throw error;
     }
   }
 
   //Usuario
 
-  async function getUserByDni(dni) {
+  async function getUserByDni(nationalId) {
     try {
-      const response = await getUserDni({ dni });
+      const response = await getUserDni({ nationalId });
       setUser(response.data);
-      console.log('Paciente encontrado:', response.data);
     } catch (error) {
-      console.error('Error al obtener el patient por DNI:', error);
+      console.error('Error fetching user by national ID:', error);
       throw error;
     }
   }
 
   async function createUserFunction(data) {
-    console.log('data:', data);
     const response = await createUserAPI(data);
     setUser(response.data);
   }
   async function updateUserFunction(data) {
     try {
-      console.log('Datos enviados para actualizar user:', data);
       const response = await updateUserAPI(data);
-      console.log('Usuario actualizado:', response?.data);
       return response;
     } catch (error) {
-      console.error('Error al actualizar el user:', error);
+      console.error('Error updating user:', error);
       console.error('Error status:', error.response?.status);
       console.error('Error data:', error.response?.data);
-      throw error; // Re-lanzar el error para que pueda ser manejado en el componente
+      throw error;
     }
   }
   return (

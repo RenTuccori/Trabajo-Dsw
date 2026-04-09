@@ -66,7 +66,6 @@ const startServer = async () => {
     await sequelize.authenticate();
     app.listen(PORT, () => {
       // eslint-disable-next-line no-console
-      console.log(`Server is running on PORT ${PORT}`);
     });
   } catch (error) {
     // eslint-disable-next-line no-console

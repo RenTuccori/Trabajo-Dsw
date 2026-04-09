@@ -11,7 +11,7 @@ import { useAuth } from '../context/global/AuthProvider.jsx';
 import { USER_TYPES } from '../constants/userTypes.js';
 
 export function DoctorsRoutes() {
-  const { rol } = useAuth();
+  const { role } = useAuth();
   return (
     <DoctorsProvider>
       <Routes>
@@ -19,7 +19,7 @@ export function DoctorsRoutes() {
         <Route
           path="/appointmentHistory"
           element={
-            <Validation rol={rol} expected={USER_TYPES.DOCTOR}>
+            <Validation role={role} expected={USER_TYPES.DOCTOR}>
               <ProtectedRoute requiredRole={USER_TYPES.DOCTOR}>
                 <HistoricalAppointments />
               </ProtectedRoute>
@@ -29,7 +29,7 @@ export function DoctorsRoutes() {
         <Route
           path="/todayAppointments"
           element={
-            <Validation rol={rol} expected={USER_TYPES.DOCTOR}>
+            <Validation role={role} expected={USER_TYPES.DOCTOR}>
               <ProtectedRoute requiredRole={USER_TYPES.DOCTOR}>
                 <TodayAppointments />
               </ProtectedRoute>
@@ -39,7 +39,7 @@ export function DoctorsRoutes() {
         <Route
           path="/appointmentsByDate"
           element={
-            <Validation rol={rol} expected={USER_TYPES.DOCTOR}>
+            <Validation role={role} expected={USER_TYPES.DOCTOR}>
               <ProtectedRoute requiredRole={USER_TYPES.DOCTOR}>
                 <AppointmentsByDate />
               </ProtectedRoute>
@@ -49,7 +49,7 @@ export function DoctorsRoutes() {
         <Route
           path="/uploadStudy"
           element={
-            <Validation rol={rol} expected={USER_TYPES.DOCTOR}>
+            <Validation role={role} expected={USER_TYPES.DOCTOR}>
               <ProtectedRoute requiredRole={USER_TYPES.DOCTOR}>
                 <UploadStudy />
               </ProtectedRoute>

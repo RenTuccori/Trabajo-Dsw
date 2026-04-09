@@ -17,15 +17,15 @@ export function CreateDoctor() {
     deleteDoctor,
   } = useAdministration();
 
-  const [dni, setDni] = useState('');
-  const [appointmentDuration, setDuracionTurno] = useState('');
-  const [password, setContra] = useState('');
-  const [usuarioExistente, setUsuarioExistente] = useState(false);
-  const [formularioVisible, setFormularioVisible] = useState(false);
-  const [selectedObraSociales, setSelectedObraSociales] = useState(null);
+  const [nationalId, setNationalId] = useState('');
+  const [appointmentDuration, setAppointmentDuration] = useState('');
+  const [password, setPassword] = useState('');
+  const [existingUser, setExistingUser] = useState(false);
+  const [formVisible, setFormVisible] = useState(false);
+  const [selectedInsurance, setSelectedInsurance] = useState(null);
 
   const [formData, setFormData] = useState({
-    dni: '',
+    nationalId: '',
     birthDate: '',
     name: '',
     lastName: '',
@@ -49,90 +49,86 @@ export function CreateDoctor() {
     });
   };
 
-  const handleObraSocialChange = (selectedOption) => {
-    setSelectedObraSociales(selectedOption);
+  const handleInsuranceChange = (selectedOption) => {
+    setSelectedInsurance(selectedOption);
     setFormData({ ...formData, healthInsuranceId: selectedOption.value });
   };
 
-  const handleBuscarDNI = async (e) => {
+  const handleSearchByNationalId = async (e) => {
     e.preventDefault();
-    if (dni.trim() !== '') {
+    if (nationalId.trim() !== '') {
       try {
-        await getUserByDni(dni);
+        await getUserByDni(nationalId);
         if (user.length !== 0) {
-          setUsuarioExistente(true);
+          setExistingUser(true);
           window.notifySuccess(
-            'Usuario encontrado, continúe con los siguientes pasos.'
+            'Usuario encontrado, proceda con los siguientes pasos.'
           );
         } else {
-          setUsuarioExistente(false);
+          setExistingUser(false);
           window.notifyError(
             'Usuario no encontrado, complete los datos para crear uno nuevo.'
           );
         }
-        setFormularioVisible(true); // Muestra el formulario después de la búsqueda
+        setFormVisible(true);
       } catch (error) {
         if (error.response && error.response.status === 404) {
-          // Si es un error 404, significa que no existe el user, continuar como nuevo
-          setUsuarioExistente(false);
+          setExistingUser(false);
           window.notifyError(
             'Usuario no encontrado, complete los datos para crear uno nuevo.'
           );
-          setFormularioVisible(true);
+          setFormVisible(true);
         } else {
-          window.notifyError('Error al buscar el user');
-          console.error('Error al buscar user:', error);
+          window.notifyError('Error al buscar usuario');
+          console.error('Error al buscar usuario:', error);
         }
       }
     } else {
-      window.notifyError('Ingrese un DNI válido');
+      window.notifyError('Por favor ingrese un DNI válido');
     }
   };
 
   const handlecreateDoctor = async (e) => {
     e.preventDefault();
     if (appointmentDuration.trim() !== '') {
-      if (!usuarioExistente && password.trim() === '') {
-        window.notifyError('Complete todos los campos');
+      if (!existingUser && password.trim() === '') {
+        window.notifyError('Por favor complete todos los campos');
         return;
       }
       try {
-        if (!usuarioExistente) {
+        if (!existingUser) {
           await createUser({
             ...formData,
-            dni, // Agregar el dni al nuevo user
-            password, // Password para el usuario
+            nationalId,
+            password,
           });
         }
-        await createDoctor({ dni, appointmentDuration });
-        window.notifySuccess('¡Doctor creado con éxito!');
+        await createDoctor({ nationalId, appointmentDuration });
+        window.notifySuccess('¡Doctor creado exitosamente!');
         navigate('/admin');
       } catch (error) {
         window.notifyError('Error al crear el doctor');
-        console.error('Error al crear doctor:', error);
+        console.error('Error al crear el doctor:', error);
       }
     } else {
-      window.notifyError('Complete todos los campos');
+      window.notifyError('Por favor complete todos los campos');
     }
   };
 
   const handleDelete = async (doctorId) => {
     try {
       await deleteDoctor(doctorId);
-      window.notifySuccess(`Doctor con ID ${doctorId} borrado.`);
-      // Actualiza la lista de doctors
+      window.notifySuccess(`Doctor con ID ${doctorId} eliminado.`);
       await getDoctors();
     } catch (error) {
-      window.notifyError(`Error al borrar el doctor con ID ${doctorId}`);
-      console.error(`Error al borrar el doctor con ID ${doctorId}:`, error);
+      window.notifyError(`Error al eliminar el doctor con ID ${doctorId}`);
+      console.error(`Error al eliminar el doctor con ID ${doctorId}:`, error);
     }
   };
 
   const handleUpdate = async (doctorId) => {
     try {
-      // Redirigir a un formulario de actualización de doctor con el ID del doctor
       navigate(`/admin/updateDoctor/${doctorId}`);
-      // Después de actualizar, recargar la lista de doctors
       await getDoctors();
     } catch (error) {
       window.notifyError(`Error al actualizar el doctor con ID ${doctorId}`);
@@ -143,16 +139,16 @@ export function CreateDoctor() {
   return (
     <div className="min-h-[calc(100vh-88px)] bg-gradient-to-b from-blue-100 to-white flex items-center justify-center p-4">
       <div className="bg-white rounded-lg shadow-md w-full max-w-md p-6 space-y-4">
-        {!formularioVisible && (
-          <form onSubmit={handleBuscarDNI} className="space-y-4">
+        {!formVisible && (
+          <form onSubmit={handleSearchByNationalId} className="space-y-4">
             <div>
               <p className="text-center text-gray-600 text-lg">
-                Por favor, ingresa el DNI del doctor que quieres crear
+                Por favor ingrese el DNI del médico que desea crear
               </p>
               <input
                 type="text"
-                value={dni}
-                onChange={(e) => setDni(e.target.value)}
+                value={nationalId}
+                onChange={(e) => setNationalId(e.target.value)}
                 className="w-full p-2 border border-gray-300 rounded-lg"
                 required
               />
@@ -161,18 +157,16 @@ export function CreateDoctor() {
               type="submit"
               className="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition-colors"
             >
-              Buscar user
+              Buscar usuario
             </button>
           </form>
         )}
-        {formularioVisible && (
+        {formVisible && (
           <>
-            {!usuarioExistente && (
+            {!existingUser && (
               <form onSubmit={handlecreateDoctor} className="space-y-4">
                 <div>
-                  <p className="text-center text-gray-600 text-lg">
-                    Fecha de nacimiento
-                  </p>
+                  <p className="text-center text-gray-600 text-lg">Fecha de nacimiento</p>
                   <input
                     type="date"
                     name="birthDate"
@@ -239,26 +233,26 @@ export function CreateDoctor() {
                 </div>
                 <div>
                   <p className="text-center text-gray-600 text-lg">
-                    Obra social
+                    Obra Social
                   </p>
                   <Select
-                      options={healthInsurances.map((obrasocial) => ({
-                        value: obrasocial.id,
-                        label: obrasocial.name,
+                      options={healthInsurances.map((insurance) => ({
+                        value: insurance.id,
+                        label: insurance.name,
                       }))}
-                    onChange={handleObraSocialChange}
-                    value={selectedObraSociales}
+                    onChange={handleInsuranceChange}
+                    value={selectedInsurance}
                     className="react-select"
                   />
                 </div>
                 <div>
                   <p className="text-center text-gray-600 text-lg">
-                    Duración del appointment (en minutos)
+                    Duración del turno (minutos)
                   </p>
                   <input
                     type="text"
                     value={appointmentDuration}
-                    onChange={(e) => setDuracionTurno(e.target.value)}
+                    onChange={(e) => setAppointmentDuration(e.target.value)}
                     className="w-full p-2 border border-gray-300 rounded-lg"
                     required
                   />
@@ -270,7 +264,7 @@ export function CreateDoctor() {
                   <input
                     type="password"
                     value={password}
-                    onChange={(e) => setContra(e.target.value)}
+                    onChange={(e) => setPassword(e.target.value)}
                     className="w-full p-2 border border-gray-300 rounded-lg"
                     required
                   />
@@ -279,18 +273,18 @@ export function CreateDoctor() {
                   type="submit"
                   className="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition-colors"
                 >
-                  Crear doctor
+                  Crear médico
                 </button>
               </form>
             )}
 
-            {usuarioExistente && (
+            {existingUser && (
               <form onSubmit={handlecreateDoctor} className="space-y-4">
                 <input
                   type="text"
-                  placeholder="Duración del appointment (en minutos)"
+                  placeholder="Duración del turno (minutos)"
                   value={appointmentDuration}
-                  onChange={(e) => setDuracionTurno(e.target.value)}
+                  onChange={(e) => setAppointmentDuration(e.target.value)}
                   className="w-full p-2 border border-gray-300 rounded-lg"
                   required
                 />
@@ -298,7 +292,7 @@ export function CreateDoctor() {
                   type="submit"
                   className="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition-colors"
                 >
-                  Crear doctor
+                  Crear médico
                 </button>
               </form>
             )}
@@ -314,7 +308,7 @@ export function CreateDoctor() {
         </button>
 
         <h3 className="text-lg font-medium text-gray-800 mt-6">
-          Doctores creados
+          Médicos existentes
         </h3>
         <ul className="space-y-2">
           {doctors.length > 0 ? (
@@ -344,7 +338,7 @@ export function CreateDoctor() {
             ))
           ) : (
             <p className="text-center text-gray-600">
-              No hay doctors creados aún.
+            No hay médicos creados aún.
             </p>
           )}
         </ul>

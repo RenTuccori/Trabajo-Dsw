@@ -41,8 +41,6 @@ export function BookAppointment() {
   }, []);
 
   useEffect(() => {
-    console.log('🔄 FRONTEND - Especialidades actualizadas:', specialties);
-    console.log('📊 FRONTEND - Número de especialidades:', specialties?.length || 0);
   }, [specialties]);
 
   const customStyles = {
@@ -73,41 +71,30 @@ export function BookAppointment() {
   };
 
   const handleLocationChange = async (selectedOption) => {
-    console.log('🏢 FRONTEND - handleLocationChange: Localidad seleccionada:', selectedOption);
     setSelectedLocation(selectedOption);
     setSelectedSpecialty(null);
     setSelectedDoctor(null);
     
     // Configurar el locationId cuando se selecciona la localidad
     if (selectedOption) {
-      console.log('🆔 FRONTEND - Configurando locationId:', selectedOption.value);
       setLocationId(selectedOption.value);
     }
     
     if (selectedOption) {
-      console.log('📞 FRONTEND - Obteniendo especialidades para localidad:', selectedOption.value);
       await getSpecialties({ locationId: selectedOption.value });
-      console.log('📋 FRONTEND - Especialidades después de la llamada:', specialties);
     }
   };
 
-  const handleEspecilidadChange = async (selectedOption) => {
-    console.log('🩺 FRONTEND - handleEspecilidadChange: Especialidad seleccionada:', selectedOption);
-    console.log('🏢 FRONTEND - Localidad actual:', selectedLocation);
+  const handleSpecialtyChange = async (selectedOption) => {
     setSelectedSpecialty(selectedOption);
     setSelectedDoctor(null);
     
     // Configurar el specialtyId cuando se selecciona la especialidad
     if (selectedOption) {
-      console.log('🆔 FRONTEND - Configurando specialtyId:', selectedOption.value);
       setSpecialtyId(selectedOption.value);
     }
     
     if (selectedLocation && selectedOption) {
-      console.log('📞 FRONTEND - Obteniendo doctores para localidad y especialidad:', {
-        locationId: selectedLocation.value,
-        specialtyId: selectedOption.value
-      });
       await getDoctors({
         locationId: selectedLocation.value,
         specialtyId: selectedOption.value,
@@ -116,46 +103,18 @@ export function BookAppointment() {
   };
 
   const handleDoctorChange = async (selectedOption) => {
-    console.log('👨‍⚕️ FRONTEND - handleDoctorChange: Doctor seleccionado:', selectedOption);
-    console.log('🏢 FRONTEND - Localidad actual:', selectedLocation);
-    console.log('🩺 FRONTEND - Especialidad actual:', selectedSpecialty);
     setSelectedDoctor(selectedOption);
     setSelectedDate(null);
     
     // Configurar el doctorId cuando se selecciona el doctor
     if (selectedOption) {
-      console.log('🆔 FRONTEND - Configurando doctorId:', selectedOption.value);
       setDoctorId(selectedOption.value);
     }
     
     if (selectedLocation && selectedOption && selectedSpecialty) {
-      console.log('📞 FRONTEND - Obteniendo fechas para doctor, especialidad y localidad');
       await getDates({ selectedOption, selectedSpecialty, selectedLocation });
-      console.log('📅 FRONTEND - Fechas obtenidas:', dates);
     }
   };
-
-  /* const isDateAvailable = (date) => {
-        const result = dates.some(f =>
-            f.getFullYear() === date.getFullYear() &&
-            f.getMonth() === date.getMonth() &&
-            f.getDate() === (date.getDate() - 1)
-        );
-        return result;
-    };
-
-
-    const handleFechaChange = async (date) => {
-        const year = date.getFullYear();
-        const month = (date.getMonth() + 1).toString().padStart(2, '0'); // Meses empiezan desde 0
-        const day = (date.getDate()).toString().padStart(2, '0');
-        date = `${year}-${month}-${day}`;
-        setSelectedDate(date);
-        setSelectedSchedule(null);
-        if (selectedLocation && date && selectedSpecialty && selectedDoctor) {
-            getSchedules({ selectedDoctor, selectedSpecialty, selectedLocation, date });
-        }
-    };*/
 
   const isDateAvailable = (date) => {
     // Aseguramos que la hora esté en 00:00 para evitar desfases invisibles
@@ -198,10 +157,9 @@ export function BookAppointment() {
     }
   };
 
-  const handleHorarioChange = (selectedOption) => {
+  const handleScheduleChange = (selectedOption) => {
     setSelectedSchedule(selectedOption);
     setDateAndTime(`${formattedDate} ${selectedOption.value}`);
-    console.log(`${formattedDate} ${selectedOption.value}`);
     setDoctorId(selectedDoctor.value);
     setSpecialtyId(selectedSpecialty.value);
     setLocationId(selectedLocation.value);
@@ -214,11 +172,10 @@ export function BookAppointment() {
     <form className="min-h-[calc(100vh-88px)] bg-gradient-to-b from-blue-100 to-white flex items-center justify-center p-4">
       <div className="bg-white rounded-lg shadow-md w-full max-w-md p-6 space-y-4">
         <div className="space-y-4">
-          <p className="text-center text-gray-600 text-lg">{t('labels.location', { defaultValue: 'Localidad' })}</p>
+          <p className="text-center text-gray-600 text-lg">{t('labels.location', { defaultValue: 'Location' })}</p>
           <Select
             className="react-select"
             options={(locations || []).map((location) => {
-              console.log('🏢 FRONTEND - Mapeando localidad:', location);
               return {
                 value: location.id || location.locationId || location.idSite,
                 label: t(`locations.${location.name}`, { defaultValue: location.name }),
@@ -227,29 +184,27 @@ export function BookAppointment() {
             onChange={handleLocationChange}
             value={selectedLocation}
             styles={customStyles}
-            placeholder="Seleccionar..."
+            placeholder="Select..."
           />
-          <p className="text-center text-gray-600 text-lg">{t('labels.specialty', { defaultValue: 'Especialidad' })}</p>
+          <p className="text-center text-gray-600 text-lg">{t('labels.specialty', { defaultValue: 'Specialty' })}</p>
           <Select
             className="react-select"
-            options={(specialties || []).map((especialidad) => {
-              console.log('🩺 FRONTEND - Mapeando especialidad:', especialidad);
+            options={(specialties || []).map((specialty) => {
               return {
-                value: especialidad.id || especialidad.specialtyId || especialidad.idSpecialty,
-                label: t(`specialties.${especialidad.name}`, { defaultValue: especialidad.name }),
+                value: specialty.id || specialty.specialtyId || specialty.idSpecialty,
+                label: t(`specialties.${specialty.name}`, { defaultValue: specialty.name }),
               };
             })}
-            onChange={handleEspecilidadChange}
+            onChange={handleSpecialtyChange}
             value={selectedSpecialty}
             isDisabled={!selectedLocation}
             styles={customStyles}
-            placeholder="Seleccionar..."
+            placeholder="Select..."
           />
-          <p className="text-center text-gray-600 text-lg">{t('labels.doctors', { defaultValue: 'Doctores' })}</p>
+          <p className="text-center text-gray-600 text-lg">{t('labels.doctors', { defaultValue: 'Doctors' })}</p>
           <Select
             className="react-select"
             options={(doctors || []).map((doctor) => {
-              console.log('👨‍⚕️ FRONTEND - Mapeando doctor:', doctor);
               return {
                 value: doctor.doctorId || doctor.idDoctor,
                 label: doctor.fullName || doctor.nombreyapellido,
@@ -259,15 +214,15 @@ export function BookAppointment() {
             onChange={handleDoctorChange}
             isDisabled={!selectedSpecialty}
             styles={customStyles}
-            placeholder="Seleccionar..."
+            placeholder="Select..."
           />
-          <p className="text-center text-gray-600 text-lg">{t('labels.date', { defaultValue: 'Fecha' })}</p>
+          <p className="text-center text-gray-600 text-lg">{t('labels.date', { defaultValue: 'Date' })}</p>
           <div className="w-full react-datepicker-wrapper-custom">
             <DatePicker
               selected={selectedDate}
               onChange={handleFechaChange}
               filterDate={isDateAvailable}
-              placeholderText="Seleccionar..."
+              placeholderText="Select..."
               className="w-full border border-[#1e40af] rounded-[0.375rem] px-[8px] py-[8px] shadow-[0_0_0_1px_rgba(29,78,216,0.1)] focus:outline-none text-[#1e40af] placeholder-[#a0aabf] bg-white box-border h-[46px] leading-tight"
               disabled={!selectedDoctor} // Deshabilitar si no hay doctor seleccionado
               dateFormat="yyyy-MM-dd" // Formato consistente
@@ -279,18 +234,18 @@ export function BookAppointment() {
               width: 100%;
             }
           `}</style>
-          <p className="text-center text-gray-600 text-lg">{t('labels.time', { defaultValue: 'Horario' })}</p>
+          <p className="text-center text-gray-600 text-lg">{t('labels.time', { defaultValue: 'Schedule' })}</p>
           <Select
             className="react-select"
-            options={(schedules || []).map((horario) => ({
-              value: horario.startTime,
-              label: horario.startTime,
+            options={(schedules || []).map((schedule) => ({
+              value: schedule.startTime,
+              label: schedule.startTime,
             }))}
-            onChange={handleHorarioChange}
+            onChange={handleScheduleChange}
             value={selectedSchedule}
             isDisabled={!selectedDate}
             styles={customStyles}
-            placeholder="Seleccionar..."
+            placeholder="Select..."
           />
         </div>
         <button
@@ -299,14 +254,14 @@ export function BookAppointment() {
           onClick={() => navigate('/patient/appointmentConfirmation')}
           className="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50"
         >
-          {t('labels.continue', { defaultValue: 'Continuar' })}
+          {t('labels.continue', { defaultValue: 'Continue' })}
         </button>
         <button
           type="button"
           onClick={() => navigate('/patient')}
           className="w-full bg-gray-200 text-gray-700 py-2 rounded-lg hover:bg-gray-300 transition-colors"
         >
-          {t('labels.back', { defaultValue: 'Volver' })}
+          {t('labels.back', { defaultValue: 'Back' })}
         </button>
       </div>
     </form>

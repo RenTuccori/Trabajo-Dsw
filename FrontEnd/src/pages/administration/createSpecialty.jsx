@@ -20,23 +20,23 @@ export function CreateSpecialty() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // Manejar la creación de una nueva especialidad
-  const handlecreateSpecialty = async (e) => {
+  // Handle creation of a new specialty
+  const handleCreateSpecialty = async (e) => {
     e.preventDefault();
     if (specialtyName.trim() !== '') {
       try {
         await createSpecialty({ name: specialtyName });
-        setSpecialtyName(''); // Reiniciar el campo de texto
+        setSpecialtyName('');
         window.notifySuccess('¡Especialidad creada con éxito!');
-        getAvailableSpecialties(); // Actualizar la lista después de crear una especialidad
+        getAvailableSpecialties();
       } catch (error) {
         window.notifyError('Error al crear la especialidad');
-        console.error('Error al crear especialidad:', error);
+        console.error('Error creating specialty:', error);
       }
     }
   };
 
-  const handleBorrarEspecialidad = async (specialtyId) => {
+  const handleDeleteSpecialty = async (specialtyId) => {
     const result = await window.confirmDialog(
       '¿Está seguro?',
       'Esta acción no se puede deshacer.'
@@ -46,7 +46,7 @@ export function CreateSpecialty() {
       try {
         await deleteSpecialty(specialtyId);
         window.notifySuccess('¡Especialidad eliminada con éxito!');
-        getAvailableSpecialties(); // Actualizar la lista después de borrar una especialidad
+        getAvailableSpecialties();
       } catch (error) {
         window.notifyError('Error al eliminar la especialidad');
         console.error('Error al borrar especialidad:', error);
@@ -61,10 +61,10 @@ export function CreateSpecialty() {
           Crear nueva especialidad
         </h2>
 
-        <form onSubmit={handlecreateSpecialty} className="space-y-4">
+        <form onSubmit={handleCreateSpecialty} className="space-y-4">
           <input
             type="text"
-            placeholder="Nombre de la especialidad"
+              placeholder="Nombre de la especialidad"
             value={specialtyName}
             onChange={(e) => setSpecialtyName(e.target.value)}
             className="w-full p-2 border border-gray-300 rounded-lg"
@@ -90,16 +90,16 @@ export function CreateSpecialty() {
         </h3>
         <ul className="space-y-2">
           {specialties.length > 0 ? (
-            specialties.map((especialidad) => (
+            specialties.map((specialty) => (
               <li
-                key={especialidad.id}
+                key={specialty.id}
                 className="bg-gray-100 p-4 rounded-lg flex justify-between items-center"
               >
                 <span>
-                  <strong>{t(`specialties.${especialidad.name}`, especialidad.name)}</strong>
+                  <strong>{t(`specialties.${specialty.name}`, specialty.name)}</strong>
                 </span>
                 <button
-                  onClick={() => handleBorrarEspecialidad(especialidad.id)}
+                  onClick={() => handleDeleteSpecialty(specialty.id)}
                   className="text-red-600 hover:text-red-800"
                 >
                   Eliminar
