@@ -49,17 +49,20 @@ export const createStudy = async (req, res) => {
     }
 
     const uploadDate = new Date();
-    const fileName = req.file.originalname;
+    
+    // Corregir codificación de caracteres especiales (ej: tildes, ñ)
+    const finalFileName = Buffer.from(req.file.originalname, 'latin1').toString('utf8');
+
     const filePath = req.file.path;
 
     const study = await studiesService.createStudy({
-      patientId, doctorId, performanceDate, uploadDate, fileName, filePath, description,
+      patientId, doctorId, performanceDate, uploadDate, fileName: finalFileName, filePath, description,
     });
 
     res.status(201).json({
       message: 'Study uploaded successfully',
       id: study.id,
-      fileName,
+      fileName: finalFileName,
       uploadDate,
     });
   } catch (error) {
