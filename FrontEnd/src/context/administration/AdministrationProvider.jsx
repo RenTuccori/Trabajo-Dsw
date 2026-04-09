@@ -14,6 +14,7 @@ import {
   deleteSeEspDoc,
   getCombinaciones,
   createHorarios,
+  replaceHorarios,
   getHorariosXDoctor,
   updateHorarios,
 } from '../../api/admin.api.js';
@@ -257,6 +258,15 @@ const AdministrationProvider = ({ children }) => {
   }
 
   //Horarios
+  async function replaceSchedules({ locationId, doctorId, specialtyId, schedules }) {
+    try {
+      await replaceHorarios({ locationId, doctorId, specialtyId, schedules });
+    } catch (error) {
+      console.error('Error al reemplazar los horarios del doctor:', error);
+      throw error;
+    }
+  }
+
   async function createSchedules({
     locationId,
     doctorId,
@@ -418,6 +428,7 @@ const AdministrationProvider = ({ children }) => {
         getDoctorById,
         doctor,
         createSchedules,
+        replaceSchedules,
         getDoctorSchedules,
         doctorSchedules,
         updateSchedules,

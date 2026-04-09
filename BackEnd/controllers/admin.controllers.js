@@ -47,6 +47,16 @@ export const getCombinations = async (req, res) => {
   }
 };
 
+export const replaceSchedulesController = async (req, res) => {
+  try {
+    const { locationId, doctorId, specialtyId, schedules } = req.body;
+    await adminService.replaceSchedules(locationId, doctorId, specialtyId, schedules);
+    res.json({ message: 'Schedules reemplazados con éxito' });
+  } catch (error) {
+    return res.status(500).json({ message: error.message });
+  }
+};
+
 export const createSchedule = async (req, res) => {
   try {
     const schedule = await adminService.createNewSchedule(req.body);

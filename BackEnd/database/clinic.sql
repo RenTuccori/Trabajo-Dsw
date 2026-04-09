@@ -211,11 +211,11 @@ CREATE TABLE `doctors` (
 LOCK TABLES `doctors` WRITE;
 /*!40000 ALTER TABLE `doctors` DISABLE KEYS */;
 INSERT INTO `doctors` VALUES
-  (1,12345678,30,'password123','Enabled'),
-  (2,23456789,45,'password123','Enabled'),
-  (3,34567890,30,'password123','Enabled'),
-  (4,45678901,60,'password123','Enabled'),
-  (5,56789012,30,'password123','Enabled');
+  (1,12345678,30,'Enabled'),
+  (2,23456789,45,'Enabled'),
+  (3,34567890,30,'Enabled'),
+  (4,45678901,60,'Enabled'),
+  (5,56789012,30,'Enabled');
 /*!40000 ALTER TABLE `doctors` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -455,19 +455,19 @@ CREATE TABLE `users` (
 LOCK TABLES `users` WRITE;
 /*!40000 ALTER TABLE `users` DISABLE KEYS */;
 INSERT INTO `users` VALUES
-  (12345678,'1980-05-15','Carlos','Rodriguez','1134567890','carlos.rodriguez@hospital.com','Av. Santa Fe 1000',2),
-  (23456789,'1975-08-22','Maria','Gonzalez','1145678901','maria.gonzalez@hospital.com','Av. Callao 500',3),
-  (34567890,'1982-12-10','Juan','Lopez','1156789012','juan.lopez@hospital.com','Av. Corrientes 800',4),
-  (45678901,'1978-03-18','Ana','Martinez','1167890123','ana.martinez@hospital.com','Av. 9 de Julio 200',2),
-  (56789012,'1985-11-25','Roberto','Silva','1178901234','roberto.silva@hospital.com','Av. Las Heras 300',3),
-  (87654321,'1990-01-15','Laura','Fernandez','1198765432','laura.fernandez@email.com','Calle Falsa 123',2),
-  (76543210,'1985-06-20','Diego','Perez','1187654321','diego.perez@email.com','Av. Belgrano 456',3),
-  (65432109,'1992-09-12','Sofia','Torres','1176543210','sofia.torres@email.com','San Martin 789',4),
-  (54321098,'1988-04-08','Martin','Ruiz','1165432109','martin.ruiz@email.com','Mitre 321',5),
-  (43210987,'1995-12-03','Valentina','Morales','1154321098','valentina.morales@email.com','Sarmiento 654',1),
-  (32109876,'1983-07-28','Fernando','Castro','1143210987','fernando.castro@email.com','Alsina 987',2),
-  (21098765,'1991-10-17','Camila','Ramos','1132109876','camila.ramos@email.com','Tucuman 159',3),
-  (10987654,'1987-02-14','Alejandro','Vega','1121098765','alejandro.vega@email.com','Entre Rios 753',4);
+  (12345678,'$2b$10$WOFx0innOOhtvyMGo6eI../bmtbEuSf8WB6FHJsQy0oAJ18aU2uoa','1980-05-15','Carlos','Rodriguez','1134567890','carlos.rodriguez@hospital.com','Av. Santa Fe 1000',2),
+  (23456789,'$2b$10$WOFx0innOOhtvyMGo6eI../bmtbEuSf8WB6FHJsQy0oAJ18aU2uoa','1975-08-22','Maria','Gonzalez','1145678901','maria.gonzalez@hospital.com','Av. Callao 500',3),
+  (34567890,'$2b$10$WOFx0innOOhtvyMGo6eI../bmtbEuSf8WB6FHJsQy0oAJ18aU2uoa','1982-12-10','Juan','Lopez','1156789012','juan.lopez@hospital.com','Av. Corrientes 800',4),
+  (45678901,'$2b$10$WOFx0innOOhtvyMGo6eI../bmtbEuSf8WB6FHJsQy0oAJ18aU2uoa','1978-03-18','Ana','Martinez','1167890123','ana.martinez@hospital.com','Av. 9 de Julio 200',2),
+  (56789012,'$2b$10$WOFx0innOOhtvyMGo6eI../bmtbEuSf8WB6FHJsQy0oAJ18aU2uoa','1985-11-25','Roberto','Silva','1178901234','roberto.silva@hospital.com','Av. Las Heras 300',3),
+  (87654321,'$2b$10$WOFx0innOOhtvyMGo6eI../bmtbEuSf8WB6FHJsQy0oAJ18aU2uoa','1990-01-15','Laura','Fernandez','1198765432','laura.fernandez@email.com','Calle Falsa 123',2),
+  (76543210,'$2b$10$WOFx0innOOhtvyMGo6eI../bmtbEuSf8WB6FHJsQy0oAJ18aU2uoa','1985-06-20','Diego','Perez','1187654321','diego.perez@email.com','Av. Belgrano 456',3),
+  (65432109,'$2b$10$WOFx0innOOhtvyMGo6eI../bmtbEuSf8WB6FHJsQy0oAJ18aU2uoa','1992-09-12','Sofia','Torres','1176543210','sofia.torres@email.com','San Martin 789',4),
+  (54321098,'$2b$10$WOFx0innOOhtvyMGo6eI../bmtbEuSf8WB6FHJsQy0oAJ18aU2uoa','1988-04-08','Martin','Ruiz','1165432109','martin.ruiz@email.com','Mitre 321',5),
+  (43210987,'$2b$10$WOFx0innOOhtvyMGo6eI../bmtbEuSf8WB6FHJsQy0oAJ18aU2uoa','1995-12-03','Valentina','Morales','1154321098','valentina.morales@email.com','Sarmiento 654',1),
+  (32109876,'$2b$10$WOFx0innOOhtvyMGo6eI../bmtbEuSf8WB6FHJsQy0oAJ18aU2uoa','1983-07-28','Fernando','Castro','1143210987','fernando.castro@email.com','Alsina 987',2),
+  (21098765,'$2b$10$WOFx0innOOhtvyMGo6eI../bmtbEuSf8WB6FHJsQy0oAJ18aU2uoa','1991-10-17','Camila','Ramos','1132109876','camila.ramos@email.com','Tucuman 159',3),
+  (10987654,'$2b$10$WOFx0innOOhtvyMGo6eI../bmtbEuSf8WB6FHJsQy0oAJ18aU2uoa','1987-02-14','Alejandro','Vega','1121098765','alejandro.vega@email.com','Entre Rios 753',4);
 /*!40000 ALTER TABLE `users` ENABLE KEYS */;
 UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;

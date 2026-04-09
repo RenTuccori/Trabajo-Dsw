@@ -193,6 +193,20 @@ export const createHorarios = async ({
   }
 };
 
+export const replaceHorarios = async ({ locationId, doctorId, specialtyId, schedules }) => {
+  try {
+    const response = await axiosInstance.post(`admin/schedules/replace`, {
+      locationId,
+      doctorId,
+      specialtyId,
+      schedules,
+    });
+    return response;
+  } catch (error) {
+    return error.response?.data?.message || 'Error al reemplazar horarios';
+  }
+};
+
 export const getHorariosXDoctor = async ({
   locationId,
   specialtyId,

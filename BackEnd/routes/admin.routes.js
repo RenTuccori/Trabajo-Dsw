@@ -5,6 +5,7 @@ import {
   createCombination,
   deleteCombination,
   getCombinations,
+  replaceSchedulesController,
   createSchedule,
   getSchedules,
   updateSchedule,
@@ -77,6 +78,7 @@ router.get('/api/admin/combinations', Admin, getCombinations);
 
 // Schedules
 router.post('/api/admin/schedules', Admin, validateCreateSchedule, validate, createSchedule);
+router.post('/api/admin/schedules/replace', Admin, replaceSchedulesController);
 router.post('/api/admin/schedules/doctor', Admin, validateCreateCombination, validate, getSchedules);
 router.put('/api/admin/schedules', Admin, validateCreateSchedule, validate, updateSchedule);
 

@@ -83,6 +83,33 @@ export const getAllCombinations = async () => {
   }));
 };
 
+export const replaceSchedules = async (locationId, doctorId, specialtyId, schedulesData) => {
+  // Primero eliminamos todos los horarios existentes de esa combinación exacta
+  await AvailableSchedule.destroy({
+    where: {
+      locationId,
+      doctorId,
+      specialtyId
+    }
+  });
+
+  // Luego hacemos insert de todos los horarios recibidos
+  if (schedulesData && schedulesData.length > 0) {
+    const schedulesToInsert = schedulesData.map(schedule => ({
+      locationId,
+      doctorId,
+      specialtyId,
+      day: normalizeDay(schedule.day),
+      startTime: schedule.startTime,
+      endTime: schedule.endTime,
+      status: schedule.status || 'Available'
+    }));
+
+    await AvailableSchedule.bulkCreate(schedulesToInsert);
+  }
+  return true;
+};
+
 export const createNewSchedule = async (scheduleData) => {
   const normalizedDay = normalizeDay(scheduleData.day);
   const schedule = await AvailableSchedule.create({
