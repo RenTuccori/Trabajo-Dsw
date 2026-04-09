@@ -8,15 +8,14 @@ function UserHome() {
   const { dni, login, comprobarToken, nombreUsuario, apellidoUsuario } =
     useAuth();
   const [dniform, setDni] = useState('');
-  const [fecha, setFecha] = useState('');
+  const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
 
   const handleLogin = async () => {
     try {
-      const parts = fecha.split('/');
-      const isoDate = parts.length === 3 ? `${parts[2]}-${parts[1]}-${parts[0]}` : fecha;
       await login({
         identifier: dniform,
-        credential: isoDate,
+        credential: password,
         userType: 'Patient',
       });
       window.notifySuccess('¡Login exitoso!'); // Muestra mensaje de éxito
@@ -33,18 +32,12 @@ function UserHome() {
     setDni(event.target.value);
   };
 
-  const handleFechaChange = (event) => {
-    let val = event.target.value.replace(/\D/g, '');
-    if (val.length >= 5) {
-      val = val.substring(0, 2) + '/' + val.substring(2, 4) + '/' + val.substring(4, 8);
-    } else if (val.length >= 3) {
-      val = val.substring(0, 2) + '/' + val.substring(2, 4);
-    }
-    setFecha(val);
+  const handlePasswordChange = (event) => {
+    setPassword(event.target.value);
   };
 
   const handleKeyDown = (e) => {
-    if (e.key === 'Enter' && dniform && fecha) {
+    if (e.key === 'Enter' && dniform && password) {
       handleLogin();
     }
   };
@@ -54,7 +47,7 @@ function UserHome() {
       {/* Fondo de imagen */}
       <div
         className="absolute inset-0 bg-cover bg-center z-0"
-        style={{ backgroundImage: "url('../src/components/fondo2.png')" }}
+        style={{ backgroundImage: "url('/src/components/fondo2.png')" }}
       ></div>
       <div className="absolute inset-0 bg-gradient-to-b from-transparent to-white z-0"></div>
 
@@ -78,21 +71,29 @@ function UserHome() {
               className="w-full border border-gray-300 rounded-lg p-2 focus:outline-none focus:border-blue-500"
             />
             <p className="text-center text-gray-600 text-lg">
-              Ingrese su fecha de nacimiento
+              Ingrese su contraseña
             </p>
-            <input
-              type="text"
-              value={fecha}
-              onChange={handleFechaChange}
-              onKeyDown={handleKeyDown}
-              placeholder="Fecha Nacimiento (DD/MM/AAAA)"
-              maxLength={10}
-              className="w-full border border-gray-300 rounded-lg p-2 focus:outline-none focus:border-blue-500"
-            />
+            <div className="relative">
+              <input
+                type={showPassword ? 'text' : 'password'}
+                value={password}
+                onChange={handlePasswordChange}
+                onKeyDown={handleKeyDown}
+                placeholder="Contraseña"
+                className="w-full border border-gray-300 rounded-lg p-2 focus:outline-none focus:border-blue-500 pr-20"
+              />
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                className="absolute inset-y-0 right-0 px-3 flex items-center text-sm font-medium text-gray-600 hover:text-gray-800 focus:outline-none"
+              >
+                {showPassword ? 'Ocultar' : 'Mostrar'}
+              </button>
+            </div>
             <div className="space-y-4">
               <button
                 onClick={handleLogin}
-                disabled={!dniform || !fecha}
+                disabled={!dniform || !password}
                 className="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50"
               >
                 Verificar

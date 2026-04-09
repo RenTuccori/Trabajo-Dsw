@@ -2,7 +2,7 @@ import { Router } from 'express';
 import { Patient, AdminOrPatient } from '../middleware/authorizeRole.js';
 import {
   getUsers,
-  getUserByNationalIdBirthDate,
+  getUserByNationalIdPassword,
   createUser,
   updateUser,
   deleteUser,
@@ -15,7 +15,7 @@ const router = Router();
 
 router.post('/api/users/nationalId', Patient, validateUserNationalId, validate, getUserByNationalId);
 
-router.post('/api/users/login', validateUserLogin, validate, getUserByNationalIdBirthDate);
+router.post('/api/users/login', validateUserLogin, validate, getUserByNationalIdPassword);
 
 router.get('/api/users/all', Patient, getUsers);
 

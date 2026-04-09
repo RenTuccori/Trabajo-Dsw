@@ -5,12 +5,11 @@ export const getAdmin = async ({ user, password }) => {
 };
 
 //Doctor
-export const createDoctor = async ({ dni, appointmentDuration, password }) => {
+export const createDoctor = async ({ dni, appointmentDuration }) => {
   try {
     const response = await axiosInstance.post(`admin/doctors`, {
       nationalId: dni,
       appointmentDuration,
-      password,
     });
     return response;
   } catch (error) {
@@ -30,12 +29,10 @@ export const deleteDoctor = async (doctorId) => {
 export const updateDoctor = async ({
   doctorId,
   appointmentDuration,
-  password,
 }) => {
   try {
     const response = await axiosInstance.put(`admin/doctors/${doctorId}`, {
       appointmentDuration,
-      password,
     });
     return response;
   } catch (error) {
@@ -193,6 +190,20 @@ export const createHorarios = async ({
     return response;
   } catch (error) {
     return error.response.data.message;
+  }
+};
+
+export const replaceHorarios = async ({ locationId, doctorId, specialtyId, schedules }) => {
+  try {
+    const response = await axiosInstance.post(`admin/schedules/replace`, {
+      locationId,
+      doctorId,
+      specialtyId,
+      schedules,
+    });
+    return response;
+  } catch (error) {
+    return error.response?.data?.message || 'Error al reemplazar horarios';
   }
 };
 

@@ -23,6 +23,7 @@ export function CreateCombination() {
   const [selectedLocation, setSelectedLocation] = useState(null);
   const [selectedSpecialty, setSelectedSpecialty] = useState(null);
   const [selectedDoctor, setSelectedDoctor] = useState(null);
+  const [searchFilter, setSearchFilter] = useState('');
 
   useEffect(() => {
     getLocations();
@@ -224,57 +225,83 @@ export function CreateCombination() {
         <hr className="my-4 border-gray-300" />
 
         {/* Lista de combinations */}
-        <div>
-          <h2 className="text-lg font-semibold mb-4">
+        <div className="bg-white rounded-lg shadow-md p-6">
+          <h2 className="text-xl font-semibold mb-4 text-center">
             Combinaciones Asignadas
           </h2>
-          <ul className="space-y-2 bg-white rounded-lg shadow-md p-4">
-            {combinations &&
-              combinations.map((combinacion) => (
-                <li
-                  key={`${combinacion.locationId}-${combinacion.specialtyId}-${combinacion.doctorId}`}
-                  className="flex justify-between items-center bg-gray-100 p-2 rounded-md"
-                >
-                  <span>{`Localidad: ${t(`locations.${combinacion.locationName}`, { defaultValue: combinacion.locationName })}, Especialidad: ${t(`specialties.${combinacion.specialtyName}`, { defaultValue: combinacion.specialtyName })}, Doctor: ${combinacion.doctorName} ${combinacion.doctorLastName}`}</span>
-                  <div className="flex space-x-4">
-                    {/* Botón de Eliminar */}
-                    <button
-                      className="text-red-600 hover:text-red-800"
-                      onClick={() =>
-                        handleDeleteCombinacion(
-                          combinacion.locationId,
-                          combinacion.doctorId,
-                          combinacion.specialtyId
-                        )
-                      }
-                    >
-                      Eliminar
-                    </button>
+          
+          <div className="mb-4">
+            <input
+              type="text"
+              placeholder="Buscar combinación..."
+              className="w-full border border-gray-300 rounded-lg py-2 px-4 focus:outline-none focus:border-blue-500"
+              value={searchFilter}
+              onChange={(e) => setSearchFilter(e.target.value)}
+            />
+          </div>
 
-                    {/* Botón de Agregar Horarios */}
-                    <button
-                      className="text-blue-600 hover:text-blue-800"
-                      onClick={() => {
-                        const data = {
-                          locationId: combinacion.locationId,
-                          specialtyId: combinacion.specialtyId,
-                          doctorId: combinacion.doctorId,
-                          locationName: combinacion.locationName,
-                          specialtyName: combinacion.specialtyName,
-                          doctorFullName: `${combinacion.doctorName} ${combinacion.doctorLastName}`,
-                        };
-                        console.log(
-                          'Datos a enviar para agregar schedules:',
-                          data
-                        ); // Log de los datos que se envían
-                        navigate('/admin/createSchedules', { state: data });
-                      }}
-                    >
-                      Agregar horarios
-                    </button>
-                  </div>
-                </li>
-              ))}
+          <ul className="space-y-2 max-h-[300px] overflow-y-auto pr-2">
+            {combinations &&
+              combinations
+                .filter((combinacion) => {
+                  const searchTerm = searchFilter.toLowerCase();
+                  const locName = t(`locations.${combinacion.locationName}`, { defaultValue: combinacion.locationName }).toLowerCase();
+                  const specName = t(`specialties.${combinacion.specialtyName}`, { defaultValue: combinacion.specialtyName }).toLowerCase();
+                  const docFullName = `${combinacion.doctorName} ${combinacion.doctorLastName}`.toLowerCase();
+                  
+                  return locName.includes(searchTerm) || specName.includes(searchTerm) || docFullName.includes(searchTerm);
+                })
+                .map((combinacion) => (
+                  <li
+                    key={`${combinacion.locationId}-${combinacion.specialtyId}-${combinacion.doctorId}`}
+                    className="flex justify-between items-center bg-gray-50 border border-gray-200 p-3 rounded-md"
+                  >
+                    <span className="text-sm text-gray-700">
+                      <strong>{t(`locations.${combinacion.locationName}`, { defaultValue: combinacion.locationName })}</strong> - {t(`specialties.${combinacion.specialtyName}`, { defaultValue: combinacion.specialtyName })} <br/>
+                      <span className="text-gray-500">Doc: {combinacion.doctorName} {combinacion.doctorLastName}</span>
+                    </span>
+                    <div className="flex space-x-4">
+                      {/* Botón de Eliminar */}
+                      <button
+                        className="text-red-600 hover:text-red-800"
+                        onClick={() =>
+                          handleDeleteCombinacion(
+                            combinacion.locationId,
+                            combinacion.doctorId,
+                            combinacion.specialtyId
+                          )
+                        }
+                      >
+                        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 hover:scale-110 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor" title="Eliminar combinación">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
+                        </svg>
+                      </button>
+
+                      {/* Botón de Agregar Horarios */}
+                      <button
+                        className="text-blue-600 hover:text-blue-800"
+                        onClick={() => {
+                          const data = {
+                            locationId: combinacion.locationId,
+                            specialtyId: combinacion.specialtyId,
+                            doctorId: combinacion.doctorId,
+                            locationName: combinacion.locationName,
+                            specialtyName: combinacion.specialtyName,
+                            doctorFullName: `${combinacion.doctorName} ${combinacion.doctorLastName}`,
+                          };
+                          navigate('/admin/createSchedules', { state: data });
+                        }}
+                      >
+                        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 hover:scale-110 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor" title="Agregar / Editar horarios">
+                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
+                        </svg>
+                      </button>
+                    </div>
+                  </li>
+                ))}
+            {combinations && combinations.length === 0 && (
+              <li className="text-center text-gray-500 py-4">No hay combinaciones asignadas.</li>
+            )}
           </ul>
         </div>
       </div>

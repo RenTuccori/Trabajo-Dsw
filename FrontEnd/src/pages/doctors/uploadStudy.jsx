@@ -117,8 +117,13 @@ function UploadStudy() {
       return;
     }
 
-    if (!formData.patientId || !formData.fechaRealizacion) {
-      window.notifyError('Por favor complete todos los campos obligatorios');
+    if (!formData.patientId) {
+      window.notifyError('Por favor busque y seleccione un paciente primero utilizando su DNI');
+      return;
+    }
+
+    if (!formData.fechaRealizacion) {
+      window.notifyError('Por favor complete la fecha de realización');
       return;
     }
 
@@ -248,6 +253,11 @@ function UploadStudy() {
               <div>
                 <label className="block text-sm font-medium text-gray-700 mb-2">
                   Buscar Paciente por DNI *
+                  {!patientFound && (
+                    <span className="text-red-500 font-normal ml-2 text-xs">
+                      (Debe presionar el botón "Buscar" para seleccionarlo antes de subir)
+                    </span>
+                  )}
                 </label>
                 <div className="flex space-x-2">
                   <input
@@ -329,9 +339,9 @@ function UploadStudy() {
               {/* Botón de envío */}
               <button
                 type="submit"
-                disabled={loading}
+                disabled={loading || !patientFound}
                 className={`w-full py-2 px-4 rounded-lg font-medium transition-colors ${
-                  loading
+                  loading || !patientFound
                     ? 'bg-gray-400 cursor-not-allowed'
                     : 'bg-blue-600 hover:bg-blue-700 text-white'
                 }`}

@@ -2,6 +2,7 @@ import { Doctor, User, HealthInsurance, LocationDoctorSpecialty, AvailableSchedu
 import { sequelize } from '../models/index.js';
 import { Op } from 'sequelize';
 import jwt from 'jsonwebtoken';
+import bcrypt from 'bcrypt';
 import { USER_TYPES } from '../constants/userTypes.js';
 
 const JWT_SECRET = process.env.JWT_SECRET;
@@ -118,14 +119,17 @@ export const findDoctorById = async (doctorId) => {
 
 export const authenticateDoctor = async (nationalId, password) => {
   const doctor = await Doctor.findOne({
-    where: { nationalId, password, status: 'Enabled' },
+    where: { nationalId, status: 'Enabled' },
     include: [{
       model: User,
       as: 'user',
-      attributes: ['firstName', 'lastName'],
+      attributes: ['firstName', 'lastName', 'password'],
     }],
   });
-  if (!doctor) return null;
+  if (!doctor || !doctor.user) return null;
+
+  const isPasswordValid = await bcrypt.compare(password, doctor.user.password);
+  if (!isPasswordValid) return null;
 
   const token = jwt.sign(
     { doctorId: doctor.id, nationalId: doctor.nationalId, firstName: doctor.user.firstName, lastName: doctor.user.lastName, role: USER_TYPES.DOCTOR },
@@ -135,11 +139,10 @@ export const authenticateDoctor = async (nationalId, password) => {
   return { token };
 };
 
-export const createNewDoctor = async ({ nationalId, appointmentDuration, password }) => {
+export const createNewDoctor = async ({ nationalId, appointmentDuration }) => {
   const doctor = await Doctor.create({
     nationalId,
     appointmentDuration,
-    password,
     status: 'Enabled',
   });
   return doctor;
@@ -172,11 +175,8 @@ export const softDeleteDoctor = async (doctorId) => {
   }
 };
 
-export const updateExistingDoctor = async (doctorId, { appointmentDuration, password }) => {
+export const updateExistingDoctor = async (doctorId, { appointmentDuration }) => {
   const updates = { appointmentDuration };
-  if (password !== undefined && password !== null && password !== '') {
-    updates.password = password;
-  }
 
   const [affectedRows] = await Doctor.update(
     updates,

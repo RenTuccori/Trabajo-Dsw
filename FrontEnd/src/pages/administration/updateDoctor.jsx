@@ -82,15 +82,15 @@ export function UpdateDoctor() {
           email: formData.email,
           address: formData.address,
           healthInsuranceId: formData.healthInsuranceId,
+          ...(formData.password?.trim()
+            ? { password: formData.password.trim() }
+            : {}),
         };
 
         // Preparar datos para actualizar doctor
         const doctorData = {
           doctorId: formData.doctorId,
           appointmentDuration: formData.appointmentDuration,
-          ...(formData.password?.trim()
-            ? { password: formData.password.trim() }
-            : {}),
         };
 
         console.log('Datos user:', usuarioData);

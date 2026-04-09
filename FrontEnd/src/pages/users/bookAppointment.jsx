@@ -227,6 +227,7 @@ export function BookAppointment() {
             onChange={handleLocationChange}
             value={selectedLocation}
             styles={customStyles}
+            placeholder="Seleccionar..."
           />
           <p className="text-center text-gray-600 text-lg">{t('labels.specialty', { defaultValue: 'Especialidad' })}</p>
           <Select
@@ -242,6 +243,7 @@ export function BookAppointment() {
             value={selectedSpecialty}
             isDisabled={!selectedLocation}
             styles={customStyles}
+            placeholder="Seleccionar..."
           />
           <p className="text-center text-gray-600 text-lg">{t('labels.doctors', { defaultValue: 'Doctores' })}</p>
           <Select
@@ -257,17 +259,26 @@ export function BookAppointment() {
             onChange={handleDoctorChange}
             isDisabled={!selectedSpecialty}
             styles={customStyles}
+            placeholder="Seleccionar..."
           />
           <p className="text-center text-gray-600 text-lg">{t('labels.date', { defaultValue: 'Fecha' })}</p>
-          <DatePicker
-            selected={selectedDate}
-            onChange={handleFechaChange}
-            filterDate={isDateAvailable}
-            placeholderText="Selecciona una fecha"
-            className="w-full border border-gray-300 rounded-lg p-2 focus:outline-none focus:border-blue-500"
-            disabled={!selectedDoctor} // Deshabilitar si no hay doctor seleccionado
-            dateFormat="yyyy-MM-dd" // Formato consistente
-          />
+          <div className="w-full react-datepicker-wrapper-custom">
+            <DatePicker
+              selected={selectedDate}
+              onChange={handleFechaChange}
+              filterDate={isDateAvailable}
+              placeholderText="Seleccionar..."
+              className="w-full border border-[#1e40af] rounded-[0.375rem] px-[8px] py-[8px] shadow-[0_0_0_1px_rgba(29,78,216,0.1)] focus:outline-none text-[#1e40af] placeholder-[#a0aabf] bg-white box-border h-[46px] leading-tight"
+              disabled={!selectedDoctor} // Deshabilitar si no hay doctor seleccionado
+              dateFormat="yyyy-MM-dd" // Formato consistente
+            />
+          </div>
+          <style jsx="true">{`
+            .react-datepicker-wrapper-custom .react-datepicker-wrapper {
+              display: block;
+              width: 100%;
+            }
+          `}</style>
           <p className="text-center text-gray-600 text-lg">{t('labels.time', { defaultValue: 'Horario' })}</p>
           <Select
             className="react-select"
@@ -279,6 +290,7 @@ export function BookAppointment() {
             value={selectedSchedule}
             isDisabled={!selectedDate}
             styles={customStyles}
+            placeholder="Seleccionar..."
           />
         </div>
         <button
