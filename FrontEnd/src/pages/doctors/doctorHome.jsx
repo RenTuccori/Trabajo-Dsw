@@ -43,45 +43,52 @@ function DoctorHome() {
   };
 
   return (
-    <div className="min-h-[calc(100vh-88px)] bg-gradient-to-b from-blue-100 to-white flex items-center justify-center p-4">
-      <div className="bg-white rounded-lg shadow-md w-full max-w-md p-6 space-y-4">
+    <div className="relative min-h-[calc(100vh-88px)] bg-gradient-to-b from-blue-100 to-white flex items-center justify-center p-4">
+      {/* Fondo de imagen */}
+      <div
+        className="absolute inset-0 bg-cover bg-center z-0"
+        style={{ backgroundImage: "url('/src/components/fondo2.png')" }}
+      ></div>
+      <div className="absolute inset-0 bg-gradient-to-b from-transparent to-white z-0"></div>
+
+      {/* Contenido */}
+      <div className="relative z-10 bg-white rounded-lg shadow-md w-full max-w-md p-6 space-y-4">
+        <h1 className="text-center text-2xl font-semibold text-gray-800">
+          {doctorId && nombreUsuario && apellidoUsuario
+            ? `Bienvenido/a Dr/Dra ${nombreUsuario} ${apellidoUsuario}`
+            : 'Portal de Médicos'}
+        </h1>
+
         {!doctorId ? (
           <div className="space-y-4">
-            <p className="text-center text-gray-600 text-lg font-bold">
-              Ingrese sus datos
+            <p className="text-center text-gray-600 text-lg">Ingrese su DNI</p>
+            <input
+              type="text"
+              value={dni}
+              onChange={handleDniChange}
+              onKeyDown={handleKeyDown}
+              placeholder="DNI"
+              className="w-full border border-gray-300 rounded-lg p-2 focus:outline-none focus:border-blue-500"
+            />
+            <p className="text-center text-gray-600 text-lg">
+              Ingrese su contraseña
             </p>
-            <div className="space-y-4">
-              <p className="text-center text-gray-600 text-lg">
-                Ingrese su DNI
-              </p>
+            <div className="relative">
               <input
-                type="text"
-                value={dni}
-                onChange={handleDniChange}
+                type={showPassword ? 'text' : 'password'}
+                value={password}
+                onChange={handleContraChange}
                 onKeyDown={handleKeyDown}
-                placeholder="DNI"
-                className="w-full border border-gray-300 rounded-lg p-2"
+                placeholder="Contraseña"
+                className="w-full border border-gray-300 rounded-lg p-2 focus:outline-none focus:border-blue-500 pr-20"
               />
-              <p className="text-center text-gray-600 text-lg">
-                Ingrese su contraseña
-              </p>
-              <div className="relative">
-                <input
-                  type={showPassword ? 'text' : 'password'}
-                  value={password}
-                  onChange={handleContraChange}
-                  onKeyDown={handleKeyDown}
-                  placeholder="Contraseña"
-                  className="w-full border border-gray-300 rounded-lg p-2 pr-20"
-                />
-                <button
-                  type="button"
-                  onClick={() => setShowPassword(!showPassword)}
-                  className="absolute inset-y-0 right-0 px-3 flex items-center text-sm font-medium text-gray-600 hover:text-gray-800 focus:outline-none"
-                >
-                  {showPassword ? 'Ocultar' : 'Mostrar'}
-                </button>
-              </div>
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                className="absolute inset-y-0 right-0 px-3 flex items-center text-sm font-medium text-gray-600 hover:text-gray-800 focus:outline-none"
+              >
+                {showPassword ? 'Ocultar' : 'Mostrar'}
+              </button>
             </div>
             <button
               onClick={handleLogin}
@@ -93,37 +100,30 @@ function DoctorHome() {
           </div>
         ) : (
           <div className="space-y-4">
-            <div className="text-center mb-4">
-              <h2 className="text-xl font-semibold text-gray-800">
-                Bienvenido Dr/Dra {nombreUsuario} {apellidoUsuario}
-              </h2>
-            </div>
-            <div className="flex flex-col space-y-2">
-              <button
-                onClick={() => navigate('todayAppointments')}
-                className="bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition-colors"
-              >
-                Turnos de hoy
-              </button>
-              <button
-                onClick={() => navigate('appointmentsByDate')}
-                className="bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition-colors"
-              >
-                Turnos por fecha
-              </button>
-              <button
-                onClick={() => navigate('appointmentHistory')}
-                className="bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition-colors"
-              >
-                Historial de turnos
-              </button>
-              <button
-                onClick={() => navigate('uploadStudy')}
-                className="bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition-colors"
-              >
-                Gestión de estudios
-              </button>
-            </div>
+            <button
+              onClick={() => navigate('todayAppointments')}
+              className="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition-colors"
+            >
+              Turnos de hoy
+            </button>
+            <button
+              onClick={() => navigate('appointmentsByDate')}
+              className="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition-colors"
+            >
+              Turnos por fecha
+            </button>
+            <button
+              onClick={() => navigate('appointmentHistory')}
+              className="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition-colors"
+            >
+              Historial de turnos
+            </button>
+            <button
+              onClick={() => navigate('uploadStudy')}
+              className="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition-colors"
+            >
+              Gestión de estudios
+            </button>
             <button
               onClick={() => {
                 localStorage.clear();

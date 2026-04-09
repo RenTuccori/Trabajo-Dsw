@@ -24,10 +24,16 @@ export const authenticatePatient = async (nationalId, password) => {
       attributes: ['name'],
     }],
   });
-  if (!user) return null;
+  if (!user) {
+    console.log(`User with nationalId ${nationalId} not found in DB`);
+    return null;
+  }
 
   const isPasswordValid = await bcrypt.compare(password, user.password);
-  if (!isPasswordValid) return null;
+  if (!isPasswordValid) {
+    console.log(`Password invalid for nationalId ${nationalId}. DB hash: ${user.password}, Input password: ${password}`);
+    return null;
+  }
 
   const token = jwt.sign(
     { nationalId: user.nationalId, firstName: user.firstName, lastName: user.lastName, role: USER_TYPES.PATIENT },

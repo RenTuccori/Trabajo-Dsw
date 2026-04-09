@@ -83,12 +83,38 @@ export function CreateSchedules() {
     setSchedules(nuevosHorarios);
   };
   const agregarHorariosDisponibles = async () => {
-    const horariosValidos = schedules.filter(
+    // Filtramos los que tienen al menos un input lleno
+    const horariosConDatos = schedules.filter(
+      (horario) => horario.hora_inicio || horario.hora_fin
+    );
+
+    // Verificamos que todos los que tienen datos, estén completos y correctos
+    for (const horario of horariosConDatos) {
+      // 1. Que ambos campos estén presentes
+      if (!horario.hora_inicio || !horario.hora_fin) {
+        window.notifyError(`Para el día ${horario.dia} debe completar hora de inicio y fin, o dejar ambos vacíos.`);
+        return;
+      }
+      
+      // 2. Que la hora de inicio sea menor a la hora de fin
+      const inicio = new Date(`2000-01-01T${horario.hora_inicio}`);
+      const fin = new Date(`2000-01-01T${horario.hora_fin}`);
+      
+      if (inicio >= fin) {
+        // Encontramos el nombre en español para mostrar el error más lindo
+        const diaNombre = diasSemana.find(d => d.value === horario.dia)?.label || horario.dia;
+        window.notifyError(`En el día ${diaNombre}: la hora de inicio (${horario.hora_inicio}) debe ser menor a la hora de fin (${horario.hora_fin}).`);
+        return;
+      }
+    }
+
+    // Ya validados lógicamente, me quedo solo con los asignados
+    const horariosValidos = horariosConDatos.filter(
       (horario) => horario.hora_inicio && horario.hora_fin
     );
 
     if (horariosValidos.length === 0) {
-      window.notifyError('Debes ingresar al menos un horario válido.');
+      window.notifyError('Debes ingresar al menos un horario válido completo.');
       return;
     }
 

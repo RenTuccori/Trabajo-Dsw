@@ -9,6 +9,7 @@ function UserHome() {
     useAuth();
   const [dniform, setDni] = useState('');
   const [password, setPassword] = useState('');
+  const [showPassword, setShowPassword] = useState(false);
 
   const handleLogin = async () => {
     try {
@@ -46,7 +47,7 @@ function UserHome() {
       {/* Fondo de imagen */}
       <div
         className="absolute inset-0 bg-cover bg-center z-0"
-        style={{ backgroundImage: "url('../src/components/fondo2.png')" }}
+        style={{ backgroundImage: "url('/src/components/fondo2.png')" }}
       ></div>
       <div className="absolute inset-0 bg-gradient-to-b from-transparent to-white z-0"></div>
 
@@ -72,14 +73,23 @@ function UserHome() {
             <p className="text-center text-gray-600 text-lg">
               Ingrese su contraseña
             </p>
-            <input
-              type="password"
-              value={password}
-              onChange={handlePasswordChange}
-              onKeyDown={handleKeyDown}
-              placeholder="Contraseña"
-              className="w-full border border-gray-300 rounded-lg p-2 focus:outline-none focus:border-blue-500"
-            />
+            <div className="relative">
+              <input
+                type={showPassword ? 'text' : 'password'}
+                value={password}
+                onChange={handlePasswordChange}
+                onKeyDown={handleKeyDown}
+                placeholder="Contraseña"
+                className="w-full border border-gray-300 rounded-lg p-2 focus:outline-none focus:border-blue-500 pr-20"
+              />
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                className="absolute inset-y-0 right-0 px-3 flex items-center text-sm font-medium text-gray-600 hover:text-gray-800 focus:outline-none"
+              >
+                {showPassword ? 'Ocultar' : 'Mostrar'}
+              </button>
+            </div>
             <div className="space-y-4">
               <button
                 onClick={handleLogin}
