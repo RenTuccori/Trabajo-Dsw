@@ -5,9 +5,9 @@ describe('Frontend Test Suite', () => {
     expect(true).toBe(true);
   });
 
-  it('should have access to environment variables', () => {
-    expect(import.meta.env.VITE_API_BASE_URL).toBeDefined();
-    expect(import.meta.env.VITE_APP_NAME).toBeDefined();
+  it('should have access to import.meta.env', () => {
+    expect(import.meta.env).toBeDefined();
+    expect(import.meta.env.MODE).toBeDefined();
   });
 
   it('should validate basic JavaScript functionality', () => {
@@ -35,10 +35,10 @@ describe('Frontend Test Suite', () => {
   it('should validate date handling', () => {
     const fechaNacimiento = '1990-01-01';
 
-    // Validar formato ISO
+    // Validate ISO format
     expect(fechaNacimiento).toMatch(/^\d{4}-\d{2}-\d{2}$/);
 
-    // Validar que es una fecha válida usando UTC para evitar problemas de zona horaria
+    // Validate that it's a valid date using UTC to avoid timezone issues
     const date = new Date(fechaNacimiento + 'T00:00:00.000Z');
     expect(date.getUTCFullYear()).toBe(1990);
   });

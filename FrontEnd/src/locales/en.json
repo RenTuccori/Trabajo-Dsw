@@ -1,0 +1,29 @@
+{
+  "specialties": {
+    "Cardiology": "Cardiology",
+    "Neurology": "Neurology",
+    "Traumatology": "Traumatology",
+    "Pediatrics": "Pediatrics",
+    "Gynecology": "Gynecology"
+  },
+  "locations": {
+    "Main Campus": "Main Campus",
+    "North Campus": "North Campus",
+    "South Campus": "South Campus"
+  },
+  "labels": {
+    "location": "Location",
+    "specialty": "Specialty",
+    "doctors": "Doctors",
+    "date": "Date",
+    "time": "Time",
+    "continue": "Continue",
+    "back": "Back"
+  }
+  ,
+  "statuses": {
+    "Pending": "Pending",
+    "Confirmed": "Confirmed",
+    "Cancelled": "Cancelled"
+  }
+}

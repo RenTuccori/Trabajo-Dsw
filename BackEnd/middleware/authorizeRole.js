@@ -1,17 +1,18 @@
-// middleware/authorizeRole.js
+import { USER_TYPES } from '../constants/userTypes.js';
+
 export const authorizeRole = (...allowedRoles) => {
   return (req, res, next) => {
-    const userRole = req.session.rol; // Usuario tiene un único rol
+    const userRole = req.session.role;
 
     if (!userRole) {
       return res
         .status(401)
-        .json({ message: 'No autorizado. Token inválido o inexistente.' });
+        .json({ message: 'Unauthorized. Invalid or missing token.' });
     }
 
     if (!allowedRoles.includes(userRole)) {
       return res.status(403).json({
-        message: `Acceso denegado. Se requiere uno de los roles: ${allowedRoles.join(
+        message: `Access denied. One of the following roles is required: ${allowedRoles.join(
           ', '
         )}.`,
       });
@@ -21,15 +22,12 @@ export const authorizeRole = (...allowedRoles) => {
   };
 };
 
-// Exportar middleware para combinaciones de roles
-export const Doctor = authorizeRole('Doctor');
-export const Admin = authorizeRole('Admin');
-export const Patient = authorizeRole('Patient');
+export const Doctor = authorizeRole(USER_TYPES.DOCTOR);
+export const Admin = authorizeRole(USER_TYPES.ADMIN);
+export const Patient = authorizeRole(USER_TYPES.PATIENT);
 
-// Ejemplo: Para rutas que aceptan tanto doctores como administradores
-export const DoctorOrAdmin = authorizeRole('Doctor', 'Admin');
-export const DoctorOrPatient = authorizeRole('Doctor', 'Patient');
-export const AdminOrPatient = authorizeRole('Admin', 'Patient');
+export const DoctorOrAdmin = authorizeRole(USER_TYPES.DOCTOR, USER_TYPES.ADMIN);
+export const DoctorOrPatient = authorizeRole(USER_TYPES.DOCTOR, USER_TYPES.PATIENT);
+export const AdminOrPatient = authorizeRole(USER_TYPES.ADMIN, USER_TYPES.PATIENT);
 
-// Ejemplo: Para rutas que aceptan todos los roles
-export const AnyRole = authorizeRole('Doctor', 'Admin', 'Patient');
+export const AnyRole = authorizeRole(USER_TYPES.DOCTOR, USER_TYPES.ADMIN, USER_TYPES.PATIENT);

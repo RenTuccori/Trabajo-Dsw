@@ -2,109 +2,129 @@ import { jest } from '@jest/globals';
 import request from 'supertest';
 import express from 'express';
 
-// Mock del pool de base de datos
-const mockPool = {
-  query: jest.fn(),
+// Mock the service layer
+const mockService = {
+  getAllUsers: jest.fn(),
+  findUserByDni: jest.fn(),
+  authenticatePatient: jest.fn(),
+  createNewUser: jest.fn(),
+  updateExistingUser: jest.fn(),
+  deleteExistingUser: jest.fn(),
 };
 
-jest.unstable_mockModule('../db.js', () => ({
-  pool: mockPool,
-}));
+jest.unstable_mockModule('../services/usuarios.service.js', () => mockService);
 
-// Importar después del mock
 const usersRouter = await import('../routes/usuarios.routes.js');
 
-describe('Usuarios API Integration Tests', () => {
+describe('Usuarios API – Integration Tests', () => {
   let app;
 
   beforeEach(() => {
     app = express();
     app.use(express.json());
 
-    // Mock del middleware de autenticación
+    // Mock JWT session middleware
     app.use((req, res, next) => {
-      req.session = { rol: 'Patient' };
+      req.session = { role: 'Patient' };
       next();
     });
 
     app.use(usersRouter.default);
-
-    // Limpiar mocks antes de cada test
     jest.clearAllMocks();
   });
 
-  describe('GET /api/users/debug', () => {
+  describe('GET /api/userstodos', () => {
     it('should return list of users', async () => {
-      // Mock de la respuesta de la base de datos
-      const mockUsers = [
-        {
-          dni: '12345678',
-          nombre: 'Juan',
-          apellido: 'Pérez',
-          fechaNacimiento: '1990-01-01',
-        },
-        {
-          dni: '87654321',
-          nombre: 'María',
-          apellido: 'García',
-          fechaNacimiento: '1985-05-15',
-        },
+      const users = [
+        { dni: 12345678, nombre: 'Juan', apellido: 'Pérez' },
+        { dni: 87654321, nombre: 'María', apellido: 'García' },
       ];
+      mockService.getAllUsers.mockResolvedValue(users);
 
-      pool.query.mockResolvedValue([mockUsers]);
+      const response = await request(app).get('/api/userstodos').expect(200);
 
-      const response = await request(app).get('/api/users/debug').expect(200);
-
-      expect(response.body).toEqual(mockUsers);
-      expect(pool.query).toHaveBeenCalledWith(
-        expect.stringContaining(
-          'SELECT dni, nombre, apellido, fechaNacimiento'
-        ),
-        expect.anything()
-      );
+      expect(response.body).toEqual(users);
     });
 
-    it('should handle database errors', async () => {
-      pool.query.mockRejectedValue(new Error('Database connection failed'));
+    it('should return 404 when no users', async () => {
+      mockService.getAllUsers.mockResolvedValue([]);
 
-      const response = await request(app).get('/api/users/debug').expect(500);
-
-      expect(response.body).toHaveProperty('error');
+      await request(app).get('/api/userstodos').expect(404);
     });
   });
 
   describe('POST /api/usersdnifecha', () => {
-    it('should return JWT token for valid user credentials', async () => {
-      const mockUser = {
-        dni: '12345678',
-        nombre: 'Juan',
-        apellido: 'Pérez',
-        fechaNacimiento: '1990-01-01',
-      };
-
-      pool.query.mockResolvedValue([[mockUser]]);
+    it('should return JWT token for valid credentials', async () => {
+      mockService.authenticatePatient.mockResolvedValue({ token: 'fake.jwt.token' });
 
       const response = await request(app)
         .post('/api/usersdnifecha')
-        .send({ dni: '12345678', fechaNacimiento: '1990-01-01' })
+        .send({ dni: 12345678, fechaNacimiento: '1990-01-01' })
         .expect(200);
 
-      expect(typeof response.body).toBe('string'); // JWT token
-      expect(pool.query).toHaveBeenCalledWith(
-        'SELECT * FROM usuarios WHERE dni = ? and fechaNacimiento = ?',
-        ['12345678', '1990-01-01']
-      );
+      expect(response.text).toContain('fake.jwt.token');
     });
 
-    it('should return 404 for user not found', async () => {
-      pool.query.mockResolvedValue([[]]);
+    it('should return 404 for invalid credentials', async () => {
+      mockService.authenticatePatient.mockResolvedValue(null);
 
+      await request(app)
+        .post('/api/usersdnifecha')
+        .send({ dni: 99999999, fechaNacimiento: '2000-01-01' })
+        .expect(404);
+    });
+
+    it('should return 400 for missing required fields (validation)', async () => {
       const response = await request(app)
         .post('/api/usersdnifecha')
-        .send({ dni: '99999999', fechaNacimiento: '1990-01-01' })
-        .expect(404);
+        .send({})
+        .expect(400);
 
-      expect(response.body.message).toBe('Usuario no encontrado');
+      expect(response.body).toHaveProperty('errors');
+    });
+  });
+
+  describe('POST /api/users', () => {
+    it('should create a new user and return 201', async () => {
+      const newUser = { dni: 33333333, fechaNacimiento: '1995-05-05', nombre: 'Ana', apellido: 'López' };
+      mockService.createNewUser.mockResolvedValue(newUser);
+
+      const response = await request(app)
+        .post('/api/users')
+        .send(newUser)
+        .expect(201);
+
+      expect(response.body.dni).toBe(33333333);
+    });
+
+    it('should return 400 when validation fails', async () => {
+      const response = await request(app)
+        .post('/api/users')
+        .send({ dni: 123 }) // Too short DNI
+        .expect(400);
+
+      expect(response.body).toHaveProperty('errors');
+    });
+  });
+
+  describe('POST /api/usersdni', () => {
+    it('should return user by DNI', async () => {
+      const user = { dni: 12345678, nombre: 'Juan' };
+      mockService.findUserByDni.mockResolvedValue(user);
+
+      const response = await request(app)
+        .post('/api/usersdni')
+        .send({ dni: 12345678 })
+        .expect(200);
+
+      expect(response.body).toEqual(user);
+    });
+
+    it('should return 400 for invalid DNI format', async () => {
+      await request(app)
+        .post('/api/usersdni')
+        .send({ dni: 'abc' })
+        .expect(400);
     });
   });
 });

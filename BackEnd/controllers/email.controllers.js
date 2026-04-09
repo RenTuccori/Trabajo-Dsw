@@ -1,33 +1,68 @@
 import nodemailer from 'nodemailer';
-const dbEmailPass = process.env.DB_EMAILPASS;
-// Configuración del transporte de nodemailer
-const transporter = nodemailer.createTransport({
-  host: "smtp.gmail.com", // Cambia esto por tu servicio de correo (e.g., Gmail, SendGrid, etc.)
-  port: 465, // Cambia según tu servicio (e.g., 587 para TLS, 465 para SSL)
-  secure: true, // true para port 465, false para otros puertos
-  auth: {
-    user: 'utnsanatorio@gmail.com', // Tu correo
-    pass: dbEmailPass, // Tu contraseña
-  },
-});
 
-// Función para enviar correo
+// Function to create transporter. If SMTP credentials are not provided via
+// environment variables, create an Ethereal test account for development.
+async function createTransporter() {
+  const host = 'smtp.gmail.com';
+  const port = 465;
+  const secure = 465;
+  const user = 'utnsanatorio@gmail.com';
+  const pass = process.env.DB_EMAILPASS;
+
+  if (!pass) {
+    // No real credentials — create Ethereal test account
+    const testAccount = await nodemailer.createTestAccount();
+    const transporter = nodemailer.createTransport({
+      host: 'smtp.ethereal.email',
+      port: 587,
+      secure: false,
+      auth: {
+        user: testAccount.user,
+        pass: testAccount.pass,
+      },
+    });
+    console.warn('Using Ethereal test account for emails. Preview at:', nodemailer.getTestMessageUrl);
+    return { transporter, isTest: true };
+  }
+
+  const transporter = nodemailer.createTransport({
+    host,
+    port,
+    secure,
+    auth: {
+      user,
+      pass,
+    },
+  });
+
+  return { transporter, isTest: false };
+}
+
+// Function to send email
 export const sendEmail = async (req, res) => {
   try {
     const { to, subject, html } = req.body;
 
+    const { transporter, isTest } = await createTransporter();
+
     const mailOptions = {
-      from: 'Sanatorio UTN', // El correo desde el cual se envía
-      to: to, // Correo destino
-      subject: subject, // Asunto del correo
-      html: html, // Texto del correo
+      from: process.env.EMAIL_FROM || 'Sanatorio UTN <utnsanatorio@gmail.com>',
+      to,
+      subject,
+      html,
     };
 
-    // Enviar el correo
-    let info = await transporter.sendMail(mailOptions);
+    const info = await transporter.sendMail(mailOptions);
 
-    res.json({ message: 'Correo enviado correctamente', info });
+    if (isTest) {
+      // For Ethereal, return the preview URL so developer can open it
+      const preview = nodemailer.getTestMessageUrl(info);
+      return res.json({ message: 'Email sent (Ethereal)', info, preview });
+    }
+
+    res.json({ message: 'Email sent successfully', info });
   } catch (error) {
-    res.status(500).json({ message: 'Error al enviar el correo', error: error.message });
+    console.error('Error sending email:', error);
+    res.status(500).json({ message: 'Error sending email', error: error.message });
   }
 };

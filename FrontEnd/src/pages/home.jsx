@@ -9,7 +9,7 @@ export default function Home() {
   }, []);
 
   return (
-    <div className="min-h-screen flex items-center justify-center p-4 relative">
+    <div className="min-h-[calc(100vh-88px)] flex items-center justify-center p-4 relative">
       <div
         className="absolute inset-0 bg-cover bg-center"
         style={{ backgroundImage: "url('../src/components/image.png')" }}
@@ -18,10 +18,14 @@ export default function Home() {
       <div className="relative bg-white rounded-lg shadow-md w-full max-w-md p-6 z-10">
         <div className="text-center mb-6">
           <h1 className="text-3xl font-bold text-blue-800">Sanatorio UTN</h1>
-          <p className="text-gray-600">Bienvenido a nuestro sistema de turnos</p>
+          <p className="text-gray-600">
+            Bienvenido a nuestro sistema de turnos
+          </p>
         </div>
         <div className="space-y-4">
-          <p className="text-center text-gray-600">Por favor, selecciona tu rol para continuar:</p>
+          <p className="text-center text-gray-600">
+            Por favor, selecciona tu rol para continuar:
+          </p>
           <div className="grid grid-cols-2 gap-4">
             <button
               className="h-24 flex flex-col items-center justify-center border border-gray-300 rounded-lg hover:bg-blue-50 transition-colors"
@@ -32,7 +36,7 @@ export default function Home() {
             </button>
             <button
               className="h-24 flex flex-col items-center justify-center border border-gray-300 rounded-lg hover:bg-blue-50 transition-colors"
-              onClick={() => navigate('/paciente')}
+              onClick={() => navigate('/patient')}
             >
               <span className="text-4xl mb-2">🙋‍♂️</span>
               Soy paciente
@@ -42,5 +46,4 @@ export default function Home() {
       </div>
     </div>
   );
-
 }

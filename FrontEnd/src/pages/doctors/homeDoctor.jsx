@@ -1,23 +1,21 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/global/AuthProvider';
+import { USER_TYPES } from '../../constants/userTypes.js';
 
 function HomeDoctor() {
   const { idDoctor, login, comprobarToken, nombreUsuario, apellidoUsuario } =
     useAuth();
   const [dni, setDni] = useState('');
-  const [contra, setContra] = useState('');
+  const [password, setPassword] = useState('');
   const navigate = useNavigate();
 
-  // Manejo del login con toast de éxito
+  // Handle login with success toast
   const handleLogin = async () => {
     try {
-      await login({ identifier: dni, credential: contra, userType: 'Doctor' });
+      await login({ identifier: dni, credential: password, userType: USER_TYPES.DOCTOR });
       window.notifySuccess('¡Login exitoso!');
     } catch (error) {
-      console.error('Error al iniciar sesión', error);
-
-      // Usar el toast de error global
       window.notifyError('Error al iniciar sesión');
     }
   };
@@ -26,17 +24,17 @@ function HomeDoctor() {
     setDni(event.target.value);
   };
 
-  const handleContraChange = (event) => {
-    setContra(event.target.value);
+  const handlePasswordChange = (event) => {
+    setPassword(event.target.value);
   };
 
   useEffect(() => {
-    comprobarToken('Doctor');
+    comprobarToken(USER_TYPES.DOCTOR);
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-blue-100 to-white flex items-center justify-center p-4">
+    <div className="min-h-[calc(100vh-88px)] bg-gradient-to-b from-blue-100 to-white flex items-center justify-center p-4">
       <div className="bg-white rounded-lg shadow-md w-full max-w-md p-6 space-y-4">
         {!idDoctor ? (
           <div className="space-y-4">
@@ -59,15 +57,15 @@ function HomeDoctor() {
               </p>
               <input
                 type="password"
-                value={contra}
-                onChange={handleContraChange}
+                value={password}
+                onChange={handlePasswordChange}
                 placeholder="Contraseña"
                 className="w-full border border-gray-300 rounded-lg p-2"
               />
             </div>
             <button
               onClick={handleLogin}
-              disabled={!dni || !contra}
+              disabled={!dni || !password}
               className="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50"
             >
               Verificar
@@ -97,7 +95,7 @@ function HomeDoctor() {
                 onClick={() => navigate('turnoshist')}
                 className="bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition-colors"
               >
-                Historial turnos
+                Historial de turnos
               </button>
               <button
                 onClick={() => navigate('estudios')}

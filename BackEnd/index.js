@@ -1,27 +1,31 @@
 import express from 'express';
-import usersRouter from './routes/usuarios.routes.js';
-import doctorsRouter from './routes/doctores.routes.js';
-import specialtiesRouter from './routes/especialidades.routes.js';
-import turnosRouter from './routes/turnos.routes.js';
-import horariosRouter from './routes/horarios.routes.js';
-import pacienteRouter from './routes/pacientes.routes.js';
-import obrassocialesRouter from './routes/obrassociales.routes.js';
-import sedesRouter from './routes/sedes.routes.js';
+import usersRouter from './routes/users.routes.js';
+import doctorsRouter from './routes/doctors.routes.js';
+import specialtiesRouter from './routes/specialties.routes.js';
+import appointmentsRouter from './routes/appointments.routes.js';
+import schedulesRouter from './routes/schedules.routes.js';
+import patientsRouter from './routes/patients.routes.js';
+import healthInsuranceRouter from './routes/health-insurance.routes.js';
+import locationsRouter from './routes/locations.routes.js';
 import adminRouter from './routes/admin.routes.js';
 import emailRoutes from './routes/email.routes.js';
-import estudiosRouter from './routes/estudios.routes.js';
+import studiesRouter from './routes/studies.routes.js';
 import cors from 'cors';
 import jwt from 'jsonwebtoken';
+import config from 'dotenv';
+import { sequelize } from './models/index.js';
 
-// Importar las funciones de auto cancelación y auto recordatorio
-import { startAutoCancelTurnos } from './autoCancelTurnos.js'; // Cancelación de turnos cada 30 minutos
-import { startAutoReminderEmails } from './autoreminderEmails.js'; // Envío de recordatorios de correos cada 30 minutos
+import { startAutoCancelAppointments } from './autoCancelAppointments.js';
+import { startAutoReminderEmails } from './autoReminderEmails.js';
+
+config.config();
 
 const app = express();
-const PORT = 3000;
+const PORT = process.env.PORT || 3000;
+const JWT_SECRET = process.env.JWT_SECRET;
 
 app.use(cors());
-app.use(express.json()); // Para usar JSON en el body
+app.use(express.json());
 
 app.use((req, res, next) => {
   let data = null;
@@ -31,13 +35,13 @@ app.use((req, res, next) => {
     token = authHeader.split(' ')[1];
   }
 
-  req.session = { rol: null };
+  req.session = { role: null };
 
   try {
-    data = jwt.verify(token, 'CLAVE_SUPER_SEGURISIMA');
-    req.session.rol = data.rol;
-  } catch (e) {
-    req.session.rol = null;
+    data = jwt.verify(token, JWT_SECRET);
+    Object.assign(req.session, data);
+  } catch {
+    req.session.role = null;
   }
   next();
 });
@@ -45,21 +49,30 @@ app.use((req, res, next) => {
 app.use(usersRouter);
 app.use(doctorsRouter);
 app.use(specialtiesRouter);
-app.use(turnosRouter);
-app.use(horariosRouter);
-app.use(pacienteRouter);
-app.use(obrassocialesRouter);
-app.use(sedesRouter);
+app.use(appointmentsRouter);
+app.use(schedulesRouter);
+app.use(patientsRouter);
+app.use(healthInsuranceRouter);
+app.use(locationsRouter);
 app.use(adminRouter);
 app.use(emailRoutes);
-app.use(estudiosRouter);
+app.use(studiesRouter);
 
-// Inicia la ejecución automática de la cancelación de turnos
-startAutoCancelTurnos();
-
-// Inicia la ejecución automática de recordatorios por correo electrónico
+startAutoCancelAppointments();
 startAutoReminderEmails();
 
-app.listen(PORT, () => {
-  console.log(`Server is running on PORT ${PORT}`);
-});
+const startServer = async () => {
+  try {
+    await sequelize.authenticate();
+    app.listen(PORT, () => {
+      // eslint-disable-next-line no-console
+      console.log(`Server is running on PORT ${PORT}`);
+    });
+  } catch (error) {
+    // eslint-disable-next-line no-console
+    console.error('Unable to connect to the database:', error);
+    process.exit(1);
+  }
+};
+
+startServer();

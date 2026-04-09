@@ -26,7 +26,7 @@ describe('Authorization Middleware Tests', () => {
 
   describe('authorizeRole', () => {
     it('should allow access when user has required role', () => {
-      req.session.rol = 'Admin';
+      req.session.role = 'Admin';
       const middleware = authorizeRole('Admin', 'Doctor');
 
       middleware(req, res, next);
@@ -36,7 +36,7 @@ describe('Authorization Middleware Tests', () => {
     });
 
     it('should deny access when user does not have required role', () => {
-      req.session.rol = 'Patient';
+      req.session.role = 'Patient';
       const middleware = authorizeRole('Admin', 'Doctor');
 
       middleware(req, res, next);
@@ -44,20 +44,20 @@ describe('Authorization Middleware Tests', () => {
       expect(res.status).toHaveBeenCalledWith(403);
       expect(res.json).toHaveBeenCalledWith({
         message:
-          'Acceso denegado. Se requiere uno de los roles: Admin, Doctor.',
+          'Access denied. One of the following roles is required: Admin, Doctor.',
       });
       expect(next).not.toHaveBeenCalled();
     });
 
     it('should deny access when user has no role', () => {
-      req.session.rol = null;
+      req.session.role = null;
       const middleware = authorizeRole('Admin');
 
       middleware(req, res, next);
 
       expect(res.status).toHaveBeenCalledWith(401);
       expect(res.json).toHaveBeenCalledWith({
-        message: 'No autorizado. Token inválido o inexistente.',
+        message: 'Unauthorized. Invalid or missing token.',
       });
       expect(next).not.toHaveBeenCalled();
     });
@@ -65,7 +65,7 @@ describe('Authorization Middleware Tests', () => {
 
   describe('Predefined role middlewares', () => {
     it('Admin middleware should allow Admin role', () => {
-      req.session.rol = 'Admin';
+      req.session.role = 'Admin';
 
       Admin(req, res, next);
 
@@ -74,7 +74,7 @@ describe('Authorization Middleware Tests', () => {
     });
 
     it('Patient middleware should allow Patient role', () => {
-      req.session.rol = 'Patient';
+      req.session.role = 'Patient';
 
       Patient(req, res, next);
 
@@ -84,7 +84,7 @@ describe('Authorization Middleware Tests', () => {
 
     it('AdminOrPatient middleware should allow both Admin and Patient roles', () => {
       // Test Admin
-      req.session.rol = 'Admin';
+      req.session.role = 'Admin';
       AdminOrPatient(req, res, next);
       expect(next).toHaveBeenCalled();
 
@@ -92,13 +92,13 @@ describe('Authorization Middleware Tests', () => {
       jest.clearAllMocks();
 
       // Test Patient
-      req.session.rol = 'Patient';
+      req.session.role = 'Patient';
       AdminOrPatient(req, res, next);
       expect(next).toHaveBeenCalled();
     });
 
     it('should deny access for unauthorized roles', () => {
-      req.session.rol = 'Doctor';
+      req.session.role = 'Doctor';
 
       AdminOrPatient(req, res, next);
 

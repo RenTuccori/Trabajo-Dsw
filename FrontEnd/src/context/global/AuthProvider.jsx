@@ -3,8 +3,8 @@ import { useContext, useState, useEffect } from 'react';
 import { jwtDecode } from 'jwt-decode';
 import PropTypes from 'prop-types';
 import { useNavigate } from 'react-router-dom';
-import { verifyDoctor } from '../../api/doctores.api.js';
-import { getUserDniFecha } from '../../api/usuarios.api.js';
+import { verifyDoctor } from '../../api/doctors.api.js';
+import { getUserDniFecha } from '../../api/users.api.js';
 import { getAdmin } from '../../api/admin.api.js';
 
 export const useAuth = () => {
@@ -19,35 +19,36 @@ const AuthProvider = ({ children }) => {
   const [dni, setDni] = useState('');
   const [nombreUsuario, setNombreUsuario] = useState('');
   const [apellidoUsuario, setApellidoUsuario] = useState('');
-  const [idDoctor, setIdDoctor] = useState('');
+  const [doctorId, setDoctorId] = useState('');
   const [idAdmin, setIdAdmin] = useState('');
   const [rol, setRol] = useState('');
   const navigate = useNavigate();
 
-  // Inicializar estado desde localStorage al montar el componente
   useEffect(() => {
+    // Initialize status from localStorage when component mounts
     const token = localStorage.getItem('token');
     if (token) {
       try {
         const decoded = jwtDecode(token);
         if (decoded.exp > Date.now() / 1000) {
-          // Token válido, restaurar estado según el rol del token
-          if (decoded.rol === 'Patient') {
-            setDni(decoded.dni);
-            setNombreUsuario(decoded.nombre || '');
-            setApellidoUsuario(decoded.apellido || '');
+          // Valid token, restore status based on token role
+          if (decoded.role === 'Patient') {
+            setDni(decoded.nationalId);
+            setNombreUsuario(decoded.firstName || '');
+            setApellidoUsuario(decoded.lastName || '');
             setRol('Patient');
-          } else if (decoded.rol === 'Doctor') {
-            setIdDoctor(decoded.idDoctor);
-            setNombreUsuario(decoded.nombre || '');
-            setApellidoUsuario(decoded.apellido || '');
+          } else if (decoded.role === 'Doctor') {
+            setDoctorId(decoded.doctorId);
+            setNombreUsuario(decoded.firstName || '');
+            setApellidoUsuario(decoded.lastName || '');
             setRol('Doctor');
-          } else if (decoded.rol === 'Admin') {
-            setIdAdmin(decoded.idAdmin);
+          } else if (decoded.role === 'Admin') {
+            console.log('AuthProvider: restored admin from token, id=', decoded.id);
+            setIdAdmin(decoded.id);
             setRol('Admin');
           }
         } else {
-          // Token expirado, limpiar
+          // Token expired, clear
           localStorage.removeItem('token');
         }
       } catch (error) {
@@ -67,60 +68,72 @@ const AuthProvider = ({ children }) => {
           // Paciente
           response = await getUserDniFecha({
             dni: identifier,
-            fechaNacimiento: credential,
+            password: credential,
           });
+
           token = response.data;
           localStorage.setItem('token', token);
+
           const decodedPatient = jwtDecode(token);
-          setDni(decodedPatient.dni);
-          setNombreUsuario(decodedPatient.nombre || '');
-          setApellidoUsuario(decodedPatient.apellido || '');
+
+          setDni(decodedPatient.nationalId);
+          setNombreUsuario(decodedPatient.firstName || '');
+          setApellidoUsuario(decodedPatient.lastName || '');
           setRol('Patient');
+          navigate('/patient');
           break;
         }
         case 'Doctor': {
           // Doctor
           response = await verifyDoctor({
             dni: identifier,
-            contra: credential,
+            password: credential,
           });
           token = response.data;
           localStorage.setItem('token', token);
           const decodedDoctor = jwtDecode(token);
-          setIdDoctor(decodedDoctor.idDoctor);
-          setNombreUsuario(decodedDoctor.nombre || '');
-          setApellidoUsuario(decodedDoctor.apellido || '');
+          setDoctorId(decodedDoctor.doctorId);
+          setNombreUsuario(decodedDoctor.firstName || '');
+          setApellidoUsuario(decodedDoctor.lastName || '');
           setRol('Doctor');
+          navigate('/doctor');
           break;
         }
         case 'Admin': {
           // Admin
           response = await getAdmin({
-            usuario: identifier,
-            contra: credential,
+            user: identifier,
+            password: credential,
           });
           token = response.data;
           localStorage.setItem('token', token);
           const decodedAdmin = jwtDecode(token);
-          setIdAdmin(decodedAdmin.idAdmin);
+          console.log('AuthProvider: login decoded admin id=', decodedAdmin.id);
+          setIdAdmin(decodedAdmin.id);
           setRol('Admin');
+          navigate('/admin');
           break;
         }
         default:
-          throw new Error('Tipo de usuario no válido');
+          throw new Error('Tipo de user no válido');
       }
     } catch (error) {
       // Manejar errores de inicio de sesión
-      console.error('Error en el inicio de sesión:', error);
+      console.error('💥 FRONTEND - Error en el inicio de sesión:', error);
+      console.error('📄 FRONTEND - Detalles del error:', error.response?.data);
+      console.error('🔢 FRONTEND - Código de estado:', error.response?.status);
+
       if (userType === 'Patient') {
         setDni(null);
         setNombreUsuario('');
         setApellidoUsuario('');
       } else if (userType === 'Doctor') {
-        setIdDoctor(null);
+        setDoctorId(null);
         setNombreUsuario('');
         setApellidoUsuario('');
-      } else if (userType === 'Admin') setIdAdmin(null);
+      } else if (userType === 'Admin') {
+        setIdAdmin(null);
+      }
       throw error;
     }
   }
@@ -129,12 +142,13 @@ const AuthProvider = ({ children }) => {
     if (localStorage.getItem('token')) {
       try {
         const decoded = jwtDecode(localStorage.getItem('token'));
+
         if (decoded.exp < Date.now() / 1000) {
-          console.error('Token expired');
+          console.error('⏰ FRONTEND - Token expired');
           localStorage.removeItem('token');
           // Limpiar todos los estados
           setDni('');
-          setIdDoctor('');
+          setDoctorId('');
           setIdAdmin('');
           setNombreUsuario('');
           setApellidoUsuario('');
@@ -143,31 +157,31 @@ const AuthProvider = ({ children }) => {
         } else {
           switch (userType) {
             case 'Patient': // Paciente
-              setDni(decoded.dni);
-              setNombreUsuario(decoded.nombre || '');
-              setApellidoUsuario(decoded.apellido || '');
+              setDni(decoded.nationalId);
+              setNombreUsuario(decoded.firstName || '');
+              setApellidoUsuario(decoded.lastName || '');
               setRol('Patient');
               break;
             case 'Doctor': // Doctor
-              setIdDoctor(decoded.idDoctor);
-              setNombreUsuario(decoded.nombre || '');
-              setApellidoUsuario(decoded.apellido || '');
+              setDoctorId(decoded.doctorId);
+              setNombreUsuario(decoded.firstName || '');
+              setApellidoUsuario(decoded.lastName || '');
               setRol('Doctor');
               break;
             case 'Admin': // Admin
-              setIdAdmin(decoded.idAdmin);
+              setIdAdmin(decoded.id);
               setRol('Admin');
               break;
             default:
-              throw new Error('Tipo de usuario no válido');
+              throw new Error('Tipo de user no válido');
           }
         }
       } catch (error) {
-        console.error('Error decoding token:', error);
+        console.error('💥 FRONTEND - Error decoding token:', error);
         localStorage.removeItem('token');
         // Limpiar todos los estados
         setDni('');
-        setIdDoctor('');
+        setDoctorId('');
         setIdAdmin('');
         setNombreUsuario('');
         setApellidoUsuario('');
@@ -177,7 +191,7 @@ const AuthProvider = ({ children }) => {
     } else {
       // Limpiar todos los estados cuando no hay token
       setDni('');
-      setIdDoctor('');
+      setDoctorId('');
       setIdAdmin('');
       setNombreUsuario('');
       setApellidoUsuario('');
@@ -191,7 +205,7 @@ const AuthProvider = ({ children }) => {
         login,
         comprobarToken,
         dni,
-        idDoctor,
+        doctorId,
         idAdmin,
         rol,
         nombreUsuario,

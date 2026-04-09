@@ -1,9 +1,9 @@
 import { render, screen } from '@testing-library/react';
 import { BrowserRouter } from 'react-router-dom';
 import { describe, it, expect } from 'vitest';
-import Navbar from '../components/navbar.jsx';
+import Navbar from '../components/Navbar.jsx';
 
-// Wrapper para React Router
+// Wrapper for React Router
 const renderWithRouter = (component) => {
   return render(<BrowserRouter>{component}</BrowserRouter>);
 };
@@ -12,10 +12,10 @@ describe('Navbar Component', () => {
   it('should render the navbar with logo and title', () => {
     renderWithRouter(<Navbar />);
 
-    // Verificar que el título aparece
+    // Verify that the title appears
     expect(screen.getByText('Sanatorio UTN')).toBeInTheDocument();
 
-    // Verificar que el logo aparece
+    // Verify that the logo appears
     const logo = screen.getByAltText('Logo');
     expect(logo).toBeInTheDocument();
     expect(logo).toHaveAttribute('src', expect.stringContaining('logo.png'));
@@ -24,22 +24,22 @@ describe('Navbar Component', () => {
   it('should have navigation links to doctor and admin sections', () => {
     renderWithRouter(<Navbar />);
 
-    // Verificar links de navegación por atributos
+    // Verify navigation links by attributes
     const links = screen.getAllByRole('link');
 
-    // Encontrar link a /doctor
+    // Find link to /doctor
     const doctorLink = links.find(
       (link) => link.getAttribute('href') === '/doctor'
     );
     expect(doctorLink).toBeInTheDocument();
 
-    // Encontrar link a /admin
+    // Find link to /admin
     const adminLink = links.find(
       (link) => link.getAttribute('href') === '/admin'
     );
     expect(adminLink).toBeInTheDocument();
 
-    // Verificar que tienen las clases correctas
+    // Verify they have the correct classes
     expect(doctorLink).toHaveClass('text-blue-800', 'hover:text-blue-600');
     expect(adminLink).toHaveClass('text-blue-800', 'hover:text-blue-600');
   });

@@ -1,0 +1,8 @@
+{
+  "name": "trabajo-dsw-root",
+  "private": true,
+  "scripts": {
+    "postinstall": "npm --prefix BackEnd install",
+    "start": "npm --prefix BackEnd start"
+  }
+}
