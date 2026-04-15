@@ -1,22 +1,22 @@
 import { AdministrationContext } from './AdministrationContext';
 import {
-  createLocation as createLocationAPI,
-  deleteLocation as deleteLocationAPI,
-  createSpecialty as createSpecialtyAPI,
-  deleteSpecialty as deleteSpecialtyAPI,
-  createHealthInsurance as createHealthInsuranceAPI,
-  deleteHealthInsurance as deleteHealthInsuranceAPI,
-  updateHealthInsurance as updateHealthInsuranceAPI,
-  createCombination as createCombinationAPI,
+  createLocation,
+  deleteLocation,
+  createSpecialty,
+  deleteSpecialty,
+  createHealthInsurance,
+  deleteHealthInsurance,
+  updateHealthInsurance,
+  createCombination,
   createDoctor,
   updateDoctor,
   deleteDoctor,
-  deleteCombination as deleteCombinationAPI,
-  getCombinations as getCombinationsAPI,
-  createSchedules as createSchedulesAPI,
-  replaceSchedules as replaceSchedulesAPI,
+  deleteCombination,
+  getCombinations,
+  createSchedules,
+  replaceSchedules,
   getSchedulesByDoctor,
-  updateSchedules as updateSchedulesAPI,
+  updateSchedules,
 } from '../../api/admin.api.js';
 import { useContext, useState } from 'react';
 import { getLocations } from '../../api/locations.api.js';
@@ -61,7 +61,7 @@ const AdministrationProvider = ({ children }) => {
 
   async function createNewLocation({ name, address }) {
     try {
-      await createLocationAPI({ name, address }); // Llamada a la API
+      await createLocation({ name, address }); // Llamada a la API
     } catch (error) {
       if (error.response) {
         // Error del servidor o del cliente
@@ -88,7 +88,7 @@ const AdministrationProvider = ({ children }) => {
 
   async function deleteLocation(locationId) {
     try {
-      await deleteLocationAPI(locationId); // Llamada a la API
+      await deleteLocation(locationId); // Llamada a la API
     } catch (error) {
       console.error('Error al borrar la sede:', error);
       throw error;
@@ -102,7 +102,7 @@ const AdministrationProvider = ({ children }) => {
   }
   async function createSpecialtyFunction({ name }) {
     try {
-      await createSpecialtyAPI({ name });
+      await createSpecialty({ name });
     } catch (error) {
       console.error('Error creating specialty:', error);
       throw error;
@@ -110,7 +110,7 @@ const AdministrationProvider = ({ children }) => {
   }
   async function deleteSpecialtyFunction(specialtyId) {
     try {
-      await deleteSpecialtyAPI(specialtyId); // Llamada a la API
+      await deleteSpecialty(specialtyId); // Llamada a la API
     } catch (error) {
       console.error('Error al borrar la especialidad:', error);
       throw error;
@@ -172,7 +172,7 @@ const AdministrationProvider = ({ children }) => {
   //Obra Social
   async function createHealthInsurance({ name }) {
     try {
-      await createHealthInsuranceAPI({ name });
+      await createHealthInsurance({ name });
     } catch (error) {
       console.error('Error al obtener las venues:', error);
     }
@@ -189,7 +189,7 @@ const AdministrationProvider = ({ children }) => {
 
   async function deleteHealthInsurance(healthInsuranceId) {
     try {
-      await deleteHealthInsuranceAPI(healthInsuranceId);
+      await deleteHealthInsurance(healthInsuranceId);
     } catch (error) {
       console.error('Error al borrar la obra social:', error);
       throw error;
@@ -199,7 +199,7 @@ const AdministrationProvider = ({ children }) => {
   async function updateHealthInsurance({ healthInsuranceId, name }) {
     try {
       console.log('healthInsuranceId:', healthInsuranceId, 'name:', name);
-      await updateHealthInsuranceAPI({ insuranceId: healthInsuranceId, name });
+      await updateHealthInsurance({ insuranceId: healthInsuranceId, name });
     } catch (error) {
       console.error('Error al actualizar la obra social:', error);
       throw error;
@@ -213,7 +213,7 @@ const AdministrationProvider = ({ children }) => {
     doctorId,
   }) {
     try {
-      await createCombinationAPI({
+      await createCombination({
         locationId,
         specialtyId,
         doctorId,
@@ -230,7 +230,7 @@ const AdministrationProvider = ({ children }) => {
     specialtyId,
   }) {
     try {
-      await deleteCombinationAPI({
+      await deleteCombination({
         locationId,
         doctorId,
         specialtyId,
@@ -246,7 +246,7 @@ const AdministrationProvider = ({ children }) => {
 
   async function getCombinations() {
     try {
-      const response = await getCombinationsAPI();
+      const response = await getCombinations();
       setCombinations(response.data);
     } catch (error) {
       console.error(
@@ -260,7 +260,7 @@ const AdministrationProvider = ({ children }) => {
   //Horarios
   async function replaceSchedules({ locationId, doctorId, specialtyId, schedules }) {
     try {
-      await replaceSchedulesAPI({ locationId, doctorId, specialtyId, schedules });
+      await replaceSchedules({ locationId, doctorId, specialtyId, schedules });
     } catch (error) {
       console.error('Error al reemplazar los horarios del doctor:', error);
       throw error;
@@ -287,7 +287,7 @@ const AdministrationProvider = ({ children }) => {
         hora_fin,
         status
       );
-      await createSchedulesAPI({
+      await createSchedules({
         locationId,
         doctorId,
         specialtyId,
@@ -310,7 +310,7 @@ const AdministrationProvider = ({ children }) => {
     status,
   }) {
     try {
-      await updateSchedulesAPI({
+      await updateSchedules({
         locationId,
         doctorId,
         specialtyId,
@@ -363,13 +363,7 @@ const AdministrationProvider = ({ children }) => {
 
   async function createUserFunction(data) {
     console.log('data:', data);
-    // Map form field 'name' to backend field 'firstName', and 'dni' to 'nationalId'
-    const mappedData = {
-      ...data,
-      nationalId: data.nationalId || data.dni,
-      firstName: data.firstName || data.name,
-    };
-    const response = await createUserAPI(mappedData);
+    const response = await createUserAPI(data);
     setUser(response.data);
   }
   async function updateUserFunction(data) {

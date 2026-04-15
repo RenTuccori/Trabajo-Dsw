@@ -116,8 +116,4 @@ export const getUserByNationalId = async ({ nationalId }) => {
     }
 }
 
-// Alias used by providers that pass { dni } instead of { nationalId }
-export const getUserDni = async ({ dni }) => {
-    return getUserByNationalId({ nationalId: dni });
-}
 

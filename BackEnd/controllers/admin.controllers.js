@@ -25,7 +25,7 @@ export const createCombination = async (req, res) => {
 export const deleteCombination = async (req, res) => {
   try {
     const { locationId, doctorId, specialtyId } = req.body;
-    const deleted = await adminService.softDeleteCombination({ locationId, doctorId, specialtyId });
+    const deleted = await adminService.softDeleteCombination(locationId, doctorId, specialtyId);
     if (!deleted) {
       return res.status(404).json({ message: 'Combination not found' });
     }

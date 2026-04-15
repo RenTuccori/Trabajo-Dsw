@@ -5,8 +5,8 @@ import nodemailer from 'nodemailer';
 async function createTransporter() {
   const host = 'smtp.gmail.com';
   const port = 465;
-  const secure = true;
-  const user = 'clinicutn@gmail.com';
+  const secure = 465;
+  const user = 'utnsanatorio@gmail.com';
   const pass = process.env.DB_EMAILPASS;
 
   if (!pass) {
