@@ -137,12 +137,10 @@ export function CreateLocation() {
                       placeholder="Nombre"
                       autoFocus
                     />
-                    <input
-                      type="text"
-                      value={editingAddress}
-                      onChange={(e) => setEditingAddress(e.target.value)}
-                      className="input"
-                      placeholder="Dirección"
+                    <AddressAutocomplete
+                      initialValue={editingAddress}
+                      onChange={(value) => setEditingAddress(value)}
+                      onSelect={(data) => setEditingAddress(data.address)}
                     />
                   </div>
                 ) : (

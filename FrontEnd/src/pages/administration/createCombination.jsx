@@ -203,6 +203,7 @@ export function CreateCombination() {
 
           {/* Botón para confirmar la asignación */}
           <button
+            type="button"
             className="btn-primary"
             disabled={!selectedDoctor}
             onClick={confirmarCombinacion}
