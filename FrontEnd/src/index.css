@@ -146,13 +146,16 @@ body {
   /* ========== BENTO TILE ========== */
   .bento-tile {
     @apply glass-solid p-6 cursor-pointer transition-all duration-300 
-    hover:shadow-glass-hover hover:-translate-y-1 group relative overflow-hidden;
+    hover:shadow-glass-hover hover:-translate-y-1 relative overflow-hidden;
   }
 
   .bento-tile::after {
     content: '';
-    @apply absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none;
+    @apply absolute inset-0 opacity-0 transition-opacity duration-300 pointer-events-none;
     background: linear-gradient(135deg, rgba(20, 184, 166, 0.03) 0%, rgba(251, 191, 36, 0.03) 100%);
+  }
+  .bento-tile:hover::after {
+    @apply opacity-100;
   }
 
   /* ========== FLOATING SHAPES ========== */
