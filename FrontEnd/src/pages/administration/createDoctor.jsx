@@ -27,7 +27,7 @@ export function CreateDoctor() {
   const [formData, setFormData] = useState({
     dni: '',
     birthDate: '',
-    name: '',
+    firstName: '',
     lastName: '',
     phone: '',
     email: '',
@@ -107,7 +107,8 @@ export function CreateDoctor() {
         window.notifySuccess('¡Doctor creado con éxito!');
         navigate('/admin');
       } catch (error) {
-        window.notifyError('Error al crear el doctor');
+        const msg = error?.response?.data?.message || error?.message || 'Error al crear el doctor';
+        window.notifyError(msg);
         console.error('Error al crear doctor:', error);
       }
     } else {
@@ -190,8 +191,8 @@ export function CreateDoctor() {
                   <p className="label text-center">Nombre</p>
                   <input
                     type="text"
-                    name="name"
-                    value={formData.name}
+                    name="firstName"
+                    value={formData.firstName}
                     onChange={handleInputChange}
                     required
                     className="input"

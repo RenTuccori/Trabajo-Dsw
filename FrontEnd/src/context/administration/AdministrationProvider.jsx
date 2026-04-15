@@ -160,7 +160,8 @@ const AdministrationProvider = ({ children }) => {
     try {
       await createDoctor({ dni, appointmentDuration, password });
     } catch (error) {
-      console.error('Error al obtener las venues:', error);
+      console.error('Error al crear el doctor:', error);
+      throw error;
     }
   }
   async function deleteDoctorFunction(doctorId) {

@@ -120,12 +120,12 @@ export function CreateLocation() {
         <h3 className="text-lg font-bold text-gray-900 mb-4">
           Sedes creadas
         </h3>
-        <ul className="space-y-2">
+        <ul className="space-y-2 overflow-visible">
           {locations.length > 0 ? (
             locations.map((location) => (
               <li
                 key={location.id}
-                className="glass-list-item flex justify-between items-center gap-4"
+                className={`glass-list-item flex justify-between items-center gap-4 ${editingId === location.id ? 'relative z-[1000] overflow-visible' : ''}`}
               >
                 {editingId === location.id ? (
                   <div className="flex-1 space-y-2">
