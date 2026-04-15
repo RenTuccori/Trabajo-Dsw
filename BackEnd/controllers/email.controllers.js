@@ -6,7 +6,7 @@ async function createTransporter() {
   const host = 'smtp.gmail.com';
   const port = 465;
   const secure = 465;
-  const user = 'utnsanatorio@gmail.com';
+  const user = 'clinicutn@gmail.com';
   const pass = process.env.DB_EMAILPASS;
 
   if (!pass) {
@@ -46,7 +46,7 @@ export const sendEmail = async (req, res) => {
     const { transporter, isTest } = await createTransporter();
 
     const mailOptions = {
-      from: process.env.EMAIL_FROM || 'Sanatorio UTN <utnsanatorio@gmail.com>',
+      from: process.env.EMAIL_FROM || 'Sanatorio UTN <clinicutn@gmail.com>',
       to,
       subject,
       html,

@@ -16,9 +16,10 @@ export default function AddressAutocomplete({ onSelect, initialValue = '' }) {
     timer.current = setTimeout(async () => {
       try {
         const q = encodeURIComponent(query);
-        // IMPORTANT: replace the email query param with a real contact address for production
-        const url = `https://nominatim.openstreetmap.org/search?format=json&addressdetails=1&limit=6&q=${q}&email=dev@yourdomain.com`;
-        const res = await fetch(url);
+        const url = `https://nominatim.openstreetmap.org/search?format=json&addressdetails=1&limit=6&q=${q}&email=clinicutn@gmail.com`;
+        const res = await fetch(url, {
+          headers: { 'Accept-Language': 'es' },
+        });
         const data = await res.json();
         setResults(data || []);
         setOpen(true);
