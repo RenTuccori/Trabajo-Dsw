@@ -5,10 +5,13 @@ import AddressAutocomplete from '../../components/AddressAutocomplete';
 
 export function CreateLocation() {
   const navigate = useNavigate();
-  const { locations, createNewLocation, getLocations, deleteLocation } =
+  const { locations, createNewLocation, getLocations, deleteLocation, updateLocation } =
     useAdministration();
   const [locationName, setLocationName] = useState('');
   const [locationAddress, setLocationAddress] = useState('');
+  const [editingId, setEditingId] = useState(null);
+  const [editingName, setEditingName] = useState('');
+  const [editingAddress, setEditingAddress] = useState('');
 
   // Obtener locations al cargar el componente
   useEffect(() => {
@@ -54,12 +57,30 @@ export function CreateLocation() {
     if (result.isConfirmed) {
       try {
         await deleteLocation(locationId);
-        window.notifySuccess('¡Sede eliminada con éxito!'); // Mostrar mensaje de éxito
-        getLocations(); // Actualizar la lista después de borrar una sede
+        window.notifySuccess('¡Sede eliminada con éxito!');
+        getLocations();
       } catch (error) {
-        window.notifyError('Error al eliminar la sede'); // Mostrar mensaje de error
+        window.notifyError('Error al eliminar la sede');
         console.error('Error al borrar sede:', error);
       }
+    }
+  };
+
+  const handleUpdateLocation = async (locationId) => {
+    if (editingName.trim() === '') {
+      window.notifyError('El nombre no puede estar vacío');
+      return;
+    }
+    try {
+      await updateLocation({ locationId, name: editingName, address: editingAddress });
+      window.notifySuccess('¡Sede actualizada con éxito!');
+      setEditingId(null);
+      setEditingName('');
+      setEditingAddress('');
+      getLocations();
+    } catch (error) {
+      window.notifyError('Error al actualizar la sede');
+      console.error('Error al actualizar sede:', error);
     }
   };
 
@@ -106,15 +127,62 @@ export function CreateLocation() {
                 key={location.id}
                 className="glass-list-item flex justify-between items-center gap-4"
               >
-                <span>
-                  <strong>{location.name}</strong> - {location.address}
-                </span>
-                <button
-                  onClick={() => handleDeleteLocation(location.id)}
-                  className="text-xs font-semibold px-3 py-1.5 rounded-xl bg-coral-50 text-coral-500 hover:bg-coral-100 transition-colors flex-shrink-0"
-                >
-                  Eliminar
-                </button>
+                {editingId === location.id ? (
+                  <div className="flex-1 space-y-2">
+                    <input
+                      type="text"
+                      value={editingName}
+                      onChange={(e) => setEditingName(e.target.value)}
+                      className="input"
+                      placeholder="Nombre"
+                      autoFocus
+                    />
+                    <input
+                      type="text"
+                      value={editingAddress}
+                      onChange={(e) => setEditingAddress(e.target.value)}
+                      className="input"
+                      placeholder="Dirección"
+                    />
+                  </div>
+                ) : (
+                  <span>
+                    <strong>{location.name}</strong> - {location.address}
+                  </span>
+                )}
+                <div className="flex gap-2 flex-shrink-0">
+                  {editingId === location.id ? (
+                    <>
+                      <button
+                        onClick={() => handleUpdateLocation(location.id)}
+                        className="text-xs font-semibold px-3 py-1.5 rounded-xl bg-brand-50 text-brand-600 hover:bg-brand-100 transition-colors"
+                      >
+                        Guardar
+                      </button>
+                      <button
+                        onClick={() => { setEditingId(null); setEditingName(''); setEditingAddress(''); }}
+                        className="text-xs font-semibold px-3 py-1.5 rounded-xl bg-gray-100 text-gray-600 hover:bg-gray-200 transition-colors"
+                      >
+                        Cancelar
+                      </button>
+                    </>
+                  ) : (
+                    <>
+                      <button
+                        onClick={() => { setEditingId(location.id); setEditingName(location.name); setEditingAddress(location.address); }}
+                        className="text-xs font-semibold px-3 py-1.5 rounded-xl bg-brand-50 text-brand-600 hover:bg-brand-100 transition-colors"
+                      >
+                        Actualizar
+                      </button>
+                      <button
+                        onClick={() => handleDeleteLocation(location.id)}
+                        className="text-xs font-semibold px-3 py-1.5 rounded-xl bg-coral-50 text-coral-500 hover:bg-coral-100 transition-colors"
+                      >
+                        Eliminar
+                      </button>
+                    </>
+                  )}
+                </div>
               </li>
             ))
           ) : (

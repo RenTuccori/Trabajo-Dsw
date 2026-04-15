@@ -133,6 +133,16 @@ export const deleteSpecialty = async (specialtyId) => {
   }
 };
 
+export const updateSpecialty = async ({ specialtyId, name }) => {
+  try {
+    const response = await axiosInstance.put(`admin/specialties/${specialtyId}`, { name });
+    return response;
+  } catch (error) {
+    console.error('Error updating specialty:', error);
+    throw error;
+  }
+};
+
 //combinations
 export const createCombination = async ({ locationId, specialtyId, doctorId }) => {
   try {

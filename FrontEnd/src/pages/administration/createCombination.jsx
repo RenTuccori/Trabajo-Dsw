@@ -95,8 +95,17 @@ export function CreateCombination() {
           });
 
           window.notifySuccess('¡Combinación creada con éxito!');
-          // Refresca las combinations después de la creación
-          getCombinations();
+          // Navegar automáticamente a crear horarios para esta combinación
+          navigate('/admin/createSchedules', {
+            state: {
+              locationId: selectedLocation.value,
+              specialtyId: selectedSpecialty.value,
+              doctorId: selectedDoctor.value,
+              locationName: selectedLocation.label,
+              specialtyName: selectedSpecialty.label,
+              doctorFullName: selectedDoctor.label,
+            },
+          });
         } catch (error) {
           if (error.response && error.response.status === 400) {
             window.notifyError(error.response.data.message);

@@ -58,6 +58,20 @@ export const createNewSpecialty = async ({ name }) => {
   return specialty;
 };
 
+export const updateExistingSpecialty = async (specialtyId, { name }) => {
+  const existing = await Specialty.findOne({
+    where: { name, status: 'Enabled', id: { [Op.ne]: specialtyId } },
+  });
+  if (existing) {
+    throw { status: 400, message: 'An enabled specialty with that name already exists.' };
+  }
+  const [affectedRows] = await Specialty.update(
+    { name },
+    { where: { id: specialtyId, status: 'Enabled' } }
+  );
+  return affectedRows > 0;
+};
+
 export const softDeleteSpecialty = async (specialtyId) => {
   const transaction = await sequelize.transaction();
   try {

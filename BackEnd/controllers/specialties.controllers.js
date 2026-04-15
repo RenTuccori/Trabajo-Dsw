@@ -53,6 +53,21 @@ export const createSpecialty = async (req, res) => {
   }
 };
 
+export const updateSpecialty = async (req, res) => {
+  try {
+    const updated = await specialtiesService.updateExistingSpecialty(req.params.id, req.body);
+    if (!updated) {
+      return res.status(404).json({ message: 'Specialty not found' });
+    }
+    res.json({ message: 'Specialty updated' });
+  } catch (error) {
+    if (error.status) {
+      return res.status(error.status).json({ message: error.message });
+    }
+    return res.status(500).json({ message: error.message });
+  }
+};
+
 export const deleteSpecialty = async (req, res) => {
   try {
     const deleted = await specialtiesService.softDeleteSpecialty(req.params.id);

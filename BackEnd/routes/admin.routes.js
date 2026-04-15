@@ -29,6 +29,7 @@ import {
 import {
   createSpecialty,
   deleteSpecialty,
+  updateSpecialty,
 } from '../controllers/specialties.controllers.js';
 import {
   validateAdminLogin,
@@ -69,6 +70,7 @@ router.put('/api/admin/health-insurance/:id', Admin, validateHealthInsuranceId, 
 
 // Specialty
 router.post('/api/admin/specialties', Admin, validateCreateSpecialty, validate, createSpecialty);
+router.put('/api/admin/specialties/:id', Admin, validateSpecialtyId, validate, updateSpecialty);
 router.delete('/api/admin/specialties/:id', Admin, validateSpecialtyId, validate, deleteSpecialty);
 
 // Combinations

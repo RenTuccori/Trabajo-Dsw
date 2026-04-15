@@ -2,8 +2,10 @@ import { AdministrationContext } from './AdministrationContext';
 import {
   createLocation,
   deleteLocation as deleteLocationAPI,
+  updateLocation as updateLocationAPI,
   createSpecialty,
   deleteSpecialty,
+  updateSpecialty as updateSpecialtyAPI,
   createHealthInsurance as createHealthInsuranceAPI,
   deleteHealthInsurance as deleteHealthInsuranceAPI,
   updateHealthInsurance as updateHealthInsuranceAPI,
@@ -95,6 +97,15 @@ const AdministrationProvider = ({ children }) => {
     }
   }
 
+  async function updateLocationFunction({ locationId, name, address }) {
+    try {
+      await updateLocationAPI({ locationId, name, address });
+    } catch (error) {
+      console.error('Error al actualizar la sede:', error);
+      throw error;
+    }
+  }
+
   //Especialidad
   async function getSpecialtiesFunc({ locationId }) {
     const response = await getSpecialties({ locationId });
@@ -113,6 +124,15 @@ const AdministrationProvider = ({ children }) => {
       await deleteSpecialty(specialtyId); // Llamada a la API
     } catch (error) {
       console.error('Error al borrar la especialidad:', error);
+      throw error;
+    }
+  }
+
+  async function updateSpecialtyFunction({ specialtyId, name }) {
+    try {
+      await updateSpecialtyAPI({ specialtyId, name });
+    } catch (error) {
+      console.error('Error al actualizar la especialidad:', error);
       throw error;
     }
   }
@@ -384,10 +404,12 @@ const AdministrationProvider = ({ children }) => {
         getLocationsFunc,
         getLocations: getLocationsFunc,
         deleteLocation,
+        updateLocation: updateLocationFunction,
         createSpecialty: createSpecialtyFunction,
         specialties,
         setSpecialties,
         deleteSpecialty: deleteSpecialtyFunction,
+        updateSpecialty: updateSpecialtyFunction,
         createHealthInsurance,
         getHealthInsurancesFunc,
         getHealthInsurances: getHealthInsurancesFunc,

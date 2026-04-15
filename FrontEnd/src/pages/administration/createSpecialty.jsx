@@ -11,8 +11,11 @@ export function CreateSpecialty() {
     createSpecialty,
     getAvailableSpecialties,
     deleteSpecialty,
+    updateSpecialty,
   } = useAdministration();
   const [specialtyName, setSpecialtyName] = useState('');
+  const [editingId, setEditingId] = useState(null);
+  const [editingName, setEditingName] = useState('');
 
   // Obtener specialties al cargar el componente
   useEffect(() => {
@@ -46,11 +49,28 @@ export function CreateSpecialty() {
       try {
         await deleteSpecialty(specialtyId);
         window.notifySuccess('¡Especialidad eliminada con éxito!');
-        getAvailableSpecialties(); // Actualizar la lista después de borrar una especialidad
+        getAvailableSpecialties();
       } catch (error) {
         window.notifyError('Error al eliminar la especialidad');
         console.error('Error al borrar especialidad:', error);
       }
+    }
+  };
+
+  const handleUpdateSpecialty = async (specialtyId) => {
+    if (editingName.trim() === '') {
+      window.notifyError('El nombre no puede estar vacío');
+      return;
+    }
+    try {
+      await updateSpecialty({ specialtyId, name: editingName });
+      window.notifySuccess('¡Especialidad actualizada con éxito!');
+      setEditingId(null);
+      setEditingName('');
+      getAvailableSpecialties();
+    } catch (error) {
+      window.notifyError('Error al actualizar la especialidad');
+      console.error('Error al actualizar especialidad:', error);
     }
   };
 
@@ -92,15 +112,53 @@ export function CreateSpecialty() {
                 key={especialidad.id}
                 className="glass-list-item flex justify-between items-center gap-4"
               >
-                <span>
-                  <strong>{t(`specialties.${especialidad.name}`, especialidad.name)}</strong>
-                </span>
-                <button
-                  onClick={() => handleBorrarEspecialidad(especialidad.id)}
-                  className="text-xs font-semibold px-3 py-1.5 rounded-xl bg-coral-50 text-coral-500 hover:bg-coral-100 transition-colors flex-shrink-0"
-                >
-                  Eliminar
-                </button>
+                {editingId === especialidad.id ? (
+                  <input
+                    type="text"
+                    value={editingName}
+                    onChange={(e) => setEditingName(e.target.value)}
+                    className="input flex-1"
+                    autoFocus
+                    onKeyDown={(e) => e.key === 'Enter' && handleUpdateSpecialty(especialidad.id)}
+                  />
+                ) : (
+                  <span>
+                    <strong>{t(`specialties.${especialidad.name}`, especialidad.name)}</strong>
+                  </span>
+                )}
+                <div className="flex gap-2 flex-shrink-0">
+                  {editingId === especialidad.id ? (
+                    <>
+                      <button
+                        onClick={() => handleUpdateSpecialty(especialidad.id)}
+                        className="text-xs font-semibold px-3 py-1.5 rounded-xl bg-brand-50 text-brand-600 hover:bg-brand-100 transition-colors"
+                      >
+                        Guardar
+                      </button>
+                      <button
+                        onClick={() => { setEditingId(null); setEditingName(''); }}
+                        className="text-xs font-semibold px-3 py-1.5 rounded-xl bg-gray-100 text-gray-600 hover:bg-gray-200 transition-colors"
+                      >
+                        Cancelar
+                      </button>
+                    </>
+                  ) : (
+                    <>
+                      <button
+                        onClick={() => { setEditingId(especialidad.id); setEditingName(especialidad.name); }}
+                        className="text-xs font-semibold px-3 py-1.5 rounded-xl bg-brand-50 text-brand-600 hover:bg-brand-100 transition-colors"
+                      >
+                        Actualizar
+                      </button>
+                      <button
+                        onClick={() => handleBorrarEspecialidad(especialidad.id)}
+                        className="text-xs font-semibold px-3 py-1.5 rounded-xl bg-coral-50 text-coral-500 hover:bg-coral-100 transition-colors"
+                      >
+                        Eliminar
+                      </button>
+                    </>
+                  )}
+                </div>
               </li>
             ))
           ) : (
