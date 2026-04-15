@@ -78,7 +78,7 @@ export default function AddressAutocomplete({ onSelect, onChange, initialValue =
         className="w-full p-2 border border-gray-300 rounded-lg"
       />
       {open && results.length > 0 && (
-        <ul className="absolute z-50 w-full bg-white border rounded mt-1 max-h-48 overflow-auto">
+        <ul className="absolute z-[1000] w-full bg-white border rounded mt-1 max-h-48 overflow-auto shadow-lg">
           {results.map((r) => (
             <li
               key={r.place_id}

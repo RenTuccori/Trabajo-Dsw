@@ -58,8 +58,8 @@ export function CreateDoctor() {
     e.preventDefault();
     if (dni.trim() !== '') {
       try {
-        await getUserByDni(dni);
-        if (user.length !== 0) {
+        const foundUser = await getUserByDni(dni);
+        if (foundUser && Object.keys(foundUser).length > 0) {
           setUsuarioExistente(true);
           window.notifySuccess(
             'Usuario encontrado, continúe con los siguientes pasos.'
@@ -70,10 +70,9 @@ export function CreateDoctor() {
             'Usuario no encontrado, complete los datos para crear uno nuevo.'
           );
         }
-        setFormularioVisible(true); // Muestra el formulario después de la búsqueda
+        setFormularioVisible(true);
       } catch (error) {
         if (error.response && error.response.status === 404) {
-          // Si es un error 404, significa que no existe el user, continuar como nuevo
           setUsuarioExistente(false);
           window.notifyError(
             'Usuario no encontrado, complete los datos para crear uno nuevo.'
@@ -166,7 +165,7 @@ export function CreateDoctor() {
               type="submit"
               className="btn-primary"
             >
-              Buscar user
+              Buscar usuario
             </button>
           </form>
         )}
@@ -344,7 +343,7 @@ export function CreateDoctor() {
             ))
           ) : (
             <p className="text-center text-gray-600">
-              No hay doctors creados aún.
+              No hay doctores creados aún.
             </p>
           )}
         </ul>

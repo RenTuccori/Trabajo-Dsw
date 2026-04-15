@@ -51,14 +51,17 @@ export const createNewUser = async (userData) => {
 };
 
 export const updateExistingUser = async (nationalId, userData) => {
+  const user = await User.findOne({ where: { nationalId } });
+  if (!user) return false;
+
   const data = { ...userData };
   if (data.password) {
     data.password = await bcrypt.hash(data.password, 10);
   }
-  const [affectedRows] = await User.update(data, {
+  await User.update(data, {
     where: { nationalId },
   });
-  return affectedRows > 0;
+  return true;
 };
 
 export const deleteExistingUser = async (nationalId) => {

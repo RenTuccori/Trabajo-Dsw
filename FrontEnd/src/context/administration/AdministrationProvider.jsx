@@ -373,6 +373,7 @@ const AdministrationProvider = ({ children }) => {
     try {
       const response = await getUserByNationalId({ dni });
       setUser(response.data);
+      return response.data;
     } catch (error) {
       console.error('Error al obtener el patient por DNI:', error);
       throw error;
@@ -432,6 +433,7 @@ const AdministrationProvider = ({ children }) => {
         createDoctorFunction,
         createDoctor: createDoctorFunction,
         deleteDoctorFunction,
+        deleteDoctor: deleteDoctorFunction,
         updateDoctorFunction,
         updateDoctor: updateDoctorFunction,
         getUserByDni,

@@ -140,6 +140,12 @@ export const authenticateDoctor = async (nationalId, password) => {
 };
 
 export const createNewDoctor = async ({ nationalId, appointmentDuration }) => {
+  const existing = await Doctor.findOne({
+    where: { nationalId, status: 'Enabled' },
+  });
+  if (existing) {
+    throw { status: 400, message: 'Ya existe un doctor con ese DNI.' };
+  }
   const doctor = await Doctor.create({
     nationalId,
     appointmentDuration,

@@ -93,7 +93,7 @@ export const getUserByNationalId = async ({ dni }) => {
         const response = await axiosInstance.post(`users/nationalId`, { nationalId: Number(dni) });
         return response;
     } catch (error) {
-        return error.response.data.message;
+        throw error;
     }
 }
 
