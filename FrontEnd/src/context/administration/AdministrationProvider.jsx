@@ -195,7 +195,8 @@ const AdministrationProvider = ({ children }) => {
     try {
       await createHealthInsuranceAPI({ name });
     } catch (error) {
-      console.error('Error al obtener las venues:', error);
+      console.error('Error al crear la obra social:', error);
+      throw error;
     }
   }
 
@@ -318,6 +319,7 @@ const AdministrationProvider = ({ children }) => {
       });
     } catch (error) {
       console.error('Error al crear el horario:', error);
+      throw error;
     }
   }
   async function updateSchedules({
@@ -341,6 +343,7 @@ const AdministrationProvider = ({ children }) => {
       });
     } catch (error) {
       console.error('Error al actualizar el horario:', error);
+      throw error;
     }
   }
   async function getDoctorSchedules({ locationId, specialtyId, doctorId }) {

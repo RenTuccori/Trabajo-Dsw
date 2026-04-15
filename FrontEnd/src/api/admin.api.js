@@ -6,38 +6,26 @@ export const getAdmin = async ({ user, password }) => {
 
 //Doctor
 export const createDoctor = async ({ dni, appointmentDuration }) => {
-  try {
-    const response = await axiosInstance.post(`admin/doctors`, {
-      nationalId: dni,
-      appointmentDuration,
-    });
-    return response;
-  } catch (error) {
-    return error.response.data.message;
-  }
+  const response = await axiosInstance.post(`admin/doctors`, {
+    nationalId: dni,
+    appointmentDuration,
+  });
+  return response;
 };
 
 export const deleteDoctor = async (doctorId) => {
-  try {
-    const response = await axiosInstance.delete(`admin/doctors/${doctorId}`);
-    return response;
-  } catch (error) {
-    return error.response.data.message;
-  }
+  const response = await axiosInstance.delete(`admin/doctors/${doctorId}`);
+  return response;
 };
 
 export const updateDoctor = async ({
   doctorId,
   appointmentDuration,
 }) => {
-  try {
-    const response = await axiosInstance.put(`admin/doctors/${doctorId}`, {
-      appointmentDuration,
-    });
-    return response;
-  } catch (error) {
-    return error.response.data.message;
-  }
+  const response = await axiosInstance.put(`admin/doctors/${doctorId}`, {
+    appointmentDuration,
+  });
+  return response;
 };
 
 //Sede
@@ -55,15 +43,11 @@ export const createLocation = async ({ name, address }) => {
 };
 
 export const updateLocation = async ({ locationId, name, address }) => {
-  try {
-    const response = await axiosInstance.put(`admin/locations/${locationId}`, {
-      name,
-      address,
-    });
-    return response;
-  } catch (error) {
-    return error.response.data.message;
-  }
+  const response = await axiosInstance.put(`admin/locations/${locationId}`, {
+    name,
+    address,
+  });
+  return response;
 };
 
 export const deleteLocation = async (locationId) => {
@@ -145,16 +129,12 @@ export const updateSpecialty = async ({ specialtyId, name }) => {
 
 //combinations
 export const createCombination = async ({ locationId, specialtyId, doctorId }) => {
-  try {
-    const response = await axiosInstance.post(`admin/combinations`, {
-      locationId,
-      specialtyId,
-      doctorId,
-    });
-    return response;
-  } catch (error) {
-    return error.response.data.message;
-  }
+  const response = await axiosInstance.post(`admin/combinations`, {
+    locationId,
+    specialtyId,
+    doctorId,
+  });
+  return response;
 };
 
 export const deleteCombination = async ({ locationId, doctorId, specialtyId }) => {
