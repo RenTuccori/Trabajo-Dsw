@@ -336,6 +336,7 @@ function UploadStudy() {
         ) : (
           /* Lista de estudios */
           <div className="glass-solid rounded-2xl p-6 lg:p-8">
+            <h2 className="text-lg font-bold text-gray-900 mb-4">
               Estudios Subidos
             </h2>
 
