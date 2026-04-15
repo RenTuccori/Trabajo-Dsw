@@ -213,6 +213,7 @@ function UserHome() {
               </div>
             </div>
           )}
+        </div>
       </div>
     </div>
   );

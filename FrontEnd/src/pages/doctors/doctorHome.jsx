@@ -200,6 +200,7 @@ function DoctorHome() {
               </div>
             </div>
           )}
+        </div>
       </div>
     </div>
   );

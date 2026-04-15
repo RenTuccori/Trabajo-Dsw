@@ -187,6 +187,7 @@ function AdministrationHome() {
             </p>
           </div>
           {!idAdmin ? renderLoginForm() : renderMenu()}
+        </div>
       </div>
     </div>
   );

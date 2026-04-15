@@ -226,8 +226,6 @@ function UploadStudy() {
         {!showEstudios ? (
           /* Formulario para subir estudios */
           <div className="card p-6">
-            </h2>
-
             <form onSubmit={handleSubmit} className="space-y-4">
               {/* Selección de patient */}
               <div>
