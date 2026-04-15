@@ -13,7 +13,7 @@ import {
   getDoctorById,
 } from '../../api/doctors.api';
 import { getAvailableDatesByDocSpecLoc, getAvailableSchedulesByDocSpecLoc } from '../../api/schedules.api';
-import { createUser, getUserDni, updateUser } from '../../api/users.api';
+import { createUser, getUserByNationalId, updateUser } from '../../api/users.api';
 import { getInsurance } from '../../api/insurance.api';
 import { createPatient, getPatientbyNationalId } from '../../api/patients.api';
 import {
@@ -169,7 +169,7 @@ const PatientsProvider = ({ children }) => {
 
     // Mapear campos del frontend al backend
     const backendData = {
-      dni: data.dni,
+      nationalId: data.nationalId,
       password: data.password,
       birthDate: data.birthDate,
       firstName: data.name, // Mapear name a firstName
@@ -183,7 +183,7 @@ const PatientsProvider = ({ children }) => {
     try {
       const response = await createUser(backendData);
       setUser(response.data);
-      await createPatient({ nationalId: data.dni });
+      await createPatient({ nationalId: data.nationalId });
     } catch (error) {
       console.error('❌ FRONTEND - createUserFunction: Error:', error);
       throw error;
@@ -415,8 +415,8 @@ const PatientsProvider = ({ children }) => {
     console.log('📋 FRONTEND - National ID to search:', dni);
 
     try {
-      const response = await getUserDni({ dni });
-      console.log('📨 FRONTEND - getUserDni response:', response);
+      const response = await getUserByNationalId({ nationalId: dni });
+      console.log('📨 FRONTEND - getUserByNationalId response:', response);
 
       if (response && response.data) {
         console.log(
@@ -526,6 +526,8 @@ const PatientsProvider = ({ children }) => {
         updateUserFunction,
         sendEmailFunction,
         userEmail,
+        loadingAppointments,
+        appointmentsError,
       }}
     >
       {children}

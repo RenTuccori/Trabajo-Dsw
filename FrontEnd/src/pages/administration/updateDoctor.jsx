@@ -15,7 +15,7 @@ export function UpdateDoctor() {
 
   const { doctors, getDoctors } = useAdministration();
 
-  const [selectedObraSociales, setSelectedObraSociales] = useState(null);
+  const [selectedHealthInsurance, setSelectedHealthInsurance] = useState(null);
   const [hasChanges, setHasChanges] = useState(false); // Estado para rastrear cambios
   const [, setOriginalData] = useState({}); // Datos originales para comparar
   const navigate = useNavigate();
@@ -25,7 +25,7 @@ export function UpdateDoctor() {
 
   const [formData, setFormData] = useState({
     doctorId: '',
-    dni: '',
+    nationalId: '',
     birthDate: '',
     name: '',
     lastName: '',
@@ -73,9 +73,8 @@ export function UpdateDoctor() {
         }
 
         // Preparar datos para actualizar user (solo los campos que espera el backend)
-        const usuarioData = {
-          dni: formData.dni,
-          nationalId: formData.dni ? Number(formData.dni) : undefined,
+        const userData = {
+          nationalId: formData.nationalId ? Number(formData.nationalId) : undefined,
           name: formData.name,
           lastName: formData.lastName,
           phone: formData.phone,
@@ -93,10 +92,10 @@ export function UpdateDoctor() {
           appointmentDuration: formData.appointmentDuration,
         };
 
-        console.log('Datos user:', usuarioData);
+        console.log('Datos user:', userData);
         console.log('Datos doctor:', doctorData);
 
-        const response = await updateUser(usuarioData);
+        const response = await updateUser(userData);
         console.log('Respuesta de actualización user:', response);
 
         const responseDoctor = await updateDoctor(doctorData);
@@ -153,17 +152,17 @@ export function UpdateDoctor() {
     if (healthInsurances.length > 0 && doctor && doctor.doctorId) {
       // Prefer direct id from backend, fallback to name matching for older payloads
       const doctorInsuranceId = doctor.healthInsuranceId;
-      const matchedObra = doctorInsuranceId
+      const matchedInsurance = doctorInsuranceId
         ? healthInsurances.find(
             (os) => String(getInsuranceId(os)) === String(doctorInsuranceId)
           )
         : healthInsurances.find((os) => os.name === doctor.healthInsurance);
-      const healthInsuranceId = matchedObra ? getInsuranceId(matchedObra) : '';
+      const healthInsuranceId = matchedInsurance ? getInsuranceId(matchedInsurance) : '';
 
       setFormData((prevFormData) => ({
         ...prevFormData,
         doctorId: doctor.doctorId || doctorId,
-        dni: doctor.nationalId || '',
+        nationalId: doctor.nationalId || '',
         name: doctor.firstName || '',
         lastName: doctor.lastName || '',
         phone: doctor.phone || '',
@@ -174,16 +173,16 @@ export function UpdateDoctor() {
         password: '',
       }));
 
-      setSelectedObraSociales(
+      setSelectedHealthInsurance(
         healthInsuranceId
-          ? { value: healthInsuranceId, label: matchedObra.name }
+          ? { value: healthInsuranceId, label: matchedInsurance.name }
           : null
       );
 
       // Guardar datos originales
       setOriginalData({
         doctorId: doctor.doctorId || doctorId,
-        dni: doctor.nationalId || '',
+        nationalId: doctor.nationalId || '',
         name: doctor.firstName || '',
         lastName: doctor.lastName || '',
         phone: doctor.phone || '',
@@ -209,8 +208,8 @@ export function UpdateDoctor() {
       console.error('Error al cargar doctor seleccionado:', error);
     }
   };
-  const handleObraSocialChange = (selectedOption) => {
-    setSelectedObraSociales(selectedOption);
+  const handleHealthInsuranceChange = (selectedOption) => {
+    setSelectedHealthInsurance(selectedOption);
     setFormData((prevFormData) => ({
       ...prevFormData,
       healthInsuranceId: selectedOption?.value ?? '',
@@ -219,7 +218,7 @@ export function UpdateDoctor() {
   };
 
   // Función para manejar el regreso a la lista de doctors
-  const handleRegresar = async () => {
+  const handleGoBack = async () => {
     if (hasChanges) {
       // Si hay cambios, muestra advertencia
       const result = await window.confirmDialog(
@@ -308,12 +307,12 @@ export function UpdateDoctor() {
           <div>
             <p className="text-center text-gray-600 text-lg">Obra social</p>
             <Select
-              options={healthInsurances.map((obrasociales) => ({
-                value: getInsuranceId(obrasociales),
-                label: obrasociales.name,
+              options={healthInsurances.map((healthInsuranceItem) => ({
+                value: getInsuranceId(healthInsuranceItem),
+                label: healthInsuranceItem.name,
               }))}
-              onChange={handleObraSocialChange}
-              value={selectedObraSociales}
+              onChange={handleHealthInsuranceChange}
+              value={selectedHealthInsurance}
               className="react-select"
               placeholder="Seleccione obra social..."
             />
@@ -352,7 +351,7 @@ export function UpdateDoctor() {
 
         <button
           type="button"
-          onClick={handleRegresar}
+          onClick={handleGoBack}
           className="w-full bg-gray-200 text-gray-700 py-2 rounded-lg hover:bg-gray-300 transition-colors mt-4"
         >
           Volver

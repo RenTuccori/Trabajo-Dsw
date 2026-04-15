@@ -22,14 +22,14 @@ export function AppointmentsByDate() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const formatHora = (dateAndTime) => {
-    const opciones = {
+  const formatTime = (dateAndTime) => {
+    const options = {
       hour: '2-digit',
       minute: '2-digit',
       second: '2-digit',
       timeZoneName: 'short',
     };
-    return new Date(dateAndTime).toLocaleTimeString('es-ES', opciones);
+    return new Date(dateAndTime).toLocaleTimeString('es-ES', options);
   };
 
   const isDateAvailable = (date) => {
@@ -83,7 +83,7 @@ export function AppointmentsByDate() {
                     <strong>Especialidad:</strong> {t(`specialties.${appointment.specialty}`)}
                   </p>
                   <p>
-                    <strong>Hora:</strong> {formatHora(appointment.dateTime)}
+                    <strong>Hora:</strong> {formatTime(appointment.dateTime)}
                   </p>
                   <p>
                     <strong>Estado:</strong> {t(`statuses.${appointment.status}`)}

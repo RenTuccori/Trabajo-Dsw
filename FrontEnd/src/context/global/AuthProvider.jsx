@@ -138,7 +138,7 @@ const AuthProvider = ({ children }) => {
     }
   }
 
-  function comprobarToken(userType) {
+  function checkToken(userType) {
     if (localStorage.getItem('token')) {
       try {
         const decoded = jwtDecode(localStorage.getItem('token'));
@@ -203,7 +203,7 @@ const AuthProvider = ({ children }) => {
     <AuthContext.Provider
       value={{
         login,
-        comprobarToken,
+        checkToken,
         nationalId,
         doctorId,
         adminId,

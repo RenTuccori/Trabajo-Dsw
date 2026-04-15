@@ -1,18 +1,18 @@
 import { AdministrationContext } from './AdministrationContext';
 import {
   createLocation,
-  deleteLocation,
+  deleteLocation as deleteLocationAPI,
   createSpecialty,
   deleteSpecialty,
-  createHealthInsurance,
-  deleteHealthInsurance,
-  updateHealthInsurance,
+  createHealthInsurance as createHealthInsuranceAPI,
+  deleteHealthInsurance as deleteHealthInsuranceAPI,
+  updateHealthInsurance as updateHealthInsuranceAPI,
   createCombination,
   createDoctor,
   updateDoctor,
   deleteDoctor,
   deleteCombination,
-  getCombinations,
+  getCombinations as getCombinationsAPI,
   createSchedules,
   replaceSchedules,
   getSchedulesByDoctor,
@@ -30,7 +30,7 @@ import {
 } from '../../api/doctors.api';
 import { getInsurance } from '../../api/insurance.api.js';
 import {
-  getUserDni,
+  getUserByNationalId as getUserByNationalIdAPI,
   createUser as createUserAPI,
   updateUser as updateUserAPI,
 } from '../../api/users.api.js';
@@ -88,7 +88,7 @@ const AdministrationProvider = ({ children }) => {
 
   async function deleteLocation(locationId) {
     try {
-      await deleteLocation(locationId); // Llamada a la API
+      await deleteLocationAPI(locationId); // Llamada a la API
     } catch (error) {
       console.error('Error al borrar la sede:', error);
       throw error;
@@ -172,7 +172,7 @@ const AdministrationProvider = ({ children }) => {
   //Obra Social
   async function createHealthInsurance({ name }) {
     try {
-      await createHealthInsurance({ name });
+      await createHealthInsuranceAPI({ name });
     } catch (error) {
       console.error('Error al obtener las venues:', error);
     }
@@ -189,7 +189,7 @@ const AdministrationProvider = ({ children }) => {
 
   async function deleteHealthInsurance(healthInsuranceId) {
     try {
-      await deleteHealthInsurance(healthInsuranceId);
+      await deleteHealthInsuranceAPI(healthInsuranceId);
     } catch (error) {
       console.error('Error al borrar la obra social:', error);
       throw error;
@@ -199,7 +199,7 @@ const AdministrationProvider = ({ children }) => {
   async function updateHealthInsurance({ healthInsuranceId, name }) {
     try {
       console.log('healthInsuranceId:', healthInsuranceId, 'name:', name);
-      await updateHealthInsurance({ insuranceId: healthInsuranceId, name });
+      await updateHealthInsuranceAPI({ insuranceId: healthInsuranceId, name });
     } catch (error) {
       console.error('Error al actualizar la obra social:', error);
       throw error;
@@ -246,7 +246,7 @@ const AdministrationProvider = ({ children }) => {
 
   async function getCombinations() {
     try {
-      const response = await getCombinations();
+      const response = await getCombinationsAPI();
       setCombinations(response.data);
     } catch (error) {
       console.error(
@@ -258,7 +258,7 @@ const AdministrationProvider = ({ children }) => {
   }
 
   //Horarios
-  async function replaceSchedules({ locationId, doctorId, specialtyId, schedules }) {
+  async function replaceSchedulesFunc({ locationId, doctorId, specialtyId, schedules }) {
     try {
       await replaceSchedules({ locationId, doctorId, specialtyId, schedules });
     } catch (error) {
@@ -267,13 +267,13 @@ const AdministrationProvider = ({ children }) => {
     }
   }
 
-  async function createSchedules({
+  async function createSchedulesFunc({
     locationId,
     doctorId,
     specialtyId,
-    dia,
-    hora_inicio,
-    hora_fin,
+    day,
+    startTime,
+    endTime,
     status,
   }) {
     try {
@@ -282,31 +282,31 @@ const AdministrationProvider = ({ children }) => {
         locationId,
         doctorId,
         specialtyId,
-        dia,
-        hora_inicio,
-        hora_fin,
+        day,
+        startTime,
+        endTime,
         status
       );
       await createSchedules({
         locationId,
         doctorId,
         specialtyId,
-        day: dia,
-        startTime: hora_inicio,
-        endTime: hora_fin,
+        day: day,
+        startTime: startTime,
+        endTime: endTime,
         status,
       });
     } catch (error) {
       console.error('Error al crear el horario:', error);
     }
   }
-  async function updateSchedules({
+  async function updateSchedulesFunc({
     locationId,
     doctorId,
     specialtyId,
-    dia,
-    hora_inicio,
-    hora_fin,
+    day,
+    startTime,
+    endTime,
     status,
   }) {
     try {
@@ -314,9 +314,9 @@ const AdministrationProvider = ({ children }) => {
         locationId,
         doctorId,
         specialtyId,
-        day: dia,
-        startTime: hora_inicio,
-        endTime: hora_fin,
+        day: day,
+        startTime: startTime,
+        endTime: endTime,
         status,
       });
     } catch (error) {
@@ -332,9 +332,9 @@ const AdministrationProvider = ({ children }) => {
       });
       const normalizedSchedules = (response?.data || []).map((schedule) => ({
         ...schedule,
-        dia: schedule.dia ?? schedule.day,
-        hora_inicio: schedule.hora_inicio ?? schedule.startTime,
-        hora_fin: schedule.hora_fin ?? schedule.endTime,
+        day: schedule.day ?? schedule.day,
+        startTime: schedule.startTime ?? schedule.startTime,
+        endTime: schedule.endTime ?? schedule.endTime,
       }));
       setDoctorSchedules(normalizedSchedules);
     } catch (error) {
@@ -350,9 +350,9 @@ const AdministrationProvider = ({ children }) => {
 
   //Usuario
 
-  async function getUserByDni(dni) {
+  async function getUserByNationalIdFunc(nationalId) {
     try {
-      const response = await getUserDni({ dni });
+      const response = await getUserByNationalIdAPI({ nationalId });
       setUser(response.data);
       console.log('Paciente encontrado:', response.data);
     } catch (error) {
@@ -417,7 +417,7 @@ const AdministrationProvider = ({ children }) => {
         deleteDoctorFunction,
         updateDoctorFunction,
         updateDoctor: updateDoctorFunction,
-        getUserByDni,
+        getUserByNationalId: getUserByNationalIdFunc,
         createUserFunction,
         createUser: createUserFunction,
         setUser,
@@ -427,11 +427,11 @@ const AdministrationProvider = ({ children }) => {
         combinations,
         getDoctorById,
         doctor,
-        createSchedules,
-        replaceSchedules,
+        createSchedules: createSchedulesFunc,
+        replaceSchedules: replaceSchedulesFunc,
         getDoctorSchedules,
         doctorSchedules,
-        updateSchedules,
+        updateSchedules: updateSchedulesFunc,
       }}
     >
       {children}

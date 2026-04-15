@@ -5,7 +5,7 @@ import { useState, useEffect } from 'react';
 
 function UserHome() {
   const navigate = useNavigate();
-  const { dni, login, comprobarToken, nombreUsuario, apellidoUsuario } =
+  const { dni, login, checkToken, nombreUsuario, apellidoUsuario } =
     useAuth();
   const [dniform, setDni] = useState('');
   const [password, setPassword] = useState('');
@@ -24,7 +24,7 @@ function UserHome() {
     }
   };
   useEffect(() => {
-    comprobarToken('Patient');
+    checkToken('Patient');
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 

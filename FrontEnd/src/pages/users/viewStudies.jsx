@@ -8,33 +8,33 @@ import { getPatientbyNationalId } from '../../api/patients.api';
 import { notifyError } from '../../components/ToastConfig';
 
 function ViewStudies() {
-  const { dni } = useAuth();
-  const [estudios, setEstudios] = useState([]);
-  const [pacienteData, setPacienteData] = useState(null);
+  const { nationalId } = useAuth();
+  const [studies, setStudies] = useState([]);
+  const [patientInfo, setPatientInfo] = useState(null);
   const [loading, setLoading] = useState(true);
 
   // Cargar patient por DNI
-  const loadPaciente = useCallback(async () => {
-    console.log('🔍 FRONTEND - loadPaciente: Cargando paciente con DNI:', dni);
+  const loadPatientInfo = useCallback(async () => {
+    console.log('🔍 FRONTEND - loadPatientInfo: Cargando paciente con DNI:', nationalId);
     try {
       const response = await getPatientbyNationalId({ nationalId: dni });
       if (!response || !response.data) {
-        console.error('❌ FRONTEND - loadPaciente: Respuesta inválida del backend:', response);
+        console.error('❌ FRONTEND - loadPatientInfo: Respuesta inválida del backend:', response);
         return null;
       }
-      console.log('✅ FRONTEND - loadPaciente: Respuesta recibida:', response);
-      console.log('📊 FRONTEND - loadPaciente: Datos del paciente:', response.data);
+      console.log('✅ FRONTEND - loadPatientInfo: Respuesta recibida:', response);
+      console.log('📊 FRONTEND - loadPatientInfo: Datos del paciente:', response.data);
       const patientData = response?.data || {};
       const userData = patientData.user || {};
 
-      setPacienteData({
+      setPatientInfo({
         ...patientData,
         firstName: patientData.firstName || userData.firstName || '',
         lastName: patientData.lastName || userData.lastName || '',
       });
       
       const patientId = patientData.id || patientData.idPatient || patientData.patientId;
-      console.log('🆔 FRONTEND - loadPaciente: patientId obtenido:', patientId);
+      console.log('🆔 FRONTEND - loadPatientInfo: patientId obtenido:', patientId);
       return patientId;
     } catch (error) {
       console.error('❌ FRONTEND - Error al cargar datos del patient:', error);
@@ -44,46 +44,46 @@ function ViewStudies() {
   }, [dni]);
 
   // Cargar estudios del patient
-  const loadEstudios = useCallback(async (patientId) => {
-    console.log('📚 FRONTEND - loadEstudios: Cargando estudios para patientId:', patientId);
+  const loadStudies = useCallback(async (patientId) => {
+    console.log('📚 FRONTEND - loadStudies: Cargando estudios para patientId:', patientId);
     try {
       const response = await getStudiesByPatient(patientId);
-      console.log('✅ FRONTEND - loadEstudios: Respuesta recibida:', response);
-      console.log('📊 FRONTEND - loadEstudios: Estudios:', response.data);
-      setEstudios(response.data || []);
+      console.log('✅ FRONTEND - loadStudies: Respuesta recibida:', response);
+      console.log('📊 FRONTEND - loadStudies: Estudios:', response.data);
+      setStudies(response.data || []);
     } catch (error) {
       console.error('❌ FRONTEND - Error al cargar estudios:', error);
       if (error.response?.status !== 404) {
         notifyError('Error al cargar estudios');
       }
-      setEstudios([]);
+      setStudies([]);
     }
   }, []);
 
   useEffect(() => {
     const fetchData = async () => {
       setLoading(true);
-      const patientId = await loadPaciente();
+      const patientId = await loadPatientInfo();
       if (patientId) {
-        await loadEstudios(patientId);
+        await loadStudies(patientId);
       }
       setLoading(false);
     };
 
-    if (dni) {
+    if (nationalId) {
       fetchData();
     }
-  }, [dni, loadPaciente, loadEstudios]);
+  }, [nationalId, loadPatientInfo, loadStudies]);
 
-  const downloadStudy = async (idEstudio, nombreArchivo) => {
+  const downloadStudy = async (studyId, fileName) => {
     try {
-      const response = await downloadStudyAPI(idEstudio);
+      const response = await downloadStudyAPI(studyId);
 
       // Crear enlace de descarga
       const url = window.URL.createObjectURL(new Blob([response.data]));
       const link = document.createElement('a');
       link.href = url;
-      link.setAttribute('download', nombreArchivo);
+      link.setAttribute('download', fileName);
       document.body.appendChild(link);
       link.click();
       link.remove();
@@ -99,7 +99,7 @@ function ViewStudies() {
     return new Date(dateString).toLocaleDateString('es-ES');
   };
 
-  if (!dni) {
+  if (!nationalId) {
     return (
       <div className="min-h-[calc(100vh-88px)] bg-gradient-to-b from-blue-100 to-white flex items-center justify-center">
         <div className="text-center">
@@ -115,7 +115,7 @@ function ViewStudies() {
     return (
       <div className="min-h-[calc(100vh-88px)] bg-gradient-to-b from-blue-100 to-white flex items-center justify-center">
         <div className="text-center">
-          <p className="text-xl text-gray-600">Cargando estudios...</p>
+          <p className="text-xl text-gray-600">Cargando studies...</p>
         </div>
       </div>
     );
@@ -128,23 +128,23 @@ function ViewStudies() {
           Mis estudios médicos
         </h1>
 
-        {pacienteData && (
+        {patientInfo && (
           <div className="bg-white rounded-lg shadow-md p-4 mb-6">
             <h2 className="text-lg font-semibold text-gray-800 mb-2">
               Información del paciente
             </h2>
-            <p className="text-gray-600">DNI: {dni}</p>
-            <p className="text-gray-600">Nombre: {pacienteData.firstName}</p>
-            <p className="text-gray-600">Apellido: {pacienteData.lastName}</p>
+            <p className="text-gray-600">DNI: {nationalId}</p>
+            <p className="text-gray-600">Nombre: {patientInfo.firstName}</p>
+            <p className="text-gray-600">Apellido: {patientInfo.lastName}</p>
           </div>
         )}
 
         <div className="bg-white rounded-lg shadow-md p-6">
           <h2 className="text-xl font-semibold text-gray-800 mb-4">
-            Historial de Estudios ({estudios.length})
+            Historial de Estudios ({studies.length})
           </h2>
 
-          {estudios.length === 0 ? (
+          {studies.length === 0 ? (
             <div className="text-center py-8">
               <p className="text-gray-500 text-lg">
                 No tiene estudios médicos registrados
@@ -179,12 +179,12 @@ function ViewStudies() {
                   </tr>
                 </thead>
                 <tbody>
-                  {(estudios || []).map((estudio) => {
-                    const studyId = estudio.idEstudio ?? estudio.idStudy ?? estudio.id;
-                    const performanceDate = estudio.fechaRealizacion ?? estudio.performanceDate;
-                    const uploadDate = estudio.fechaCarga ?? estudio.uploadDate;
-                    const fileName = estudio.nombreArchivo ?? estudio.fileName;
-                    const description = estudio.descripcion ?? estudio.description;
+                  {(studies || []).map((study) => {
+                    const studyId = study.studyId ?? study.idStudy ?? study.id;
+                    const performanceDate = study.performanceDate ?? study.performanceDate;
+                    const uploadDate = study.uploadDate ?? study.uploadDate;
+                    const fileName = study.fileName ?? study.fileName;
+                    const description = study.description ?? study.description;
 
                     return (
                     <tr
@@ -192,7 +192,7 @@ function ViewStudies() {
                       className="border-t border-gray-200"
                     >
                       <td className="px-4 py-2 text-sm">
-                        Dr. {estudio.doctorName || '-'}
+                        Dr. {study.doctorName || '-'}
                       </td>
                       <td className="px-4 py-2 text-sm">
                         {formatDate(performanceDate)}

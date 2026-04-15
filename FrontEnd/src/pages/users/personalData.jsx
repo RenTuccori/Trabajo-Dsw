@@ -5,16 +5,15 @@ import { usePatients } from '../../context/patients/PatientsProvider';
 import { useAuth } from '../../context/global/AuthProvider';
 import Select from 'react-select';
 import { notifyError } from '../../components/ToastConfig';
-import { confirmDialog } from '../../components/SwalConfig';
 import AddressAutocomplete from '../../components/AddressAutocomplete';
 
 export function PersonalData() {
-  const { healthInsurances, getHealthInsurances, createUserFunction, getUserByDniFunction, userByDni } = usePatients();
-  const { login, dni } = useAuth();
-  const [selectedObraSociales, setSelectedObraSociales] = useState(null);
+  const { healthInsurances, getHealthInsurances, createUserFunction, getUserByNationalIdFunction, userByNationalId } = usePatients();
+  const { login, nationalId } = useAuth();
+  const [selectedHealthInsurance, setSelectedHealthInsurance] = useState(null);
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
-    dni: '',
+    nationalId: '',
     birthDate: '',
     password: '',
     name: '',
@@ -39,7 +38,7 @@ export function PersonalData() {
   const handleSubmit = async (e) => {
     e.preventDefault(); // Previene el comportamiento por defecto del formulario
     // Client-side validation to mirror backend validators
-    const nationalIdDigits = String(formData.dni).replace(/\D/g, '');
+    const nationalIdDigits = String(formData.nationalId).replace(/\D/g, '');
     if (nationalIdDigits.length < 7) {
       notifyError('El DNI debe tener al menos 7 dígitos.');
       return;
@@ -62,7 +61,7 @@ export function PersonalData() {
         await createUserFunction(formData); // Asegura que la creación del user sea asíncrona
 
         login({
-          identifier: formData.dni,
+          identifier: formData.nationalId,
           credential: formData.password,
           userType: 'Patient',
         });
@@ -89,39 +88,39 @@ export function PersonalData() {
   }, []);
 
   useEffect(() => {
-    if (dni) {
-      getUserByDniFunction();
+    if (nationalId) {
+      getUserByNationalIdFunction();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [dni]);
+  }, [nationalId]);
 
   useEffect(() => {
     // When user data is fetched from backend, prefill the form
-    if (userByDni && Object.keys(userByDni).length > 0) {
+    if (userByNationalId && Object.keys(userByNationalId).length > 0) {
       setFormData((prev) => ({
         ...prev,
-        dni: userByDni.nationalId || prev.dni,
-        birthDate: userByDni.birthDate || prev.birthDate,
-        name: userByDni.firstName || prev.name,
-        lastName: userByDni.lastName || prev.lastName,
-        phone: userByDni.phone || prev.phone,
-        email: userByDni.email || prev.email,
-        address: userByDni.address || prev.address,
+        nationalId: userByNationalId.nationalId || prev.dni,
+        birthDate: userByNationalId.birthDate || prev.birthDate,
+        name: userByNationalId.firstName || prev.name,
+        lastName: userByNationalId.lastName || prev.lastName,
+        phone: userByNationalId.phone || prev.phone,
+        email: userByNationalId.email || prev.email,
+        address: userByNationalId.address || prev.address,
         healthInsuranceId:
-          userByDni.healthInsuranceId ||
-          userByDni.insuranceCompanyId ||
+          userByNationalId.healthInsuranceId ||
+          userByNationalId.insuranceCompanyId ||
           prev.healthInsuranceId,
       }));
 
       // set selected option for obra social if available
       const selectedInsuranceId =
-        userByDni.healthInsuranceId || userByDni.insuranceCompanyId;
+        userByNationalId.healthInsuranceId || userByNationalId.insuranceCompanyId;
       if (selectedInsuranceId) {
         const option = (healthInsurances || []).find(
           (h) => String(getInsuranceId(h)) === String(selectedInsuranceId)
         );
         if (option) {
-          setSelectedObraSociales({
+          setSelectedHealthInsurance({
             value: getInsuranceId(option),
             label: option.name,
           });
@@ -129,10 +128,10 @@ export function PersonalData() {
       }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [userByDni, healthInsurances]);
+  }, [userByNationalId, healthInsurances]);
 
-  const handleObraSocialChange = (selectedOption) => {
-    setSelectedObraSociales(selectedOption);
+  const handleHealthInsuranceChange = (selectedOption) => {
+    setSelectedHealthInsurance(selectedOption);
     setFormData((prevFormData) => ({
       ...prevFormData,
       healthInsuranceId: selectedOption.value,
@@ -147,8 +146,8 @@ export function PersonalData() {
             <p className="text-center text-gray-600 text-lg">DNI</p>
             <input
               type="text"
-              name="dni"
-              value={formData.dni}
+              name="nationalId"
+              value={formData.nationalId}
               onChange={handleInputChange}
               required
               className="w-full border border-gray-300 rounded-lg p-2 focus:outline-none focus:border-blue-500"
@@ -241,12 +240,12 @@ export function PersonalData() {
           <div>
             <p className="text-center text-gray-600 text-lg">Obra Social</p>
             <Select
-              options={(healthInsurances || []).map((obrasocial) => ({
-                value: getInsuranceId(obrasocial),
-                label: obrasocial.name,
+              options={(healthInsurances || []).map((healthInsurance) => ({
+                value: getInsuranceId(healthInsurance),
+                label: healthInsurance.name,
               }))}
-              onChange={handleObraSocialChange}
-              value={selectedObraSociales}
+              onChange={handleHealthInsuranceChange}
+              value={selectedHealthInsurance}
               className="react-select"
               placeholder="Seleccione obra social..."
             />

@@ -3,17 +3,17 @@ import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/global/AuthProvider';
 
 function DoctorHome() {
-  const { doctorId, login, comprobarToken, nombreUsuario, apellidoUsuario } =
+  const { doctorId, login, checkToken, firstName, lastName } =
     useAuth();
-  const [dni, setDni] = useState('');
-  const [password, setContra] = useState('');
+  const [nationalId, setNationalId] = useState('');
+  const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate();
 
   // Manejo del login con toast de éxito
   const handleLogin = async () => {
     try {
-      await login({ identifier: dni, credential: password, userType: 'Doctor' });
+      await login({ identifier: nationalId, credential: password, userType: 'Doctor' });
       window.notifySuccess('¡Login exitoso!');
     } catch (error) {
       console.error('Error al iniciar sesión', error);
@@ -23,21 +23,21 @@ function DoctorHome() {
     }
   };
 
-  const handleDniChange = (event) => {
-    setDni(event.target.value);
+  const handleNationalIdChange = (event) => {
+    setNationalId(event.target.value);
   };
 
-  const handleContraChange = (event) => {
-    setContra(event.target.value);
+  const handlePasswordChange = (event) => {
+    setPassword(event.target.value);
   };
 
   useEffect(() => {
-    comprobarToken('Doctor');
+    checkToken('Doctor');
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const handleKeyDown = (e) => {
-    if (e.key === 'Enter' && dni && password) {
+    if (e.key === 'Enter' && nationalId && password) {
       handleLogin();
     }
   };
@@ -54,8 +54,8 @@ function DoctorHome() {
       {/* Contenido */}
       <div className="relative z-10 bg-white rounded-lg shadow-md w-full max-w-md p-6 space-y-4">
         <h1 className="text-center text-2xl font-semibold text-gray-800">
-          {doctorId && nombreUsuario && apellidoUsuario
-            ? `Bienvenido/a Dr/Dra ${nombreUsuario} ${apellidoUsuario}`
+          {doctorId && firstName && lastName
+            ? `Bienvenido/a Dr/Dra ${firstName} ${lastName}`
             : 'Portal de Médicos'}
         </h1>
 
@@ -64,8 +64,8 @@ function DoctorHome() {
             <p className="text-center text-gray-600 text-lg">Ingrese su DNI</p>
             <input
               type="text"
-              value={dni}
-              onChange={handleDniChange}
+              value={nationalId}
+              onChange={handleNationalIdChange}
               onKeyDown={handleKeyDown}
               placeholder="DNI"
               className="w-full border border-gray-300 rounded-lg p-2 focus:outline-none focus:border-blue-500"
@@ -77,7 +77,7 @@ function DoctorHome() {
               <input
                 type={showPassword ? 'text' : 'password'}
                 value={password}
-                onChange={handleContraChange}
+                onChange={handlePasswordChange}
                 onKeyDown={handleKeyDown}
                 placeholder="Contraseña"
                 className="w-full border border-gray-300 rounded-lg p-2 focus:outline-none focus:border-blue-500 pr-20"
@@ -92,7 +92,7 @@ function DoctorHome() {
             </div>
             <button
               onClick={handleLogin}
-              disabled={!dni || !password}
+              disabled={!nationalId || !password}
               className="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50"
             >
               Verificar

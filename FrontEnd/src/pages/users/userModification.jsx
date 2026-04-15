@@ -5,16 +5,16 @@ import { usePatients } from '../../context/patients/PatientsProvider';
 
 export function UserModification() {
   const {
-    userByDni,
-    getUserByDniFunction,
+    userByNationalId,
+    getUserByNationalIdFunction,
     getHealthInsurances,
     healthInsurances,
     updateUserFunction,
   } = usePatients();
-  const [selectedObraSociales, setSelectedObraSociales] = useState(null);
+  const [selectedHealthInsurance, setSelectedHealthInsurance] = useState(null);
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
-    dni: '',
+    nationalId: '',
     birthDate: '',
     name: '',
     lastName: '',
@@ -44,10 +44,10 @@ export function UserModification() {
     );
 
     if (result.isConfirmed) {
-      // Ensure we send a valid nationalId: prefer form dni, fallback to userByDni.nationalId
+      // Ensure we send a valid nationalId: prefer form dni, fallback to userByNationalId.nationalId
       const payload = {
         ...formData,
-        dni: formData.dni || userByDni?.nationalId || userByDni?.id || formData.dni,
+        nationalId: formData.nationalId || userByNationalId?.nationalId || userByNationalId?.id || formData.nationalId,
       };
 
       console.log('💾 FRONTEND - handleSubmit: Datos a enviar:', payload);
@@ -74,20 +74,20 @@ export function UserModification() {
 
   useEffect(() => {
     console.log('🔄 FRONTEND - userModification: useEffect disparado');
-    console.log('👤 FRONTEND - userByDni:', userByDni);
+    console.log('👤 FRONTEND - userByNationalId:', userByNationalId);
     console.log('🏥 FRONTEND - healthInsurances:', healthInsurances);
     
     getHealthInsurances();
-    getUserByDniFunction();
+    getUserByNationalIdFunction();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
-    if (userByDni && healthInsurances.length > 0) {
-      console.log('🔧 FRONTEND - userModification: Mapeando datos del usuario:', userByDni);
+    if (userByNationalId && healthInsurances.length > 0) {
+      console.log('🔧 FRONTEND - userModification: Mapeando datos del usuario:', userByNationalId);
       console.log('🏥 FRONTEND - Obras sociales disponibles:', healthInsurances);
       
-      const insuranceId = userByDni.healthInsuranceId ?? userByDni.idInsuranceCompany;
+      const insuranceId = userByNationalId.healthInsuranceId ?? userByNationalId.idInsuranceCompany;
       console.log('🆔 FRONTEND - ID de obra social del usuario:', insuranceId);
       
       // Buscar la obra social correspondiente
@@ -97,16 +97,16 @@ export function UserModification() {
       console.log('🔍 FRONTEND - Obra social encontrada:', matchingInsurance);
       
       setFormData({
-        dni: userByDni.nationalId || userByDni.dni,
-        name: userByDni.firstName || userByDni.name || '', // Mapear firstName a name
-        lastName: userByDni.lastName,
-        phone: userByDni.phone,
-        email: userByDni.email,
-        address: userByDni.address,
+        nationalId: userByNationalId.nationalId || userByNationalId.dni,
+        name: userByNationalId.firstName || userByNationalId.name || '', // Mapear firstName a name
+        lastName: userByNationalId.lastName,
+        phone: userByNationalId.phone,
+        email: userByNationalId.email,
+        address: userByNationalId.address,
         healthInsuranceId: insuranceId || '', // Mapear campo correcto
       });
 
-      setSelectedObraSociales({
+      setSelectedHealthInsurance({
         value: insuranceId || '',
         label: matchingInsurance?.name || 'No asignada',
       });
@@ -116,10 +116,10 @@ export function UserModification() {
         label: matchingInsurance?.name || 'No asignada',
       });
     }
-  }, [userByDni, healthInsurances]);
+  }, [userByNationalId, healthInsurances]);
 
-  const handleObraSocialChange = (selectedOption) => {
-    setSelectedObraSociales(selectedOption);
+  const handleHealthInsuranceChange = (selectedOption) => {
+    setSelectedHealthInsurance(selectedOption);
     setFormData((prevFormData) => ({
       ...prevFormData,
       healthInsuranceId: selectedOption.value,
@@ -188,15 +188,15 @@ export function UserModification() {
           <div>
             <p className="text-center text-gray-600 text-lg">Obra Social</p>
             <Select
-              options={(healthInsurances || []).map((obrasociales) => {
-                console.log('🏥 FRONTEND - Mapeando obra social:', obrasociales);
+              options={(healthInsurances || []).map((healthInsuranceItem) => {
+                console.log('🏥 FRONTEND - Mapeando obra social:', healthInsuranceItem);
                 return {
-                  value: getInsuranceId(obrasociales),
-                  label: obrasociales.name,
+                  value: getInsuranceId(healthInsuranceItem),
+                  label: healthInsuranceItem.name,
                 };
               })}
-              onChange={handleObraSocialChange}
-              value={selectedObraSociales}
+              onChange={handleHealthInsuranceChange}
+              value={selectedHealthInsurance}
               className="react-select"
             />
           </div>

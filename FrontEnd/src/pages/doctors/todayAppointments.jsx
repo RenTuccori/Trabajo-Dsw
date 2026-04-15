@@ -14,8 +14,8 @@ export function TodayAppointments() {
     loadTodayAppointments();
   }, []);
 
-  const formatFechaHora = (dateAndTime) => {
-    const opciones = {
+  const formatDateTime = (dateAndTime) => {
+    const options = {
       year: 'numeric',
       month: 'long',
       day: 'numeric',
@@ -24,7 +24,7 @@ export function TodayAppointments() {
       second: '2-digit',
       timeZoneName: 'short',
     };
-    return new Date(dateAndTime).toLocaleString('es-ES', opciones);
+    return new Date(dateAndTime).toLocaleString('es-ES', options);
   };
 
   return (
@@ -48,7 +48,7 @@ export function TodayAppointments() {
                 </p>
                 <p>
                   <strong>Fecha y Hora:</strong>{' '}
-                  {formatFechaHora(appointment.dateTime)}
+                  {formatDateTime(appointment.dateTime)}
                 </p>
                 <p>
                   <strong>Estado:</strong> {appointment.status}

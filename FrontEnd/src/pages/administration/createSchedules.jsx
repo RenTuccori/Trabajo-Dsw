@@ -7,7 +7,7 @@ export function CreateSchedules() {
   const location = useLocation();
   const { locationId, specialtyId, doctorId, locationName, specialtyName, doctorFullName } = location.state || {};
 
-  const diasSemana = [
+  const daysOfWeek = [
     { label: 'Lunes', value: 'Monday' },
     { label: 'Martes', value: 'Tuesday' },
     { label: 'Miercoles', value: 'Wednesday' },
@@ -22,7 +22,7 @@ export function CreateSchedules() {
     updateSchedules,
   } = useAdministration();
   const [schedules, setSchedules] = useState(
-    diasSemana.map((dayOption) => ({ dia: dayOption.value, hora_inicio: '', hora_fin: '' }))
+    daysOfWeek.map((dayOption) => ({ day: dayOption.value, startTime: '', endTime: '' }))
   );
 
   const normalizeDay = (value) =>
@@ -33,7 +33,7 @@ export function CreateSchedules() {
 
   // Comprobar token y cargar los schedules del doctor
   useEffect(() => {
-    const cargarHorarios = async () => {
+    const loadSchedules = async () => {
       try {
         await getDoctorSchedules({ locationId, specialtyId, doctorId });
       } catch (error) {
@@ -51,7 +51,7 @@ export function CreateSchedules() {
 
     if (locationId && specialtyId && doctorId) {
       console.log('cargando schedules');
-      cargarHorarios();
+      loadSchedules();
     } else {
       window.notifyError('Faltan datos para cargar schedules');
     }
@@ -60,124 +60,124 @@ export function CreateSchedules() {
   useEffect(() => {
     if (doctorSchedules && doctorSchedules.length > 0) {
       console.log('Horarios doctor:', doctorSchedules);
-      const nuevosHorarios = [];
+      const newSchedules = [];
       
-      diasSemana.forEach((dayOption) => {
+      daysOfWeek.forEach((dayOption) => {
         const dayValue = dayOption.value;
-        const horariosDelDia = doctorSchedules.filter(
-          (horario) => normalizeDay(horario.dia) === normalizeDay(dayValue)
+        const schedulesForDay = doctorSchedules.filter(
+          (schedule) => normalizeDay(schedule.day) === normalizeDay(dayValue)
         );
         
-        if (horariosDelDia.length > 0) {
+        if (schedulesForDay.length > 0) {
           // Si el doctor tiene horarios en este día, los agregamos todos
-          horariosDelDia.forEach(h => {
-            nuevosHorarios.push({
-              dia: dayValue,
-              hora_inicio: h.hora_inicio,
-              hora_fin: h.hora_fin,
+          schedulesForDay.forEach(s => {
+            newSchedules.push({
+              day: dayValue,
+              startTime: s.startTime,
+              endTime: s.endTime,
             });
           });
         } else {
           // Si no tiene horarios en este día, agregamos uno vacío por defecto para que sea visible
-          nuevosHorarios.push({
-            dia: dayValue,
-            hora_inicio: '',
-            hora_fin: '',
+          newSchedules.push({
+            day: dayValue,
+            startTime: '',
+            endTime: '',
           });
         }
       });
       
-      setSchedules(nuevosHorarios);
-      console.log('Horarios cargados:', nuevosHorarios);
+      setSchedules(newSchedules);
+      console.log('Horarios cargados:', newSchedules);
     }
   }, [doctorSchedules]);
 
-  const agregarFilaDia = (diaValor) => {
-    const nuevosHorarios = [...schedules];
+  const addRowForDay = (dayValue) => {
+    const newSchedules = [...schedules];
     // Encontrar el último índice donde aparece este día para insertarlo debajo
-    const lastIndex = nuevosHorarios.map(s => s.dia).lastIndexOf(diaValor);
+    const lastIndex = newSchedules.map(s => s.day).lastIndexOf(dayValue);
     
     // Si lo encontró, lo insertamos justo después
     if (lastIndex !== -1) {
-      nuevosHorarios.splice(lastIndex + 1, 0, { dia: diaValor, hora_inicio: '', hora_fin: '' });
+      newSchedules.splice(lastIndex + 1, 0, { day: dayValue, startTime: '', endTime: '' });
     } else {
-      nuevosHorarios.push({ dia: diaValor, hora_inicio: '', hora_fin: '' });
+      newSchedules.push({ day: dayValue, startTime: '', endTime: '' });
     }
-    setSchedules(nuevosHorarios);
+    setSchedules(newSchedules);
   };
 
-  const eliminarFila = (index) => {
-    const diaActual = schedules[index].dia;
+  const deleteRow = (index) => {
+    const currentDay = schedules[index].day;
     // Chequeamos cuántas filas hay para este día
-    const filasDeEsteDia = schedules.filter(s => s.dia === diaActual);
+    const rowsForThisDay = schedules.filter(s => s.day === currentDay);
     
-    const nuevosHorarios = [...schedules];
+    const newSchedules = [...schedules];
     
-    if (filasDeEsteDia.length === 1) {
+    if (rowsForThisDay.length === 1) {
       // Si es la única fila, en vez de borrarla entera, solo le limpiamos la hora
       // así el usuario siempre ve la fila del día
-      nuevosHorarios[index].hora_inicio = '';
-      nuevosHorarios[index].hora_fin = '';
+      newSchedules[index].startTime = '';
+      newSchedules[index].endTime = '';
     } else {
       // Si hay más de una fila para ese día, la borramos sin problema
-      nuevosHorarios.splice(index, 1);
+      newSchedules.splice(index, 1);
     }
-    setSchedules(nuevosHorarios);
+    setSchedules(newSchedules);
   };
 
   const handleInputChange = (index, field, value) => {
-    const nuevosHorarios = [...schedules];
-    nuevosHorarios[index][field] = value; // field puede ser 'hora_inicio' o 'hora_fin'
-    console.log('Nuevo horario:', nuevosHorarios[index]);
-    setSchedules(nuevosHorarios);
+    const newSchedules = [...schedules];
+    newSchedules[index][field] = value; // field puede ser 'startTime' o 'endTime'
+    console.log('Nuevo horario:', newSchedules[index]);
+    setSchedules(newSchedules);
   };
-  const agregarHorariosDisponibles = async () => {
+  const saveSchedules = async () => {
     // Filtramos los que tienen al menos un input lleno
-    const horariosConDatos = schedules.filter(
-      (horario) => horario.hora_inicio || horario.hora_fin
+    const schedulesWithData = schedules.filter(
+      (schedule) => schedule.startTime || schedule.endTime
     );
 
     // Verificamos que todos los que tienen datos, estén completos y correctos
-    for (const horario of horariosConDatos) {
+    for (const schedule of schedulesWithData) {
       // 1. Que ambos campos estén presentes
-      if (!horario.hora_inicio || !horario.hora_fin) {
-        window.notifyError(`Para el día ${horario.dia} debe completar hora de inicio y fin, o dejar ambos vacíos.`);
+      if (!schedule.startTime || !schedule.endTime) {
+        window.notifyError(`Para el día ${schedule.day} debe completar hora de inicio y fin, o dejar ambos vacíos.`);
         return;
       }
       
       // 2. Que la hora de inicio sea menor a la hora de fin
-      const inicio = new Date(`2000-01-01T${horario.hora_inicio}`);
-      const fin = new Date(`2000-01-01T${horario.hora_fin}`);
+      const inicio = new Date(`2000-01-01T${schedule.startTime}`);
+      const fin = new Date(`2000-01-01T${schedule.endTime}`);
       
       if (inicio >= fin) {
         // Encontramos el nombre en español para mostrar el error más lindo
-        const diaNombre = diasSemana.find(d => d.value === horario.dia)?.label || horario.dia;
-        window.notifyError(`En el día ${diaNombre}: la hora de inicio (${horario.hora_inicio}) debe ser menor a la hora de fin (${horario.hora_fin}).`);
+        const dayName = daysOfWeek.find(d => d.value === schedule.day)?.label || schedule.day;
+        window.notifyError(`En el día ${dayName}: la hora de inicio (${schedule.startTime}) debe ser menor a la hora de fin (${schedule.endTime}).`);
         return;
       }
     }
 
     // 3. Verificamos que no se solapen horarios en el mismo día
-    const horariosPorDia = horariosConDatos.reduce((acc, curr) => {
-      if (!acc[curr.dia]) acc[curr.dia] = [];
-      acc[curr.dia].push(curr);
+    const schedulesByDay = schedulesWithData.reduce((acc, curr) => {
+      if (!acc[curr.day]) acc[curr.day] = [];
+      acc[curr.day].push(curr);
       return acc;
     }, {});
 
-    for (const dia in horariosPorDia) {
-      const turnosDia = horariosPorDia[dia];
-      if (turnosDia.length > 1) {
-        for (let i = 0; i < turnosDia.length; i++) {
-          for (let j = i + 1; j < turnosDia.length; j++) {
-            const inicio1 = new Date(`2000-01-01T${turnosDia[i].hora_inicio}`);
-            const fin1 = new Date(`2000-01-01T${turnosDia[i].hora_fin}`);
-            const inicio2 = new Date(`2000-01-01T${turnosDia[j].hora_inicio}`);
-            const fin2 = new Date(`2000-01-01T${turnosDia[j].hora_fin}`);
+    for (const day in schedulesByDay) {
+      const dayShifts = schedulesByDay[day];
+      if (dayShifts.length > 1) {
+        for (let i = 0; i < dayShifts.length; i++) {
+          for (let j = i + 1; j < dayShifts.length; j++) {
+            const start1 = new Date(`2000-01-01T${dayShifts[i].startTime}`);
+            const end1 = new Date(`2000-01-01T${dayShifts[i].endTime}`);
+            const start2 = new Date(`2000-01-01T${dayShifts[j].startTime}`);
+            const end2 = new Date(`2000-01-01T${dayShifts[j].endTime}`);
 
-            // Condición de solapamiento: inicio1 < fin2 && fin1 > inicio2
-            if (inicio1 < fin2 && fin1 > inicio2) {
-              const diaNombre = diasSemana.find(d => d.value === dia)?.label || dia;
-              window.notifyError(`En el día ${diaNombre} hay horarios superpuestos: ${turnosDia[i].hora_inicio}-${turnosDia[i].hora_fin} y ${turnosDia[j].hora_inicio}-${turnosDia[j].hora_fin}.`);
+            // Condición de solapamiento: start1 < end2 && end1 > start2
+            if (start1 < end2 && end1 > start2) {
+              const dayName = daysOfWeek.find(d => d.value === day)?.label || day;
+              window.notifyError(`En el día ${dayName} hay horarios superpuestos: ${dayShifts[i].startTime}-${dayShifts[i].endTime} y ${dayShifts[j].startTime}-${dayShifts[j].endTime}.`);
               return;
             }
           }
@@ -186,11 +186,11 @@ export function CreateSchedules() {
     }
 
     // Ya validados lógicamente, me quedo solo con los asignados
-    const horariosValidos = horariosConDatos.filter(
-      (horario) => horario.hora_inicio && horario.hora_fin
+    const validSchedules = schedulesWithData.filter(
+      (schedule) => schedule.startTime && schedule.endTime
     );
 
-    if (horariosValidos.length === 0) {
+    if (validSchedules.length === 0) {
       window.notifyError('Debes ingresar al menos un horario válido completo.');
       return;
     }
@@ -202,12 +202,12 @@ export function CreateSchedules() {
 
     if (result.isConfirmed) {
       try {
-        console.log('Reemplazando todos los horarios con:', horariosValidos);
+        console.log('Reemplazando todos los horarios con:', validSchedules);
         
-        const payloadSchedules = horariosValidos.map(h => ({
-          day: h.dia,
-          startTime: h.hora_inicio,
-          endTime: h.hora_fin,
+        const payloadSchedules = validSchedules.map(schedule => ({
+          day: schedule.day,
+          startTime: schedule.startTime,
+          endTime: schedule.endTime,
           status: 'Available'
         }));
 
@@ -238,20 +238,20 @@ export function CreateSchedules() {
 
           {/* Ingreso de nuevos schedules agrupados por día */}
           <div className="space-y-6">
-            {diasSemana.map((dayOption) => {
+            {daysOfWeek.map((dayOption) => {
               // Obtenemos los horarios correspondientes a este día conservando el índice original para evitar problemas
-              const horariosDelDia = schedules
+              const schedulesForDay = schedules
                 .map((s, index) => ({ ...s, originalIndex: index }))
-                .filter((s) => s.dia === dayOption.value);
+                .filter((s) => s.day === dayOption.value);
 
-              if (horariosDelDia.length === 0) return null;
+              if (schedulesForDay.length === 0) return null;
 
               return (
                 <div key={dayOption.value} className="bg-gray-50 border border-gray-200 rounded-lg p-4">
                   <div className="flex justify-between items-center mb-3">
                     <h4 className="font-semibold text-gray-700">{dayOption.label}</h4>
                     <button
-                      onClick={() => agregarFilaDia(dayOption.value)}
+                      onClick={() => addRowForDay(dayOption.value)}
                       className="text-sm px-3 py-1 bg-blue-100 text-blue-600 rounded-md hover:bg-blue-200 font-medium transition-colors"
                     >
                       + Agregar turno
@@ -259,27 +259,27 @@ export function CreateSchedules() {
                   </div>
                   
                   <div className="space-y-3">
-                    {horariosDelDia.map((horario) => (
-                      <div key={horario.originalIndex} className="flex items-center space-x-3">
+                    {schedulesForDay.map((schedule) => (
+                      <div key={schedule.originalIndex} className="flex items-center space-x-3">
                         <input
                           type="time"
                           className="flex-1 border border-gray-300 rounded-md p-2 text-sm bg-white focus:ring-blue-500 focus:border-blue-500"
-                          value={horario.hora_inicio || ''}
+                          value={schedule.startTime || ''}
                           onChange={(e) =>
-                            handleInputChange(horario.originalIndex, 'hora_inicio', e.target.value)
+                            handleInputChange(schedule.originalIndex, 'startTime', e.target.value)
                           }
                         />
                         <span className="text-gray-500 font-medium">a</span>
                         <input
                           type="time"
                           className="flex-1 border border-gray-300 rounded-md p-2 text-sm bg-white focus:ring-blue-500 focus:border-blue-500"
-                          value={horario.hora_fin || ''}
+                          value={schedule.endTime || ''}
                           onChange={(e) =>
-                            handleInputChange(horario.originalIndex, 'hora_fin', e.target.value)
+                            handleInputChange(schedule.originalIndex, 'endTime', e.target.value)
                           }
                         />
                         <button
-                          onClick={() => eliminarFila(horario.originalIndex)}
+                          onClick={() => deleteRow(schedule.originalIndex)}
                           className="ml-auto w-8 h-8 rounded-full bg-red-100 text-red-600 hover:bg-red-200 flex items-center justify-center font-bold flex-shrink-0"
                           title="Limpiar/Eliminar este rango horario"
                         >
@@ -294,7 +294,7 @@ export function CreateSchedules() {
           </div>
 
           <button
-            onClick={agregarHorariosDisponibles}
+            onClick={saveSchedules}
             className="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition-colors"
           >
             Confirmar horarios

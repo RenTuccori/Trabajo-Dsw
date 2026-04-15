@@ -21,7 +21,7 @@ export function CreateSpecialty() {
   }, []);
 
   // Manejar la creación de una nueva especialidad
-  const handlecreateSpecialty = async (e) => {
+  const handleCreateSpecialty = async (e) => {
     e.preventDefault();
     if (specialtyName.trim() !== '') {
       try {
@@ -36,7 +36,7 @@ export function CreateSpecialty() {
     }
   };
 
-  const handleBorrarEspecialidad = async (specialtyId) => {
+  const handleDeleteSpecialty = async (specialtyId) => {
     const result = await window.confirmDialog(
       '¿Está seguro?',
       'Esta acción no se puede deshacer.'
@@ -61,7 +61,7 @@ export function CreateSpecialty() {
           Crear nueva especialidad
         </h2>
 
-        <form onSubmit={handlecreateSpecialty} className="space-y-4">
+        <form onSubmit={handleCreateSpecialty} className="space-y-4">
           <input
             type="text"
             placeholder="Nombre de la especialidad"
@@ -90,16 +90,16 @@ export function CreateSpecialty() {
         </h3>
         <ul className="space-y-2">
           {specialties.length > 0 ? (
-            specialties.map((especialidad) => (
+            specialties.map((specialty) => (
               <li
-                key={especialidad.id}
+                key={specialty.id}
                 className="bg-gray-100 p-4 rounded-lg flex justify-between items-center"
               >
                 <span>
-                  <strong>{t(`specialties.${especialidad.name}`, especialidad.name)}</strong>
+                  <strong>{t(`specialties.${specialty.name}`, specialty.name)}</strong>
                 </span>
                 <button
-                  onClick={() => handleBorrarEspecialidad(especialidad.id)}
+                  onClick={() => handleDeleteSpecialty(specialty.id)}
                   className="text-red-600 hover:text-red-800"
                 >
                   Eliminar

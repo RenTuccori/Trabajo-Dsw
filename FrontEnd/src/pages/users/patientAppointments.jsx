@@ -15,16 +15,16 @@ export function PatientAppointments() {
     userEmail,
     loadingAppointments,
     appointmentsError,
-    getUserByDniFunction,
+    getUserByNationalIdFunction,
   } = usePatients();
 
   useEffect(() => {
-    getUserByDniFunction();
+    getUserByNationalIdFunction();
     getPatientAppointments();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const handleConfirmarTurno = async (appointment) => {
+  const handleConfirmAppointment = async (appointment) => {
     const result = await window.confirmDialog(
       'Confirmar Turno',
       '¿Estás seguro que deseas confirmar este turno?'
@@ -38,7 +38,7 @@ export function PatientAppointments() {
 
         await confirmAppointment({ appointmentId });
         window.notifySuccess('¡Turno confirmado con éxito!'); // Mensaje de éxito
-        const cuerpo = `<div style="background-color: #f0f4f8; padding: 20px; border-radius: 10px; font-family: Arial, sans-serif; max-width: 600px; margin: auto;">
+        const emailBody = `<div style="background-color: #f0f4f8; padding: 20px; border-radius: 10px; font-family: Arial, sans-serif; max-width: 600px; margin: auto;">
                     <h1 style="color: #1c4e80; text-align: center;">¡Tu turno ha sido confirmado con éxito!</h1>
                     <div style="background-color: #ffffff; padding: 20px; border-radius: 8px; margin-top: 20px;">
                     <p><strong>Sede:</strong> ${t(`locations.${appointment.location}`)}</p>
@@ -48,7 +48,7 @@ export function PatientAppointments() {
                         <p><strong>Especialidad:</strong> ${
                           t(`specialties.${appointment.specialty}`)
                         }</p>
-                        <p><strong>Fecha y Hora:</strong> ${formatFechaHora(
+                        <p><strong>Fecha y Hora:</strong> ${formatDateTime(
                           appointment.dateTime
                         )}</p>
                         <p><strong>Doctor:</strong> ${appointment.doctor}</p>
@@ -65,7 +65,7 @@ export function PatientAppointments() {
         sendEmailFunction({
           to: userEmail, // Asegúrate de pasar el destinatario como tal
           subject: 'Turno Confirmado',
-          html: cuerpo,
+          html: emailBody,
         });
       } catch (error) {
         window.notifyError('Error al confirmar el turno');
@@ -73,7 +73,7 @@ export function PatientAppointments() {
     }
   };
 
-  const handleCancelarTurno = async (appointment) => {
+  const handleCancelAppointment = async (appointment) => {
     const result = await window.confirmDialog(
       'Cancelar Turno',
       '¿Estás seguro que deseas cancelar este turno?'
@@ -87,7 +87,7 @@ export function PatientAppointments() {
 
         await cancelAppointment({ appointmentId });
         window.notifySuccess('¡Turno cancelado con éxito!'); // Mensaje de éxito
-        const cuerpo = `<div style="background-color: #f0f4f8; padding: 20px; border-radius: 10px; font-family: Arial, sans-serif; max-width: 600px; margin: auto;">
+        const emailBody = `<div style="background-color: #f0f4f8; padding: 20px; border-radius: 10px; font-family: Arial, sans-serif; max-width: 600px; margin: auto;">
                 <h1 style="color: #1c4e80; text-align: center;">¡Tu turno ha sido cancelado con éxito!</h1>
                 <div style="background-color: #ffffff; padding: 20px; border-radius: 8px; margin-top: 20px;">
                     <p><strong>Sede:</strong> ${t(`locations.${appointment.location}`)}</p>
@@ -95,7 +95,7 @@ export function PatientAppointments() {
                     <p><strong>Especialidad:</strong> ${
                       t(`specialties.${appointment.specialty}`)
                     }</p>
-                    <p><strong>Fecha y Hora:</strong> ${formatFechaHora(
+                    <p><strong>Fecha y Hora:</strong> ${formatDateTime(
                       appointment.dateTime
                     )}</p>
                     <p><strong>Doctor:</strong> ${appointment.doctor}</p>
@@ -112,7 +112,7 @@ export function PatientAppointments() {
         sendEmailFunction({
           to: userEmail, // Asegúrate de pasar el destinatario como tal
           subject: 'Turno Cancelado',
-          html: cuerpo,
+          html: emailBody,
         });
       } catch (error) {
         window.notifyError('Error al cancelar el turno');
@@ -120,15 +120,15 @@ export function PatientAppointments() {
     }
   };
 
-  const formatFechaHora = (fechaHora) => {
-    const date = new Date(fechaHora);
-    const opcionesFecha = { year: 'numeric', month: 'long', day: 'numeric' };
-    const opcionesHora = { hour: '2-digit', minute: '2-digit' };
+  const formatDateTime = (dateTime) => {
+    const date = new Date(dateTime);
+    const dateOptions = { year: 'numeric', month: 'long', day: 'numeric' };
+    const timeOptions = { hour: '2-digit', minute: '2-digit' };
 
-    const fecha = date.toLocaleDateString('es-ES', opcionesFecha);
-    const hora = date.toLocaleTimeString('es-ES', opcionesHora);
+    const dateStr = date.toLocaleDateString('es-ES', dateOptions);
+    const timeStr = date.toLocaleTimeString('es-ES', timeOptions);
 
-    return `${fecha} a las ${hora}`; // Retorna la fecha y hora en un solo string
+    return `${dateStr} a las ${timeStr}`; // Retorna la fecha y hora en un solo string
   };
 
   return (
@@ -162,7 +162,7 @@ export function PatientAppointments() {
               </p>
               <p>
                 <strong>Fecha y Hora:</strong>{' '}
-                {formatFechaHora(appointment.dateTime)}
+                {formatDateTime(appointment.dateTime)}
               </p>
               <p>
                 <strong>Doctor:</strong> {appointment.doctor}
@@ -176,7 +176,7 @@ export function PatientAppointments() {
               <div className="flex space-x-2 mt-4">
                 <button
                   className="bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50"
-                  onClick={() => handleConfirmarTurno(appointment)}
+                  onClick={() => handleConfirmAppointment(appointment)}
                   disabled={
                     appointment.status === 'Confirmed' ||
                     appointment.status === 'Cancelled'
@@ -186,7 +186,7 @@ export function PatientAppointments() {
                 </button>
                 <button
                   className="bg-red-600 text-white py-2 px-4 rounded-lg hover:bg-red-700 transition-colors disabled:opacity-50"
-                  onClick={() => handleCancelarTurno(appointment)}
+                  onClick={() => handleCancelAppointment(appointment)}
                   disabled={
                     appointment.status === 'Cancelled' ||
                     appointment.status === 'Confirmed'

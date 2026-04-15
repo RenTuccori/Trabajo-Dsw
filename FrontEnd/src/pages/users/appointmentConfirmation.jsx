@@ -23,11 +23,11 @@ export function AppointmentConfirmation() {
   } = usePatients();
   const { t } = useTranslation();
 
-  const [turnoCreado, setTurnoCreado] = useState(false);
+  const [appointmentCreated, setAppointmentCreated] = useState(false);
   const [error, setError] = useState(null);
 
   useEffect(() => {
-    const confirmarTurno = async () => {
+    const confirmAppointment = async () => {
       try {
         console.log('🎯 FRONTEND - appointmentConfirmation: Getting user data');
         // Get user data first
@@ -49,7 +49,7 @@ export function AppointmentConfirmation() {
         // Create the appointment - all data should already be in context from bookAppointment
         const result = await createAppointment();
         console.log('✅ FRONTEND - appointmentConfirmation: Appointment created!', result);
-        setTurnoCreado(true);
+        setAppointmentCreated(true);
         setError(null);
       } catch (error) {
         console.error(
@@ -57,17 +57,17 @@ export function AppointmentConfirmation() {
           error
         );
         setError(error.message || 'Error creating appointment');
-        setTurnoCreado(false);
+        setAppointmentCreated(false);
       }
     };
 
-    confirmarTurno();
+    confirmAppointment();
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
-    if (turnoCreado && userEmail) {
+    if (appointmentCreated && userEmail) {
       // Construir el cuerpo del correo como string HTML
       const cuerpo = `
             <div style="background-color: #f0f4f8; padding: 20px; border-radius: 10px; font-family: Arial, sans-serif; max-width: 600px; margin: auto;">
@@ -98,7 +98,7 @@ export function AppointmentConfirmation() {
       );
     }
   }, [
-    turnoCreado,
+    appointmentCreated,
     userEmail,
     dateAndTime,
     doctorName,
@@ -107,7 +107,7 @@ export function AppointmentConfirmation() {
     locationName,
     locationAddress,
     sendEmailFunction,
-  ]); // Este efecto se ejecuta solo cuando `userEmail` y `turnoCreado` están listos
+  ]); // Este efecto se ejecuta solo cuando `userEmail` y `appointmentCreated` están listos
 
   return (
     <div className="min-h-[calc(100vh-88px)] bg-gradient-to-b from-blue-100 to-white flex flex-col items-center justify-center p-6">
@@ -123,7 +123,7 @@ export function AppointmentConfirmation() {
               Volver a intentar
             </button>
           </>
-        ) : turnoCreado ? (
+        ) : appointmentCreated ? (
           <>
             <h1 className="text-2xl font-bold text-green-800 text-center">✅ Turno creado exitosamente</h1>
             <p className="text-gray-700">

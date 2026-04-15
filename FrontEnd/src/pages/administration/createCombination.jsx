@@ -66,7 +66,7 @@ export function CreateCombination() {
     }
   };
 
-  const handleEspecilidadChange = async (selectedOption) => {
+  const handleSpecialtyChange = async (selectedOption) => {
     setSelectedSpecialty(selectedOption);
     setSelectedDoctor(null);
 
@@ -79,7 +79,7 @@ export function CreateCombination() {
     setSelectedDoctor(selectedOption);
   };
 
-  const confirmarCombinacion = async () => {
+  const confirmCombination = async () => {
     if (selectedLocation && selectedSpecialty && selectedDoctor) {
       const result = await window.confirmDialog(
         '¿Está seguro?',
@@ -108,7 +108,7 @@ export function CreateCombination() {
     }
   };
 
-  const handleDeleteCombinacion = async (locationId, doctorId, specialtyId) => {
+  const handleDeleteCombination = async (locationId, doctorId, specialtyId) => {
     const result = await window.confirmDialog(
       '¿Estás seguro?',
       '¿Deseas eliminar esta combinación?'
@@ -176,7 +176,7 @@ export function CreateCombination() {
                     }))
                   : []
               }
-              onChange={handleEspecilidadChange}
+              onChange={handleSpecialtyChange}
               value={selectedSpecialty}
               isDisabled={!selectedLocation}
               styles={customStyles}
@@ -208,7 +208,7 @@ export function CreateCombination() {
             type="button"
             className="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50"
             disabled={!selectedDoctor}
-            onClick={confirmarCombinacion}
+            onClick={confirmCombination}
           >
             Confirmar
           </button>
@@ -243,32 +243,32 @@ export function CreateCombination() {
           <ul className="space-y-2 max-h-[300px] overflow-y-auto pr-2">
             {combinations &&
               combinations
-                .filter((combinacion) => {
+                .filter((combination) => {
                   const searchTerm = searchFilter.toLowerCase();
-                  const locName = t(`locations.${combinacion.locationName}`, { defaultValue: combinacion.locationName }).toLowerCase();
-                  const specName = t(`specialties.${combinacion.specialtyName}`, { defaultValue: combinacion.specialtyName }).toLowerCase();
-                  const docFullName = `${combinacion.doctorName} ${combinacion.doctorLastName}`.toLowerCase();
+                  const locName = t(`locations.${combination.locationName}`, { defaultValue: combination.locationName }).toLowerCase();
+                  const specName = t(`specialties.${combination.specialtyName}`, { defaultValue: combination.specialtyName }).toLowerCase();
+                  const docFullName = `${combination.doctorName} ${combination.doctorLastName}`.toLowerCase();
                   
                   return locName.includes(searchTerm) || specName.includes(searchTerm) || docFullName.includes(searchTerm);
                 })
-                .map((combinacion) => (
+                .map((combination) => (
                   <li
-                    key={`${combinacion.locationId}-${combinacion.specialtyId}-${combinacion.doctorId}`}
+                    key={`${combination.locationId}-${combination.specialtyId}-${combination.doctorId}`}
                     className="flex justify-between items-center bg-gray-50 border border-gray-200 p-3 rounded-md"
                   >
                     <span className="text-sm text-gray-700">
-                      <strong>{t(`locations.${combinacion.locationName}`, { defaultValue: combinacion.locationName })}</strong> - {t(`specialties.${combinacion.specialtyName}`, { defaultValue: combinacion.specialtyName })} <br/>
-                      <span className="text-gray-500">Doc: {combinacion.doctorName} {combinacion.doctorLastName}</span>
+                      <strong>{t(`locations.${combination.locationName}`, { defaultValue: combination.locationName })}</strong> - {t(`specialties.${combination.specialtyName}`, { defaultValue: combination.specialtyName })} <br/>
+                      <span className="text-gray-500">Doc: {combination.doctorName} {combination.doctorLastName}</span>
                     </span>
                     <div className="flex space-x-4">
                       {/* Botón de Eliminar */}
                       <button
                         className="text-red-600 hover:text-red-800"
                         onClick={() =>
-                          handleDeleteCombinacion(
-                            combinacion.locationId,
-                            combinacion.doctorId,
-                            combinacion.specialtyId
+                          handleDeleteCombination(
+                            combination.locationId,
+                            combination.doctorId,
+                            combination.specialtyId
                           )
                         }
                       >
@@ -282,12 +282,12 @@ export function CreateCombination() {
                         className="text-blue-600 hover:text-blue-800"
                         onClick={() => {
                           const data = {
-                            locationId: combinacion.locationId,
-                            specialtyId: combinacion.specialtyId,
-                            doctorId: combinacion.doctorId,
-                            locationName: combinacion.locationName,
-                            specialtyName: combinacion.specialtyName,
-                            doctorFullName: `${combinacion.doctorName} ${combinacion.doctorLastName}`,
+                            locationId: combination.locationId,
+                            specialtyId: combination.specialtyId,
+                            doctorId: combination.doctorId,
+                            locationName: combination.locationName,
+                            specialtyName: combination.specialtyName,
+                            doctorFullName: `${combination.doctorName} ${combination.doctorLastName}`,
                           };
                           navigate('/admin/createSchedules', { state: data });
                         }}

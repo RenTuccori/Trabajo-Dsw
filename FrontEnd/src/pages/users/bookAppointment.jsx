@@ -91,8 +91,8 @@ export function BookAppointment() {
     }
   };
 
-  const handleEspecilidadChange = async (selectedOption) => {
-    console.log('🩺 FRONTEND - handleEspecilidadChange: Especialidad seleccionada:', selectedOption);
+  const handleSpecialtyChange = async (selectedOption) => {
+    console.log('🩺 FRONTEND - handleSpecialtyChange: Especialidad seleccionada:', selectedOption);
     console.log('🏢 FRONTEND - Localidad actual:', selectedLocation);
     setSelectedSpecialty(selectedOption);
     setSelectedDoctor(null);
@@ -145,7 +145,7 @@ export function BookAppointment() {
     };
 
 
-    const handleFechaChange = async (date) => {
+    const handleDateChange = async (date) => {
         const year = date.getFullYear();
         const month = (date.getMonth() + 1).toString().padStart(2, '0'); // Meses empiezan desde 0
         const day = (date.getDate()).toString().padStart(2, '0');
@@ -170,7 +170,7 @@ export function BookAppointment() {
       );
     });
   };
-  const handleFechaChange = async (date) => {
+  const handleDateChange = async (date) => {
     // Aseguramos que la hora de la fecha seleccionada esté en 00:00 para evitar desfases
     date.setHours(0, 0, 0, 0);
 
@@ -198,7 +198,7 @@ export function BookAppointment() {
     }
   };
 
-  const handleHorarioChange = (selectedOption) => {
+  const handleScheduleChange = (selectedOption) => {
     setSelectedSchedule(selectedOption);
     setDateAndTime(`${formattedDate} ${selectedOption.value}`);
     console.log(`${formattedDate} ${selectedOption.value}`);
@@ -232,14 +232,14 @@ export function BookAppointment() {
           <p className="text-center text-gray-600 text-lg">{t('labels.specialty', { defaultValue: 'Especialidad' })}</p>
           <Select
             className="react-select"
-            options={(specialties || []).map((especialidad) => {
-              console.log('🩺 FRONTEND - Mapeando especialidad:', especialidad);
+            options={(specialties || []).map((specialty) => {
+              console.log('🩺 FRONTEND - Mapeando especialidad:', specialty);
               return {
-                value: especialidad.id || especialidad.specialtyId || especialidad.idSpecialty,
-                label: t(`specialties.${especialidad.name}`, { defaultValue: especialidad.name }),
+                value: specialty.id || specialty.specialtyId || specialty.idSpecialty,
+                label: t(`specialties.${specialty.name}`, { defaultValue: specialty.name }),
               };
             })}
-            onChange={handleEspecilidadChange}
+            onChange={handleSpecialtyChange}
             value={selectedSpecialty}
             isDisabled={!selectedLocation}
             styles={customStyles}
@@ -265,7 +265,7 @@ export function BookAppointment() {
           <div className="w-full react-datepicker-wrapper-custom">
             <DatePicker
               selected={selectedDate}
-              onChange={handleFechaChange}
+              onChange={handleDateChange}
               filterDate={isDateAvailable}
               placeholderText="Seleccionar..."
               className="w-full border border-[#1e40af] rounded-[0.375rem] px-[8px] py-[8px] shadow-[0_0_0_1px_rgba(29,78,216,0.1)] focus:outline-none text-[#1e40af] placeholder-[#a0aabf] bg-white box-border h-[46px] leading-tight"
@@ -273,7 +273,7 @@ export function BookAppointment() {
               dateFormat="yyyy-MM-dd" // Formato consistente
             />
           </div>
-          <style jsx="true">{`
+          <style>{`
             .react-datepicker-wrapper-custom .react-datepicker-wrapper {
               display: block;
               width: 100%;
@@ -282,11 +282,11 @@ export function BookAppointment() {
           <p className="text-center text-gray-600 text-lg">{t('labels.time', { defaultValue: 'Horario' })}</p>
           <Select
             className="react-select"
-            options={(schedules || []).map((horario) => ({
-              value: horario.startTime,
-              label: horario.startTime,
+            options={(schedules || []).map((schedule) => ({
+              value: schedule.startTime,
+              label: schedule.startTime,
             }))}
-            onChange={handleHorarioChange}
+            onChange={handleScheduleChange}
             value={selectedSchedule}
             isDisabled={!selectedDate}
             styles={customStyles}

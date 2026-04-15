@@ -9,7 +9,7 @@ export function CreateDoctor() {
     doctors,
     createDoctor,
     getDoctors,
-    getUserByDni,
+    getUserByNationalId,
     createUser,
     getHealthInsurances,
     user,
@@ -17,15 +17,15 @@ export function CreateDoctor() {
     deleteDoctor,
   } = useAdministration();
 
-  const [dni, setDni] = useState('');
-  const [appointmentDuration, setDuracionTurno] = useState('');
-  const [password, setContra] = useState('');
-  const [usuarioExistente, setUsuarioExistente] = useState(false);
-  const [formularioVisible, setFormularioVisible] = useState(false);
-  const [selectedObraSociales, setSelectedObraSociales] = useState(null);
+  const [nationalId, setNationalId] = useState('');
+  const [appointmentDuration, setAppointmentDuration] = useState('');
+  const [password, setPassword] = useState('');
+  const [existingUser, setExistingUser] = useState(false);
+  const [formVisible, setFormVisible] = useState(false);
+  const [selectedHealthInsurance, setSelectedHealthInsurance] = useState(null);
 
   const [formData, setFormData] = useState({
-    dni: '',
+    nationalId: '',
     birthDate: '',
     name: '',
     lastName: '',
@@ -49,36 +49,36 @@ export function CreateDoctor() {
     });
   };
 
-  const handleObraSocialChange = (selectedOption) => {
-    setSelectedObraSociales(selectedOption);
+  const handleHealthInsuranceChange = (selectedOption) => {
+    setSelectedHealthInsurance(selectedOption);
     setFormData({ ...formData, healthInsuranceId: selectedOption.value });
   };
 
-  const handleBuscarDNI = async (e) => {
+  const handleSearchNationalId = async (e) => {
     e.preventDefault();
-    if (dni.trim() !== '') {
+    if (nationalId.trim() !== '') {
       try {
-        await getUserByDni(dni);
+        await getUserByNationalId(nationalId);
         if (user.length !== 0) {
-          setUsuarioExistente(true);
+          setExistingUser(true);
           window.notifySuccess(
             'Usuario encontrado, continúe con los siguientes pasos.'
           );
         } else {
-          setUsuarioExistente(false);
+          setExistingUser(false);
           window.notifyError(
             'Usuario no encontrado, complete los datos para crear uno nuevo.'
           );
         }
-        setFormularioVisible(true); // Muestra el formulario después de la búsqueda
+        setFormVisible(true); // Muestra el formulario después de la búsqueda
       } catch (error) {
         if (error.response && error.response.status === 404) {
           // Si es un error 404, significa que no existe el user, continuar como nuevo
-          setUsuarioExistente(false);
+          setExistingUser(false);
           window.notifyError(
             'Usuario no encontrado, complete los datos para crear uno nuevo.'
           );
-          setFormularioVisible(true);
+          setFormVisible(true);
         } else {
           window.notifyError('Error al buscar el user');
           console.error('Error al buscar user:', error);
@@ -89,22 +89,22 @@ export function CreateDoctor() {
     }
   };
 
-  const handlecreateDoctor = async (e) => {
+  const handleCreateDoctor = async (e) => {
     e.preventDefault();
     if (appointmentDuration.trim() !== '') {
-      if (!usuarioExistente && password.trim() === '') {
+      if (!existingUser && password.trim() === '') {
         window.notifyError('Complete todos los campos');
         return;
       }
       try {
-        if (!usuarioExistente) {
+        if (!existingUser) {
           await createUser({
             ...formData,
-            dni, // Agregar el dni al nuevo user
+            nationalId, // Agregar el nationalId al nuevo user
             password, // Password para el usuario
           });
         }
-        await createDoctor({ dni, appointmentDuration });
+        await createDoctor({ nationalId, appointmentDuration });
         window.notifySuccess('¡Doctor creado con éxito!');
         navigate('/admin');
       } catch (error) {
@@ -143,16 +143,16 @@ export function CreateDoctor() {
   return (
     <div className="min-h-[calc(100vh-88px)] bg-gradient-to-b from-blue-100 to-white flex items-center justify-center p-4">
       <div className="bg-white rounded-lg shadow-md w-full max-w-md p-6 space-y-4">
-        {!formularioVisible && (
-          <form onSubmit={handleBuscarDNI} className="space-y-4">
+        {!formVisible && (
+          <form onSubmit={handleSearchNationalId} className="space-y-4">
             <div>
               <p className="text-center text-gray-600 text-lg">
                 Por favor, ingresa el DNI del doctor que quieres crear
               </p>
               <input
                 type="text"
-                value={dni}
-                onChange={(e) => setDni(e.target.value)}
+                value={nationalId}
+                onChange={(e) => setNationalId(e.target.value)}
                 className="w-full p-2 border border-gray-300 rounded-lg"
                 required
               />
@@ -165,10 +165,10 @@ export function CreateDoctor() {
             </button>
           </form>
         )}
-        {formularioVisible && (
+        {formVisible && (
           <>
-            {!usuarioExistente && (
-              <form onSubmit={handlecreateDoctor} className="space-y-4">
+            {!existingUser && (
+              <form onSubmit={handleCreateDoctor} className="space-y-4">
                 <div>
                   <p className="text-center text-gray-600 text-lg">
                     Fecha de nacimiento
@@ -246,8 +246,8 @@ export function CreateDoctor() {
                         value: obrasocial.id,
                         label: obrasocial.name,
                       }))}
-                    onChange={handleObraSocialChange}
-                    value={selectedObraSociales}
+                    onChange={handleHealthInsuranceChange}
+                    value={selectedHealthInsurance}
                     className="react-select"
                   />
                 </div>
@@ -258,7 +258,7 @@ export function CreateDoctor() {
                   <input
                     type="text"
                     value={appointmentDuration}
-                    onChange={(e) => setDuracionTurno(e.target.value)}
+                    onChange={(e) => setAppointmentDuration(e.target.value)}
                     className="w-full p-2 border border-gray-300 rounded-lg"
                     required
                   />
@@ -270,7 +270,7 @@ export function CreateDoctor() {
                   <input
                     type="password"
                     value={password}
-                    onChange={(e) => setContra(e.target.value)}
+                    onChange={(e) => setPassword(e.target.value)}
                     className="w-full p-2 border border-gray-300 rounded-lg"
                     required
                   />
@@ -284,13 +284,13 @@ export function CreateDoctor() {
               </form>
             )}
 
-            {usuarioExistente && (
-              <form onSubmit={handlecreateDoctor} className="space-y-4">
+            {existingUser && (
+              <form onSubmit={handleCreateDoctor} className="space-y-4">
                 <input
                   type="text"
                   placeholder="Duración del appointment (en minutos)"
                   value={appointmentDuration}
-                  onChange={(e) => setDuracionTurno(e.target.value)}
+                  onChange={(e) => setAppointmentDuration(e.target.value)}
                   className="w-full p-2 border border-gray-300 rounded-lg"
                   required
                 />

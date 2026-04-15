@@ -11,9 +11,9 @@ export function CreateInsurance() {
     deleteHealthInsurance,
     updateHealthInsurance,
   } = useAdministration();
-  const [nombreObraSocial, setNombreObraSocial] = useState('');
-  const [nuevoNombreObraSocial, setNuevoNombreObraSocial] = useState('');
-  const [obraSocialAEditar, setObraSocialAEditar] = useState(null);
+  const [insuranceName, setInsuranceName] = useState('');
+  const [newInsuranceName, setNewInsuranceName] = useState('');
+  const [insuranceToEdit, setInsuranceToEdit] = useState(null);
 
   useEffect(() => {
     getHealthInsurances();
@@ -22,10 +22,10 @@ export function CreateInsurance() {
 
   const handlecreateInsurance = async (e) => {
     e.preventDefault();
-    if (nombreObraSocial.trim() !== '') {
+    if (insuranceName.trim() !== '') {
       try {
-        await createHealthInsurance({ name: nombreObraSocial });
-        setNombreObraSocial('');
+        await createHealthInsurance({ name: insuranceName });
+        setInsuranceName('');
         window.notifySuccess('¡Obra Social creada con éxito!');
         getHealthInsurances();
       } catch (error) {
@@ -35,7 +35,7 @@ export function CreateInsurance() {
     }
   };
 
-  const handleBorrarObraSocial = async (healthInsuranceId) => {
+  const handleDeleteInsurance = async (healthInsuranceId) => {
     const result = await window.confirmDialog(
       '¿Estás seguro?',
       '¿Deseas eliminar esta obra social?'
@@ -53,17 +53,17 @@ export function CreateInsurance() {
     }
   };
 
-  const handleActualizarObraSocial = async (e) => {
+  const handleUpdateInsurance = async (e) => {
     e.preventDefault();
-    if (obraSocialAEditar && nuevoNombreObraSocial.trim() !== '') {
+    if (insuranceToEdit && newInsuranceName.trim() !== '') {
       try {
         await updateHealthInsurance({
-          healthInsuranceId: obraSocialAEditar,
-          name: nuevoNombreObraSocial,
+          healthInsuranceId: insuranceToEdit,
+          name: newInsuranceName,
         });
         window.notifySuccess('¡Obra Social actualizada con éxito!');
-        setObraSocialAEditar(null);
-        setNuevoNombreObraSocial('');
+        setInsuranceToEdit(null);
+        setNewInsuranceName('');
         getHealthInsurances();
       } catch (error) {
         window.notifyError('No se puede actualizar esta obra social');
@@ -80,13 +80,13 @@ export function CreateInsurance() {
         </h2>
 
         {/* Formulario para crear una nueva obra social */}
-        {!obraSocialAEditar && (
+        {!insuranceToEdit && (
           <form onSubmit={handlecreateInsurance} className="space-y-4">
             <input
               type="text"
               placeholder="Nombre de la obra social"
-              value={nombreObraSocial}
-              onChange={(e) => setNombreObraSocial(e.target.value)}
+              value={insuranceName}
+              onChange={(e) => setInsuranceName(e.target.value)}
               className="w-full p-2 border border-gray-300 rounded-lg"
             />
             <button
@@ -99,13 +99,13 @@ export function CreateInsurance() {
         )}
 
         {/* Formulario para actualizar una obra social */}
-        {obraSocialAEditar && (
-          <form onSubmit={handleActualizarObraSocial} className="space-y-4">
+        {insuranceToEdit && (
+          <form onSubmit={handleUpdateInsurance} className="space-y-4">
             <input
               type="text"
               placeholder="Nuevo name de la obra social"
-              value={nuevoNombreObraSocial}
-              onChange={(e) => setNuevoNombreObraSocial(e.target.value)}
+              value={newInsuranceName}
+              onChange={(e) => setNewInsuranceName(e.target.value)}
               className="w-full p-2 border border-gray-300 rounded-lg"
             />
             <div className="flex justify-between space-x-2">
@@ -117,7 +117,7 @@ export function CreateInsurance() {
               </button>
               <button
                 type="button"
-                onClick={() => setObraSocialAEditar(null)}
+                onClick={() => setInsuranceToEdit(null)}
                 className="w-full bg-gray-200 text-gray-700 py-2 rounded-lg hover:bg-gray-300 transition-colors"
               >
                 Cancelar
@@ -139,27 +139,27 @@ export function CreateInsurance() {
         </h3>
         <ul className="space-y-2">
           {healthInsurances.length > 0 ? (
-            healthInsurances.map((obraSocial) => {
-              const id = obraSocial.id ?? obraSocial.healthInsuranceId;
+            healthInsurances.map((insurance) => {
+              const id = insurance.id ?? insurance.healthInsuranceId;
               return (
                 <li
                   key={id}
                   className="bg-gray-100 p-4 rounded-lg flex justify-between items-center"
                 >
                   <span>
-                    <strong>{obraSocial.name}</strong>
+                    <strong>{insurance.name}</strong>
                   </span>
                   <div className="flex space-x-2">
                     <button
-                      onClick={() => handleBorrarObraSocial(id)}
+                      onClick={() => handleDeleteInsurance(id)}
                       className="text-red-600 hover:text-red-800"
                     >
                       Eliminar
                     </button>
                     <button
                       onClick={() => {
-                        setObraSocialAEditar(id);
-                        setNuevoNombreObraSocial(obraSocial.name);
+                        setInsuranceToEdit(id);
+                        setNewInsuranceName(insurance.name);
                       }}
                       className="text-blue-600 hover:text-blue-800"
                     >
