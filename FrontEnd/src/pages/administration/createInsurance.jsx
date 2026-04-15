@@ -73,11 +73,13 @@ export function CreateInsurance() {
   };
 
   return (
-    <div className="page-bg flex items-center justify-center p-4">
-      <div className="card p-8 space-y-5 animate-slide-up w-full max-w-md">
-        <h2 className="text-xl font-semibold text-center text-gray-800">
-          Crear nueva obra social
-        </h2>
+    <div className="page-bg p-6 lg:p-10">
+      <div className="max-w-5xl mx-auto animate-slide-up space-y-6">
+        <div className="flex items-center gap-4">
+          <button onClick={() => navigate('/admin')} className="btn-ghost text-sm">← Volver</button>
+          <h2 className="text-2xl lg:text-3xl font-extrabold text-gray-900 tracking-tight">Crear nueva obra social</h2>
+        </div>
+        <div className="glass-solid rounded-2xl p-6 lg:p-8 space-y-5">
 
         {/* Formulario para crear una nueva obra social */}
         {!obraSocialAEditar && (
@@ -126,15 +128,10 @@ export function CreateInsurance() {
           </form>
         )}
 
-        <button
-          type="button"
-          onClick={() => navigate('/admin')}
-          className="btn-secondary mt-4"
-        >
-          Volver
-        </button>
+        </div>
 
-        <h3 className="text-lg font-medium text-gray-800 mt-6">
+        <div className="glass-solid rounded-2xl p-6 lg:p-8">
+        <h3 className="text-lg font-bold text-gray-900 mb-4">
           Obras sociales creadas
         </h3>
         <ul className="space-y-2">
@@ -152,7 +149,7 @@ export function CreateInsurance() {
                   <div className="flex space-x-2">
                     <button
                       onClick={() => handleBorrarObraSocial(id)}
-                      className="text-red-600 hover:text-red-800"
+                      className="text-coral-500 hover:text-coral-600 font-medium text-sm"
                     >
                       Eliminar
                     </button>
@@ -161,7 +158,7 @@ export function CreateInsurance() {
                         setObraSocialAEditar(id);
                         setNuevoNombreObraSocial(obraSocial.name);
                       }}
-                      className="text-blue-600 hover:text-blue-800"
+                      className="text-brand-600 hover:text-brand-700 font-medium text-sm"
                     >
                       Actualizar
                     </button>
@@ -175,6 +172,7 @@ export function CreateInsurance() {
             </p>
           )}
         </ul>
+        </div>
       </div>
     </div>
   );

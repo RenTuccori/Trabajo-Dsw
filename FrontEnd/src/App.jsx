@@ -40,7 +40,7 @@ function App() {
             theme="light"
             style={{
               textAlign: 'center',
-              fontFamily: 'Inter, Poppins, sans-serif',
+              fontFamily: 'Plus Jakarta Sans, DM Sans, sans-serif',
             }}
             toastStyle={{
               borderRadius: '12px',

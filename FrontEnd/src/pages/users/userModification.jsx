@@ -116,11 +116,13 @@ export function UserModification() {
   };
 
   return (
-    <div className="page-bg flex items-center justify-center p-4">
-      <div className="card p-8 space-y-5 animate-slide-up w-full max-w-md">
+    <div className="page-bg p-6 lg:p-10 flex items-center justify-center min-h-[80vh]">
+      <div className="glass-solid p-8 lg:p-10 rounded-3xl shadow-glass animate-slide-up w-full max-w-lg">
+        <h1 className="text-2xl font-extrabold text-gray-900 tracking-tight mb-1">Modificar datos</h1>
+        <p className="text-gray-500 text-sm mb-6">Actualizá tu información personal</p>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <p className="label text-center">Nombre</p>
+            <label className="label">Nombre</label>
             <input
               type="text"
               name="name"
@@ -131,7 +133,7 @@ export function UserModification() {
             />
           </div>
           <div>
-            <p className="label text-center">Apellido</p>
+            <label className="label">Apellido</label>
             <input
               type="text"
               name="lastName"
@@ -142,7 +144,7 @@ export function UserModification() {
             />
           </div>
           <div>
-            <p className="label text-center">Dirección</p>
+            <label className="label">Dirección</label>
             <input
               type="text"
               name="address"
@@ -153,7 +155,7 @@ export function UserModification() {
             />
           </div>
           <div>
-            <p className="label text-center">Teléfono</p>
+            <label className="label">Teléfono</label>
             <input
               type="text"
               name="phone"
@@ -164,7 +166,7 @@ export function UserModification() {
             />
           </div>
           <div>
-            <p className="label text-center">Email</p>
+            <label className="label">Email</label>
             <input
               type="email"
               name="email"
@@ -175,7 +177,7 @@ export function UserModification() {
             />
           </div>
           <div>
-            <p className="label text-center">Obra Social</p>
+            <label className="label">Obra Social</label>
             <Select
               options={(healthInsurances || []).map((obrasociales) => {
                 return {
@@ -197,7 +199,7 @@ export function UserModification() {
           <button
             type="button"
             onClick={() => navigate('/patient')}
-            className="btn-secondary"
+            className="btn-ghost"
           >
             Volver
           </button>

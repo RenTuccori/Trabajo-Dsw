@@ -9,9 +9,9 @@ export function Validation({ rol, children, expected }) {
     return <>{children}</>;
   } else {
     return (
-      <div className="page-bg flex items-center justify-center p-4">
-        <div className="max-w-md w-full card overflow-hidden animate-slide-up">
-          <div className="bg-gradient-to-r from-red-500 to-red-600 px-6 py-4 flex items-center justify-center">
+      <div className="page-bg flex items-center justify-center p-6 min-h-[80vh]">
+        <div className="max-w-md w-full glass-solid rounded-3xl overflow-hidden animate-slide-up">
+          <div className="bg-gradient-to-r from-coral-500 to-rose-500 px-6 py-5 flex items-center justify-center">
             <svg
               className="h-6 w-6 text-white mr-2"
               fill="none"
@@ -26,7 +26,7 @@ export function Validation({ rol, children, expected }) {
             <h1 className="text-xl font-bold text-white">Acceso Denegado</h1>
           </div>
           <div className="px-6 py-6">
-            <p className="text-slate-600 text-center mb-6">
+            <p className="text-gray-600 text-center mb-6">
               No tenés permisos para acceder a esta página.
             </p>
             <Link

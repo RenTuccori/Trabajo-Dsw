@@ -3,8 +3,6 @@ import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useDoctors } from '../../context/doctors/DoctorsProvider.jsx';
 import { useTranslation } from 'react-i18next';
-import '../../estilos/home.css';
-import '../../estilos/sacarturno.css';
 
 export function HistoricalAppointments() {
   const { historicalAppointments, loadHistoricalAppointments } = useDoctors();
@@ -28,23 +26,21 @@ export function HistoricalAppointments() {
     return new Date(dateAndTime).toLocaleString('es-ES', opciones);
   };
   return (
-    <div className="page-bg flex items-center justify-center p-4">
-      <div className="card p-8 space-y-5 animate-slide-up w-full max-w-md">
-        <h1 className="section-title text-center">
-          Historial de Turnos
-        </h1>
-        <button
-          className="btn-secondary"
-          onClick={() => navigate('/doctor')}
-        >
-          Volver
-        </button>
+    <div className="page-bg p-6 lg:p-10">
+      <div className="max-w-3xl mx-auto animate-slide-up">
+        <div className="flex items-center justify-between mb-8">
+          <div>
+            <h1 className="text-2xl lg:text-3xl font-extrabold text-gray-900 tracking-tight">Historial de turnos</h1>
+            <p className="text-gray-500 text-sm mt-1">Todos tus turnos anteriores</p>
+          </div>
+          <button className="btn-ghost" onClick={() => navigate('/doctor')}>← Volver</button>
+        </div>
         <div className="space-y-4">
           {historicalAppointments && historicalAppointments.length > 0 ? (
             historicalAppointments.map((appointment, index) => (
               <div
                 key={index}
-                className="appointment-card"
+                className="glass-solid rounded-2xl p-6 space-y-2 mb-4"
               >
                 <p>
                   <strong>Localidad:</strong> {t(`locations.${appointment.location || appointment.venue}`)}
@@ -56,9 +52,10 @@ export function HistoricalAppointments() {
                   <strong>Fecha y Hora:</strong>{' '}
                   {formatFechaHora(appointment.dateTime)}
                 </p>
-                <p>
-                  <strong>Estado:</strong> {t(`statuses.${appointment.status}`)}
-                </p>
+                <div className="flex items-center gap-2">
+                  <strong className="text-gray-600">Estado:</strong>
+                  <span className={`badge ${appointment.status === 'Confirmed' ? 'badge-confirmed' : appointment.status === 'Cancelled' ? 'badge-cancelled' : 'badge-pending'}`}>{t(`statuses.${appointment.status}`)}</span>
+                </div>
                 <p>
                   <strong>DNI Paciente:</strong> {appointment.dni}
                 </p>

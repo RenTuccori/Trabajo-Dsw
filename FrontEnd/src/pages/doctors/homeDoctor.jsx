@@ -34,17 +34,14 @@ function HomeDoctor() {
   }, []);
 
   return (
-    <div className="page-bg flex items-center justify-center p-4">
-      <div className="card w-full max-w-md p-8 space-y-5 animate-slide-up">
+    <div className="page-bg p-6 lg:p-10 flex items-center justify-center min-h-[80vh]">
+      <div className="glass-solid rounded-3xl shadow-glass w-full max-w-md p-8 lg:p-10 space-y-5 animate-slide-up">
         {!idDoctor ? (
           <div className="space-y-4">
-            <p className="section-title text-center text-lg">
-              Ingrese sus datos
-            </p>
+            <h1 className="text-2xl font-extrabold text-gray-900 tracking-tight text-center">Portal Médico</h1>
+            <p className="text-gray-500 text-sm text-center">Ingresá con tu DNI y contraseña</p>
             <div className="space-y-4">
-              <p className="label text-center">
-                Ingrese su DNI
-              </p>
+              <label className="label">DNI</label>
               <input
                 type="text"
                 value={dni}
@@ -52,9 +49,7 @@ function HomeDoctor() {
                 placeholder="DNI"
                 className="input"
               />
-              <p className="label text-center">
-                Ingrese su contraseña
-              </p>
+              <label className="label">Contraseña</label>
               <input
                 type="password"
                 value={password}
@@ -68,15 +63,16 @@ function HomeDoctor() {
               disabled={!dni || !password}
               className="btn-primary disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              Verificar
+              Ingresar
             </button>
           </div>
         ) : (
           <div className="space-y-4">
             <div className="text-center mb-4">
-              <h2 className="text-xl font-semibold text-gray-800">
-                Bienvenido Dr/Dra {nombreUsuario} {apellidoUsuario}
+              <h2 className="text-2xl font-extrabold text-gray-900 tracking-tight">
+                Dr/a. {nombreUsuario} {apellidoUsuario}
               </h2>
+              <p className="text-gray-500 text-sm mt-1">Panel de gestión médica</p>
             </div>
             <div className="flex flex-col space-y-2">
               <button

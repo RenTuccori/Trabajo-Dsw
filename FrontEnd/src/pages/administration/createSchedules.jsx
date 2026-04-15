@@ -222,12 +222,15 @@ export function CreateSchedules() {
   };
 
   return (
-    <div className="page-bg flex items-center justify-center p-4">
-      <div className="w-full max-w-lg space-y-6">
-        <h2 className="text-xl font-semibold mb-4">Crear horarios</h2>
+    <div className="page-bg p-6 lg:p-10">
+      <div className="max-w-5xl mx-auto animate-slide-up space-y-6">
+        <div className="flex items-center gap-4">
+          <button onClick={() => navigate('/admin/createCombination')} className="btn-ghost text-sm">← Volver</button>
+          <h2 className="text-2xl lg:text-3xl font-extrabold text-gray-900 tracking-tight">Crear horarios</h2>
+        </div>
 
-        <div className="card p-6 space-y-4 animate-slide-up">
-          <h3 className="text-lg font-medium">
+        <div className="glass-solid rounded-2xl p-6 lg:p-8 space-y-4">
+          <h3 className="text-lg font-bold text-gray-900">
             Sede: {locationName || locationId}, Especialidad: {specialtyName || specialtyId}, Doctor: {doctorFullName || doctorId}
           </h3>
 
@@ -242,12 +245,12 @@ export function CreateSchedules() {
               if (horariosDelDia.length === 0) return null;
 
               return (
-                <div key={dayOption.value} className="bg-gray-50 border border-gray-200 rounded-lg p-4">
+                <div key={dayOption.value} className="bg-brand-50/30 border border-brand-100 rounded-2xl p-4">
                   <div className="flex justify-between items-center mb-3">
-                    <h4 className="font-semibold text-gray-700">{dayOption.label}</h4>
+                    <h4 className="font-bold text-gray-900">{dayOption.label}</h4>
                     <button
                       onClick={() => agregarFilaDia(dayOption.value)}
-                      className="text-sm px-3 py-1 bg-blue-100 text-blue-600 rounded-md hover:bg-blue-200 font-medium transition-colors"
+                      className="text-sm px-3 py-1 bg-brand-100 text-brand-700 rounded-2xl hover:bg-brand-200 font-medium transition-colors"
                     >
                       + Agregar turno
                     </button>
@@ -258,7 +261,7 @@ export function CreateSchedules() {
                       <div key={horario.originalIndex} className="flex items-center space-x-3">
                         <input
                           type="time"
-                          className="flex-1 border border-gray-300 rounded-md p-2 text-sm bg-white focus:ring-blue-500 focus:border-blue-500"
+                          className="input flex-1 !py-2 text-sm"
                           value={horario.hora_inicio || ''}
                           onChange={(e) =>
                             handleInputChange(horario.originalIndex, 'hora_inicio', e.target.value)
@@ -267,7 +270,7 @@ export function CreateSchedules() {
                         <span className="text-gray-500 font-medium">a</span>
                         <input
                           type="time"
-                          className="flex-1 border border-gray-300 rounded-md p-2 text-sm bg-white focus:ring-blue-500 focus:border-blue-500"
+                          className="input flex-1 !py-2 text-sm"
                           value={horario.hora_fin || ''}
                           onChange={(e) =>
                             handleInputChange(horario.originalIndex, 'hora_fin', e.target.value)
@@ -275,7 +278,7 @@ export function CreateSchedules() {
                         />
                         <button
                           onClick={() => eliminarFila(horario.originalIndex)}
-                          className="ml-auto w-8 h-8 rounded-full bg-red-100 text-red-600 hover:bg-red-200 flex items-center justify-center font-bold flex-shrink-0"
+                          className="ml-auto w-8 h-8 rounded-full bg-coral-100 text-coral-500 hover:bg-coral-200 flex items-center justify-center font-bold flex-shrink-0"
                           title="Limpiar/Eliminar este rango horario"
                         >
                           -
@@ -293,13 +296,6 @@ export function CreateSchedules() {
             className="btn-primary"
           >
             Confirmar horarios
-          </button>
-
-          <button
-            className="btn-secondary"
-            onClick={() => navigate('/admin/createCombination')}
-          >
-            Volver
           </button>
         </div>
       </div>

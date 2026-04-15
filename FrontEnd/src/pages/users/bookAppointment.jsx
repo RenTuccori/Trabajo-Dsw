@@ -43,32 +43,7 @@ export function BookAppointment() {
   useEffect(() => {
   }, [specialties]);
 
-  const customStyles = {
-    option: (provided, state) => ({
-      ...provided,
-      backgroundColor: state.isFocused ? '#1e40af' : '#374151', // Ajusta los colores para que se alineen con el estilo
-      color: '#ffffff', // Texto blanco
-      padding: '10px', // Espaciado
-    }),
-    control: (provided) => ({
-      ...provided,
-      backgroundColor: 'white', // Fondo blanco del select
-      borderColor: '#1e40af', // Color del borde
-      borderRadius: '0.375rem', // Bordes redondeados (Tailwind: rounded-md)
-      boxShadow: '0 0 0 1px rgba(29, 78, 216, 0.1)', // Sombra sutil
-      padding: '5px', // Espaciado
-    }),
-    menu: (provided) => ({
-      ...provided,
-      border: '0.1rem solid #1e40af', // Borde del menú
-      borderRadius: '0.375rem', // Bordes redondeados
-      marginTop: '4px', // Espaciado superior
-    }),
-    singleValue: (provided) => ({
-      ...provided,
-      color: '#1e40af', // Color del valor seleccionado
-    }),
-  };
+
 
   const handleLocationChange = async (selectedOption) => {
     setSelectedLocation(selectedOption);
@@ -195,10 +170,12 @@ export function BookAppointment() {
   };
 
   return (
-    <form className="page-bg flex items-center justify-center p-4">
-      <div className="card p-8 space-y-5 animate-slide-up w-full max-w-md">
+    <form className="page-bg p-6 lg:p-10 flex items-center justify-center min-h-[80vh]">
+      <div className="glass-solid p-8 lg:p-10 rounded-3xl shadow-glass animate-slide-up w-full max-w-lg">
+        <h1 className="text-2xl font-extrabold text-gray-900 tracking-tight mb-2">Sacar turno</h1>
+        <p className="text-gray-500 text-sm mb-6">Completá cada paso para agendar tu consulta</p>
         <div className="space-y-4">
-          <p className="label text-center">{t('labels.location', { defaultValue: 'Localidad' })}</p>
+          <label className="label">{t('labels.location', { defaultValue: 'Localidad' })}</label>
           <Select
             className="react-select"
             options={(locations || []).map((location) => {
@@ -209,10 +186,9 @@ export function BookAppointment() {
             })}
             onChange={handleLocationChange}
             value={selectedLocation}
-            styles={customStyles}
             placeholder="Seleccionar..."
           />
-          <p className="label text-center">{t('labels.specialty', { defaultValue: 'Especialidad' })}</p>
+          <label className="label">{t('labels.specialty', { defaultValue: 'Especialidad' })}</label>
           <Select
             className="react-select"
             options={(specialties || []).map((especialidad) => {
@@ -224,10 +200,9 @@ export function BookAppointment() {
             onChange={handleEspecilidadChange}
             value={selectedSpecialty}
             isDisabled={!selectedLocation}
-            styles={customStyles}
             placeholder="Seleccionar..."
           />
-          <p className="label text-center">{t('labels.doctors', { defaultValue: 'Doctores' })}</p>
+          <label className="label">{t('labels.doctors', { defaultValue: 'Doctores' })}</label>
           <Select
             className="react-select"
             options={(doctors || []).map((doctor) => {
@@ -239,28 +214,21 @@ export function BookAppointment() {
             value={selectedDoctor}
             onChange={handleDoctorChange}
             isDisabled={!selectedSpecialty}
-            styles={customStyles}
             placeholder="Seleccionar..."
           />
-          <p className="label text-center">{t('labels.date', { defaultValue: 'Fecha' })}</p>
-          <div className="w-full react-datepicker-wrapper-custom">
+          <label className="label">{t('labels.date', { defaultValue: 'Fecha' })}</label>
+          <div className="w-full">
             <DatePicker
               selected={selectedDate}
               onChange={handleFechaChange}
               filterDate={isDateAvailable}
               placeholderText="Seleccionar..."
-              className="w-full border border-[#1e40af] rounded-[0.375rem] px-[8px] py-[8px] shadow-[0_0_0_1px_rgba(29,78,216,0.1)] focus:outline-none text-[#1e40af] placeholder-[#a0aabf] bg-white box-border h-[46px] leading-tight"
-              disabled={!selectedDoctor} // Deshabilitar si no hay doctor seleccionado
-              dateFormat="yyyy-MM-dd" // Formato consistente
+              className="input w-full"
+              disabled={!selectedDoctor}
+              dateFormat="yyyy-MM-dd"
             />
           </div>
-          <style jsx="true">{`
-            .react-datepicker-wrapper-custom .react-datepicker-wrapper {
-              display: block;
-              width: 100%;
-            }
-          `}</style>
-          <p className="label text-center">{t('labels.time', { defaultValue: 'Horario' })}</p>
+          <label className="label">{t('labels.time', { defaultValue: 'Horario' })}</label>
           <Select
             className="react-select"
             options={(schedules || []).map((horario) => ({
@@ -270,25 +238,26 @@ export function BookAppointment() {
             onChange={handleHorarioChange}
             value={selectedSchedule}
             isDisabled={!selectedDate}
-            styles={customStyles}
             placeholder="Seleccionar..."
           />
         </div>
-        <button
-          type="button"
-          disabled={!selectedSchedule}
-          onClick={() => navigate('/patient/appointmentConfirmation')}
-          className="btn-primary disabled:opacity-50 disabled:cursor-not-allowed"
-        >
-          {t('labels.continue', { defaultValue: 'Continuar' })}
-        </button>
-        <button
-          type="button"
-          onClick={() => navigate('/patient')}
-          className="btn-secondary"
-        >
-          {t('labels.back', { defaultValue: 'Volver' })}
-        </button>
+        <div className="flex gap-3 pt-4">
+          <button
+            type="button"
+            onClick={() => navigate('/patient')}
+            className="btn-secondary flex-1"
+          >
+            {t('labels.back', { defaultValue: 'Volver' })}
+          </button>
+          <button
+            type="button"
+            disabled={!selectedSchedule}
+            onClick={() => navigate('/patient/appointmentConfirmation')}
+            className="btn-primary flex-1 disabled:opacity-50 disabled:cursor-not-allowed"
+          >
+            {t('labels.continue', { defaultValue: 'Continuar' })}
+          </button>
+        </div>
       </div>
     </form>
   );

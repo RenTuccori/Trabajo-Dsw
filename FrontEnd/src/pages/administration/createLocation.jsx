@@ -64,11 +64,13 @@ export function CreateLocation() {
   };
 
   return (
-    <div className="page-bg flex items-center justify-center p-4">
-      <div className="card p-8 space-y-5 animate-slide-up w-full max-w-md">
-        <h2 className="text-xl font-semibold text-center text-gray-800">
-          Crear nueva sede
-        </h2>
+    <div className="page-bg p-6 lg:p-10">
+      <div className="max-w-5xl mx-auto animate-slide-up space-y-6">
+        <div className="flex items-center gap-4">
+          <button onClick={() => navigate('/admin')} className="btn-ghost text-sm">← Volver</button>
+          <h2 className="text-2xl lg:text-3xl font-extrabold text-gray-900 tracking-tight">Crear nueva sede</h2>
+        </div>
+        <div className="glass-solid rounded-2xl p-6 lg:p-8 space-y-5">
 
         <form onSubmit={handleCreateLocation} className="space-y-4">
           <input
@@ -91,15 +93,10 @@ export function CreateLocation() {
           </button>
         </form>
 
-        <button
-          type="button"
-          onClick={() => navigate('/admin')}
-          className="btn-secondary mt-4"
-        >
-          Volver
-        </button>
+        </div>
 
-        <h3 className="text-lg font-medium text-gray-800 mt-6">
+        <div className="glass-solid rounded-2xl p-6 lg:p-8">
+        <h3 className="text-lg font-bold text-gray-900 mb-4">
           Sedes creadas
         </h3>
         <ul className="space-y-2">
@@ -114,7 +111,7 @@ export function CreateLocation() {
                 </span>
                 <button
                   onClick={() => handleDeleteLocation(location.id)}
-                  className="text-red-600 hover:text-red-800"
+                  className="text-coral-500 hover:text-coral-600 font-medium text-sm"
                 >
                   Eliminar
                 </button>
@@ -126,6 +123,7 @@ export function CreateLocation() {
             </p>
           )}
         </ul>
+        </div>
       </div>
     </div>
   );

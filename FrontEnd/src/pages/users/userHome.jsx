@@ -1,4 +1,3 @@
-// src/pages/home.jsx
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/global/AuthProvider';
 import { useState, useEffect } from 'react';
@@ -18,9 +17,9 @@ function UserHome() {
         credential: password,
         userType: 'Patient',
       });
-      window.notifySuccess('¡Login exitoso!'); // Muestra mensaje de éxito
+      window.notifySuccess('¡Login exitoso!');
     } catch (error) {
-      window.notifyError('Error en el login, verifica tus datos.'); // Muestra mensaje de error si hay fallo
+      window.notifyError('Error en el login, verifica tus datos.');
     }
   };
   useEffect(() => {
@@ -42,45 +41,32 @@ function UserHome() {
     }
   };
 
-  return (
-    <div className="page-bg flex items-center justify-center p-4 relative overflow-hidden">
-      {/* Decorative background */}
-      <div className="absolute top-[-10%] right-[-5%] w-[500px] h-[500px] bg-primary-200/15 rounded-full blur-3xl"></div>
-      <div className="absolute bottom-[-10%] left-[-5%] w-[400px] h-[400px] bg-accent-200/15 rounded-full blur-3xl"></div>
-
-      {/* Content */}
-      <div className="relative z-10 w-full max-w-md animate-slide-up">
-        <div className="card p-8">
-          {/* Header */}
-          <div className="text-center mb-6">
-            {dni && nombreUsuario ? (
-              <>
-                <div className="inline-flex items-center justify-center w-14 h-14 bg-accent-100 rounded-2xl mb-3">
-                  <svg className="w-7 h-7 text-accent-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
-                  </svg>
-                </div>
-                <h1 className="text-2xl font-bold text-slate-800 tracking-tight">
-                  Hola, {nombreUsuario}
-                </h1>
-                <p className="text-slate-500 text-sm mt-1">¿Qué querés hacer hoy?</p>
-              </>
-            ) : (
-              <>
-                <div className="inline-flex items-center justify-center w-14 h-14 bg-primary-100 rounded-2xl mb-3">
-                  <svg className="w-7 h-7 text-primary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
-                  </svg>
-                </div>
-                <h1 className="text-2xl font-bold text-slate-800 tracking-tight">
-                  Portal de Pacientes
-                </h1>
-                <p className="text-slate-500 text-sm mt-1">Ingresá con tu DNI para continuar</p>
-              </>
-            )}
+  if (!dni) {
+    // ===== LOGIN: Split screen =====
+    return (
+      <div className="page-split">
+        <div className="page-split-visual">
+          <div className="shape-blob w-[250px] h-[250px] bg-white/10 top-[20%] left-[15%] animate-float"></div>
+          <div className="shape-blob w-[180px] h-[180px] bg-brand-300/15 bottom-[20%] right-[10%] animate-float-delayed"></div>
+          <div className="relative z-10 text-white text-center px-10 max-w-sm">
+            <div className="w-16 h-16 bg-white/15 backdrop-blur-sm rounded-3xl flex items-center justify-center mx-auto mb-6 border border-white/20">
+              <svg className="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M16 7a4 4 0 11-8 0 4 4 0 018 0zM12 14a7 7 0 00-7 7h14a7 7 0 00-7-7z" />
+              </svg>
+            </div>
+            <h2 className="text-3xl font-extrabold tracking-tight mb-3">Portal de Pacientes</h2>
+            <p className="text-brand-200 leading-relaxed">Accedé para gestionar tus turnos, estudios y datos personales</p>
           </div>
+        </div>
 
-          {!dni ? (
+        <div className="page-split-content">
+          <div className="w-full max-w-sm animate-slide-up">
+            <div className="mb-8">
+              <p className="text-xs font-bold text-brand-600 tracking-widest uppercase mb-2">Acceso pacientes</p>
+              <h1 className="text-3xl font-extrabold text-gray-900 tracking-tight">Iniciar sesión</h1>
+              <p className="text-gray-500 mt-2">Ingresá tus datos para continuar</p>
+            </div>
+
             <div className="space-y-5">
               <div>
                 <label className="label">DNI</label>
@@ -89,7 +75,7 @@ function UserHome() {
                   value={dniform}
                   onChange={handleDniChange}
                   onKeyDown={handleKeyDown}
-                  placeholder="Ingresá tu número de documento"
+                  placeholder="Ingresá tu documento"
                   className="input"
                 />
               </div>
@@ -101,118 +87,138 @@ function UserHome() {
                     value={password}
                     onChange={handlePasswordChange}
                     onKeyDown={handleKeyDown}
-                    placeholder="Ingresá tu contraseña"
+                    placeholder="Tu contraseña"
                     className="input pr-20"
                   />
                   <button
                     type="button"
                     onClick={() => setShowPassword(!showPassword)}
-                    className="absolute inset-y-0 right-0 px-4 flex items-center text-xs font-semibold text-slate-400 
-                    hover:text-primary-600 focus:outline-none transition-colors uppercase tracking-wider"
+                    className="absolute inset-y-0 right-0 px-4 flex items-center text-xs font-bold text-gray-400 
+                    hover:text-brand-600 focus:outline-none transition-colors uppercase tracking-wider"
                   >
                     {showPassword ? 'Ocultar' : 'Mostrar'}
                   </button>
                 </div>
               </div>
-              <div className="space-y-3 pt-2">
+              <div className="space-y-3 pt-3">
                 <button
                   onClick={handleLogin}
                   disabled={!dniform || !password}
                   className="btn-primary"
                 >
-                  Iniciar sesión
+                  Ingresar
                 </button>
                 <button
                   onClick={() => navigate('/patient/personalData')}
-                  className="btn-secondary"
+                  className="btn-outline"
                 >
-                  Crear una cuenta
+                  Crear una cuenta nueva
                 </button>
               </div>
             </div>
-          ) : (
-            <div className="space-y-3">
-              <button
-                onClick={() => navigate('/patient/bookAppointment')}
-                className="group w-full flex items-center gap-4 p-4 rounded-xl border-2 border-slate-200 
-                hover:border-primary-300 hover:bg-primary-50/50 transition-all duration-200"
-              >
-                <div className="w-10 h-10 bg-primary-100 rounded-xl flex items-center justify-center 
-                group-hover:bg-primary-200 transition-colors flex-shrink-0">
-                  <svg className="w-5 h-5 text-primary-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                  </svg>
-                </div>
-                <div className="text-left">
-                  <span className="font-semibold text-slate-700 group-hover:text-primary-700">Sacar un turno</span>
-                  <p className="text-xs text-slate-400">Reservá una consulta médica</p>
-                </div>
-              </button>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
-              <button
-                onClick={() => navigate('/patient/myAppointments')}
-                className="group w-full flex items-center gap-4 p-4 rounded-xl border-2 border-slate-200 
-                hover:border-primary-300 hover:bg-primary-50/50 transition-all duration-200"
-              >
-                <div className="w-10 h-10 bg-indigo-100 rounded-xl flex items-center justify-center 
-                group-hover:bg-indigo-200 transition-colors flex-shrink-0">
-                  <svg className="w-5 h-5 text-indigo-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2" />
-                  </svg>
-                </div>
-                <div className="text-left">
-                  <span className="font-semibold text-slate-700 group-hover:text-primary-700">Ver mis turnos</span>
-                  <p className="text-xs text-slate-400">Consultá tus turnos pendientes</p>
-                </div>
-              </button>
-
-              <button
-                onClick={() => navigate('/patient/myStudies')}
-                className="group w-full flex items-center gap-4 p-4 rounded-xl border-2 border-slate-200 
-                hover:border-primary-300 hover:bg-primary-50/50 transition-all duration-200"
-              >
-                <div className="w-10 h-10 bg-violet-100 rounded-xl flex items-center justify-center 
-                group-hover:bg-violet-200 transition-colors flex-shrink-0">
-                  <svg className="w-5 h-5 text-violet-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
-                  </svg>
-                </div>
-                <div className="text-left">
-                  <span className="font-semibold text-slate-700 group-hover:text-primary-700">Ver mis estudios</span>
-                  <p className="text-xs text-slate-400">Descargá tus estudios médicos</p>
-                </div>
-              </button>
-
-              <button
-                onClick={() => navigate('/patient/editPersonalData')}
-                className="group w-full flex items-center gap-4 p-4 rounded-xl border-2 border-slate-200 
-                hover:border-slate-300 hover:bg-slate-50 transition-all duration-200"
-              >
-                <div className="w-10 h-10 bg-slate-100 rounded-xl flex items-center justify-center 
-                group-hover:bg-slate-200 transition-colors flex-shrink-0">
-                  <svg className="w-5 h-5 text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
-                  </svg>
-                </div>
-                <div className="text-left">
-                  <span className="font-semibold text-slate-700">Modificar datos</span>
-                  <p className="text-xs text-slate-400">Actualizá tu información personal</p>
-                </div>
-              </button>
-
-              <div className="pt-2">
-                <button
-                  onClick={() => {
-                    localStorage.clear();
-                    navigate('/');
-                  }}
-                  className="btn-secondary text-sm"
-                >
-                  Cerrar sesión
-                </button>
-              </div>
+  // ===== DASHBOARD: Bento grid =====
+  return (
+    <div className="page-bg p-6 lg:p-10">
+      <div className="max-w-4xl mx-auto animate-slide-up">
+        {/* Greeting */}
+        <div className="mb-8">
+          <div className="flex items-center gap-4 mb-1">
+            <div className="w-12 h-12 bg-brand-100 rounded-2xl flex items-center justify-center">
+              <span className="text-xl">👋</span>
             </div>
-          )}
+            <div>
+              <h1 className="text-2xl lg:text-3xl font-extrabold text-gray-900 tracking-tight">
+                Hola, {nombreUsuario}
+              </h1>
+              <p className="text-gray-500 text-sm">¿Qué necesitás hoy?</p>
+            </div>
+          </div>
+        </div>
+
+        {/* Bento Grid */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6">
+          {/* Large tile - Sacar turno */}
+          <div
+            onClick={() => navigate('/patient/bookAppointment')}
+            className="bento-tile md:col-span-2 flex items-center gap-6 p-8 cursor-pointer bg-gradient-to-br from-brand-50 to-white"
+          >
+            <div className="w-16 h-16 bg-brand-500 rounded-3xl flex items-center justify-center flex-shrink-0 shadow-colored">
+              <svg className="w-8 h-8 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 4v16m8-8H4" />
+              </svg>
+            </div>
+            <div>
+              <h3 className="text-xl font-bold text-gray-900">Sacar un turno nuevo</h3>
+              <p className="text-gray-500 mt-1">Elegí especialidad, médico, fecha y horario para tu consulta</p>
+            </div>
+            <svg className="w-6 h-6 text-gray-300 ml-auto flex-shrink-0 group-hover:text-brand-400 transition-colors" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 5l7 7-7 7" />
+            </svg>
+          </div>
+
+          {/* Mis turnos */}
+          <div
+            onClick={() => navigate('/patient/myAppointments')}
+            className="bento-tile flex flex-col gap-4 p-6 cursor-pointer"
+          >
+            <div className="w-12 h-12 bg-warm-100 rounded-2xl flex items-center justify-center">
+              <svg className="w-6 h-6 text-warm-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+              </svg>
+            </div>
+            <div>
+              <h3 className="font-bold text-gray-900 text-lg">Mis turnos</h3>
+              <p className="text-sm text-gray-500 mt-1">Confirmá o cancelá tus turnos pendientes</p>
+            </div>
+          </div>
+
+          {/* Mis estudios */}
+          <div
+            onClick={() => navigate('/patient/myStudies')}
+            className="bento-tile flex flex-col gap-4 p-6 cursor-pointer"
+          >
+            <div className="w-12 h-12 bg-violet-100 rounded-2xl flex items-center justify-center">
+              <svg className="w-6 h-6 text-violet-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+              </svg>
+            </div>
+            <div>
+              <h3 className="font-bold text-gray-900 text-lg">Mis estudios</h3>
+              <p className="text-sm text-gray-500 mt-1">Descargá tus resultados médicos</p>
+            </div>
+          </div>
+
+          {/* Modificar datos */}
+          <div
+            onClick={() => navigate('/patient/editPersonalData')}
+            className="bento-tile flex items-center gap-4 p-6 cursor-pointer"
+          >
+            <div className="w-10 h-10 bg-gray-100 rounded-xl flex items-center justify-center flex-shrink-0">
+              <svg className="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" />
+              </svg>
+            </div>
+            <span className="font-semibold text-gray-700">Modificar mis datos</span>
+          </div>
+
+          {/* Cerrar sesión */}
+          <div
+            onClick={() => { localStorage.clear(); navigate('/'); }}
+            className="bento-tile flex items-center gap-4 p-6 cursor-pointer"
+          >
+            <div className="w-10 h-10 bg-coral-50 rounded-xl flex items-center justify-center flex-shrink-0">
+              <svg className="w-5 h-5 text-coral-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M17 16l4-4m0 0l-4-4m4 4H7m6 4v1a3 3 0 01-3 3H6a3 3 0 01-3-3V7a3 3 0 013-3h4a3 3 0 013 3v1" />
+              </svg>
+            </div>
+            <span className="font-semibold text-gray-700">Cerrar sesión</span>
+          </div>
         </div>
       </div>
     </div>

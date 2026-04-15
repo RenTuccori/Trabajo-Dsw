@@ -231,8 +231,13 @@ export function UpdateDoctor() {
   };
 
   return (
-    <div className="page-bg flex items-center justify-center p-4">
-      <div className="card p-8 space-y-5 animate-slide-up w-full max-w-md">
+    <div className="page-bg p-6 lg:p-10">
+      <div className="max-w-5xl mx-auto animate-slide-up space-y-6">
+        <div className="flex items-center gap-4">
+          <button onClick={handleRegresar} className="btn-ghost text-sm">← Volver</button>
+          <h2 className="text-2xl lg:text-3xl font-extrabold text-gray-900 tracking-tight">Actualizar Doctor</h2>
+        </div>
+        <div className="glass-solid rounded-2xl p-6 lg:p-8 space-y-5">
         <div>
           <p className="label text-center">Seleccione doctor</p>
           <Select
@@ -343,14 +348,7 @@ export function UpdateDoctor() {
             Guardar cambios
           </button>
         </form>
-
-        <button
-          type="button"
-          onClick={handleRegresar}
-          className="btn-secondary mt-4"
-        >
-          Volver
-        </button>
+        </div>
       </div>
     </div>
   );

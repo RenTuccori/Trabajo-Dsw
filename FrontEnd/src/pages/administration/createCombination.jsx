@@ -127,28 +127,20 @@ export function CreateCombination() {
   };
 
   return (
-    <div className="page-bg flex items-center justify-center p-4">
-      <div className="w-full max-w-md space-y-6">
+    <div className="page-bg p-6 lg:p-10">
+      <div className="max-w-5xl mx-auto animate-slide-up space-y-6">
+        <div className="flex items-center gap-4">
+          <button onClick={() => navigate('/admin')} className="btn-ghost text-sm">← Volver</button>
+          <h2 className="text-2xl lg:text-3xl font-extrabold text-gray-900 tracking-tight">Asignar Combinación</h2>
+        </div>
         {/* Formulario para crear combinations */}
-        <form className="card p-6 space-y-4 animate-slide-up">
-          <div className="flex items-center mb-4 space-x-2">
-            <h2 className="text-xl font-semibold">Asignar Combinación</h2>
-            <div className="relative group cursor-pointer flex-shrink-0">
-              <div className="text-blue-600 bg-blue-100 rounded-full w-5 h-5 flex items-center justify-center text-xs font-bold border border-blue-200">
-                ?
-              </div>
-              <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 hidden group-hover:block w-48 p-2 bg-gray-800 text-white text-xs rounded-md shadow-lg z-10 text-center font-normal">
-                Esta sección es para asociar una sede con un doctor y su respectiva especialidad.
-                <div className="absolute top-full left-1/2 transform -translate-x-1/2 border-[5px] border-transparent border-t-gray-800"></div>
-              </div>
-            </div>
-          </div>
+        <form className="glass-solid rounded-2xl p-6 lg:p-8 space-y-4">
 
           {/* Selección de Locality */}
           <div className="space-y-2">
-            <label className="text-gray-700">Localidad</label>
+            <label className="label">Localidad</label>
             <Select
-              className="select"
+              className="react-select"
               options={
                 Array.isArray(locations)
                   ? locations.map((location) => ({
@@ -159,15 +151,14 @@ export function CreateCombination() {
               }
               onChange={handleLocationChange}
               value={selectedLocation}
-              styles={customStyles}
             />
           </div>
 
           {/* Selección de Especialidad */}
           <div className="space-y-2">
-            <label className="text-gray-700">Especialidad</label>
+            <label className="label">Especialidad</label>
             <Select
-              className="select"
+              className="react-select"
               options={
                 Array.isArray(specialties)
                   ? specialties.map((especialidad) => ({
@@ -179,15 +170,14 @@ export function CreateCombination() {
               onChange={handleEspecilidadChange}
               value={selectedSpecialty}
               isDisabled={!selectedLocation}
-              styles={customStyles}
             />
           </div>
 
           {/* Selección de Doctor */}
           <div className="space-y-2">
-            <label className="text-gray-700">Doctor</label>
+            <label className="label">Doctor</label>
             <Select
-              className="select"
+              className="react-select"
               options={
                 Array.isArray(doctors)
                   ? doctors.map((doctor) => ({
@@ -199,34 +189,23 @@ export function CreateCombination() {
               onChange={handleDoctorChange}
               value={selectedDoctor}
               isDisabled={!selectedSpecialty}
-              styles={customStyles}
             />
           </div>
 
           {/* Botón para confirmar la asignación */}
           <button
-            type="button"
-            className="btn-primary disabled:opacity-50 disabled:cursor-not-allowed"
+            className="btn-primary"
             disabled={!selectedDoctor}
             onClick={confirmarCombinacion}
           >
             Confirmar
           </button>
-
-          <button
-            className="btn-secondary"
-            onClick={() => navigate('/admin')}
-          >
-            Volver
-          </button>
         </form>
 
-        {/* Separador */}
-        <hr className="my-4 border-gray-300" />
 
         {/* Lista de combinations */}
-        <div className="card p-6 animate-slide-up">
-          <h2 className="text-xl font-semibold mb-4 text-center">
+        <div className="glass-solid rounded-2xl p-6 lg:p-8">
+          <h2 className="text-lg font-bold text-gray-900 mb-4 text-center">
             Combinaciones Asignadas
           </h2>
           
@@ -254,7 +233,7 @@ export function CreateCombination() {
                 .map((combinacion) => (
                   <li
                     key={`${combinacion.locationId}-${combinacion.specialtyId}-${combinacion.doctorId}`}
-                    className="flex justify-between items-center bg-gray-50 border border-gray-200 p-3 rounded-md"
+                    className="list-item flex justify-between items-center"
                   >
                     <span className="text-sm text-gray-700">
                       <strong>{t(`locations.${combinacion.locationName}`, { defaultValue: combinacion.locationName })}</strong> - {t(`specialties.${combinacion.specialtyName}`, { defaultValue: combinacion.specialtyName })} <br/>
@@ -263,7 +242,7 @@ export function CreateCombination() {
                     <div className="flex space-x-4">
                       {/* Botón de Eliminar */}
                       <button
-                        className="text-red-600 hover:text-red-800"
+                        className="text-coral-500 hover:text-coral-600"
                         onClick={() =>
                           handleDeleteCombinacion(
                             combinacion.locationId,
@@ -279,7 +258,7 @@ export function CreateCombination() {
 
                       {/* Botón de Agregar Horarios */}
                       <button
-                        className="text-blue-600 hover:text-blue-800"
+                        className="text-brand-600 hover:text-brand-700"
                         onClick={() => {
                           const data = {
                             locationId: combinacion.locationId,

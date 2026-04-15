@@ -2,9 +2,6 @@
 import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useDoctors } from '../../context/doctors/DoctorsProvider.jsx';
-import '../../estilos/home.css';
-import '../../estilos/sacarturno.css';
-import '../../estilos/verTurnos.css';
 
 export function TodayAppointments() {
   const { todayAppointments, loadTodayAppointments } = useDoctors();
@@ -28,17 +25,21 @@ export function TodayAppointments() {
   };
 
   return (
-    <div className="page-bg flex items-center justify-center p-4">
-      <div className="card p-8 space-y-5 animate-slide-up w-full max-w-md">
-        <h1 className="section-title text-center">
-          Turnos de Hoy
-        </h1>
+    <div className="page-bg p-6 lg:p-10">
+      <div className="max-w-3xl mx-auto animate-slide-up">
+        <div className="flex items-center justify-between mb-8">
+          <div>
+            <h1 className="text-2xl lg:text-3xl font-extrabold text-gray-900 tracking-tight">Turnos de hoy</h1>
+            <p className="text-gray-500 text-sm mt-1">Consultas agendadas para hoy</p>
+          </div>
+          <button className="btn-ghost" onClick={() => navigate('/doctor')}>← Volver</button>
+        </div>
         <div className="space-y-4">
           {todayAppointments && todayAppointments.length > 0 ? (
             todayAppointments.map((appointment, index) => (
               <div
                 key={index}
-                className="appointment-card"
+                className="glass-solid rounded-2xl p-6 space-y-2 mb-4"
               >
                 <p>
                   <strong>Localidad:</strong> {appointment.location || appointment.venue}
@@ -50,9 +51,10 @@ export function TodayAppointments() {
                   <strong>Fecha y Hora:</strong>{' '}
                   {formatFechaHora(appointment.dateTime)}
                 </p>
-                <p>
-                  <strong>Estado:</strong> {appointment.status}
-                </p>
+                <div className="flex items-center gap-2">
+                  <strong className="text-gray-600">Estado:</strong>
+                  <span className={`badge ${appointment.status === 'Confirmed' ? 'badge-confirmed' : appointment.status === 'Cancelled' ? 'badge-cancelled' : 'badge-pending'}`}>{appointment.status}</span>
+                </div>
                 <p>
                   <strong>DNI Paciente:</strong> {appointment.dni}
                 </p>
@@ -62,17 +64,11 @@ export function TodayAppointments() {
               </div>
             ))
           ) : (
-            <p className="text-center text-gray-600">
-              No hay turnos para hoy
-            </p>
+            <div className="glass-solid rounded-2xl p-8 text-center">
+              <p className="text-gray-600">No hay turnos para hoy</p>
+            </div>
           )}
         </div>
-        <button
-          className="btn-secondary"
-          onClick={() => navigate('/doctor')}
-        >
-          Volver
-        </button>
       </div>
     </div>
   );

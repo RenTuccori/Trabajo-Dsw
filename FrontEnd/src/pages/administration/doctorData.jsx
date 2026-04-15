@@ -82,8 +82,13 @@ export function DoctorData() {
   };
 
   return (
-    <div className="page-bg flex items-center justify-center p-4">
-      <div className="card w-full max-w-md p-8 space-y-5 animate-slide-up">
+    <div className="page-bg p-6 lg:p-10">
+      <div className="max-w-5xl mx-auto animate-slide-up space-y-6">
+        <div className="flex items-center gap-4">
+          <button onClick={() => navigate('/admin')} className="btn-ghost text-sm">← Volver</button>
+          <h2 className="text-2xl lg:text-3xl font-extrabold text-gray-900 tracking-tight">Datos del Doctor</h2>
+        </div>
+        <div className="glass-solid rounded-2xl p-6 lg:p-8 space-y-5">
         {/* Formulario para crear user */}
         {!usuarioCreado && (
           <form onSubmit={handleSubmitUsuario} className="space-y-4">
@@ -222,6 +227,7 @@ export function DoctorData() {
             </button>
           </form>
         )}
+        </div>
       </div>
     </div>
   );
