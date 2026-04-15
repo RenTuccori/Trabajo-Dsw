@@ -33,7 +33,7 @@ export const usePatients = () => {
 };
 
 const PatientsProvider = ({ children }) => {
-  //proveedor para acceder a los datos de los empleados desde cualquier componente
+  //provider to access employee data from any component
   const [locations, setLocations] = useState([]);
   const [specialties, setSpecialties] = useState([]);
   const [doctors, setDoctors] = useState([]);
@@ -352,7 +352,7 @@ const PatientsProvider = ({ children }) => {
         } else {
           setAppointments([]);
           setAppointmentsError(response);
-          window.notifyError('Error getting appointments');
+          window.notifyError('Error al obtener los turnos');
         }
       } else if (response && response.data) {
         console.log(
@@ -369,8 +369,8 @@ const PatientsProvider = ({ children }) => {
       } else {
         console.error('❌ FRONTEND - Could not get appointments');
         setAppointments([]);
-        setAppointmentsError('Could not get appointments');
-        window.notifyError('Error getting appointments');
+        setAppointmentsError('No se pudieron obtener los turnos');
+        window.notifyError('Error al obtener los turnos');
       }
     } catch (error) {
       console.error(
@@ -378,8 +378,8 @@ const PatientsProvider = ({ children }) => {
         error
       );
       setAppointments([]);
-      setAppointmentsError('Error getting appointments');
-      window.notifyError('Error getting appointments');
+      setAppointmentsError('Error al obtener los turnos');
+      window.notifyError('Error al obtener los turnos');
     } finally {
       setLoadingAppointments(false);
     }
@@ -428,11 +428,11 @@ const PatientsProvider = ({ children }) => {
         console.log('💾 FRONTEND - State updated with user data');
       } else {
         console.error('❌ FRONTEND - Could not get user data');
-        window.notifyError('Error getting user data');
+        window.notifyError('Error al obtener los datos del usuario');
       }
     } catch (error) {
       console.error('💥 FRONTEND - Error getting user by national ID:', error);
-      window.notifyError('Error getting user data');
+      window.notifyError('Error al obtener los datos del usuario');
     }
   }
 

@@ -35,7 +35,7 @@ export function CreateInsurance() {
     }
   };
 
-  const handleBorrarObraSocial = async (healthInsuranceId) => {
+  const handleDeleteInsurance = async (healthInsuranceId) => {
     const result = await window.confirmDialog(
       '¿Está seguro?',
       '¿Deseas eliminar esta obra social?'
@@ -53,17 +53,17 @@ export function CreateInsurance() {
     }
   };
 
-  const handleActualizarObraSocial = async (e) => {
+  const handleUpdateInsurance = async (e) => {
     e.preventDefault();
-    if (obraSocialAEditar && nuevoNombreObraSocial.trim() !== '') {
+    if (editingInsuranceId && newInsuranceName.trim() !== '') {
       try {
         await updateHealthInsurance({
-          healthInsuranceId: obraSocialAEditar,
-          name: nuevoNombreObraSocial,
+          healthInsuranceId: editingInsuranceId,
+          name: newInsuranceName,
         });
         window.notifySuccess('¡Obra Social actualizada con éxito!');
-        setObraSocialAEditar(null);
-        setNuevoNombreObraSocial('');
+        setEditingInsuranceId(null);
+        setNewInsuranceName('');
         getHealthInsurances();
       } catch (error) {
         window.notifyError('No se puede actualizar esta obra social');

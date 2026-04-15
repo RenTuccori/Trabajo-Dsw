@@ -34,7 +34,7 @@ export function CreateLocation() {
 
   const handleDeleteLocation = async (locationId) => {
     const result = await window.confirmDialog(
-      'Are you sure?',
+      '¿Está seguro?',
       '¿Deseas eliminar esta sede?'
     );
 

@@ -109,8 +109,8 @@ export function CreateCombination() {
 
   const handleDeleteCombination = async (locationId, doctorId, specialtyId) => {
     const result = await window.confirmDialog(
-      'Are you sure?',
-      'Do you want to delete this combination?'
+      '¿Está seguro?',
+      '¿Desea eliminar esta combinación?'
     );
 
     if (result.isConfirmed) {

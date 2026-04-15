@@ -6,7 +6,7 @@ function DoctorHome() {
   const { doctorId, login, checkToken, firstName, lastName } =
     useAuth();
   const [nationalId, setNationalId] = useState('');
-  const [password, setContra] = useState('');
+  const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);
   const navigate = useNavigate();
 
@@ -25,8 +25,8 @@ function DoctorHome() {
     setNationalId(event.target.value);
   };
 
-  const handleContraChange = (event) => {
-    setContra(event.target.value);
+  const handlePasswordChange = (event) => {
+    setPassword(event.target.value);
   };
 
   useEffect(() => {
@@ -75,7 +75,7 @@ function DoctorHome() {
               <input
                 type={showPassword ? 'text' : 'password'}
                 value={password}
-                onChange={handleContraChange}
+                onChange={handlePasswordChange}
                 onKeyDown={handleKeyDown}
                 placeholder="Contraseña"
                 className="w-full border border-gray-300 rounded-lg p-2 focus:outline-none focus:border-blue-500 pr-20"

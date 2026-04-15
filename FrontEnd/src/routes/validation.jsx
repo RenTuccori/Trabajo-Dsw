@@ -23,11 +23,11 @@ export function Validation({ role, children, expected }) {
             >
               <path d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
             </svg>
-            <h1 className="text-xl font-bold text-white">Access Denied</h1>
+            <h1 className="text-xl font-bold text-white">Acceso Denegado</h1>
           </div>
           <div className="px-4 py-4 sm:px-6">
             <p className="text-gray-700 text-center mb-4">
-              Sorry, you don't have permission to view this page.
+              Lo sentimos, no tiene permisos para ver esta página.
             </p>
             <Link
               to="/"
@@ -44,7 +44,7 @@ export function Validation({ role, children, expected }) {
               >
                 <path d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"></path>
               </svg>
-              Back to Home
+              Volver al inicio
             </Link>
           </div>
         </div>

@@ -68,7 +68,7 @@ export function UpdateDoctor() {
           return;
         }
 
-        const usuarioData = {
+        const userData = {
           nationalId: formData.nationalId ? Number(formData.nationalId) : undefined,
           name: formData.name,
           lastName: formData.lastName,
@@ -81,13 +81,12 @@ export function UpdateDoctor() {
             : {}),
         };
 
-        // Preparar datos para actualizar doctor
         const doctorData = {
           doctorId: formData.doctorId,
           appointmentDuration: formData.appointmentDuration,
         };
 
-        const response = await updateUser(usuarioData);
+        const response = await updateUser(userData);
 
         const responseDoctor = await updateDoctor(doctorData);
 
@@ -135,12 +134,12 @@ export function UpdateDoctor() {
     if (healthInsurances.length > 0 && doctor && doctor.doctorId) {
       // Prefer direct id from backend, fallback to name matching for older payloads
       const doctorInsuranceId = doctor.healthInsuranceId;
-      const matchedObra = doctorInsuranceId
+      const matchedInsurance = doctorInsuranceId
         ? healthInsurances.find(
             (os) => String(getInsuranceId(os)) === String(doctorInsuranceId)
           )
         : healthInsurances.find((os) => os.name === doctor.healthInsurance);
-      const healthInsuranceId = matchedObra ? getInsuranceId(matchedObra) : '';
+      const healthInsuranceId = matchedInsurance ? getInsuranceId(matchedInsurance) : '';
 
       setFormData((prevFormData) => ({
         ...prevFormData,
@@ -158,7 +157,7 @@ export function UpdateDoctor() {
 
       setSelectedInsurance(
         healthInsuranceId
-          ? { value: healthInsuranceId, label: matchedObra.name }
+          ? { value: healthInsuranceId, label: matchedInsurance.name }
           : null
       );
 
@@ -190,19 +189,17 @@ export function UpdateDoctor() {
       console.error('Error al cargar doctor seleccionado:', error);
     }
   };
-  const handleObraSocialChange = (selectedOption) => {
-    setSelectedObraSociales(selectedOption);
+  const handleInsuranceChange = (selectedOption) => {
+    setSelectedInsurance(selectedOption);
     setFormData((prevFormData) => ({
       ...prevFormData,
       healthInsuranceId: selectedOption?.value ?? '',
     }));
-    setHasChanges(true); // Marca como cambiado al modificar la obra social
+    setHasChanges(true);
   };
 
-  // Función para manejar el regreso a la lista de doctors
-  const handleRegresar = async () => {
+  const handleGoBack = async () => {
     if (hasChanges) {
-      // Si hay cambios, muestra advertencia
       const result = await window.confirmDialog(
         'Cambios sin guardar',
           'Tiene cambios sin guardar. ¿Está seguro de que desea volver? Los cambios se perderán.'
@@ -212,7 +209,6 @@ export function UpdateDoctor() {
         navigate('/admin/createDoctor');
       }
     } else {
-      // Si no hay cambios, navega de regreso directamente
       navigate('/admin/createDoctor');
     }
   };

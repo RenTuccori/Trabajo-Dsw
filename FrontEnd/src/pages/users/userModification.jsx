@@ -11,7 +11,7 @@ export function UserModification() {
     healthInsurances,
     updateUserFunction,
   } = usePatients();
-  const [selectedObraSociales, setSelectedObraSociales] = useState(null);
+  const [selectedInsurance, setSelectedInsurance] = useState(null);
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
     dni: '',
@@ -106,7 +106,7 @@ export function UserModification() {
         healthInsuranceId: insuranceId || '', // Mapear campo correcto
       });
 
-      setSelectedObraSociales({
+      setSelectedInsurance({
         value: insuranceId || '',
         label: matchingInsurance?.name || 'No asignada',
       });
@@ -118,8 +118,8 @@ export function UserModification() {
     }
   }, [userByDni, healthInsurances]);
 
-  const handleObraSocialChange = (selectedOption) => {
-    setSelectedObraSociales(selectedOption);
+  const handleInsuranceChange = (selectedOption) => {
+    setSelectedInsurance(selectedOption);
     setFormData((prevFormData) => ({
       ...prevFormData,
       healthInsuranceId: selectedOption.value,
@@ -195,8 +195,8 @@ export function UserModification() {
                   label: obrasociales.name,
                 };
               })}
-              onChange={handleObraSocialChange}
-              value={selectedObraSociales}
+              onChange={handleInsuranceChange}
+              value={selectedInsurance}
               className="react-select"
             />
           </div>

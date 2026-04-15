@@ -39,10 +39,10 @@ export function CreateSchedules() {
       } catch (error) {
         if (error.response && error.response.status === 404) {
           window.notifyError(
-            'No schedules found for this doctor. You can create new ones.'
+            'No se encontraron horarios para este médico. Puede crear nuevos.'
           );
         } else {
-          window.notifyError('Error loading schedules');
+          window.notifyError('Error al cargar los horarios');
         }
       }
     };
@@ -97,7 +97,7 @@ export function CreateSchedules() {
     setSchedules(newSchedules);
   };
 
-  const eliminarFila = (index) => {
+  const removeRow = (index) => {
     const currentDay = schedules[index].day;
     const rowsForDay = schedules.filter(s => s.day === currentDay);
     
@@ -133,7 +133,7 @@ export function CreateSchedules() {
       
       if (start >= end) {
         const dayName = weekDays.find(d => d.value === sched.day)?.label || sched.day;
-        window.notifyError(`On ${dayName}: start time (${sched.startTime}) must be earlier than end time (${sched.endTime}).`);
+        window.notifyError(`En ${dayName}: la hora de inicio (${sched.startTime}) debe ser anterior a la hora de fin (${sched.endTime}).`);
         return;
       }
     }
@@ -156,7 +156,7 @@ export function CreateSchedules() {
 
             if (start1 < end2 && end1 > start2) {
               const dayName = weekDays.find(d => d.value === day)?.label || day;
-              window.notifyError(`On ${dayName} there are overlapping schedules: ${daySchedules[i].startTime}-${daySchedules[i].endTime} and ${daySchedules[j].startTime}-${daySchedules[j].endTime}.`);
+              window.notifyError(`En ${dayName} hay horarios superpuestos: ${daySchedules[i].startTime}-${daySchedules[i].endTime} y ${daySchedules[j].startTime}-${daySchedules[j].endTime}.`);
               return;
             }
           }
@@ -195,10 +195,10 @@ export function CreateSchedules() {
           schedules: payloadSchedules
         });
 
-        window.notifySuccess('Schedules saved successfully');
+        window.notifySuccess('¡Horarios guardados exitosamente!');
         navigate('/admin/createCombination');
       } catch (error) {
-        window.notifyError('Error saving schedules.');
+        window.notifyError('Error al guardar los horarios.');
       }
     }
   };
@@ -255,7 +255,7 @@ export function CreateSchedules() {
                           }
                         />
                         <button
-                          onClick={() => eliminarFila(sched.originalIndex)}
+                          onClick={() => removeRow(sched.originalIndex)}
                           className="ml-auto w-8 h-8 rounded-full bg-red-100 text-red-600 hover:bg-red-200 flex items-center justify-center font-bold flex-shrink-0"
                           title="Clear/Remove this time range"
                         >

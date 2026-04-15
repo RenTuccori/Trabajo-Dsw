@@ -15,8 +15,8 @@ export function HistoricalAppointments() {
     loadHistoricalAppointments();
   }, []);
 
-  const formatFechaHora = (dateAndTime) => {
-    const opciones = {
+  const formatDateTime = (dateAndTime) => {
+    const options = {
       year: 'numeric',
       month: 'long',
       day: 'numeric',
@@ -25,7 +25,7 @@ export function HistoricalAppointments() {
       second: '2-digit',
       timeZoneName: 'short',
     };
-    return new Date(dateAndTime).toLocaleString('es-ES', opciones);
+    return new Date(dateAndTime).toLocaleString('es-ES', options);
   };
   return (
     <div className="min-h-[calc(100vh-88px)] bg-gradient-to-b from-blue-100 to-white flex items-center justify-center p-4">
@@ -54,7 +54,7 @@ export function HistoricalAppointments() {
                 </p>
                 <p>
                   <strong>Fecha y hora:</strong>{' '}
-                  {formatFechaHora(appointment.dateTime)}
+                  {formatDateTime(appointment.dateTime)}
                 </p>
                 <p>
                   <strong>Estado:</strong> {t(`statuses.${appointment.status}`)}

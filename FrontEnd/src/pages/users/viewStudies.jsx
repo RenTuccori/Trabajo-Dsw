@@ -108,7 +108,7 @@ function ViewStudies() {
     return (
       <div className="min-h-[calc(100vh-88px)] bg-gradient-to-b from-blue-100 to-white flex items-center justify-center">
         <div className="text-center">
-          <p className="text-xl text-gray-600">Loading studies...</p>
+          <p className="text-xl text-gray-600">Cargando estudios...</p>
         </div>
       </div>
     );

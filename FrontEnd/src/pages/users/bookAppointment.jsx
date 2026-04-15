@@ -129,7 +129,7 @@ export function BookAppointment() {
       );
     });
   };
-  const handleFechaChange = async (date) => {
+  const handleDateChange = async (date) => {
     // Aseguramos que la hora de la fecha seleccionada esté en 00:00 para evitar desfases
     date.setHours(0, 0, 0, 0);
 
@@ -172,7 +172,7 @@ export function BookAppointment() {
     <form className="min-h-[calc(100vh-88px)] bg-gradient-to-b from-blue-100 to-white flex items-center justify-center p-4">
       <div className="bg-white rounded-lg shadow-md w-full max-w-md p-6 space-y-4">
         <div className="space-y-4">
-          <p className="text-center text-gray-600 text-lg">{t('labels.location', { defaultValue: 'Location' })}</p>
+          <p className="text-center text-gray-600 text-lg">{t('labels.location', { defaultValue: 'Localidad' })}</p>
           <Select
             className="react-select"
             options={(locations || []).map((location) => {
@@ -184,9 +184,9 @@ export function BookAppointment() {
             onChange={handleLocationChange}
             value={selectedLocation}
             styles={customStyles}
-            placeholder="Select..."
+            placeholder="Seleccionar..."
           />
-          <p className="text-center text-gray-600 text-lg">{t('labels.specialty', { defaultValue: 'Specialty' })}</p>
+          <p className="text-center text-gray-600 text-lg">{t('labels.specialty', { defaultValue: 'Especialidad' })}</p>
           <Select
             className="react-select"
             options={(specialties || []).map((specialty) => {
@@ -199,9 +199,9 @@ export function BookAppointment() {
             value={selectedSpecialty}
             isDisabled={!selectedLocation}
             styles={customStyles}
-            placeholder="Select..."
+            placeholder="Seleccionar..."
           />
-          <p className="text-center text-gray-600 text-lg">{t('labels.doctors', { defaultValue: 'Doctors' })}</p>
+          <p className="text-center text-gray-600 text-lg">{t('labels.doctors', { defaultValue: 'Médicos' })}</p>
           <Select
             className="react-select"
             options={(doctors || []).map((doctor) => {
@@ -214,15 +214,15 @@ export function BookAppointment() {
             onChange={handleDoctorChange}
             isDisabled={!selectedSpecialty}
             styles={customStyles}
-            placeholder="Select..."
+            placeholder="Seleccionar..."
           />
-          <p className="text-center text-gray-600 text-lg">{t('labels.date', { defaultValue: 'Date' })}</p>
+          <p className="text-center text-gray-600 text-lg">{t('labels.date', { defaultValue: 'Fecha' })}</p>
           <div className="w-full react-datepicker-wrapper-custom">
             <DatePicker
               selected={selectedDate}
-              onChange={handleFechaChange}
+              onChange={handleDateChange}
               filterDate={isDateAvailable}
-              placeholderText="Select..."
+              placeholderText="Seleccionar..."
               className="w-full border border-[#1e40af] rounded-[0.375rem] px-[8px] py-[8px] shadow-[0_0_0_1px_rgba(29,78,216,0.1)] focus:outline-none text-[#1e40af] placeholder-[#a0aabf] bg-white box-border h-[46px] leading-tight"
               disabled={!selectedDoctor} // Deshabilitar si no hay doctor seleccionado
               dateFormat="yyyy-MM-dd" // Formato consistente
@@ -234,7 +234,7 @@ export function BookAppointment() {
               width: 100%;
             }
           `}</style>
-          <p className="text-center text-gray-600 text-lg">{t('labels.time', { defaultValue: 'Schedule' })}</p>
+          <p className="text-center text-gray-600 text-lg">{t('labels.time', { defaultValue: 'Horario' })}</p>
           <Select
             className="react-select"
             options={(schedules || []).map((schedule) => ({
@@ -245,7 +245,7 @@ export function BookAppointment() {
             value={selectedSchedule}
             isDisabled={!selectedDate}
             styles={customStyles}
-            placeholder="Select..."
+            placeholder="Seleccionar..."
           />
         </div>
         <button
@@ -254,14 +254,14 @@ export function BookAppointment() {
           onClick={() => navigate('/patient/appointmentConfirmation')}
           className="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50"
         >
-          {t('labels.continue', { defaultValue: 'Continue' })}
+          {t('labels.continue', { defaultValue: 'Continuar' })}
         </button>
         <button
           type="button"
           onClick={() => navigate('/patient')}
           className="w-full bg-gray-200 text-gray-700 py-2 rounded-lg hover:bg-gray-300 transition-colors"
         >
-          {t('labels.back', { defaultValue: 'Back' })}
+          {t('labels.back', { defaultValue: 'Volver' })}
         </button>
       </div>
     </form>

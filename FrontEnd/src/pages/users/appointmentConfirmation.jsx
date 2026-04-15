@@ -64,7 +64,7 @@ export function AppointmentConfirmation() {
   useEffect(() => {
     if (appointmentCreated && userEmail) {
       // Construir el cuerpo del correo como string HTML
-      const cuerpo = `
+      const emailBody = `
             <div style="background-color: #f0f4f8; padding: 20px; border-radius: 10px; font-family: Arial, sans-serif; max-width: 600px; margin: auto;">
                 <h1 style="color: #1c4e80; text-align: center;">¡Su turno ha sido creado exitosamente!</h1>
                 <div style="background-color: #ffffff; padding: 20px; border-radius: 8px;">
@@ -83,7 +83,7 @@ export function AppointmentConfirmation() {
       sendEmailFunction({
         to: userEmail, // Pass the recipient
         subject: 'Turno creado',
-        html: cuerpo,
+        html: emailBody,
       });
     }
   }, [
