@@ -230,9 +230,11 @@ export function CreateSchedules() {
         </div>
 
         <div className="glass-solid rounded-2xl p-6 lg:p-8 space-y-4">
-          <h3 className="text-lg font-bold text-gray-900">
-            Sede: {locationName || locationId}, Especialidad: {specialtyName || specialtyId}, Doctor: {doctorFullName || doctorId}
-          </h3>
+          <div className="flex flex-wrap gap-x-6 gap-y-2 text-sm">
+            <div><span className="text-gray-400 uppercase tracking-wider text-xs">Sede</span><p className="font-semibold text-gray-900">{locationName || locationId}</p></div>
+            <div><span className="text-gray-400 uppercase tracking-wider text-xs">Especialidad</span><p className="font-semibold text-gray-900">{specialtyName || specialtyId}</p></div>
+            <div><span className="text-gray-400 uppercase tracking-wider text-xs">Doctor</span><p className="font-semibold text-gray-900">{doctorFullName || doctorId}</p></div>
+          </div>
 
           {/* Ingreso de nuevos schedules agrupados por día */}
           <div className="space-y-6">

@@ -233,16 +233,15 @@ export function CreateCombination() {
                 .map((combinacion) => (
                   <li
                     key={`${combinacion.locationId}-${combinacion.specialtyId}-${combinacion.doctorId}`}
-                    className="list-item flex justify-between items-center gap-4"
+                    className="glass-list-item flex justify-between items-center gap-4"
                   >
                     <span className="text-sm text-gray-700">
                       <strong>{t(`locations.${combinacion.locationName}`, { defaultValue: combinacion.locationName })}</strong> - {t(`specialties.${combinacion.specialtyName}`, { defaultValue: combinacion.specialtyName })} <br/>
                       <span className="text-gray-500">Doc: {combinacion.doctorName} {combinacion.doctorLastName}</span>
                     </span>
-                    <div className="flex space-x-4">
-                      {/* Botón de Eliminar */}
+                    <div className="flex gap-2 flex-shrink-0">
                       <button
-                        className="text-coral-500 hover:text-coral-600"
+                        className="text-xs font-semibold px-3 py-1.5 rounded-xl bg-coral-50 text-coral-500 hover:bg-coral-100 transition-colors"
                         onClick={() =>
                           handleDeleteCombinacion(
                             combinacion.locationId,
@@ -251,14 +250,10 @@ export function CreateCombination() {
                           )
                         }
                       >
-                        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 hover:scale-110 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor" title="Eliminar combinación">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                        </svg>
+                        Eliminar
                       </button>
-
-                      {/* Botón de Agregar Horarios */}
                       <button
-                        className="text-brand-600 hover:text-brand-700"
+                        className="text-xs font-semibold px-3 py-1.5 rounded-xl bg-brand-50 text-brand-600 hover:bg-brand-100 transition-colors"
                         onClick={() => {
                           const data = {
                             locationId: combinacion.locationId,
@@ -271,9 +266,7 @@ export function CreateCombination() {
                           navigate('/admin/createSchedules', { state: data });
                         }}
                       >
-                        <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 hover:scale-110 transition-transform" fill="none" viewBox="0 0 24 24" stroke="currentColor" title="Agregar / Editar horarios">
-                          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                        </svg>
+                        Horarios
                       </button>
                     </div>
                   </li>

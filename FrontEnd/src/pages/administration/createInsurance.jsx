@@ -141,15 +141,15 @@ export function CreateInsurance() {
               return (
                 <li
                   key={id}
-                  className="list-item flex justify-between items-center gap-4"
+                  className="glass-list-item flex justify-between items-center gap-4"
                 >
                   <span>
                     <strong>{obraSocial.name}</strong>
                   </span>
-                  <div className="flex space-x-2">
+                  <div className="flex gap-2 flex-shrink-0">
                     <button
                       onClick={() => handleBorrarObraSocial(id)}
-                      className="text-coral-500 hover:text-coral-600 font-medium text-sm flex-shrink-0"
+                      className="text-xs font-semibold px-3 py-1.5 rounded-xl bg-coral-50 text-coral-500 hover:bg-coral-100 transition-colors"
                     >
                       Eliminar
                     </button>
@@ -158,7 +158,7 @@ export function CreateInsurance() {
                         setObraSocialAEditar(id);
                         setNuevoNombreObraSocial(obraSocial.name);
                       }}
-                      className="text-brand-600 hover:text-brand-700 font-medium text-sm"
+                      className="text-xs font-semibold px-3 py-1.5 rounded-xl bg-brand-50 text-brand-600 hover:bg-brand-100 transition-colors"
                     >
                       Actualizar
                     </button>

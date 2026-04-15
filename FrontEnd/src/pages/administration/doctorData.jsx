@@ -197,7 +197,7 @@ export function DoctorData() {
           <form onSubmit={handleSubmitDoctor} className="space-y-4">
             <div>
               <p className="label text-center">
-                Duración del appointment (minutos)
+                Duración del turno (minutos)
               </p>
               <input
                 type="text"

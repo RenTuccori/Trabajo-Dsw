@@ -319,7 +319,7 @@ export function UpdateDoctor() {
           </div>
           <div>
             <p className="label text-center">
-              Duración del appointment (minutos)
+              Duración del turno (minutos)
             </p>
             <input
               type="number"

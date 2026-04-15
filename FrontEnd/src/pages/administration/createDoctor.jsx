@@ -258,7 +258,7 @@ export function CreateDoctor() {
                 </div>
                 <div>
                   <p className="label text-center">
-                    Duración del appointment (en minutos)
+                    Duración del turno (en minutos)
                   </p>
                   <input
                     type="text"
@@ -293,7 +293,7 @@ export function CreateDoctor() {
               <form onSubmit={handlecreateDoctor} className="space-y-4">
                 <input
                   type="text"
-                  placeholder="Duración del appointment (en minutos)"
+                  placeholder="Duración del turno (en minutos)"
                   value={appointmentDuration}
                   onChange={(e) => setDuracionTurno(e.target.value)}
                   className="input"
@@ -321,21 +321,21 @@ export function CreateDoctor() {
             doctors.map((doctor) => (
               <li
                 key={doctor.doctorId}
-                className="list-item flex justify-between items-center gap-4"
+                className="glass-list-item flex justify-between items-center gap-4"
               >
                 <span>
                   <strong>{doctor.fullName}</strong>
                 </span>
-                <div className="flex space-x-4">
+                <div className="flex gap-2 flex-shrink-0">
                   <button
                     onClick={() => handleDelete(doctor.doctorId)}
-                    className="text-coral-500 hover:text-coral-600 font-medium text-sm flex-shrink-0"
+                    className="text-xs font-semibold px-3 py-1.5 rounded-xl bg-coral-50 text-coral-500 hover:bg-coral-100 transition-colors"
                   >
                     Eliminar
                   </button>
                   <button
                     onClick={() => handleUpdate(doctor.doctorId)}
-                    className="text-brand-600 hover:text-brand-700 font-medium text-sm"
+                    className="text-xs font-semibold px-3 py-1.5 rounded-xl bg-brand-50 text-brand-600 hover:bg-brand-100 transition-colors"
                   >
                     Actualizar
                   </button>
