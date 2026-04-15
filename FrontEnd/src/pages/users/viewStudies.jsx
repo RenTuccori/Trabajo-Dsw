@@ -1,8 +1,8 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useAuth } from '../../context/global/AuthProvider';
 import {
-  getEstudiosByPaciente,
-  downloadEstudio as downloadEstudioAPI,
+  getStudiesByPatient,
+  downloadStudy as downloadStudyAPI,
 } from '../../api/studies.api';
 import { getPatientbyNationalId } from '../../api/patients.api';
 import { notifyError } from '../../components/ToastConfig';
@@ -47,7 +47,7 @@ function ViewStudies() {
   const loadEstudios = useCallback(async (patientId) => {
     console.log('📚 FRONTEND - loadEstudios: Cargando estudios para patientId:', patientId);
     try {
-      const response = await getEstudiosByPaciente(patientId);
+      const response = await getStudiesByPatient(patientId);
       console.log('✅ FRONTEND - loadEstudios: Respuesta recibida:', response);
       console.log('📊 FRONTEND - loadEstudios: Estudios:', response.data);
       setEstudios(response.data || []);
@@ -75,9 +75,9 @@ function ViewStudies() {
     }
   }, [dni, loadPaciente, loadEstudios]);
 
-  const downloadEstudio = async (idEstudio, nombreArchivo) => {
+  const downloadStudy = async (idEstudio, nombreArchivo) => {
     try {
-      const response = await downloadEstudioAPI(idEstudio);
+      const response = await downloadStudyAPI(idEstudio);
 
       // Crear enlace de descarga
       const url = window.URL.createObjectURL(new Blob([response.data]));
@@ -211,7 +211,7 @@ function ViewStudies() {
                       <td className="px-4 py-2 text-sm">
                         <button
                           onClick={() =>
-                            downloadEstudio(
+                            downloadStudy(
                               studyId,
                               fileName || 'estudio'
                             )

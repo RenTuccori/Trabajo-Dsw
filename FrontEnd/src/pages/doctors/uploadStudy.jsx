@@ -2,9 +2,9 @@ import { useState, useEffect, useCallback } from 'react';
 import { useAuth } from '../../context/global/AuthProvider';
 import { useNavigate } from 'react-router-dom';
 import {
-  uploadEstudio,
-  getEstudiosByDoctor,
-  downloadEstudio as downloadEstudioAPI,
+  uploadStudy,
+  getStudiesByDoctor,
+  downloadStudy as downloadStudyAPI,
 } from '../../api/studies.api';
 import { getPatients } from '../../api/patients.api';
 
@@ -40,7 +40,7 @@ function UploadStudy() {
   const loadEstudios = useCallback(async () => {
     try {
       console.log('Cargando estudios para doctor:', doctorId);
-      const response = await getEstudiosByDoctor(doctorId);
+      const response = await getStudiesByDoctor(doctorId);
       console.log('Respuesta de estudios:', response);
       setEstudios(response.data || []);
     } catch (error) {
@@ -137,7 +137,7 @@ function UploadStudy() {
       data.append('performanceDate', formData.fechaRealizacion);
       data.append('description', formData.descripcion);
 
-      await uploadEstudio(data);
+      await uploadStudy(data);
 
       window.notifySuccess('Estudio subido exitosamente');
 
@@ -165,9 +165,9 @@ function UploadStudy() {
     }
   };
 
-  const downloadEstudio = async (idEstudio, nombreArchivo) => {
+  const downloadStudy = async (idEstudio, nombreArchivo) => {
     try {
-      const response = await downloadEstudioAPI(idEstudio);
+      const response = await downloadStudyAPI(idEstudio);
 
       // Crear enlace de descarga
       const url = window.URL.createObjectURL(new Blob([response.data]));
@@ -423,7 +423,7 @@ function UploadStudy() {
                         <td className="px-4 py-2 text-sm">
                           <button
                             onClick={() =>
-                              downloadEstudio(
+                              downloadStudy(
                                 estudio.idEstudio,
                                 estudio.nombreArchivo
                               )
