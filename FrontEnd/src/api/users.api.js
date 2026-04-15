@@ -1,11 +1,11 @@
 import axiosInstance from './axiosInstance';
 
-export const getUserByNationalIdPassword = async ({nationalId, password}) => {
+export const getUserDniFecha = async ({dni, password}) => {
     console.log('🌐 FRONTEND - getUserByNationalIdPassword: Starting backend request');
-    console.log('📋 FRONTEND - Data sent:', { nationalId, password: '***' });
+    console.log('📋 FRONTEND - Data sent:', { nationalId: dni, password: '***' });
     
     try {
-        const response = await axiosInstance.post(`users/login`,{nationalId: Number(nationalId), password});
+        const response = await axiosInstance.post(`users/login`,{nationalId: Number(dni), password});
         console.log('✅ FRONTEND - Backend response received:', response);
         console.log('🔑 FRONTEND - Token received:', response.data ? 'Present' : 'Not present');
         return response;
@@ -15,13 +15,13 @@ export const getUserByNationalIdPassword = async ({nationalId, password}) => {
         throw error;
     }
 }
-export const createUser = async ({ nationalId, password, birthDate, firstName, lastName, phone, email, address, healthInsuranceId }) => {
+export const createUser = async ({ dni, password, birthDate, firstName, lastName, phone, email, address, healthInsuranceId }) => {
     console.log('🌐 FRONTEND - createUser: Sending data to backend');
-    console.log('📋 FRONTEND - Data (raw):', { nationalId, password: '***', birthDate, firstName, lastName, phone, email, address, healthInsuranceId });
+    console.log('📋 FRONTEND - Data (raw):', { dni, password: '***', birthDate, firstName, lastName, phone, email, address, healthInsuranceId });
 
     // Normalize optional fields: send null instead of empty strings to satisfy validators with optional nullable
     const payload = {
-        nationalId: Number(nationalId),
+        nationalId: Number(dni),
         password,
         birthDate,
         firstName,
@@ -50,19 +50,19 @@ export const createUser = async ({ nationalId, password, birthDate, firstName, l
 }
 
 
-export const updateUser = async ({ nationalId, password, name, lastName, phone, email, address, healthInsuranceId }) => {
-    console.log('🌐 FRONTEND - updateUser: Sending data:', { nationalId, firstName: name, lastName, phone, email, address });
+export const updateUser = async ({ dni, nationalId: nat, password, name, lastName, phone, email, address, healthInsuranceId }) => {
+    console.log('🌐 FRONTEND - updateUser: Sending data:', { dni, nationalId: nat, firstName: name, lastName, phone, email, address });
     
     // Map frontend fields to backend fields
-    // Prefer explicit `nationalId` param, then token
-    let resolvedNationalId = nationalId;
-    if (!resolvedNationalId) {
+    // Prefer explicit `nationalId` param, then `dni`, then token
+    let nationalId = nat || dni;
+    if (!nationalId) {
         try {
             const token = localStorage.getItem('token');
             if (token) {
                 const payload = JSON.parse(atob(token.split('.')[1]));
                 // Try common fields
-                resolvedNationalId = payload.nationalId || payload.dni || payload.id || payload.userId;
+                nationalId = payload.nationalId || payload.dni || payload.id || payload.userId;
             }
         } catch (e) {
             console.warn('⚠️ FRONTEND - updateUser: Could not decode token to obtain nationalId', e);
@@ -70,7 +70,7 @@ export const updateUser = async ({ nationalId, password, name, lastName, phone, 
     }
 
     // Coerce to number when possible
-    const numericNationalId = resolvedNationalId ? Number(resolvedNationalId) : undefined;
+    const numericNationalId = nationalId ? Number(nationalId) : undefined;
 
     const normalizedHealthInsuranceId =
       healthInsuranceId === '' || healthInsuranceId === undefined || healthInsuranceId === null
@@ -101,12 +101,12 @@ export const updateUser = async ({ nationalId, password, name, lastName, phone, 
     }
 }
 
-export const getUserByNationalId = async ({ nationalId }) => {
+export const getUserDni = async ({ dni }) => {
     console.log('🌐 FRONTEND - getUserByNationalId: Starting backend request');
-    console.log('📋 FRONTEND - National ID sent:', nationalId);
+    console.log('📋 FRONTEND - National ID sent:', dni);
     
     try {
-        const response = await axiosInstance.post(`users/nationalId`, { nationalId: Number(nationalId) });
+        const response = await axiosInstance.post(`users/nationalId`, { nationalId: Number(dni) });
         console.log('✅ FRONTEND - getUserByNationalId response received:', response);
         return response;
     } catch (error) {

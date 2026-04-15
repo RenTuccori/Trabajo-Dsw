@@ -1,7 +1,7 @@
 import axiosInstance from './axiosInstance';
 
 // Upload a new study
-export const uploadStudy = async (formData) => {
+export const uploadEstudio = async (formData) => {
   try {
     const response = await axiosInstance.post('studies/upload', formData, {
       headers: {
@@ -15,22 +15,22 @@ export const uploadStudy = async (formData) => {
 };
 
 // Get studies by patient
-export const getStudiesByPatient = async (patientId) => {
-  console.log('🌐 FRONTEND - getStudiesByPatient: Getting studies for patientId:', patientId);
+export const getEstudiosByPaciente = async (patientId) => {
+  console.log('🌐 FRONTEND - getEstudiosByPaciente: Obteniendo estudios para patientId:', patientId);
   try {
     const response = await axiosInstance.get(`studies/patient/${patientId}`);
-    console.log('✅ FRONTEND - getStudiesByPatient: Response received:', response);
-    console.log('📊 FRONTEND - getStudiesByPatient: Studies:', response.data);
+    console.log('✅ FRONTEND - getEstudiosByPaciente: Respuesta recibida:', response);
+    console.log('📊 FRONTEND - getEstudiosByPaciente: Estudios:', response.data);
     return response;
   } catch (error) {
-    console.error('❌ FRONTEND - getStudiesByPatient: Error:', error);
-    console.error('📄 FRONTEND - Error details:', error.response?.data);
+    console.error('❌ FRONTEND - getEstudiosByPaciente: Error:', error);
+    console.error('📄 FRONTEND - Detalles del error:', error.response?.data);
     throw error.response?.data || error.message;
   }
 };
 
 // Get studies by doctor
-export const getStudiesByDoctor = async (doctorId) => {
+export const getEstudiosByDoctor = async (doctorId) => {
   try {
     const response = await axiosInstance.get(`studies/doctor/${doctorId}`);
     return response;
@@ -40,7 +40,7 @@ export const getStudiesByDoctor = async (doctorId) => {
 };
 
 // Download study
-export const downloadStudy = async (studyId) => {
+export const downloadEstudio = async (studyId) => {
   try {
     const response = await axiosInstance.get(`studies/download/${studyId}`, {
       responseType: 'blob',
@@ -52,7 +52,7 @@ export const downloadStudy = async (studyId) => {
 };
 
 // Delete study
-export const deleteStudy = async (studyId) => {
+export const deleteEstudio = async (studyId) => {
   try {
     const response = await axiosInstance.delete(`studies/${studyId}`);
     return response;

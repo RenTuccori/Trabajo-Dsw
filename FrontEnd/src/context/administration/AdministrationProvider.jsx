@@ -1,22 +1,22 @@
 import { AdministrationContext } from './AdministrationContext';
 import {
-  createLocation,
-  deleteLocation,
+  createSede,
+  deleteSede,
   createSpecialty,
   deleteSpecialty,
-  createHealthInsurance,
-  deleteHealthInsurance,
-  updateHealthInsurance,
-  createCombination,
+  createObraSocial,
+  deleteObraSocial,
+  updateObraSocial,
+  createSeEspDoc,
   createDoctor,
   updateDoctor,
   deleteDoctor,
-  deleteCombination,
-  getCombinations,
-  createSchedules,
-  replaceSchedules,
-  getSchedulesByDoctor,
-  updateSchedules,
+  deleteSeEspDoc,
+  getCombinaciones,
+  createHorarios,
+  replaceHorarios,
+  getHorariosXDoctor,
+  updateHorarios,
 } from '../../api/admin.api.js';
 import { useContext, useState } from 'react';
 import { getLocations } from '../../api/locations.api.js';
@@ -61,7 +61,7 @@ const AdministrationProvider = ({ children }) => {
 
   async function createNewLocation({ name, address }) {
     try {
-      await createLocation({ name, address }); // Llamada a la API
+      await createSede({ name, address }); // Llamada a la API
     } catch (error) {
       if (error.response) {
         // Error del servidor o del cliente
@@ -88,7 +88,7 @@ const AdministrationProvider = ({ children }) => {
 
   async function deleteLocation(locationId) {
     try {
-      await deleteLocation(locationId); // Llamada a la API
+      await deleteSede(locationId); // Llamada a la API
     } catch (error) {
       console.error('Error al borrar la sede:', error);
       throw error;
@@ -172,7 +172,7 @@ const AdministrationProvider = ({ children }) => {
   //Obra Social
   async function createHealthInsurance({ name }) {
     try {
-      await createHealthInsurance({ name });
+      await createObraSocial({ name });
     } catch (error) {
       console.error('Error al obtener las venues:', error);
     }
@@ -189,7 +189,7 @@ const AdministrationProvider = ({ children }) => {
 
   async function deleteHealthInsurance(healthInsuranceId) {
     try {
-      await deleteHealthInsurance(healthInsuranceId);
+      await deleteObraSocial(healthInsuranceId);
     } catch (error) {
       console.error('Error al borrar la obra social:', error);
       throw error;
@@ -199,7 +199,7 @@ const AdministrationProvider = ({ children }) => {
   async function updateHealthInsurance({ healthInsuranceId, name }) {
     try {
       console.log('healthInsuranceId:', healthInsuranceId, 'name:', name);
-      await updateHealthInsurance({ insuranceId: healthInsuranceId, name });
+      await updateObraSocial({ insuranceId: healthInsuranceId, name });
     } catch (error) {
       console.error('Error al actualizar la obra social:', error);
       throw error;
@@ -213,7 +213,7 @@ const AdministrationProvider = ({ children }) => {
     doctorId,
   }) {
     try {
-      await createCombination({
+      await createSeEspDoc({
         locationId,
         specialtyId,
         doctorId,
@@ -230,7 +230,7 @@ const AdministrationProvider = ({ children }) => {
     specialtyId,
   }) {
     try {
-      await deleteCombination({
+      await deleteSeEspDoc({
         locationId,
         doctorId,
         specialtyId,
@@ -246,7 +246,7 @@ const AdministrationProvider = ({ children }) => {
 
   async function getCombinations() {
     try {
-      const response = await getCombinations();
+      const response = await getCombinaciones();
       setCombinations(response.data);
     } catch (error) {
       console.error(
@@ -260,7 +260,7 @@ const AdministrationProvider = ({ children }) => {
   //Horarios
   async function replaceSchedules({ locationId, doctorId, specialtyId, schedules }) {
     try {
-      await replaceSchedules({ locationId, doctorId, specialtyId, schedules });
+      await replaceHorarios({ locationId, doctorId, specialtyId, schedules });
     } catch (error) {
       console.error('Error al reemplazar los horarios del doctor:', error);
       throw error;
@@ -287,7 +287,7 @@ const AdministrationProvider = ({ children }) => {
         hora_fin,
         status
       );
-      await createSchedules({
+      await createHorarios({
         locationId,
         doctorId,
         specialtyId,
@@ -310,7 +310,7 @@ const AdministrationProvider = ({ children }) => {
     status,
   }) {
     try {
-      await updateSchedules({
+      await updateHorarios({
         locationId,
         doctorId,
         specialtyId,
@@ -325,7 +325,7 @@ const AdministrationProvider = ({ children }) => {
   }
   async function getDoctorSchedules({ locationId, specialtyId, doctorId }) {
     try {
-      const response = await getSchedulesByDoctor({
+      const response = await getHorariosXDoctor({
         locationId,
         specialtyId,
         doctorId,
