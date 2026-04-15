@@ -1,22 +1,22 @@
 import { AdministrationContext } from './AdministrationContext';
 import {
-  createSede,
-  deleteSede,
+  createLocation,
+  deleteLocation as deleteLocationAPI,
   createSpecialty,
   deleteSpecialty,
-  createObraSocial,
-  deleteObraSocial,
-  updateObraSocial,
-  createSeEspDoc,
+  createHealthInsurance as createHealthInsuranceAPI,
+  deleteHealthInsurance as deleteHealthInsuranceAPI,
+  updateHealthInsurance as updateHealthInsuranceAPI,
+  createCombination,
   createDoctor,
   updateDoctor,
   deleteDoctor,
-  deleteSeEspDoc,
-  getCombinaciones,
-  createHorarios,
-  replaceHorarios,
-  getHorariosXDoctor,
-  updateHorarios,
+  deleteCombination as deleteCombinationAPI,
+  getCombinations as getCombinationsAPI,
+  createSchedules as createSchedulesAPI,
+  replaceSchedules as replaceSchedulesAPI,
+  getDoctorSchedules as getDoctorSchedulesAPI,
+  updateSchedules as updateSchedulesAPI,
 } from '../../api/admin.api.js';
 import { useContext, useState } from 'react';
 import { getLocations } from '../../api/locations.api.js';
@@ -30,7 +30,7 @@ import {
 } from '../../api/doctors.api';
 import { getInsurance } from '../../api/insurance.api.js';
 import {
-  getUserDni,
+  getUserByNationalId,
   createUser as createUserAPI,
   updateUser as updateUserAPI,
 } from '../../api/users.api.js';
@@ -61,7 +61,7 @@ const AdministrationProvider = ({ children }) => {
 
   async function createNewLocation({ name, address }) {
     try {
-      await createSede({ name, address }); // Llamada a la API
+      await createLocation({ name, address }); // Llamada a la API
     } catch (error) {
       if (error.response) {
         // Error del servidor o del cliente
@@ -88,7 +88,7 @@ const AdministrationProvider = ({ children }) => {
 
   async function deleteLocation(locationId) {
     try {
-      await deleteSede(locationId); // Llamada a la API
+      await deleteLocationAPI(locationId); // Llamada a la API
     } catch (error) {
       console.error('Error al borrar la sede:', error);
       throw error;
@@ -172,7 +172,7 @@ const AdministrationProvider = ({ children }) => {
   //Obra Social
   async function createHealthInsurance({ name }) {
     try {
-      await createObraSocial({ name });
+      await createHealthInsuranceAPI({ name });
     } catch (error) {
       console.error('Error al obtener las venues:', error);
     }
@@ -189,7 +189,7 @@ const AdministrationProvider = ({ children }) => {
 
   async function deleteHealthInsurance(healthInsuranceId) {
     try {
-      await deleteObraSocial(healthInsuranceId);
+      await deleteHealthInsuranceAPI(healthInsuranceId);
     } catch (error) {
       console.error('Error al borrar la obra social:', error);
       throw error;
@@ -198,8 +198,7 @@ const AdministrationProvider = ({ children }) => {
 
   async function updateHealthInsurance({ healthInsuranceId, name }) {
     try {
-      console.log('healthInsuranceId:', healthInsuranceId, 'name:', name);
-      await updateObraSocial({ insuranceId: healthInsuranceId, name });
+      await updateHealthInsuranceAPI({ insuranceId: healthInsuranceId, name });
     } catch (error) {
       console.error('Error al actualizar la obra social:', error);
       throw error;
@@ -213,7 +212,7 @@ const AdministrationProvider = ({ children }) => {
     doctorId,
   }) {
     try {
-      await createSeEspDoc({
+      await createCombination({
         locationId,
         specialtyId,
         doctorId,
@@ -230,7 +229,7 @@ const AdministrationProvider = ({ children }) => {
     specialtyId,
   }) {
     try {
-      await deleteSeEspDoc({
+      await deleteCombinationAPI({
         locationId,
         doctorId,
         specialtyId,
@@ -246,7 +245,7 @@ const AdministrationProvider = ({ children }) => {
 
   async function getCombinations() {
     try {
-      const response = await getCombinaciones();
+      const response = await getCombinationsAPI();
       setCombinations(response.data);
     } catch (error) {
       console.error(
@@ -260,7 +259,7 @@ const AdministrationProvider = ({ children }) => {
   //Horarios
   async function replaceSchedules({ locationId, doctorId, specialtyId, schedules }) {
     try {
-      await replaceHorarios({ locationId, doctorId, specialtyId, schedules });
+      await replaceSchedulesAPI({ locationId, doctorId, specialtyId, schedules });
     } catch (error) {
       console.error('Error al reemplazar los horarios del doctor:', error);
       throw error;
@@ -287,7 +286,7 @@ const AdministrationProvider = ({ children }) => {
         hora_fin,
         status
       );
-      await createHorarios({
+      await createSchedulesAPI({
         locationId,
         doctorId,
         specialtyId,
@@ -310,7 +309,7 @@ const AdministrationProvider = ({ children }) => {
     status,
   }) {
     try {
-      await updateHorarios({
+      await updateSchedulesAPI({
         locationId,
         doctorId,
         specialtyId,
@@ -325,7 +324,7 @@ const AdministrationProvider = ({ children }) => {
   }
   async function getDoctorSchedules({ locationId, specialtyId, doctorId }) {
     try {
-      const response = await getHorariosXDoctor({
+      const response = await getDoctorSchedulesAPI({
         locationId,
         specialtyId,
         doctorId,
@@ -352,9 +351,8 @@ const AdministrationProvider = ({ children }) => {
 
   async function getUserByDni(dni) {
     try {
-      const response = await getUserDni({ dni });
+      const response = await getUserByNationalId({ dni });
       setUser(response.data);
-      console.log('Paciente encontrado:', response.data);
     } catch (error) {
       console.error('Error al obtener el patient por DNI:', error);
       throw error;
@@ -362,15 +360,12 @@ const AdministrationProvider = ({ children }) => {
   }
 
   async function createUserFunction(data) {
-    console.log('data:', data);
     const response = await createUserAPI(data);
     setUser(response.data);
   }
   async function updateUserFunction(data) {
     try {
-      console.log('Datos enviados para actualizar user:', data);
       const response = await updateUserAPI(data);
-      console.log('Usuario actualizado:', response?.data);
       return response;
     } catch (error) {
       console.error('Error al actualizar el user:', error);

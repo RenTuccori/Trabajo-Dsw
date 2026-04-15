@@ -28,8 +28,6 @@ const DoctorsProvider = ({ children }) => {
   async function loadHistoricalAppointments() {
     try {
       const response = await getHistoricalAppointmentsDoctor({ doctorId : doctorId });
-      console.log(response.data.data)
-      console.log('length', response.data.data.length)
       if (response.data && response.data.data.length > 0) {
         const mapped = response.data.data.map((appointment) => ({
           ...appointment,
@@ -38,7 +36,6 @@ const DoctorsProvider = ({ children }) => {
         }));
 
         setHistoricalAppointments(mapped);
-        console.log('entre')
         const uniqueDates = new Set(
           mapped.map((appointment) => appointment.dateTime.split('T')[0])
         );
@@ -51,12 +48,10 @@ const DoctorsProvider = ({ children }) => {
 
         setAvailableDates(normalizedAvailableDates);
       } else {
-        console.log('sali por else')
         setHistoricalAppointments([]);
         setAvailableDates([]);
       }
     } catch (error) {
-      console.log('sali por catch')
       console.error('Error al obtener appointments históricos:', error);
       setHistoricalAppointments([]);
       setAvailableDates([]);

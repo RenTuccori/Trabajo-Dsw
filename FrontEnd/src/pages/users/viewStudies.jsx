@@ -1,8 +1,8 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useAuth } from '../../context/global/AuthProvider';
 import {
-  getEstudiosByPaciente,
-  downloadEstudio as downloadEstudioAPI,
+  getStudiesByPatient,
+  downloadStudy as downloadEstudioAPI,
 } from '../../api/studies.api';
 import { getPatientbyNationalId } from '../../api/patients.api';
 import { notifyError } from '../../components/ToastConfig';
@@ -15,15 +15,12 @@ function ViewStudies() {
 
   // Cargar patient por DNI
   const loadPaciente = useCallback(async () => {
-    console.log('🔍 FRONTEND - loadPaciente: Cargando paciente con DNI:', dni);
     try {
       const response = await getPatientbyNationalId({ nationalId: dni });
       if (!response || !response.data) {
         console.error('❌ FRONTEND - loadPaciente: Respuesta inválida del backend:', response);
         return null;
       }
-      console.log('✅ FRONTEND - loadPaciente: Respuesta recibida:', response);
-      console.log('📊 FRONTEND - loadPaciente: Datos del paciente:', response.data);
       const patientData = response?.data || {};
       const userData = patientData.user || {};
 
@@ -34,7 +31,6 @@ function ViewStudies() {
       });
       
       const patientId = patientData.id || patientData.idPatient || patientData.patientId;
-      console.log('🆔 FRONTEND - loadPaciente: patientId obtenido:', patientId);
       return patientId;
     } catch (error) {
       console.error('❌ FRONTEND - Error al cargar datos del patient:', error);
@@ -45,11 +41,8 @@ function ViewStudies() {
 
   // Cargar estudios del patient
   const loadEstudios = useCallback(async (patientId) => {
-    console.log('📚 FRONTEND - loadEstudios: Cargando estudios para patientId:', patientId);
     try {
-      const response = await getEstudiosByPaciente(patientId);
-      console.log('✅ FRONTEND - loadEstudios: Respuesta recibida:', response);
-      console.log('📊 FRONTEND - loadEstudios: Estudios:', response.data);
+      const response = await getStudiesByPatient(patientId);
       setEstudios(response.data || []);
     } catch (error) {
       console.error('❌ FRONTEND - Error al cargar estudios:', error);

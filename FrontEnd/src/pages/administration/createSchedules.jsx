@@ -50,7 +50,6 @@ export function CreateSchedules() {
     };
 
     if (locationId && specialtyId && doctorId) {
-      console.log('cargando schedules');
       cargarHorarios();
     } else {
       window.notifyError('Faltan datos para cargar schedules');
@@ -59,7 +58,6 @@ export function CreateSchedules() {
 
   useEffect(() => {
     if (doctorSchedules && doctorSchedules.length > 0) {
-      console.log('Horarios doctor:', doctorSchedules);
       const nuevosHorarios = [];
       
       diasSemana.forEach((dayOption) => {
@@ -88,7 +86,6 @@ export function CreateSchedules() {
       });
       
       setSchedules(nuevosHorarios);
-      console.log('Horarios cargados:', nuevosHorarios);
     }
   }, [doctorSchedules]);
 
@@ -128,7 +125,6 @@ export function CreateSchedules() {
   const handleInputChange = (index, field, value) => {
     const nuevosHorarios = [...schedules];
     nuevosHorarios[index][field] = value; // field puede ser 'hora_inicio' o 'hora_fin'
-    console.log('Nuevo horario:', nuevosHorarios[index]);
     setSchedules(nuevosHorarios);
   };
   const agregarHorariosDisponibles = async () => {
@@ -202,7 +198,6 @@ export function CreateSchedules() {
 
     if (result.isConfirmed) {
       try {
-        console.log('Reemplazando todos los horarios con:', horariosValidos);
         
         const payloadSchedules = horariosValidos.map(h => ({
           day: h.dia,

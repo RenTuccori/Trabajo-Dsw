@@ -43,7 +43,6 @@ export function AppointmentsByDate() {
   const handleDateChange = (date) => {
     setSelectedDate(date);
     if (date) {
-      console.log('Fecha seleccionada:', date);
       loadAppointmentsByDate(date);
     } else {
       loadAppointmentsByDate(null);

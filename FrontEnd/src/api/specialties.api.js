@@ -1,10 +1,8 @@
 import axiosInstance from './axiosInstance';
 
 export const getSpecialties = async ({ locationId }) => {
-    console.log('🌐 FRONTEND - getSpecialties: Getting specialties for location:', locationId);
     try {
         const response = await axiosInstance.post(`specialties`, { locationId });
-        console.log('✅ FRONTEND - Specialties response:', response.data);
         return response;
     } catch (error) {
         console.error('❌ FRONTEND - Error in getSpecialties:', error);

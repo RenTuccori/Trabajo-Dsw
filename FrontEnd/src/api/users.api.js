@@ -1,23 +1,15 @@
 import axiosInstance from './axiosInstance';
 
-export const getUserDniFecha = async ({dni, password}) => {
-    console.log('🌐 FRONTEND - getUserByNationalIdPassword: Starting backend request');
-    console.log('📋 FRONTEND - Data sent:', { nationalId: dni, password: '***' });
+export const getUserByNationalIdPassword = async ({dni, password}) => {
     
     try {
         const response = await axiosInstance.post(`users/login`,{nationalId: Number(dni), password});
-        console.log('✅ FRONTEND - Backend response received:', response);
-        console.log('🔑 FRONTEND - Token received:', response.data ? 'Present' : 'Not present');
         return response;
     } catch (error) {
-        console.log('❌ FRONTEND - Error in getUserByNationalIdBirthDate:', error);
-        console.log('📄 FRONTEND - Error details:', error.response?.data);
         throw error;
     }
 }
 export const createUser = async ({ dni, password, birthDate, firstName, lastName, phone, email, address, healthInsuranceId }) => {
-    console.log('🌐 FRONTEND - createUser: Sending data to backend');
-    console.log('📋 FRONTEND - Data (raw):', { dni, password: '***', birthDate, firstName, lastName, phone, email, address, healthInsuranceId });
 
     // Normalize optional fields: send null instead of empty strings to satisfy validators with optional nullable
     const payload = {
@@ -32,11 +24,8 @@ export const createUser = async ({ dni, password, birthDate, firstName, lastName
         healthInsuranceId: healthInsuranceId === '' || healthInsuranceId === undefined || healthInsuranceId === null ? null : Number(healthInsuranceId),
     };
 
-    console.log('📋 FRONTEND - Data (normalized):', payload);
-
     try {
         const response = await axiosInstance.post(`users`, payload);
-        console.log('✅ FRONTEND - createUser: User created successfully:', response);
         return response;
     } catch (error) {
         console.error('❌ FRONTEND - createUser: Error:', error);
@@ -51,7 +40,6 @@ export const createUser = async ({ dni, password, birthDate, firstName, lastName
 
 
 export const updateUser = async ({ dni, nationalId: nat, password, name, lastName, phone, email, address, healthInsuranceId }) => {
-    console.log('🌐 FRONTEND - updateUser: Sending data:', { dni, nationalId: nat, firstName: name, lastName, phone, email, address });
     
     // Map frontend fields to backend fields
     // Prefer explicit `nationalId` param, then `dni`, then token
@@ -88,11 +76,9 @@ export const updateUser = async ({ dni, nationalId: nat, password, name, lastNam
         ...(password?.trim() ? { password: password.trim() } : {}),
     };
     
-    console.log('🔄 FRONTEND - updateUser: Mapped data for backend:', backendData);
     
     try {
         const response = await axiosInstance.put(`users`, backendData);
-        console.log('✅ FRONTEND - updateUser: Successful response:', response);
         return response;
     } catch (error) {
         console.error('❌ FRONTEND - updateUser: Error:', error);
@@ -101,17 +87,12 @@ export const updateUser = async ({ dni, nationalId: nat, password, name, lastNam
     }
 }
 
-export const getUserDni = async ({ dni }) => {
-    console.log('🌐 FRONTEND - getUserByNationalId: Starting backend request');
-    console.log('📋 FRONTEND - National ID sent:', dni);
+export const getUserByNationalId = async ({ dni }) => {
     
     try {
         const response = await axiosInstance.post(`users/nationalId`, { nationalId: Number(dni) });
-        console.log('✅ FRONTEND - getUserByNationalId response received:', response);
         return response;
     } catch (error) {
-        console.log('❌ FRONTEND - Error in getUserByNationalId:', error);
-        console.log('📄 FRONTEND - Error details:', error.response?.data);
         return error.response.data.message;
     }
 }

@@ -50,17 +50,13 @@ export function UserModification() {
         dni: formData.dni || userByDni?.nationalId || userByDni?.id || formData.dni,
       };
 
-      console.log('💾 FRONTEND - handleSubmit: Datos a enviar:', payload);
       try {
         const response = await updateUserFunction(payload);
-        console.log('📨 FRONTEND - handleSubmit: Respuesta recibida:', response);
 
         if (response && response.data && (response.status === 200 || response.data.message === 'User updated')) {
-          console.log('✅ FRONTEND - Usuario actualizado con éxito');
           window.notifySuccess('Usuario actualizado con éxito');
           navigate('/patient');
         } else {
-          console.log('❌ FRONTEND - Error al actualizar user - respuesta:', response);
           const msg = response?.data?.message || 'No se pudo actualizar el usuario';
           await window.confirmDialog('Error', msg, 'error');
         }
@@ -73,9 +69,6 @@ export function UserModification() {
   };
 
   useEffect(() => {
-    console.log('🔄 FRONTEND - userModification: useEffect disparado');
-    console.log('👤 FRONTEND - userByDni:', userByDni);
-    console.log('🏥 FRONTEND - healthInsurances:', healthInsurances);
     
     getHealthInsurances();
     getUserByDniFunction();
@@ -84,17 +77,13 @@ export function UserModification() {
 
   useEffect(() => {
     if (userByDni && healthInsurances.length > 0) {
-      console.log('🔧 FRONTEND - userModification: Mapeando datos del usuario:', userByDni);
-      console.log('🏥 FRONTEND - Obras sociales disponibles:', healthInsurances);
       
       const insuranceId = userByDni.healthInsuranceId ?? userByDni.idInsuranceCompany;
-      console.log('🆔 FRONTEND - ID de obra social del usuario:', insuranceId);
       
       // Buscar la obra social correspondiente
       const matchingInsurance = (healthInsurances || []).find((os) =>
         String(getInsuranceId(os)) === String(insuranceId)
       );
-      console.log('🔍 FRONTEND - Obra social encontrada:', matchingInsurance);
       
       setFormData({
         dni: userByDni.nationalId || userByDni.dni,
@@ -189,7 +178,6 @@ export function UserModification() {
             <p className="text-center text-gray-600 text-lg">Obra Social</p>
             <Select
               options={(healthInsurances || []).map((obrasociales) => {
-                console.log('🏥 FRONTEND - Mapeando obra social:', obrasociales);
                 return {
                   value: getInsuranceId(obrasociales),
                   label: obrasociales.name,

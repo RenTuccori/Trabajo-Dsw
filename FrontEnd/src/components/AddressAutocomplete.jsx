@@ -1,11 +1,15 @@
 import { useState, useRef, useEffect } from 'react';
 import PropTypes from 'prop-types';
 
-export default function AddressAutocomplete({ onSelect, initialValue = '' }) {
+export default function AddressAutocomplete({ onSelect, onChange, initialValue = '' }) {
   const [query, setQuery] = useState(initialValue);
   const [results, setResults] = useState([]);
   const [open, setOpen] = useState(false);
   const timer = useRef(null);
+
+  useEffect(() => {
+    setQuery(initialValue);
+  }, [initialValue]);
 
   useEffect(() => {
     if (!query) {
@@ -17,10 +21,16 @@ export default function AddressAutocomplete({ onSelect, initialValue = '' }) {
       try {
         const q = encodeURIComponent(query);
         // IMPORTANT: replace the email query param with a real contact address for production
-        const url = `https://nominatim.openstreetmap.org/search?format=json&addressdetails=1&limit=6&q=${q}&email=dev@yourdomain.com`;
+        const url = `https://nominatim.openstreetmap.org/search?format=json&addressdetails=1&limit=10&q=${q}&email=dev@yourdomain.com`;
         const res = await fetch(url);
         const data = await res.json();
-        setResults(data || []);
+        
+        // Filtrar para que solo muestre lugares que tengan calle especificada
+        const validResults = (data || []).filter(
+          (item) => item.address && (item.address.road || item.address.pedestrian)
+        );
+        
+        setResults(validResults.slice(0, 6));
         setOpen(true);
       } catch (err) {
         console.error('Nominatim error', err);
@@ -29,11 +39,26 @@ export default function AddressAutocomplete({ onSelect, initialValue = '' }) {
     return () => clearTimeout(timer.current);
   }, [query]);
 
+  function formatAddress(item) {
+    if (!item.address) return item.display_name;
+    const { road, pedestrian, house_number, city, town, village, state, country } = item.address;
+    
+    const street = road || pedestrian || '';
+    const number = house_number ? ` ${house_number}` : '';
+    const streetWithNumber = street ? `${street}${number}` : '';
+    const cityOrTown = city || town || village || '';
+    const province = state || '';
+    
+    const parts = [streetWithNumber, cityOrTown, province, country].filter(Boolean);
+    return parts.length > 0 ? parts.join(', ') : item.display_name;
+  }
+
   function handleSelect(item) {
-    setQuery(item.display_name);
+    const formattedName = formatAddress(item);
+    setQuery(formattedName);
     setOpen(false);
     onSelect?.({
-      address: item.display_name,
+      address: formattedName,
       lat: parseFloat(item.lat),
       lon: parseFloat(item.lon),
       raw: item,
@@ -44,7 +69,10 @@ export default function AddressAutocomplete({ onSelect, initialValue = '' }) {
     <div className="relative">
       <input
         value={query}
-        onChange={(e) => setQuery(e.target.value)}
+        onChange={(e) => {
+          setQuery(e.target.value);
+          onChange?.(e.target.value);
+        }}
         onFocus={() => query && setOpen(true)}
         placeholder="Buscar dirección..."
         className="w-full p-2 border border-gray-300 rounded-lg"
@@ -57,7 +85,7 @@ export default function AddressAutocomplete({ onSelect, initialValue = '' }) {
               onClick={() => handleSelect(r)}
               className="p-2 hover:bg-gray-100 cursor-pointer"
             >
-              {r.display_name}
+              {formatAddress(r)}
             </li>
           ))}
         </ul>
@@ -68,10 +96,12 @@ export default function AddressAutocomplete({ onSelect, initialValue = '' }) {
 
 AddressAutocomplete.propTypes = {
   onSelect: PropTypes.func,
+  onChange: PropTypes.func,
   initialValue: PropTypes.string,
 };
 
 AddressAutocomplete.defaultProps = {
   onSelect: undefined,
+  onChange: undefined,
   initialValue: '',
 };

@@ -4,7 +4,7 @@ import { jwtDecode } from 'jwt-decode';
 import PropTypes from 'prop-types';
 import { useNavigate } from 'react-router-dom';
 import { verifyDoctor } from '../../api/doctors.api.js';
-import { getUserDniFecha } from '../../api/users.api.js';
+import { getUserByNationalIdPassword } from '../../api/users.api.js';
 import { getAdmin } from '../../api/admin.api.js';
 
 export const useAuth = () => {
@@ -43,7 +43,6 @@ const AuthProvider = ({ children }) => {
             setApellidoUsuario(decoded.lastName || '');
             setRol('Doctor');
           } else if (decoded.role === 'Admin') {
-            console.log('AuthProvider: restored admin from token, id=', decoded.id);
             setIdAdmin(decoded.id);
             setRol('Admin');
           }
@@ -66,7 +65,7 @@ const AuthProvider = ({ children }) => {
       switch (userType) {
         case 'Patient': {
           // Paciente
-          response = await getUserDniFecha({
+          response = await getUserByNationalIdPassword({
             dni: identifier,
             password: credential,
           });
@@ -108,7 +107,6 @@ const AuthProvider = ({ children }) => {
           token = response.data;
           localStorage.setItem('token', token);
           const decodedAdmin = jwtDecode(token);
-          console.log('AuthProvider: login decoded admin id=', decodedAdmin.id);
           setIdAdmin(decodedAdmin.id);
           setRol('Admin');
           navigate('/admin');

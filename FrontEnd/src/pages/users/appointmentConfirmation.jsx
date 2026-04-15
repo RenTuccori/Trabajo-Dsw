@@ -29,7 +29,6 @@ export function AppointmentConfirmation() {
   useEffect(() => {
     const confirmarTurno = async () => {
       try {
-        console.log('🎯 FRONTEND - appointmentConfirmation: Getting user data');
         // Get user data first
         await getUserByNationalIdFunction();
 
@@ -40,15 +39,12 @@ export function AppointmentConfirmation() {
             getSpecialtyByIdFunc(),
             getLocationByIdFunc(),
           ]);
-          console.log('✅ FRONTEND - appointmentConfirmation: Names loaded into context');
         } catch (err) {
           console.warn('⚠️ FRONTEND - appointmentConfirmation: Could not load all names', err);
         }
 
-        console.log('🎯 FRONTEND - appointmentConfirmation: Creating appointment');
         // Create the appointment - all data should already be in context from bookAppointment
         const result = await createAppointment();
-        console.log('✅ FRONTEND - appointmentConfirmation: Appointment created!', result);
         setTurnoCreado(true);
         setError(null);
       } catch (error) {

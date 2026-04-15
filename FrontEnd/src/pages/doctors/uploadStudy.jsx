@@ -2,9 +2,9 @@ import { useState, useEffect, useCallback } from 'react';
 import { useAuth } from '../../context/global/AuthProvider';
 import { useNavigate } from 'react-router-dom';
 import {
-  uploadEstudio,
-  getEstudiosByDoctor,
-  downloadEstudio as downloadEstudioAPI,
+  uploadStudy,
+  getStudiesByDoctor,
+  downloadStudy as downloadEstudioAPI,
 } from '../../api/studies.api';
 import { getPatients } from '../../api/patients.api';
 
@@ -28,7 +28,6 @@ function UploadStudy() {
 
   // Cargar patients al montar el componente
   useEffect(() => {
-    console.log('Cargando patients...');
     const initializeData = async () => {
       setInitialLoading(true);
       await loadPacientes();
@@ -39,9 +38,7 @@ function UploadStudy() {
 
   const loadEstudios = useCallback(async () => {
     try {
-      console.log('Cargando estudios para doctor:', doctorId);
-      const response = await getEstudiosByDoctor(doctorId);
-      console.log('Respuesta de estudios:', response);
+      const response = await getStudiesByDoctor(doctorId);
       setEstudios(response.data || []);
     } catch (error) {
       console.error('Error al cargar estudios:', error);
@@ -51,7 +48,6 @@ function UploadStudy() {
 
   // Cargar estudios cuando cambie el doctorId
   useEffect(() => {
-    console.log('ID Doctor:', doctorId);
     if (doctorId) {
       loadEstudios();
     }
@@ -59,9 +55,7 @@ function UploadStudy() {
 
   const loadPacientes = async () => {
     try {
-      console.log('Llamando a getPatients...');
       const response = await getPatients();
-      console.log('Respuesta de patients:', response);
       setPacientes(response.data || []);
     } catch (error) {
       console.error('Error al cargar patients:', error);
@@ -137,7 +131,7 @@ function UploadStudy() {
       data.append('performanceDate', formData.fechaRealizacion);
       data.append('description', formData.descripcion);
 
-      await uploadEstudio(data);
+      await uploadStudy(data);
 
       window.notifySuccess('Estudio subido exitosamente');
 

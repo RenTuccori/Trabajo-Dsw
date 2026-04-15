@@ -60,7 +60,6 @@ export function UpdateDoctor() {
 
     if (result.isConfirmed) {
       try {
-        console.log('Datos a enviar:', formData);
 
         // Verificar que el token existe
         const token = localStorage.getItem('token');
@@ -93,14 +92,10 @@ export function UpdateDoctor() {
           appointmentDuration: formData.appointmentDuration,
         };
 
-        console.log('Datos user:', usuarioData);
-        console.log('Datos doctor:', doctorData);
 
         const response = await updateUser(usuarioData);
-        console.log('Respuesta de actualización user:', response);
 
         const responseDoctor = await updateDoctor(doctorData);
-        console.log('Respuesta de actualización doctor:', responseDoctor);
 
         if (
           response &&
@@ -108,7 +103,6 @@ export function UpdateDoctor() {
           responseDoctor &&
           responseDoctor.data
         ) {
-          console.log('Usuario y doctor actualizados con éxito');
           window.notifySuccess('Usuario actualizado con éxito');
           setHasChanges(false);
           navigate('/admin/createDoctor');

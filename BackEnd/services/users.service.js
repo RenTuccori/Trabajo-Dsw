@@ -25,13 +25,11 @@ export const authenticatePatient = async (nationalId, password) => {
     }],
   });
   if (!user) {
-    console.log(`User with nationalId ${nationalId} not found in DB`);
     return null;
   }
 
   const isPasswordValid = await bcrypt.compare(password, user.password);
   if (!isPasswordValid) {
-    console.log(`Password invalid for nationalId ${nationalId}. DB hash: ${user.password}, Input password: ${password}`);
     return null;
   }
 

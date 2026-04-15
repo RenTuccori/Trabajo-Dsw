@@ -41,8 +41,6 @@ export function BookAppointment() {
   }, []);
 
   useEffect(() => {
-    console.log('🔄 FRONTEND - Especialidades actualizadas:', specialties);
-    console.log('📊 FRONTEND - Número de especialidades:', specialties?.length || 0);
   }, [specialties]);
 
   const customStyles = {
@@ -73,33 +71,26 @@ export function BookAppointment() {
   };
 
   const handleLocationChange = async (selectedOption) => {
-    console.log('🏢 FRONTEND - handleLocationChange: Localidad seleccionada:', selectedOption);
     setSelectedLocation(selectedOption);
     setSelectedSpecialty(null);
     setSelectedDoctor(null);
     
     // Configurar el locationId cuando se selecciona la localidad
     if (selectedOption) {
-      console.log('🆔 FRONTEND - Configurando locationId:', selectedOption.value);
       setLocationId(selectedOption.value);
     }
     
     if (selectedOption) {
-      console.log('📞 FRONTEND - Obteniendo especialidades para localidad:', selectedOption.value);
       await getSpecialties({ locationId: selectedOption.value });
-      console.log('📋 FRONTEND - Especialidades después de la llamada:', specialties);
     }
   };
 
   const handleEspecilidadChange = async (selectedOption) => {
-    console.log('🩺 FRONTEND - handleEspecilidadChange: Especialidad seleccionada:', selectedOption);
-    console.log('🏢 FRONTEND - Localidad actual:', selectedLocation);
     setSelectedSpecialty(selectedOption);
     setSelectedDoctor(null);
     
     // Configurar el specialtyId cuando se selecciona la especialidad
     if (selectedOption) {
-      console.log('🆔 FRONTEND - Configurando specialtyId:', selectedOption.value);
       setSpecialtyId(selectedOption.value);
     }
     
@@ -116,22 +107,16 @@ export function BookAppointment() {
   };
 
   const handleDoctorChange = async (selectedOption) => {
-    console.log('👨‍⚕️ FRONTEND - handleDoctorChange: Doctor seleccionado:', selectedOption);
-    console.log('🏢 FRONTEND - Localidad actual:', selectedLocation);
-    console.log('🩺 FRONTEND - Especialidad actual:', selectedSpecialty);
     setSelectedDoctor(selectedOption);
     setSelectedDate(null);
     
     // Configurar el doctorId cuando se selecciona el doctor
     if (selectedOption) {
-      console.log('🆔 FRONTEND - Configurando doctorId:', selectedOption.value);
       setDoctorId(selectedOption.value);
     }
     
     if (selectedLocation && selectedOption && selectedSpecialty) {
-      console.log('📞 FRONTEND - Obteniendo fechas para doctor, especialidad y localidad');
       await getDates({ selectedOption, selectedSpecialty, selectedLocation });
-      console.log('📅 FRONTEND - Fechas obtenidas:', dates);
     }
   };
 
@@ -201,7 +186,6 @@ export function BookAppointment() {
   const handleHorarioChange = (selectedOption) => {
     setSelectedSchedule(selectedOption);
     setDateAndTime(`${formattedDate} ${selectedOption.value}`);
-    console.log(`${formattedDate} ${selectedOption.value}`);
     setDoctorId(selectedDoctor.value);
     setSpecialtyId(selectedSpecialty.value);
     setLocationId(selectedLocation.value);
@@ -218,7 +202,6 @@ export function BookAppointment() {
           <Select
             className="react-select"
             options={(locations || []).map((location) => {
-              console.log('🏢 FRONTEND - Mapeando localidad:', location);
               return {
                 value: location.id || location.locationId || location.idSite,
                 label: t(`locations.${location.name}`, { defaultValue: location.name }),
@@ -233,7 +216,6 @@ export function BookAppointment() {
           <Select
             className="react-select"
             options={(specialties || []).map((especialidad) => {
-              console.log('🩺 FRONTEND - Mapeando especialidad:', especialidad);
               return {
                 value: especialidad.id || especialidad.specialtyId || especialidad.idSpecialty,
                 label: t(`specialties.${especialidad.name}`, { defaultValue: especialidad.name }),
@@ -249,7 +231,6 @@ export function BookAppointment() {
           <Select
             className="react-select"
             options={(doctors || []).map((doctor) => {
-              console.log('👨‍⚕️ FRONTEND - Mapeando doctor:', doctor);
               return {
                 value: doctor.doctorId || doctor.idDoctor,
                 label: doctor.fullName || doctor.nombreyapellido,

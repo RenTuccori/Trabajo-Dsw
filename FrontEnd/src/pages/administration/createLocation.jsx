@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAdministration } from '../../context/administration/AdministrationProvider.jsx';
+import AddressAutocomplete from '../../components/AddressAutocomplete';
 
 export function CreateLocation() {
   const navigate = useNavigate();
@@ -18,17 +19,29 @@ export function CreateLocation() {
   // Manejar la creación de una nueva location
   const handleCreateLocation = async (e) => {
     e.preventDefault();
-    if (locationName.trim() !== '' && locationAddress.trim() !== '') {
-      try {
-        await createNewLocation({ name: locationName, address: locationAddress });
-        setLocationName(''); // Reiniciar el campo de texto
-        setLocationAddress('');
-        window.notifySuccess('¡Sede creada con éxito!'); // Mostrar mensaje de éxito
-        getLocations(); // Actualizar la lista después de crear una sede
-      } catch (error) {
-        window.notifyError('Error al crear la sede'); // Mostrar mensaje de error
-        console.error('Error al crear sede:', error);
-      }
+    if (locationName.trim() === '') {
+      window.notifyError('Debes ingresar un nombre para la sede.');
+      return;
+    }
+    
+    // Validación más estricta para asegurar que el texto tenga un patrón de "Calle 123"
+    // Buscamos que haya letras (la calle) seguidas en alguna parte por un número (la altura)
+    const hasStreetAndNumber = /[a-zA-Z]+.*\s\d+/.test(locationAddress);
+    
+    if (!locationAddress.trim() || !hasStreetAndNumber) {
+      window.notifyError('Debes especificar obligatoriamente una calle y su numeración para continuar.');
+      return;
+    }
+
+    try {
+      await createNewLocation({ name: locationName, address: locationAddress });
+      setLocationName(''); // Reiniciar el campo de texto
+      setLocationAddress('');
+      window.notifySuccess('¡Sede creada con éxito!'); // Mostrar mensaje de éxito
+      getLocations(); // Actualizar la lista después de crear una sede
+    } catch (error) {
+      window.notifyError('Error al crear la sede'); // Mostrar mensaje de error
+      console.error('Error al crear sede:', error);
     }
   };
 
@@ -65,12 +78,10 @@ export function CreateLocation() {
             onChange={(e) => setLocationName(e.target.value)}
             className="w-full p-2 border border-gray-300 rounded-lg"
           />
-          <input
-            type="text"
-            placeholder="Dirección de la sede"
-            value={locationAddress}
-            onChange={(e) => setLocationAddress(e.target.value)}
-            className="w-full p-2 border border-gray-300 rounded-lg"
+          <AddressAutocomplete
+            initialValue={locationAddress}
+            onChange={(value) => setLocationAddress(value)}
+            onSelect={(data) => setLocationAddress(data.address)}
           />
           <button
             type="submit"
