@@ -28,28 +28,25 @@ function App() {
             <Route path="/admin/*" element={<AdministrationRoutes />} />
           </Routes>
           <ToastContainer
-            position="top-center" // Centrar el toast en la parte superior
-            autoClose={5000}
+            position="top-center"
+            autoClose={4000}
             hideProgressBar={false}
-            newestOnTop={false}
+            newestOnTop
             closeOnClick
             rtl={false}
             pauseOnFocusLoss
             draggable
             pauseOnHover
-            theme="colored"
+            theme="light"
             style={{
-              textAlign: 'center', // Centrar el texto
-              fontFamily: 'Poppins', // Usar la fuente Poppins
-            }}
-            bodyStyle={{
-              backgroundColor: '#f0f4ff', // Cambiar color de fondo del toast
-              color: '#2a2e45', // Cambiar color del texto
-              borderRadius: '5px', // Bordes redondeados
+              textAlign: 'center',
+              fontFamily: 'Inter, Poppins, sans-serif',
             }}
             toastStyle={{
-              backgroundColor: '#fff', // Fondo del toast
-              border: '1px solid #5368e0', // Bordes personalizados
+              borderRadius: '12px',
+              boxShadow: '0 10px 25px -5px rgba(0, 0, 0, 0.1)',
+              border: '1px solid #e2e8f0',
+              padding: '12px 16px',
             }}
           />
         </div>

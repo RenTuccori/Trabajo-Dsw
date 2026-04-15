@@ -106,14 +106,14 @@ export function AppointmentConfirmation() {
   ]); // Este efecto se ejecuta solo cuando `userEmail` y `turnoCreado` están listos
 
   return (
-    <div className="min-h-[calc(100vh-88px)] bg-gradient-to-b from-blue-100 to-white flex flex-col items-center justify-center p-6">
-      <div className="bg-white rounded-lg shadow-md w-full max-w-md p-6 space-y-4">
+    <div className="page-bg flex flex-col items-center justify-center p-6">
+      <div className="card p-8 space-y-5 animate-slide-up w-full max-w-md">
         {error ? (
           <>
-            <h1 className="text-2xl font-bold text-red-800 text-center">Error creando turno</h1>
+            <h1 className="section-title text-center text-red-800">Error creando turno</h1>
             <p className="text-red-600 text-center">{error}</p>
             <button
-              className="w-full mt-6 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+              className="btn-primary w-full mt-6"
               onClick={() => navigate('/patient/bookAppointment')}
             >
               Volver a intentar
@@ -121,7 +121,7 @@ export function AppointmentConfirmation() {
           </>
         ) : turnoCreado ? (
           <>
-            <h1 className="text-2xl font-bold text-green-800 text-center">✅ Turno creado exitosamente</h1>
+            <h1 className="section-title text-center text-green-800">✅ Turno creado exitosamente</h1>
             <p className="text-gray-700">
               <strong>Fecha y Hora:</strong> {dateAndTime}
             </p>
@@ -143,13 +143,13 @@ export function AppointmentConfirmation() {
           </>
         ) : (
           <>
-            <h1 className="text-2xl font-bold text-blue-800 text-center">Creando turno...</h1>
+            <h1 className="section-title text-center">Creando turno...</h1>
             <p className="text-gray-700 text-center">Por favor espera mientras se procesa tu appointment.</p>
           </>
         )}
 
         <button
-          className="w-full mt-6 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+          className="btn-primary w-full mt-6"
           onClick={() => navigate('/patient')}
         >
           Volver al inicio

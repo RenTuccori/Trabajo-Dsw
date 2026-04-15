@@ -3,54 +3,57 @@
     top: 0;
     left: 0;
     width: 100%;
-    background-color: #1a1f36;
-    padding: 15px 30px;
+    background: linear-gradient(135deg, #1e1b4b 0%, #312e81 50%, #3730a3 100%);
+    padding: 14px 28px;
     z-index: 1000;
     display: flex;
     justify-content: space-between;
-    /* Espacio entre los elementos */
     align-items: center;
     box-sizing: border-box;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+    backdrop-filter: blur(12px);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.08);
 }
 
 .navbar-brand {
     color: #ffffff;
     text-decoration: none;
-    font-size: 28px;
-    font-family: 'Poppins', sans-serif;
+    font-size: 24px;
+    font-family: 'Inter', 'Poppins', sans-serif;
     font-weight: 700;
-    /* Permite que la marca ocupe todo el espacio disponible */
     text-align: center;
-    /* Centra el texto dentro del espacio */
+    letter-spacing: -0.025em;
+    background: linear-gradient(135deg, #fff 0%, #c7d2fe 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    transition: opacity 0.2s ease;
 }
 
 .navbar-brand:hover {
-    color: #5368e0;
-    /* Cambia el color al hacer hover */
+    opacity: 0.85;
 }
 
 .navbar-tool {
-    color: #ffffff;
-    font-size: 1.5rem;
-    /* Posiciona el icono de engranaje a la derecha */
+    color: rgba(255, 255, 255, 0.85);
+    font-size: 1.35rem;
     margin-left: auto;
     text-decoration: none;
-    transition: color 0.3s ease;
-    margin-top: 7px;
+    transition: all 0.2s ease;
+    margin-top: 4px;
+    padding: 6px;
+    border-radius: 8px;
 }
 
 .navbar-tool:hover {
-    color: #5368e0;
-    /* Cambia el color al hacer hover */
+    color: #ffffff;
+    background: rgba(255, 255, 255, 0.1);
 }
 
 .navbar-logo {
-    height: 40px;
-    /* Ajusta la altura del logo */
-    margin-right: 10px;
-    /* Espacio entre el logo y el texto */
+    height: 36px;
+    margin-right: 12px;
     width: auto;
-    /* Mantén la proporción del logo */
-    margin-bottom: -10px;
+    margin-bottom: -6px;
+    filter: brightness(1.1);
 }

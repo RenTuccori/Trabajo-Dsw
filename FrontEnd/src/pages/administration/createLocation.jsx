@@ -64,8 +64,8 @@ export function CreateLocation() {
   };
 
   return (
-    <div className="min-h-[calc(100vh-88px)] bg-gradient-to-b from-blue-100 to-white flex items-center justify-center p-4">
-      <div className="bg-white rounded-lg shadow-md w-full max-w-md p-6 space-y-4">
+    <div className="page-bg flex items-center justify-center p-4">
+      <div className="card p-8 space-y-5 animate-slide-up w-full max-w-md">
         <h2 className="text-xl font-semibold text-center text-gray-800">
           Crear nueva sede
         </h2>
@@ -76,7 +76,7 @@ export function CreateLocation() {
             placeholder="Nombre de la sede"
             value={locationName}
             onChange={(e) => setLocationName(e.target.value)}
-            className="w-full p-2 border border-gray-300 rounded-lg"
+            className="input"
           />
           <AddressAutocomplete
             initialValue={locationAddress}
@@ -85,7 +85,7 @@ export function CreateLocation() {
           />
           <button
             type="submit"
-            className="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition-colors"
+            className="btn-primary"
           >
             Crear sede
           </button>
@@ -94,7 +94,7 @@ export function CreateLocation() {
         <button
           type="button"
           onClick={() => navigate('/admin')}
-          className="w-full bg-gray-200 text-gray-700 py-2 rounded-lg hover:bg-gray-300 transition-colors mt-4"
+          className="btn-secondary mt-4"
         >
           Volver
         </button>
@@ -107,7 +107,7 @@ export function CreateLocation() {
             locations.map((location) => (
               <li
                 key={location.id}
-                className="bg-gray-100 p-4 rounded-lg flex justify-between items-center"
+                className="list-item flex justify-between items-center"
               >
                 <span>
                   <strong>{location.name}</strong> - {location.address}

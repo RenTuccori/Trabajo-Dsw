@@ -28,9 +28,9 @@ export function TodayAppointments() {
   };
 
   return (
-    <div className="min-h-[calc(100vh-88px)] bg-gradient-to-b from-blue-100 to-white flex items-center justify-center p-4">
-      <div className="bg-white rounded-lg shadow-md w-full max-w-md p-6 space-y-4">
-        <h1 className="text-2xl font-bold text-blue-800 text-center">
+    <div className="page-bg flex items-center justify-center p-4">
+      <div className="card p-8 space-y-5 animate-slide-up w-full max-w-md">
+        <h1 className="section-title text-center">
           Turnos de Hoy
         </h1>
         <div className="space-y-4">
@@ -38,7 +38,7 @@ export function TodayAppointments() {
             todayAppointments.map((appointment, index) => (
               <div
                 key={index}
-                className="bg-gray-50 rounded-lg p-4 shadow-sm mb-4"
+                className="appointment-card"
               >
                 <p>
                   <strong>Localidad:</strong> {appointment.location || appointment.venue}
@@ -68,7 +68,7 @@ export function TodayAppointments() {
           )}
         </div>
         <button
-          className="w-full bg-gray-200 text-gray-700 py-2 rounded-lg hover:bg-gray-300 transition-colors"
+          className="btn-secondary"
           onClick={() => navigate('/doctor')}
         >
           Volver

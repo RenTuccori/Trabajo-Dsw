@@ -1,6 +1,6 @@
+/* Legacy styles - most replaced by Tailwind utility classes */
 .lista-wrapper {
   padding: 20px;
-  background-color: #1a1f36;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -8,57 +8,66 @@
 
 .text-turno {
   margin-bottom: 10px;
-  color: white;
-  font-family: 'Poppins', sans-serif;
+  color: #334155;
+  font-family: 'Inter', 'Poppins', sans-serif;
 }
 
 .button {
   margin-bottom: 20px;
-  padding: 10px 20px;
-  background-color: #5368e0;
+  padding: 12px 24px;
+  background: linear-gradient(135deg, #6366f1, #4f46e5);
   color: #ffffff;
   border: none;
-  border-radius: 5px;
+  border-radius: 12px;
   cursor: pointer;
-  font-family: 'Poppins', sans-serif;
+  font-family: 'Inter', 'Poppins', sans-serif;
+  font-weight: 600;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 8px rgba(99, 102, 241, 0.25);
 }
 
 .button-cancelar {
   margin-bottom: 20px;
-  padding: 10px 20px;
-  background-color: #5368e0;
+  padding: 12px 24px;
+  background: linear-gradient(135deg, #ef4444, #dc2626);
   color: #ffffff;
   border: none;
-  border-radius: 5px;
+  border-radius: 12px;
   cursor: pointer;
   float: right;
-  font-family: 'Poppins', sans-serif;
+  font-family: 'Inter', 'Poppins', sans-serif;
+  font-weight: 600;
+  transition: all 0.2s ease;
 }
 
-
 .button:hover {
-  background-color: #4054b2;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(99, 102, 241, 0.35);
 }
 
 .turnos-lista {
   max-height: 300px;
-  /* Ajusta la altura según tus necesidades */
   overflow-y: auto;
   width: 100%;
   padding: 10px;
-  border: 1px solid #1a1f36;
-  border-radius: 5px;
+  border-radius: 12px;
 }
 
 .turno-item {
   list-style: none;
-  padding: 10px;
-  margin-bottom: 10px;
-  background-color: #2a2e45;
-  border-radius: 5px;
+  padding: 16px;
+  margin-bottom: 12px;
+  background: white;
+  border-radius: 12px;
+  border: 1px solid #e2e8f0;
+  border-left: 4px solid #6366f1;
+  transition: all 0.2s ease;
+}
+
+.turno-item:hover {
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
 }
 
 .turno-item:last-child {
   margin-bottom: 0;
-  border-bottom: none;
 }

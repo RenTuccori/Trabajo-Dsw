@@ -140,22 +140,22 @@ export function PersonalData() {
   };
 
   return (
-    <div className="min-h-[calc(100vh-88px)] bg-gradient-to-b from-blue-100 to-white flex items-center justify-center p-4">
-      <div className="bg-white rounded-lg shadow-md w-full max-w-md p-6 space-y-4">
+    <div className="page-bg flex items-center justify-center p-4">
+      <div className="card p-8 space-y-5 animate-slide-up w-full max-w-md">
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <p className="text-center text-gray-600 text-lg">DNI</p>
+            <p className="label text-center">DNI</p>
             <input
               type="text"
               name="dni"
               value={formData.dni}
               onChange={handleInputChange}
               required
-              className="w-full border border-gray-300 rounded-lg p-2 focus:outline-none focus:border-blue-500"
+              className="input"
             />
           </div>
           <div>
-            <p className="text-center text-gray-600 text-lg">
+            <p className="label text-center">
               Fecha de Nacimiento
             </p>
             <input
@@ -164,11 +164,11 @@ export function PersonalData() {
               value={formData.birthDate}
               onChange={handleInputChange}
               required
-              className="w-full border border-gray-300 rounded-lg p-2 focus:outline-none focus:border-blue-500"
+              className="input"
             />
           </div>
           <div>
-            <p className="text-center text-gray-600 text-lg">
+            <p className="label text-center">
               Contraseña
             </p>
             <input
@@ -177,33 +177,33 @@ export function PersonalData() {
               value={formData.password}
               onChange={handleInputChange}
               required
-              className="w-full border border-gray-300 rounded-lg p-2 focus:outline-none focus:border-blue-500"
+              className="input"
             />
           </div>
           <div>
-            <p className="text-center text-gray-600 text-lg">Nombre</p>
+            <p className="label text-center">Nombre</p>
             <input
               type="text"
               name="name"
               value={formData.name}
               onChange={handleInputChange}
               required
-              className="w-full border border-gray-300 rounded-lg p-2 focus:outline-none focus:border-blue-500"
+              className="input"
             />
           </div>
           <div>
-            <p className="text-center text-gray-600 text-lg">Apellido</p>
+            <p className="label text-center">Apellido</p>
             <input
               type="text"
               name="lastName"
               value={formData.lastName}
               onChange={handleInputChange}
               required
-              className="w-full border border-gray-300 rounded-lg p-2 focus:outline-none focus:border-blue-500"
+              className="input"
             />
           </div>
           <div>
-            <p className="text-center text-gray-600 text-lg">Dirección</p>
+            <p className="label text-center">Dirección</p>
             <AddressAutocomplete
               initialValue={formData.address}
               onSelect={(place) =>
@@ -217,29 +217,29 @@ export function PersonalData() {
             />
           </div>
           <div>
-            <p className="text-center text-gray-600 text-lg">Teléfono</p>
+            <p className="label text-center">Teléfono</p>
             <input
               type="text"
               name="phone"
               value={formData.phone}
               onChange={handleInputChange}
               required
-              className="w-full border border-gray-300 rounded-lg p-2 focus:outline-none focus:border-blue-500"
+              className="input"
             />
           </div>
           <div>
-            <p className="text-center text-gray-600 text-lg">Email</p>
+            <p className="label text-center">Email</p>
             <input
               type="email"
               name="email"
               value={formData.email}
               onChange={handleInputChange}
               required
-              className="w-full border border-gray-300 rounded-lg p-2 focus:outline-none focus:border-blue-500"
+              className="input"
             />
           </div>
           <div>
-            <p className="text-center text-gray-600 text-lg">Obra Social</p>
+            <p className="label text-center">Obra Social</p>
             <Select
               options={(healthInsurances || []).map((obrasocial) => ({
                 value: getInsuranceId(obrasocial),
@@ -253,7 +253,7 @@ export function PersonalData() {
           </div>
           <button
             type="submit"
-            className="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition-colors"
+            className="btn-primary"
           >
             Enviar
           </button>

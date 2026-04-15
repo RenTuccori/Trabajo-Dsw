@@ -141,25 +141,25 @@ export function CreateDoctor() {
   };
 
   return (
-    <div className="min-h-[calc(100vh-88px)] bg-gradient-to-b from-blue-100 to-white flex items-center justify-center p-4">
-      <div className="bg-white rounded-lg shadow-md w-full max-w-md p-6 space-y-4">
+    <div className="page-bg flex items-center justify-center p-4">
+      <div className="card p-8 space-y-5 animate-slide-up w-full max-w-md">
         {!formularioVisible && (
           <form onSubmit={handleBuscarDNI} className="space-y-4">
             <div>
-              <p className="text-center text-gray-600 text-lg">
+              <p className="label text-center">
                 Por favor, ingresa el DNI del doctor que quieres crear
               </p>
               <input
                 type="text"
                 value={dni}
                 onChange={(e) => setDni(e.target.value)}
-                className="w-full p-2 border border-gray-300 rounded-lg"
+                className="input"
                 required
               />
             </div>
             <button
               type="submit"
-              className="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition-colors"
+              className="btn-primary"
             >
               Buscar user
             </button>
@@ -170,7 +170,7 @@ export function CreateDoctor() {
             {!usuarioExistente && (
               <form onSubmit={handlecreateDoctor} className="space-y-4">
                 <div>
-                  <p className="text-center text-gray-600 text-lg">
+                  <p className="label text-center">
                     Fecha de nacimiento
                   </p>
                   <input
@@ -179,66 +179,66 @@ export function CreateDoctor() {
                     value={formData.birthDate}
                     onChange={handleInputChange}
                     required
-                    className="w-full border border-gray-300 rounded-lg p-2 focus:outline-none focus:border-blue-500"
+                    className="input"
                   />
                 </div>
                 <div>
-                  <p className="text-center text-gray-600 text-lg">Nombre</p>
+                  <p className="label text-center">Nombre</p>
                   <input
                     type="text"
                     name="name"
                     value={formData.name}
                     onChange={handleInputChange}
                     required
-                    className="w-full border border-gray-300 rounded-lg p-2 focus:outline-none focus:border-blue-500"
+                    className="input"
                   />
                 </div>
                 <div>
-                  <p className="text-center text-gray-600 text-lg">Apellido</p>
+                  <p className="label text-center">Apellido</p>
                   <input
                     type="text"
                     name="lastName"
                     value={formData.lastName}
                     onChange={handleInputChange}
                     required
-                    className="w-full border border-gray-300 rounded-lg p-2 focus:outline-none focus:border-blue-500"
+                    className="input"
                   />
                 </div>
                 <div>
-                  <p className="text-center text-gray-600 text-lg">Dirección</p>
+                  <p className="label text-center">Dirección</p>
                   <input
                     type="text"
                     name="address"
                     value={formData.address}
                     onChange={handleInputChange}
                     required
-                    className="w-full border border-gray-300 rounded-lg p-2 focus:outline-none focus:border-blue-500"
+                    className="input"
                   />
                 </div>
                 <div>
-                  <p className="text-center text-gray-600 text-lg">Teléfono</p>
+                  <p className="label text-center">Teléfono</p>
                   <input
                     type="text"
                     name="phone"
                     value={formData.phone}
                     onChange={handleInputChange}
                     required
-                    className="w-full border border-gray-300 rounded-lg p-2 focus:outline-none focus:border-blue-500"
+                    className="input"
                   />
                 </div>
                 <div>
-                  <p className="text-center text-gray-600 text-lg">Email</p>
+                  <p className="label text-center">Email</p>
                   <input
                     type="email"
                     name="email"
                     value={formData.email}
                     onChange={handleInputChange}
                     required
-                    className="w-full border border-gray-300 rounded-lg p-2 focus:outline-none focus:border-blue-500"
+                    className="input"
                   />
                 </div>
                 <div>
-                  <p className="text-center text-gray-600 text-lg">
+                  <p className="label text-center">
                     Obra social
                   </p>
                   <Select
@@ -252,32 +252,32 @@ export function CreateDoctor() {
                   />
                 </div>
                 <div>
-                  <p className="text-center text-gray-600 text-lg">
+                  <p className="label text-center">
                     Duración del appointment (en minutos)
                   </p>
                   <input
                     type="text"
                     value={appointmentDuration}
                     onChange={(e) => setDuracionTurno(e.target.value)}
-                    className="w-full p-2 border border-gray-300 rounded-lg"
+                    className="input"
                     required
                   />
                 </div>
                 <div>
-                  <p className="text-center text-gray-600 text-lg">
+                  <p className="label text-center">
                     Contraseña
                   </p>
                   <input
                     type="password"
                     value={password}
                     onChange={(e) => setContra(e.target.value)}
-                    className="w-full p-2 border border-gray-300 rounded-lg"
+                    className="input"
                     required
                   />
                 </div>
                 <button
                   type="submit"
-                  className="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition-colors"
+                  className="btn-primary"
                 >
                   Crear doctor
                 </button>
@@ -291,12 +291,12 @@ export function CreateDoctor() {
                   placeholder="Duración del appointment (en minutos)"
                   value={appointmentDuration}
                   onChange={(e) => setDuracionTurno(e.target.value)}
-                  className="w-full p-2 border border-gray-300 rounded-lg"
+                  className="input"
                   required
                 />
                 <button
                   type="submit"
-                  className="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition-colors"
+                  className="btn-primary"
                 >
                   Crear doctor
                 </button>
@@ -308,7 +308,7 @@ export function CreateDoctor() {
         <button
           type="button"
           onClick={() => navigate('/admin')}
-          className="w-full bg-gray-200 text-gray-700 py-2 rounded-lg hover:bg-gray-300 transition-colors mt-4"
+          className="btn-secondary mt-4"
         >
           Volver
         </button>
@@ -321,7 +321,7 @@ export function CreateDoctor() {
             doctors.map((doctor) => (
               <li
                 key={doctor.doctorId}
-                className="bg-gray-100 p-4 rounded-lg flex justify-between items-center"
+                className="list-item flex justify-between items-center"
               >
                 <span>
                   <strong>{doctor.fullName}</strong>

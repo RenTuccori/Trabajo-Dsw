@@ -34,15 +34,15 @@ function HomeDoctor() {
   }, []);
 
   return (
-    <div className="min-h-[calc(100vh-88px)] bg-gradient-to-b from-blue-100 to-white flex items-center justify-center p-4">
-      <div className="bg-white rounded-lg shadow-md w-full max-w-md p-6 space-y-4">
+    <div className="page-bg flex items-center justify-center p-4">
+      <div className="card w-full max-w-md p-8 space-y-5 animate-slide-up">
         {!idDoctor ? (
           <div className="space-y-4">
-            <p className="text-center text-gray-600 text-lg font-bold">
+            <p className="section-title text-center text-lg">
               Ingrese sus datos
             </p>
             <div className="space-y-4">
-              <p className="text-center text-gray-600 text-lg">
+              <p className="label text-center">
                 Ingrese su DNI
               </p>
               <input
@@ -50,9 +50,9 @@ function HomeDoctor() {
                 value={dni}
                 onChange={handleDniChange}
                 placeholder="DNI"
-                className="w-full border border-gray-300 rounded-lg p-2"
+                className="input"
               />
-              <p className="text-center text-gray-600 text-lg">
+              <p className="label text-center">
                 Ingrese su contraseña
               </p>
               <input
@@ -60,13 +60,13 @@ function HomeDoctor() {
                 value={password}
                 onChange={handlePasswordChange}
                 placeholder="Contraseña"
-                className="w-full border border-gray-300 rounded-lg p-2"
+                className="input"
               />
             </div>
             <button
               onClick={handleLogin}
               disabled={!dni || !password}
-              className="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50"
+              className="btn-primary disabled:opacity-50 disabled:cursor-not-allowed"
             >
               Verificar
             </button>
@@ -81,25 +81,25 @@ function HomeDoctor() {
             <div className="flex flex-col space-y-2">
               <button
                 onClick={() => navigate('turnoshoy')}
-                className="bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition-colors"
+                className="btn-primary"
               >
                 Turnos de hoy
               </button>
               <button
                 onClick={() => navigate('turnosfecha')}
-                className="bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition-colors"
+                className="btn-primary"
               >
                 Turnos por fecha
               </button>
               <button
                 onClick={() => navigate('turnoshist')}
-                className="bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition-colors"
+                className="btn-primary"
               >
                 Historial de turnos
               </button>
               <button
                 onClick={() => navigate('estudios')}
-                className="bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition-colors"
+                className="btn-primary"
               >
                 Gestión de estudios
               </button>
@@ -109,7 +109,7 @@ function HomeDoctor() {
                 localStorage.clear();
                 navigate('/');
               }}
-              className="w-full bg-gray-200 text-gray-700 py-2 rounded-lg hover:bg-gray-300 transition-colors"
+              className="btn-secondary"
             >
               Cerrar sesión
             </button>

@@ -127,10 +127,10 @@ export function CreateCombination() {
   };
 
   return (
-    <div className="min-h-[calc(100vh-88px)] bg-gradient-to-b from-blue-100 to-white flex items-center justify-center p-4">
+    <div className="page-bg flex items-center justify-center p-4">
       <div className="w-full max-w-md space-y-6">
         {/* Formulario para crear combinations */}
-        <form className="bg-white rounded-lg shadow-md p-6 space-y-4">
+        <form className="card p-6 space-y-4 animate-slide-up">
           <div className="flex items-center mb-4 space-x-2">
             <h2 className="text-xl font-semibold">Asignar Combinación</h2>
             <div className="relative group cursor-pointer flex-shrink-0">
@@ -206,7 +206,7 @@ export function CreateCombination() {
           {/* Botón para confirmar la asignación */}
           <button
             type="button"
-            className="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50"
+            className="btn-primary disabled:opacity-50 disabled:cursor-not-allowed"
             disabled={!selectedDoctor}
             onClick={confirmarCombinacion}
           >
@@ -214,7 +214,7 @@ export function CreateCombination() {
           </button>
 
           <button
-            className="w-full bg-gray-200 text-gray-700 py-2 rounded-lg hover:bg-gray-300 transition-colors"
+            className="btn-secondary"
             onClick={() => navigate('/admin')}
           >
             Volver
@@ -225,7 +225,7 @@ export function CreateCombination() {
         <hr className="my-4 border-gray-300" />
 
         {/* Lista de combinations */}
-        <div className="bg-white rounded-lg shadow-md p-6">
+        <div className="card p-6 animate-slide-up">
           <h2 className="text-xl font-semibold mb-4 text-center">
             Combinaciones Asignadas
           </h2>
@@ -234,7 +234,7 @@ export function CreateCombination() {
             <input
               type="text"
               placeholder="Buscar combinación..."
-              className="w-full border border-gray-300 rounded-lg py-2 px-4 focus:outline-none focus:border-blue-500"
+              className="input"
               value={searchFilter}
               onChange={(e) => setSearchFilter(e.target.value)}
             />

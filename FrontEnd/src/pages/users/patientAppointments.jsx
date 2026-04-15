@@ -132,12 +132,12 @@ export function PatientAppointments() {
   };
 
   return (
-    <div className="min-h-[calc(100vh-88px)] bg-gradient-to-b from-blue-100 to-white flex items-center justify-center p-4">
-      <div className="bg-white rounded-lg shadow-md w-full max-w-md p-6 space-y-4">
-        <h1 className="text-2xl font-bold text-gray-800 text-center">Mis turnos</h1>
+    <div className="page-bg flex items-center justify-center p-4">
+      <div className="card p-8 space-y-5 animate-slide-up w-full max-w-md">
+        <h1 className="section-title text-center">Mis turnos</h1>
         <button
           onClick={() => navigate('/patient')}
-          className="w-full bg-gray-200 text-gray-700 py-2 rounded-lg hover:bg-gray-300 transition-colors"
+          className="btn-secondary"
         >
           Volver
         </button>
@@ -149,7 +149,7 @@ export function PatientAppointments() {
           appointments.map((appointment, index) => (
             <div
               key={index}
-              className="bg-gray-50 rounded-lg p-4 shadow-sm mb-4"
+              className="appointment-card"
             >
               <p>
                 <strong>Sede:</strong> {t(`locations.${appointment.location}`)}
@@ -175,7 +175,7 @@ export function PatientAppointments() {
               </p>
               <div className="flex space-x-2 mt-4">
                 <button
-                  className="bg-blue-600 text-white py-2 px-4 rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50"
+                  className="btn-primary disabled:opacity-50 disabled:cursor-not-allowed"
                   onClick={() => handleConfirmarTurno(appointment)}
                   disabled={
                     appointment.status === 'Confirmed' ||
@@ -185,7 +185,7 @@ export function PatientAppointments() {
                   Confirmar
                 </button>
                 <button
-                  className="bg-red-600 text-white py-2 px-4 rounded-lg hover:bg-red-700 transition-colors disabled:opacity-50"
+                  className="btn-danger disabled:opacity-50 disabled:cursor-not-allowed"
                   onClick={() => handleCancelarTurno(appointment)}
                   disabled={
                     appointment.status === 'Cancelled' ||

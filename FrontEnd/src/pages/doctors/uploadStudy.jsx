@@ -184,19 +184,7 @@ function UploadStudy() {
 
   if (!doctorId) {
     return (
-      <div className="min-h-[calc(100vh-88px)] bg-gradient-to-b from-blue-100 to-white flex items-center justify-center">
-        <div className="text-center">
-          <p className="text-xl text-gray-600">
-            Debe iniciar sesión como doctor
-          </p>
-        </div>
-      </div>
-    );
-  }
-
-  if (initialLoading) {
-    return (
-      <div className="min-h-[calc(100vh-88px)] bg-gradient-to-b from-blue-100 to-white flex items-center justify-center">
+      <div className="page-bg flex items-center justify-center">
         <div className="text-center">
           <p className="text-xl text-gray-600">Cargando...</p>
         </div>
@@ -205,9 +193,9 @@ function UploadStudy() {
   }
 
   return (
-    <div className="min-h-[calc(100vh-88px)] bg-gradient-to-b from-blue-100 to-white p-4">
+    <div className="page-bg p-4">
       <div className="max-w-4xl mx-auto">
-        <h1 className="text-3xl font-bold text-center text-gray-800 mb-8">
+        <h1 className="section-title text-center mb-8">
           Gestión de Estudios Médicos
         </h1>
 
@@ -217,8 +205,8 @@ function UploadStudy() {
             onClick={() => setShowEstudios(false)}
             className={`px-6 py-2 rounded-lg font-medium transition-colors ${
               !showEstudios
-                ? 'bg-blue-600 text-white'
-                : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+                ? 'bg-gradient-to-r from-primary-500 to-primary-600 text-white shadow-md'
+                : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
             }`}
           >
             Subir Estudio
@@ -227,8 +215,8 @@ function UploadStudy() {
             onClick={() => setShowEstudios(true)}
             className={`px-6 py-2 rounded-lg font-medium transition-colors ${
               showEstudios
-                ? 'bg-blue-600 text-white'
-                : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+                ? 'bg-gradient-to-r from-primary-500 to-primary-600 text-white shadow-md'
+                : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
             }`}
           >
             Mis Estudios ({estudios.length})
@@ -237,9 +225,7 @@ function UploadStudy() {
 
         {!showEstudios ? (
           /* Formulario para subir estudios */
-          <div className="bg-white rounded-lg shadow-md p-6">
-            <h2 className="text-xl font-semibold text-gray-800 mb-4">
-              Subir Nuevo Estudio
+          <div className="card p-6">
             </h2>
 
             <form onSubmit={handleSubmit} className="space-y-4">
@@ -264,7 +250,7 @@ function UploadStudy() {
                   <button
                     type="button"
                     onClick={handleSearchPatient}
-                    className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+                    className="btn-primary px-4 py-2"
                   >
                     Buscar
                   </button>
@@ -337,7 +323,7 @@ function UploadStudy() {
                 className={`w-full py-2 px-4 rounded-lg font-medium transition-colors ${
                   loading || !patientFound
                     ? 'bg-gray-400 cursor-not-allowed'
-                    : 'bg-blue-600 hover:bg-blue-700 text-white'
+                    : 'bg-gradient-to-r from-primary-500 to-primary-600 hover:from-primary-600 hover:to-primary-700 text-white'
                 }`}
               >
                 {loading ? 'Subiendo...' : 'Subir Estudio'}
@@ -355,7 +341,7 @@ function UploadStudy() {
           </div>
         ) : (
           /* Lista de estudios */
-          <div className="bg-white rounded-lg shadow-md p-6">
+          <div className="card p-6">
             <h2 className="text-xl font-semibold text-gray-800 mb-4">
               Estudios Subidos
             </h2>

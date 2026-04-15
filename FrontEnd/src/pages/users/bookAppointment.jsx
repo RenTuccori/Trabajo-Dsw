@@ -195,10 +195,10 @@ export function BookAppointment() {
   };
 
   return (
-    <form className="min-h-[calc(100vh-88px)] bg-gradient-to-b from-blue-100 to-white flex items-center justify-center p-4">
-      <div className="bg-white rounded-lg shadow-md w-full max-w-md p-6 space-y-4">
+    <form className="page-bg flex items-center justify-center p-4">
+      <div className="card p-8 space-y-5 animate-slide-up w-full max-w-md">
         <div className="space-y-4">
-          <p className="text-center text-gray-600 text-lg">{t('labels.location', { defaultValue: 'Localidad' })}</p>
+          <p className="label text-center">{t('labels.location', { defaultValue: 'Localidad' })}</p>
           <Select
             className="react-select"
             options={(locations || []).map((location) => {
@@ -212,7 +212,7 @@ export function BookAppointment() {
             styles={customStyles}
             placeholder="Seleccionar..."
           />
-          <p className="text-center text-gray-600 text-lg">{t('labels.specialty', { defaultValue: 'Especialidad' })}</p>
+          <p className="label text-center">{t('labels.specialty', { defaultValue: 'Especialidad' })}</p>
           <Select
             className="react-select"
             options={(specialties || []).map((especialidad) => {
@@ -227,7 +227,7 @@ export function BookAppointment() {
             styles={customStyles}
             placeholder="Seleccionar..."
           />
-          <p className="text-center text-gray-600 text-lg">{t('labels.doctors', { defaultValue: 'Doctores' })}</p>
+          <p className="label text-center">{t('labels.doctors', { defaultValue: 'Doctores' })}</p>
           <Select
             className="react-select"
             options={(doctors || []).map((doctor) => {
@@ -242,7 +242,7 @@ export function BookAppointment() {
             styles={customStyles}
             placeholder="Seleccionar..."
           />
-          <p className="text-center text-gray-600 text-lg">{t('labels.date', { defaultValue: 'Fecha' })}</p>
+          <p className="label text-center">{t('labels.date', { defaultValue: 'Fecha' })}</p>
           <div className="w-full react-datepicker-wrapper-custom">
             <DatePicker
               selected={selectedDate}
@@ -260,7 +260,7 @@ export function BookAppointment() {
               width: 100%;
             }
           `}</style>
-          <p className="text-center text-gray-600 text-lg">{t('labels.time', { defaultValue: 'Horario' })}</p>
+          <p className="label text-center">{t('labels.time', { defaultValue: 'Horario' })}</p>
           <Select
             className="react-select"
             options={(schedules || []).map((horario) => ({
@@ -278,14 +278,14 @@ export function BookAppointment() {
           type="button"
           disabled={!selectedSchedule}
           onClick={() => navigate('/patient/appointmentConfirmation')}
-          className="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition-colors disabled:opacity-50"
+          className="btn-primary disabled:opacity-50 disabled:cursor-not-allowed"
         >
           {t('labels.continue', { defaultValue: 'Continuar' })}
         </button>
         <button
           type="button"
           onClick={() => navigate('/patient')}
-          className="w-full bg-gray-200 text-gray-700 py-2 rounded-lg hover:bg-gray-300 transition-colors"
+          className="btn-secondary"
         >
           {t('labels.back', { defaultValue: 'Volver' })}
         </button>

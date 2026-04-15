@@ -82,24 +82,24 @@ export function DoctorData() {
   };
 
   return (
-    <div className="min-h-[calc(100vh-88px)] bg-gradient-to-b from-blue-100 to-white flex items-center justify-center p-4">
-      <div className="bg-white rounded-lg shadow-md w-full max-w-md p-6 space-y-4">
+    <div className="page-bg flex items-center justify-center p-4">
+      <div className="card w-full max-w-md p-8 space-y-5 animate-slide-up">
         {/* Formulario para crear user */}
         {!usuarioCreado && (
           <form onSubmit={handleSubmitUsuario} className="space-y-4">
             <div>
-              <p className="text-center text-gray-600 text-lg">DNI</p>
+              <p className="label text-center">DNI</p>
               <input
                 type="text"
                 name="dni"
                 value={formData.dni}
                 onChange={handleInputChange}
                 required
-                className="w-full border border-gray-300 rounded-lg p-2 focus:outline-none focus:border-blue-500"
+                className="input"
               />
             </div>
             <div>
-              <p className="text-center text-gray-600 text-lg">
+              <p className="label text-center">
                 Fecha de nacimiento
               </p>
               <input
@@ -108,66 +108,66 @@ export function DoctorData() {
                 value={formData.birthDate}
                 onChange={handleInputChange}
                 required
-                className="w-full border border-gray-300 rounded-lg p-2 focus:outline-none focus:border-blue-500"
+                className="input"
               />
             </div>
             <div>
-              <p className="text-center text-gray-600 text-lg">Nombre</p>
+              <p className="label text-center">Nombre</p>
               <input
                 type="text"
                 name="name"
                 value={formData.name}
                 onChange={handleInputChange}
                 required
-                className="w-full border border-gray-300 rounded-lg p-2 focus:outline-none focus:border-blue-500"
+                className="input"
               />
             </div>
             <div>
-              <p className="text-center text-gray-600 text-lg">Apellido</p>
+              <p className="label text-center">Apellido</p>
               <input
                 type="text"
                 name="lastName"
                 value={formData.lastName}
                 onChange={handleInputChange}
                 required
-                className="w-full border border-gray-300 rounded-lg p-2 focus:outline-none focus:border-blue-500"
+                className="input"
               />
             </div>
             <div>
-              <p className="text-center text-gray-600 text-lg">Dirección</p>
+              <p className="label text-center">Dirección</p>
               <input
                 type="text"
                 name="address"
                 value={formData.address}
                 onChange={handleInputChange}
                 required
-                className="w-full border border-gray-300 rounded-lg p-2 focus:outline-none focus:border-blue-500"
+                className="input"
               />
             </div>
             <div>
-              <p className="text-center text-gray-600 text-lg">Teléfono</p>
+              <p className="label text-center">Teléfono</p>
               <input
                 type="text"
                 name="phone"
                 value={formData.phone}
                 onChange={handleInputChange}
                 required
-                className="w-full border border-gray-300 rounded-lg p-2 focus:outline-none focus:border-blue-500"
+                className="input"
               />
             </div>
             <div>
-              <p className="text-center text-gray-600 text-lg">Email</p>
+              <p className="label text-center">Email</p>
               <input
                 type="email"
                 name="email"
                 value={formData.email}
                 onChange={handleInputChange}
                 required
-                className="w-full border border-gray-300 rounded-lg p-2 focus:outline-none focus:border-blue-500"
+                className="input"
               />
             </div>
             <div>
-              <p className="text-center text-gray-600 text-lg">Obra Social</p>
+              <p className="label text-center">Obra Social</p>
               <Select
                 options={healthInsurances.map((obrasociales) => ({
                   value: obrasociales.healthInsuranceId,
@@ -180,7 +180,7 @@ export function DoctorData() {
             </div>
             <button
               type="submit"
-              className="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition-colors"
+              className="btn-primary"
             >
               Crear user
             </button>
@@ -191,7 +191,7 @@ export function DoctorData() {
         {usuarioCreado && (
           <form onSubmit={handleSubmitDoctor} className="space-y-4">
             <div>
-              <p className="text-center text-gray-600 text-lg">
+              <p className="label text-center">
                 Duración del appointment (minutos)
               </p>
               <input
@@ -200,23 +200,23 @@ export function DoctorData() {
                 value={doctorData.appointmentDuration}
                 onChange={handleDoctorInputChange}
                 required
-                className="w-full border border-gray-300 rounded-lg p-2 focus:outline-none focus:border-blue-500"
+                className="input"
               />
             </div>
             <div>
-              <p className="text-center text-gray-600 text-lg">Contraseña</p>
+              <p className="label text-center">Contraseña</p>
               <input
                 type="password"
                 name="password"
                 value={doctorData.password}
                 onChange={handleDoctorInputChange}
                 required
-                className="w-full border border-gray-300 rounded-lg p-2 focus:outline-none focus:border-blue-500"
+                className="input"
               />
             </div>
             <button
               type="submit"
-              className="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition-colors"
+              className="btn-primary"
             >
               Crear doctor
             </button>

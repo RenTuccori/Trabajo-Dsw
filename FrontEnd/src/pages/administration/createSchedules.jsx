@@ -222,11 +222,11 @@ export function CreateSchedules() {
   };
 
   return (
-    <div className="min-h-[calc(100vh-88px)] bg-gradient-to-b from-blue-100 to-white flex items-center justify-center p-4">
+    <div className="page-bg flex items-center justify-center p-4">
       <div className="w-full max-w-lg space-y-6">
         <h2 className="text-xl font-semibold mb-4">Crear horarios</h2>
 
-        <div className="bg-white rounded-lg shadow-md p-6 space-y-4">
+        <div className="card p-6 space-y-4 animate-slide-up">
           <h3 className="text-lg font-medium">
             Sede: {locationName || locationId}, Especialidad: {specialtyName || specialtyId}, Doctor: {doctorFullName || doctorId}
           </h3>
@@ -290,13 +290,13 @@ export function CreateSchedules() {
 
           <button
             onClick={agregarHorariosDisponibles}
-            className="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition-colors"
+            className="btn-primary"
           >
             Confirmar horarios
           </button>
 
           <button
-            className="w-full bg-gray-200 text-gray-700 py-2 rounded-lg hover:bg-gray-300 transition-colors"
+            className="btn-secondary"
             onClick={() => navigate('/admin/createCombination')}
           >
             Volver
