@@ -237,18 +237,18 @@ function UploadStudy() {
                     </span>
                   )}
                 </label>
-                <div className="flex space-x-2">
+                <div className="flex gap-3">
                   <input
                     type="text"
                     value={searchDni}
                     onChange={(e) => setSearchDni(e.target.value)}
                     placeholder="Ingrese el DNI del paciente"
-                    className="flex-1 input"
+                    className="input min-w-0 flex-[3]"
                   />
                   <button
                     type="button"
                     onClick={handleSearchPatient}
-                    className="btn-primary px-4 py-2"
+                    className="btn-primary flex-1 max-w-[120px]"
                   >
                     Buscar
                   </button>

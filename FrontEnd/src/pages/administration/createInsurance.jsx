@@ -141,7 +141,7 @@ export function CreateInsurance() {
               return (
                 <li
                   key={id}
-                  className="list-item flex justify-between items-center"
+                  className="list-item flex justify-between items-center gap-4"
                 >
                   <span>
                     <strong>{obraSocial.name}</strong>
@@ -149,7 +149,7 @@ export function CreateInsurance() {
                   <div className="flex space-x-2">
                     <button
                       onClick={() => handleBorrarObraSocial(id)}
-                      className="text-coral-500 hover:text-coral-600 font-medium text-sm"
+                      className="text-coral-500 hover:text-coral-600 font-medium text-sm flex-shrink-0"
                     >
                       Eliminar
                     </button>

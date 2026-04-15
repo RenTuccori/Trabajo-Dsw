@@ -104,14 +104,14 @@ export function CreateLocation() {
             locations.map((location) => (
               <li
                 key={location.id}
-                className="list-item flex justify-between items-center"
+                className="list-item flex justify-between items-center gap-4"
               >
                 <span>
                   <strong>{location.name}</strong> - {location.address}
                 </span>
                 <button
                   onClick={() => handleDeleteLocation(location.id)}
-                  className="text-coral-500 hover:text-coral-600 font-medium text-sm"
+                  className="text-coral-500 hover:text-coral-600 font-medium text-sm flex-shrink-0"
                 >
                   Eliminar
                 </button>

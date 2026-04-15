@@ -321,7 +321,7 @@ export function CreateDoctor() {
             doctors.map((doctor) => (
               <li
                 key={doctor.doctorId}
-                className="list-item flex justify-between items-center"
+                className="list-item flex justify-between items-center gap-4"
               >
                 <span>
                   <strong>{doctor.fullName}</strong>
@@ -329,7 +329,7 @@ export function CreateDoctor() {
                 <div className="flex space-x-4">
                   <button
                     onClick={() => handleDelete(doctor.doctorId)}
-                    className="text-coral-500 hover:text-coral-600 font-medium text-sm"
+                    className="text-coral-500 hover:text-coral-600 font-medium text-sm flex-shrink-0"
                   >
                     Eliminar
                   </button>

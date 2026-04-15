@@ -233,7 +233,7 @@ export function CreateCombination() {
                 .map((combinacion) => (
                   <li
                     key={`${combinacion.locationId}-${combinacion.specialtyId}-${combinacion.doctorId}`}
-                    className="list-item flex justify-between items-center"
+                    className="list-item flex justify-between items-center gap-4"
                   >
                     <span className="text-sm text-gray-700">
                       <strong>{t(`locations.${combinacion.locationName}`, { defaultValue: combinacion.locationName })}</strong> - {t(`specialties.${combinacion.specialtyName}`, { defaultValue: combinacion.specialtyName })} <br/>
