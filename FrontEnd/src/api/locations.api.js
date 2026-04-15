@@ -20,14 +20,3 @@ export const getLocationById = async (locationId) => {
         throw error.response?.data || error;
     }
 }
-
-export const getDoctorById = async (doctorId) => {
-    try {
-        const response = await axiosInstance.get(`doctorsId/${doctorId}`);
-        return response;
-    } catch (error) {
-        throw error.response?.data || error;
-    }
-}
-
-

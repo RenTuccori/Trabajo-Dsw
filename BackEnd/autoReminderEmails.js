@@ -54,7 +54,7 @@ export const sendReminderEmails = async () => {
         `,
       };
 
-      await sendEmail({ body: mailBody }, { json: () => {} });
+      await sendEmail({ body: mailBody }, { json: () => {}, status: () => ({ json: () => {} }) });
 
       await Appointment.update({ hasSentReminder: 1 }, { where: { id: appointment.id } });
     }
