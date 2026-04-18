@@ -71,16 +71,23 @@ export function PersonalData() {
       navigate('/patient');
     } catch (error) {
       console.error('❌ FRONTEND - Error al registrar usuario:', error);
+      
+      // Manejar error de DNI duplicado
+      if (error?.code === 'DNI_ALREADY_EXISTS' || error?.message?.includes('ya está registrado')) {
+        notifyError(`El DNI ${formData.dni} ya está registrado. Por favor, usa otro DNI o intenta iniciar sesión.`);
+        return;
+      }
+      
       // If validation details are available from backend, show them
-        const backendErrors = error?.response?.data?.errors || error?.errors || error?.data?.errors;
-        if (backendErrors && backendErrors.length > 0) {
-          const messages = backendErrors.map((e) => `${e.field || e.param || e.path || 'field'}: ${e.message || e.msg || e}`).join('; ');
-          notifyError(messages);
-        } else if (error?.message) {
-          notifyError(error.message);
-        } else {
-          notifyError('Hubo un error al registrar el usuario. Intente nuevamente.');
-        }
+      const backendErrors = error?.response?.data?.errors || error?.errors || error?.data?.errors;
+      if (backendErrors && backendErrors.length > 0) {
+        const messages = backendErrors.map((e) => `${e.field || e.param || e.path || 'field'}: ${e.message || e.msg || e}`).join('; ');
+        notifyError(messages);
+      } else if (error?.message) {
+        notifyError(error.message);
+      } else {
+        notifyError('Hubo un error al registrar el usuario. Intente nuevamente.');
+      }
     }
   };
 
