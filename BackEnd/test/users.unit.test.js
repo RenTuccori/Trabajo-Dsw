@@ -3,25 +3,25 @@ import { jest } from '@jest/globals';
 // Mock the service layer
 const mockService = {
   getAllUsers: jest.fn(),
-  findUserByDni: jest.fn(),
+  findUserByNationalId: jest.fn(),
   authenticatePatient: jest.fn(),
   createNewUser: jest.fn(),
   updateExistingUser: jest.fn(),
   deleteExistingUser: jest.fn(),
 };
 
-jest.unstable_mockModule('../services/usuarios.service.js', () => mockService);
+jest.unstable_mockModule('../services/users.service.js', () => mockService);
 
 const {
   getUsers,
-  getUserByDni,
-  getUserByDniFecha,
+  getUserByNationalId,
+  getUserByNationalIdPassword,
   createUser,
   updateUser,
   deleteUser,
-} = await import('../controllers/usuarios.controllers.js');
+} = await import('../controllers/users.controllers.js');
 
-describe('Usuarios Controller – Unit Tests', () => {
+describe('Users Controller – Unit Tests', () => {
   let req, res;
 
   beforeEach(() => {
@@ -37,7 +37,7 @@ describe('Usuarios Controller – Unit Tests', () => {
   // ── getUsers ───────────────────────────────────────────
   describe('getUsers', () => {
     it('should return all users', async () => {
-      const users = [{ dni: 11111111 }, { dni: 22222222 }];
+      const users = [{ nationalId: 11111111 }, { nationalId: 22222222 }];
       mockService.getAllUsers.mockResolvedValue(users);
 
       await getUsers(req, res);
@@ -64,46 +64,46 @@ describe('Usuarios Controller – Unit Tests', () => {
     });
   });
 
-  // ── getUserByDni ───────────────────────────────────────
-  describe('getUserByDni', () => {
+  // ── getUserByNationalId ───────────────────────────────────────
+  describe('getUserByNationalId', () => {
     it('should return user when found', async () => {
-      const user = { dni: 11111111, nombre: 'Test' };
-      req.body.dni = 11111111;
-      mockService.findUserByDni.mockResolvedValue(user);
+      const user = { nationalId: 11111111, firstName: 'Test' };
+      req.body.nationalId = 11111111;
+      mockService.findUserByNationalId.mockResolvedValue(user);
 
-      await getUserByDni(req, res);
+      await getUserByNationalId(req, res);
 
-      expect(mockService.findUserByDni).toHaveBeenCalledWith(11111111);
+      expect(mockService.findUserByNationalId).toHaveBeenCalledWith(11111111);
       expect(res.json).toHaveBeenCalledWith(user);
     });
 
     it('should return 404 when user not found', async () => {
-      req.body.dni = 99999999;
-      mockService.findUserByDni.mockResolvedValue(null);
+      req.body.nationalId = 99999999;
+      mockService.findUserByNationalId.mockResolvedValue(null);
 
-      await getUserByDni(req, res);
+      await getUserByNationalId(req, res);
 
       expect(res.status).toHaveBeenCalledWith(404);
     });
   });
 
-  // ── getUserByDniFecha (auth) ───────────────────────────
-  describe('getUserByDniFecha', () => {
+  // ── getUserByCredentials (auth) ───────────────────────────
+  describe('getUserByCredentials', () => {
     it('should return a JWT token for valid credentials', async () => {
-      req.body = { dni: 11111111, fechaNacimiento: '1990-01-01' };
+      req.body = { nationalId: 11111111, password: 'password' };
       mockService.authenticatePatient.mockResolvedValue({ token: 'fake.jwt.token' });
 
-      await getUserByDniFecha(req, res);
+      await getUserByNationalIdPassword(req, res);
 
-      expect(mockService.authenticatePatient).toHaveBeenCalledWith(11111111, '1990-01-01');
+      expect(mockService.authenticatePatient).toHaveBeenCalledWith(11111111, 'password');
       expect(res.json).toHaveBeenCalledWith('fake.jwt.token');
     });
 
     it('should return 404 for invalid credentials', async () => {
-      req.body = { dni: 99999999, fechaNacimiento: '2000-01-01' };
+      req.body = { nationalId: 99999999, password: 'wrong' };
       mockService.authenticatePatient.mockResolvedValue(null);
 
-      await getUserByDniFecha(req, res);
+      await getUserByNationalIdPassword(req, res);
 
       expect(res.status).toHaveBeenCalledWith(404);
     });
@@ -112,7 +112,7 @@ describe('Usuarios Controller – Unit Tests', () => {
   // ── createUser ─────────────────────────────────────────
   describe('createUser', () => {
     it('should create a user and return 201', async () => {
-      const body = { dni: 33333333, nombre: 'Nuevo' };
+      const body = { nationalId: 33333333, firstName: 'Nuevo' };
       req.body = body;
       mockService.createNewUser.mockResolvedValue(body);
 
@@ -126,8 +126,8 @@ describe('Usuarios Controller – Unit Tests', () => {
   // ── updateUser ─────────────────────────────────────────
   describe('updateUser', () => {
     it('should update user and return updated data', async () => {
-      req.body = { dni: 11111111, nombre: 'Actualizado' };
-      mockService.updateExistingUser.mockResolvedValue({ dni: 11111111, nombre: 'Actualizado' });
+      req.body = { nationalId: 11111111, firstName: 'Actualizado' };
+      mockService.updateExistingUser.mockResolvedValue({ nationalId: 11111111, firstName: 'Actualizado' });
 
       await updateUser(req, res);
 
@@ -135,7 +135,7 @@ describe('Usuarios Controller – Unit Tests', () => {
     });
 
     it('should return 404 when user not found', async () => {
-      req.body = { dni: 99999999 };
+      req.body = { nationalId: 99999999 };
       mockService.updateExistingUser.mockResolvedValue(null);
 
       await updateUser(req, res);
@@ -147,7 +147,7 @@ describe('Usuarios Controller – Unit Tests', () => {
   // ── deleteUser ─────────────────────────────────────────
   describe('deleteUser', () => {
     it('should delete user and return 204', async () => {
-      req.body = { dni: 11111111 };
+      req.body = { nationalId: 11111111 };
       mockService.deleteExistingUser.mockResolvedValue(true);
 
       await deleteUser(req, res);
@@ -156,7 +156,7 @@ describe('Usuarios Controller – Unit Tests', () => {
     });
 
     it('should return 404 when user not found', async () => {
-      req.body = { dni: 99999999 };
+      req.body = { nationalId: 99999999 };
       mockService.deleteExistingUser.mockResolvedValue(false);
 
       await deleteUser(req, res);

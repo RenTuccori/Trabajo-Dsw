@@ -1,7 +1,7 @@
 import { useState, useRef, useEffect } from 'react';
 import PropTypes from 'prop-types';
 
-export default function AddressAutocomplete({ onSelect, onChange, initialValue = '' }) {
+export default function AddressAutocomplete({ onSelect, onChange, initialValue = '', required = false, className = "w-full p-2 border border-gray-300 rounded-lg" }) {
   const [query, setQuery] = useState(initialValue || '');
   const [results, setResults] = useState([]);
   const [open, setOpen] = useState(false);
@@ -95,11 +95,12 @@ export default function AddressAutocomplete({ onSelect, onChange, initialValue =
       <input
         ref={inputRef}
         value={query}
+        required={required}
         onChange={handleInputChange}
         onBlur={handleBlur}
         onFocus={handleFocus}
         placeholder="Buscar dirección..."
-        className="w-full p-2 border border-gray-300 rounded-lg"
+        className={className}
       />
       {open && results.length > 0 && (
         <ul className="absolute z-[1000] w-full bg-white border rounded mt-1 max-h-48 overflow-auto shadow-lg">

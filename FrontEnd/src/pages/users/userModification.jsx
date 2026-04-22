@@ -12,6 +12,7 @@ export function UserModification() {
     updateUserFunction,
   } = usePatients();
   const [selectedObraSociales, setSelectedObraSociales] = useState(null);
+  const [countryCode, setCountryCode] = useState('+54');
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
     dni: '',
@@ -37,6 +38,21 @@ export function UserModification() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    if (!formData.address?.trim()) {
+      if (window.notifyError) window.notifyError('La dirección es obligatoria.');
+      else await window.confirmDialog('Error', 'La dirección es obligatoria.', 'error');
+      return;
+    }
+
+    if (!formData.healthInsuranceId) {
+      if (window.notifyError) {
+        window.notifyError('La Obra Social es obligatoria.');
+      } else {
+        await window.confirmDialog('Error', 'La Obra Social es obligatoria.', 'error');
+      }
+      return;
+    }
+
     // Alerta de confirmación
     const result = await window.confirmDialog(
       'Guardar Cambios',
@@ -48,6 +64,7 @@ export function UserModification() {
       const payload = {
         ...formData,
         dni: formData.dni || userByDni?.nationalId || userByDni?.id || formData.dni,
+        phone: `${countryCode} ${formData.phone.trim()}`,
       };
 
       try {

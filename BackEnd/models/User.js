@@ -33,11 +33,11 @@ export const defineUser = (sequelize) => {
     },
     address: {
       type: DataTypes.STRING(100),
-      allowNull: true,
+      allowNull: false,
     },
     healthInsuranceId: {
       type: DataTypes.INTEGER,
-      allowNull: true,
+      allowNull: false,
     },
   }, {
     tableName: 'users',
