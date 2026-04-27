@@ -1,10 +1,12 @@
 import { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
+import { useTranslation } from 'react-i18next';
 import { useAdministration } from '../../context/administration/AdministrationProvider.jsx';
 
 export function CreateSchedules() {
   const navigate = useNavigate();
   const location = useLocation();
+  const { t } = useTranslation();
   const { locationId, specialtyId, doctorId, locationName, specialtyName, doctorFullName } = location.state || {};
 
   const diasSemana = [
@@ -16,10 +18,8 @@ export function CreateSchedules() {
   ];
   const {
     getDoctorSchedules,
-    createSchedules,
     replaceSchedules,
     doctorSchedules,
-    updateSchedules,
   } = useAdministration();
   const [schedules, setSchedules] = useState(
     diasSemana.map((dayOption) => ({ dia: dayOption.value, hora_inicio: '', hora_fin: '' }))
@@ -231,8 +231,8 @@ export function CreateSchedules() {
 
         <div className="glass-solid rounded-2xl p-6 lg:p-8 space-y-4">
           <div className="flex flex-wrap gap-x-6 gap-y-2 text-sm">
-            <div><span className="text-gray-400 uppercase tracking-wider text-xs">Sede</span><p className="font-semibold text-gray-900">{locationName || locationId}</p></div>
-            <div><span className="text-gray-400 uppercase tracking-wider text-xs">Especialidad</span><p className="font-semibold text-gray-900">{specialtyName || specialtyId}</p></div>
+            <div><span className="text-gray-400 uppercase tracking-wider text-xs">Sede</span><p className="font-semibold text-gray-900">{t(`locations.${locationName}`, { defaultValue: locationName }) || locationId}</p></div>
+            <div><span className="text-gray-400 uppercase tracking-wider text-xs">Especialidad</span><p className="font-semibold text-gray-900">{t(`specialties.${specialtyName}`, { defaultValue: specialtyName }) || specialtyId}</p></div>
             <div><span className="text-gray-400 uppercase tracking-wider text-xs">Doctor</span><p className="font-semibold text-gray-900">{doctorFullName || doctorId}</p></div>
           </div>
 
