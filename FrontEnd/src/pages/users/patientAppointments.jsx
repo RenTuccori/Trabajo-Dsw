@@ -32,9 +32,7 @@ export function PatientAppointments() {
 
     if (result.isConfirmed) {
       try {
-        // Usar idAppointment si appointmentId no existe
-        const appointmentId =
-          appointment.appointmentId || appointment.idAppointment;
+        const appointmentId = appointment.appointmentId;
 
         await confirmAppointment({ appointmentId });
         window.notifySuccess('¡Turno confirmado con éxito!'); // Mensaje de éxito
@@ -81,9 +79,7 @@ export function PatientAppointments() {
 
     if (result.isConfirmed) {
       try {
-        // Usar idAppointment si appointmentId no existe
-        const appointmentId =
-          appointment.appointmentId || appointment.idAppointment;
+        const appointmentId = appointment.appointmentId;
 
         await cancelAppointment({ appointmentId });
         window.notifySuccess('¡Turno cancelado con éxito!'); // Mensaje de éxito

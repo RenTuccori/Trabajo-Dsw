@@ -378,7 +378,7 @@ const PatientsProvider = ({ children }) => {
 
       setAppointments((prevAppointments) =>
         prevAppointments.map((appointment) =>
-          appointment.id === appointmentId
+          appointment.appointmentId === appointmentId
             ? { ...appointment, status: 'Confirmed' }
             : appointment
         )
@@ -424,7 +424,7 @@ const PatientsProvider = ({ children }) => {
 
       setAppointments((prevAppointments) =>
         prevAppointments.map((appointment) =>
-          appointment.id === appointmentId
+          appointment.appointmentId === appointmentId
             ? { ...appointment, status: 'Cancelled' }
             : appointment
         )
