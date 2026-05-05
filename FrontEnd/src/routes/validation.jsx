@@ -9,9 +9,9 @@ export function Validation({ rol, children, expected }) {
     return <>{children}</>;
   } else {
     return (
-      <div className="min-h-[calc(100vh-88px)] flex items-center justify-center bg-gray-100">
-        <div className="max-w-md w-full bg-white shadow-lg rounded-lg overflow-hidden">
-          <div className="bg-red-500 px-4 py-2 flex items-center justify-center">
+      <div className="page-bg flex items-center justify-center p-6 min-h-[80vh]">
+        <div className="max-w-md w-full glass-solid rounded-3xl overflow-hidden animate-slide-up">
+          <div className="bg-gradient-to-r from-coral-500 to-rose-500 px-6 py-5 flex items-center justify-center">
             <svg
               className="h-6 w-6 text-white mr-2"
               fill="none"
@@ -23,15 +23,15 @@ export function Validation({ rol, children, expected }) {
             >
               <path d="M10 14l2-2m0 0l2-2m-2 2l-2-2m2 2l2 2m7-2a9 9 0 11-18 0 9 9 0 0118 0z"></path>
             </svg>
-            <h1 className="text-xl font-bold text-white">Access Denied</h1>
+            <h1 className="text-xl font-bold text-white">Acceso Denegado</h1>
           </div>
-          <div className="px-4 py-4 sm:px-6">
-            <p className="text-gray-700 text-center mb-4">
-              Sorry, you don't have permission to view this page.
+          <div className="px-6 py-6">
+            <p className="text-gray-600 text-center mb-6">
+              No tenés permisos para acceder a esta página.
             </p>
             <Link
               to="/"
-              className="block w-full bg-blue-500 hover:bg-blue-600 text-white font-bold py-2 px-4 rounded transition duration-300 ease-in-out flex items-center justify-center"
+              className="btn-primary block text-center"
             >
               <svg
                 className="h-5 w-5 mr-2"

@@ -140,6 +140,12 @@ export const authenticateDoctor = async (nationalId, password) => {
 };
 
 export const createNewDoctor = async ({ nationalId, appointmentDuration }) => {
+  const existing = await Doctor.findOne({
+    where: { nationalId, status: 'Enabled' },
+  });
+  if (existing) {
+    throw { status: 400, message: 'Ya existe un doctor con ese DNI.' };
+  }
   const doctor = await Doctor.create({
     nationalId,
     appointmentDuration,
@@ -176,11 +182,12 @@ export const softDeleteDoctor = async (doctorId) => {
 };
 
 export const updateExistingDoctor = async (doctorId, { appointmentDuration }) => {
-  const updates = { appointmentDuration };
+  const doctor = await Doctor.findOne({ where: { id: doctorId, status: 'Enabled' } });
+  if (!doctor) return false;
 
-  const [affectedRows] = await Doctor.update(
-    updates,
+  await Doctor.update(
+    { appointmentDuration },
     { where: { id: doctorId } }
   );
-  return affectedRows > 0;
+  return true;
 };

@@ -12,21 +12,21 @@ const mockService = {
   updateExistingDoctor: jest.fn(),
 };
 
-jest.unstable_mockModule('../services/doctores.service.js', () => mockService);
+jest.unstable_mockModule('../services/doctors.service.js', () => mockService);
 
 const {
   getDoctors,
   getAvailableDoctors,
   getAllDoctors,
-  getDoctorByDni,
+  getDoctorByNationalId,
   getDoctorById,
   getDoctorByCredentials,
   createDoctor,
   deleteDoctor,
   updateDoctor,
-} = await import('../controllers/doctores.controllers.js');
+} = await import('../controllers/doctors.controllers.js');
 
-describe('Doctores Controller – Unit Tests', () => {
+describe('Doctors Controller – Unit Tests', () => {
   let req, res;
 
   beforeEach(() => {
@@ -40,9 +40,9 @@ describe('Doctores Controller – Unit Tests', () => {
   });
 
   describe('getDoctors', () => {
-    it('should return doctors for sede and especialidad', async () => {
-      req.body = { idSede: 1, idEspecialidad: 2 };
-      const docs = [{ idDoctor: 1 }];
+    it('should return doctors for location and specialty', async () => {
+      req.body = { locationId: 1, specialtyId: 2 };
+      const docs = [{ doctorId: 1 }];
       mockService.getDoctorsByLocationSpecialty.mockResolvedValue(docs);
 
       await getDoctors(req, res);
@@ -52,7 +52,7 @@ describe('Doctores Controller – Unit Tests', () => {
     });
 
     it('should return 404 when no doctors found', async () => {
-      req.body = { idSede: 1, idEspecialidad: 2 };
+      req.body = { locationId: 1, specialtyId: 2 };
       mockService.getDoctorsByLocationSpecialty.mockResolvedValue([]);
 
       await getDoctors(req, res);
@@ -63,7 +63,7 @@ describe('Doctores Controller – Unit Tests', () => {
 
   describe('getDoctorByCredentials', () => {
     it('should return JWT for valid credentials', async () => {
-      req.body = { dni: 12345678, contra: 'pass' };
+      req.body = { nationalId: 12345678, password: 'pass' };
       mockService.authenticateDoctor.mockResolvedValue({ token: 'jwt.token' });
 
       await getDoctorByCredentials(req, res);
@@ -72,7 +72,7 @@ describe('Doctores Controller – Unit Tests', () => {
     });
 
     it('should return 404 for invalid credentials', async () => {
-      req.body = { dni: 99999999, contra: 'wrong' };
+      req.body = { nationalId: 99999999, password: 'wrong' };
       mockService.authenticateDoctor.mockResolvedValue(null);
 
       await getDoctorByCredentials(req, res);
@@ -83,9 +83,9 @@ describe('Doctores Controller – Unit Tests', () => {
 
   describe('createDoctor', () => {
     it('should create doctor and return 201', async () => {
-      const body = { dni: 11111111, duracionTurno: 30, contra: 'pass' };
+      const body = { nationalId: 11111111, appointmentDuration: 30, password: 'pass' };
       req.body = body;
-      mockService.createNewDoctor.mockResolvedValue({ idDoctor: 1, ...body });
+      mockService.createNewDoctor.mockResolvedValue({ doctorId: 1, ...body });
 
       await createDoctor(req, res);
 
@@ -95,7 +95,7 @@ describe('Doctores Controller – Unit Tests', () => {
 
   describe('deleteDoctor', () => {
     it('should soft-delete and return 204', async () => {
-      req.params.idDoctor = 1;
+      req.params.id = 1;
       mockService.softDeleteDoctor.mockResolvedValue(true);
 
       await deleteDoctor(req, res);
@@ -104,7 +104,7 @@ describe('Doctores Controller – Unit Tests', () => {
     });
 
     it('should return 404 when not found', async () => {
-      req.params.idDoctor = 999;
+      req.params.id = 999;
       mockService.softDeleteDoctor.mockResolvedValue(false);
 
       await deleteDoctor(req, res);
@@ -115,8 +115,8 @@ describe('Doctores Controller – Unit Tests', () => {
 
   describe('updateDoctor', () => {
     it('should update and return success message', async () => {
-      req.params.idDoctor = 1;
-      req.body = { duracionTurno: 45 };
+      req.params.id = 1;
+      req.body = { appointmentDuration: 45 };
       mockService.updateExistingDoctor.mockResolvedValue(true);
 
       await updateDoctor(req, res);

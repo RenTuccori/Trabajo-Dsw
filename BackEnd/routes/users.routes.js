@@ -13,7 +13,7 @@ import { validate } from '../middleware/validate.js';
 
 const router = Router();
 
-router.post('/api/users/nationalId', Patient, validateUserNationalId, validate, getUserByNationalId);
+router.post('/api/users/nationalId', AdminOrPatient, validateUserNationalId, validate, getUserByNationalId);
 
 router.post('/api/users/login', validateUserLogin, validate, getUserByNationalIdPassword);
 

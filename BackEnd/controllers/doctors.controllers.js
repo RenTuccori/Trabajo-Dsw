@@ -81,6 +81,9 @@ export const createDoctor = async (req, res) => {
     const doctor = await doctorsService.createNewDoctor(req.body);
     res.status(201).json(doctor);
   } catch (error) {
+    if (error.status) {
+      return res.status(error.status).json({ message: error.message });
+    }
     return res.status(500).json({ message: error.message });
   }
 };

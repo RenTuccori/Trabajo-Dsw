@@ -184,19 +184,7 @@ function UploadStudy() {
 
   if (!doctorId) {
     return (
-      <div className="min-h-[calc(100vh-88px)] bg-gradient-to-b from-blue-100 to-white flex items-center justify-center">
-        <div className="text-center">
-          <p className="text-xl text-gray-600">
-            Debe iniciar sesión como doctor
-          </p>
-        </div>
-      </div>
-    );
-  }
-
-  if (initialLoading) {
-    return (
-      <div className="min-h-[calc(100vh-88px)] bg-gradient-to-b from-blue-100 to-white flex items-center justify-center">
+      <div className="page-bg flex items-center justify-center">
         <div className="text-center">
           <p className="text-xl text-gray-600">Cargando...</p>
         </div>
@@ -205,9 +193,9 @@ function UploadStudy() {
   }
 
   return (
-    <div className="min-h-[calc(100vh-88px)] bg-gradient-to-b from-blue-100 to-white p-4">
+    <div className="page-bg p-6 lg:p-10">
       <div className="max-w-4xl mx-auto">
-        <h1 className="text-3xl font-bold text-center text-gray-800 mb-8">
+        <h1 className="text-2xl lg:text-3xl font-extrabold text-gray-900 tracking-tight text-center mb-8">
           Gestión de Estudios Médicos
         </h1>
 
@@ -215,20 +203,20 @@ function UploadStudy() {
         <div className="flex justify-center mb-6 space-x-4">
           <button
             onClick={() => setShowEstudios(false)}
-            className={`px-6 py-2 rounded-lg font-medium transition-colors ${
+            className={`px-6 py-2.5 rounded-2xl font-medium transition-colors ${
               !showEstudios
-                ? 'bg-blue-600 text-white'
-                : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+                ? 'bg-brand-500 text-white shadow-colored'
+                : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
             }`}
           >
             Subir Estudio
           </button>
           <button
             onClick={() => setShowEstudios(true)}
-            className={`px-6 py-2 rounded-lg font-medium transition-colors ${
+            className={`px-6 py-2.5 rounded-2xl font-medium transition-colors ${
               showEstudios
-                ? 'bg-blue-600 text-white'
-                : 'bg-gray-200 text-gray-700 hover:bg-gray-300'
+                ? 'bg-brand-500 text-white shadow-colored'
+                : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
             }`}
           >
             Mis Estudios ({estudios.length})
@@ -237,15 +225,11 @@ function UploadStudy() {
 
         {!showEstudios ? (
           /* Formulario para subir estudios */
-          <div className="bg-white rounded-lg shadow-md p-6">
-            <h2 className="text-xl font-semibold text-gray-800 mb-4">
-              Subir Nuevo Estudio
-            </h2>
-
+          <div className="glass-solid rounded-2xl p-6 lg:p-8">
             <form onSubmit={handleSubmit} className="space-y-4">
               {/* Selección de patient */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="label mb-2">
                   Buscar Paciente por DNI *
                   {!patientFound && (
                     <span className="text-red-500 font-normal ml-2 text-xs">
@@ -253,18 +237,18 @@ function UploadStudy() {
                     </span>
                   )}
                 </label>
-                <div className="flex space-x-2">
+                <div className="flex gap-3">
                   <input
                     type="text"
                     value={searchDni}
                     onChange={(e) => setSearchDni(e.target.value)}
                     placeholder="Ingrese el DNI del paciente"
-                    className="flex-1 px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                    className="input min-w-0 flex-[3]"
                   />
                   <button
                     type="button"
                     onClick={handleSearchPatient}
-                    className="px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+                    className="btn-primary flex-1 max-w-[120px]"
                   >
                     Buscar
                   </button>
@@ -273,7 +257,7 @@ function UploadStudy() {
                   <p className="text-red-500 text-sm mt-2">{searchError}</p>
                 )}
                 {patientFound && (
-                  <div className="mt-3 p-3 bg-green-50 text-green-800 rounded-lg border border-green-200">
+                  <div className="mt-3 p-3 bg-emerald-50 text-emerald-800 rounded-2xl border border-emerald-200">
                     Paciente encontrado: <strong>{patientFound.name} {patientFound.lastName}</strong>
                   </div>
                 )}
@@ -281,7 +265,7 @@ function UploadStudy() {
 
               {/* Fecha de realización */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="label mb-2">
                   Fecha de Realización *
                 </label>
                 <input
@@ -290,14 +274,14 @@ function UploadStudy() {
                   value={formData.fechaRealizacion}
                   onChange={handleInputChange}
                   max={new Date().toISOString().split('T')[0]}
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="input w-full"
                   required
                 />
               </div>
 
               {/* Descripción */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="label mb-2">
                   Descripción
                 </label>
                 <textarea
@@ -305,14 +289,14 @@ function UploadStudy() {
                   value={formData.descripcion}
                   onChange={handleInputChange}
                   rows="3"
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="input w-full"
                   placeholder="Descripción del estudio (opcional)"
                 />
               </div>
 
               {/* Archivo */}
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-2">
+                <label className="label mb-2">
                   Archivo del Estudio *
                 </label>
                 <input
@@ -321,7 +305,7 @@ function UploadStudy() {
                   name="file"
                   onChange={handleFileChange}
                   accept=".pdf,.jpg,.jpeg,.png,.doc,.docx"
-                  className="w-full px-3 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="input w-full"
                   required
                 />
                 <p className="text-sm text-gray-500 mt-1">
@@ -334,11 +318,7 @@ function UploadStudy() {
               <button
                 type="submit"
                 disabled={loading || !patientFound}
-                className={`w-full py-2 px-4 rounded-lg font-medium transition-colors ${
-                  loading || !patientFound
-                    ? 'bg-gray-400 cursor-not-allowed'
-                    : 'bg-blue-600 hover:bg-blue-700 text-white'
-                }`}
+                className="btn-primary disabled:opacity-50 disabled:cursor-not-allowed"
               >
                 {loading ? 'Subiendo...' : 'Subir Estudio'}
               </button>
@@ -347,7 +327,7 @@ function UploadStudy() {
               <button
                 type="button"
                 onClick={() => navigate('/doctor')}
-                className="w-full py-2 px-4 rounded-lg font-medium transition-colors bg-gray-200 text-gray-700 hover:bg-gray-300"
+                className="btn-ghost w-full"
               >
                 Volver al Menú
               </button>
@@ -355,8 +335,8 @@ function UploadStudy() {
           </div>
         ) : (
           /* Lista de estudios */
-          <div className="bg-white rounded-lg shadow-md p-6">
-            <h2 className="text-xl font-semibold text-gray-800 mb-4">
+          <div className="glass-solid rounded-2xl p-6 lg:p-8">
+            <h2 className="text-lg font-bold text-gray-900 mb-4">
               Estudios Subidos
             </h2>
 
@@ -368,23 +348,23 @@ function UploadStudy() {
               <div className="overflow-x-auto">
                 <table className="w-full table-auto">
                   <thead>
-                    <tr className="bg-gray-50">
-                      <th className="px-4 py-2 text-left text-sm font-medium text-gray-700">
+                    <tr className="bg-brand-50/50">
+                      <th className="px-4 py-2 text-left text-sm font-medium text-brand-700">
                         Paciente
                       </th>
-                      <th className="px-4 py-2 text-left text-sm font-medium text-gray-700">
+                      <th className="px-4 py-2 text-left text-sm font-medium text-brand-700">
                         Fecha Realización
                       </th>
-                      <th className="px-4 py-2 text-left text-sm font-medium text-gray-700">
+                      <th className="px-4 py-2 text-left text-sm font-medium text-brand-700">
                         Archivo
                       </th>
-                      <th className="px-4 py-2 text-left text-sm font-medium text-gray-700">
+                      <th className="px-4 py-2 text-left text-sm font-medium text-brand-700">
                         Descripción
                       </th>
-                      <th className="px-4 py-2 text-left text-sm font-medium text-gray-700">
+                      <th className="px-4 py-2 text-left text-sm font-medium text-brand-700">
                         Fecha Carga
                       </th>
-                      <th className="px-4 py-2 text-left text-sm font-medium text-gray-700">
+                      <th className="px-4 py-2 text-left text-sm font-medium text-brand-700">
                         Acciones
                       </th>
                     </tr>
@@ -422,7 +402,7 @@ function UploadStudy() {
                                 estudio.nombreArchivo
                               )
                             }
-                            className="text-blue-600 hover:text-blue-800 font-medium"
+                            className="text-brand-600 hover:text-brand-700 font-semibold"
                           >
                             Descargar
                           </button>

@@ -1,26 +1,26 @@
 import { useState, useRef, useEffect } from 'react';
 import PropTypes from 'prop-types';
 
-export default function AddressAutocomplete({ onSelect, onChange, initialValue = '' }) {
-  const [query, setQuery] = useState(initialValue);
+export default function AddressAutocomplete({ onSelect, onChange, initialValue = '', required = false, className = "w-full p-2 border border-gray-300 rounded-lg" }) {
+  const [query, setQuery] = useState(initialValue || '');
   const [results, setResults] = useState([]);
   const [open, setOpen] = useState(false);
+  const [isTyping, setIsTyping] = useState(false);
   const timer = useRef(null);
+  const inputRef = useRef(null);
 
   useEffect(() => {
-    setQuery(initialValue);
+    setQuery(initialValue || '');
   }, [initialValue]);
 
   useEffect(() => {
-    if (!query) {
-      setResults([]);
+    if (!query || !isTyping) {
       return;
     }
     clearTimeout(timer.current);
     timer.current = setTimeout(async () => {
       try {
         const q = encodeURIComponent(query);
-        // IMPORTANT: replace the email query param with a real contact address for production
         const url = `https://nominatim.openstreetmap.org/search?format=json&addressdetails=1&limit=10&q=${q}&email=dev@yourdomain.com`;
         const res = await fetch(url);
         const data = await res.json();
@@ -37,7 +37,7 @@ export default function AddressAutocomplete({ onSelect, onChange, initialValue =
       }
     }, 300);
     return () => clearTimeout(timer.current);
-  }, [query]);
+  }, [query, isTyping]);
 
   function formatAddress(item) {
     if (!item.address) return item.display_name;
@@ -57,6 +57,7 @@ export default function AddressAutocomplete({ onSelect, onChange, initialValue =
     const formattedName = formatAddress(item);
     setQuery(formattedName);
     setOpen(false);
+    setIsTyping(false);
     onSelect?.({
       address: formattedName,
       lat: parseFloat(item.lat),
@@ -65,20 +66,44 @@ export default function AddressAutocomplete({ onSelect, onChange, initialValue =
     });
   }
 
+  function handleInputChange(e) {
+    const value = e.target.value || '';
+    setQuery(value);
+    setIsTyping(true);
+    onChange?.(value);
+  }
+
+  function handleBlur() {
+    // Delay para permitir que se registre el click en la lista antes de cerrar
+    setTimeout(() => {
+      setOpen(false);
+      setIsTyping(false);
+    }, 200);
+  }
+
+  function handleFocus() {
+    // Cuando hace foco, abrir el dropdown y marcar como escribiendo
+    // para que busque si hay contenido
+    setIsTyping(true);
+    if (query.length > 0) {
+      setOpen(true);
+    }
+  }
+
   return (
     <div className="relative">
       <input
+        ref={inputRef}
         value={query}
-        onChange={(e) => {
-          setQuery(e.target.value);
-          onChange?.(e.target.value);
-        }}
-        onFocus={() => query && setOpen(true)}
+        required={required}
+        onChange={handleInputChange}
+        onBlur={handleBlur}
+        onFocus={handleFocus}
         placeholder="Buscar dirección..."
-        className="w-full p-2 border border-gray-300 rounded-lg"
+        className={className}
       />
       {open && results.length > 0 && (
-        <ul className="absolute z-50 w-full bg-white border rounded mt-1 max-h-48 overflow-auto">
+        <ul className="absolute z-[1000] w-full bg-white border rounded mt-1 max-h-48 overflow-auto shadow-lg">
           {results.map((r) => (
             <li
               key={r.place_id}
@@ -98,10 +123,4 @@ AddressAutocomplete.propTypes = {
   onSelect: PropTypes.func,
   onChange: PropTypes.func,
   initialValue: PropTypes.string,
-};
-
-AddressAutocomplete.defaultProps = {
-  onSelect: undefined,
-  onChange: undefined,
-  initialValue: '',
 };

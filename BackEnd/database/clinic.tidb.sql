@@ -18,7 +18,8 @@ INSERT INTO `healthinsurances` VALUES
   (2,'OSDE','Enabled'),
   (3,'Swiss Medical','Enabled'),
   (4,'Galeno','Enabled'),
-  (5,'PAMI','Enabled');
+  (5,'PAMI','Enabled'),
+  (6,'(Sin obra social)','Enabled');
 
 
 -- Table: users (depends on healthinsurances)
@@ -31,7 +32,7 @@ CREATE TABLE `users` (
   `lastName` varchar(100) NOT NULL,
   `phone` varchar(20) DEFAULT NULL,
   `email` varchar(100) DEFAULT NULL,
-  `address` varchar(100) DEFAULT NULL,
+  `address` varchar(100) NOT NULL,
   `healthInsuranceId` int DEFAULT NULL,
   PRIMARY KEY (`nationalId`),
   KEY `healthInsuranceId` (`healthInsuranceId`),

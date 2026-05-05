@@ -106,14 +106,17 @@ export function AppointmentConfirmation() {
   ]); // Este efecto se ejecuta solo cuando `userEmail` y `turnoCreado` están listos
 
   return (
-    <div className="min-h-[calc(100vh-88px)] bg-gradient-to-b from-blue-100 to-white flex flex-col items-center justify-center p-6">
-      <div className="bg-white rounded-lg shadow-md w-full max-w-md p-6 space-y-4">
+    <div className="page-bg p-6 lg:p-10 flex items-center justify-center min-h-[80vh]">
+      <div className="glass-solid p-8 lg:p-10 rounded-3xl shadow-glass animate-slide-up w-full max-w-md text-center">
         {error ? (
           <>
-            <h1 className="text-2xl font-bold text-red-800 text-center">Error creando turno</h1>
+            <div className="w-16 h-16 bg-coral-50 rounded-full flex items-center justify-center mx-auto mb-4">
+              <svg className="w-8 h-8 text-coral-500" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" /></svg>
+            </div>
+            <h1 className="text-2xl font-extrabold text-gray-900 mb-4">Error creando turno</h1>
             <p className="text-red-600 text-center">{error}</p>
             <button
-              className="w-full mt-6 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+              className="btn-primary w-full mt-6"
               onClick={() => navigate('/patient/bookAppointment')}
             >
               Volver a intentar
@@ -121,7 +124,11 @@ export function AppointmentConfirmation() {
           </>
         ) : turnoCreado ? (
           <>
-            <h1 className="text-2xl font-bold text-green-800 text-center">✅ Turno creado exitosamente</h1>
+            <div className="w-16 h-16 bg-emerald-100 rounded-full flex items-center justify-center mx-auto mb-4">
+              <svg className="w-8 h-8 text-emerald-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" /></svg>
+            </div>
+            <h1 className="text-2xl font-extrabold text-gray-900 mb-4">Turno creado exitosamente</h1>
+            <div className="text-left space-y-2 bg-gray-50/80 rounded-2xl p-4 mb-4">
             <p className="text-gray-700">
               <strong>Fecha y Hora:</strong> {dateAndTime}
             </p>
@@ -137,19 +144,23 @@ export function AppointmentConfirmation() {
             <p className="text-gray-700">
               <strong>Estado:</strong> {t(`statuses.${status || 'Pending'}`, { defaultValue: status || 'Pending' })}
             </p>
+            </div>
             <p className="text-sm text-gray-600 text-center mt-4">
               Se ha enviado un email de confirmación a {userEmail}. Si no lo recibiste, verifica tu carpeta de spam.
             </p>
           </>
         ) : (
           <>
-            <h1 className="text-2xl font-bold text-blue-800 text-center">Creando turno...</h1>
+            <div className="w-16 h-16 bg-brand-100 rounded-full flex items-center justify-center mx-auto mb-4 animate-pulse-soft">
+              <svg className="w-8 h-8 text-brand-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+            </div>
+            <h1 className="text-2xl font-extrabold text-gray-900 mb-4">Creando turno...</h1>
             <p className="text-gray-700 text-center">Por favor espera mientras se procesa tu appointment.</p>
           </>
         )}
 
         <button
-          className="w-full mt-6 px-4 py-2 bg-blue-600 text-white rounded-lg hover:bg-blue-700 transition-colors"
+          className="btn-primary w-full mt-6"
           onClick={() => navigate('/patient')}
         >
           Volver al inicio

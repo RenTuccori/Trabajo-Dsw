@@ -9,19 +9,36 @@ export const getUserByNationalIdPassword = async ({dni, password}) => {
         throw error;
     }
 }
-export const createUser = async ({ dni, password, birthDate, firstName, lastName, phone, email, address, healthInsuranceId }) => {
+export const createUser = async (userData) => {
+    // Acepta tanto 'name' como 'firstName', tanto 'dni' como 'nationalId'
+    const { 
+        dni, 
+        nationalId, 
+        password, 
+        birthDate, 
+        firstName, 
+        name,
+        lastName, 
+        phone, 
+        email, 
+        address,
+        addressLat,
+        addressLon,
+        healthInsuranceId
+    } = userData;
 
     // Normalize optional fields: send null instead of empty strings to satisfy validators with optional nullable
     const payload = {
-        nationalId: Number(dni),
+        nationalId: Number(nationalId || dni),
         password,
         birthDate,
-        firstName,
+        firstName: firstName || name,
         lastName,
         phone: phone && String(phone).trim() !== '' ? phone : null,
         email: email && String(email).trim() !== '' ? email : null,
         address: address && String(address).trim() !== '' ? String(address).trim().slice(0, 100) : null,
         healthInsuranceId: healthInsuranceId === '' || healthInsuranceId === undefined || healthInsuranceId === null ? null : Number(healthInsuranceId),
+        // NO incluir addressLat, addressLon en el backend
     };
 
     try {
@@ -33,7 +50,7 @@ export const createUser = async ({ dni, password, birthDate, firstName, lastName
         if (error.response?.data?.errors) {
             console.error('📌 Validation errors:', error.response.data.errors);
         }
-        // Throw the backend payload if present so callers can display validation messages cleanly
+        // Propagar la respuesta del backend con el código de error
         throw error.response?.data || error;
     }
 }
@@ -93,7 +110,7 @@ export const getUserByNationalId = async ({ dni }) => {
         const response = await axiosInstance.post(`users/nationalId`, { nationalId: Number(dni) });
         return response;
     } catch (error) {
-        return error.response.data.message;
+        throw error;
     }
 }
 

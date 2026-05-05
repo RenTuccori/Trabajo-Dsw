@@ -12,6 +12,7 @@ export function UserModification() {
     updateUserFunction,
   } = usePatients();
   const [selectedObraSociales, setSelectedObraSociales] = useState(null);
+  const [countryCode, setCountryCode] = useState('+54');
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
     dni: '',
@@ -37,6 +38,21 @@ export function UserModification() {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
+    if (!formData.address?.trim()) {
+      if (window.notifyError) window.notifyError('La dirección es obligatoria.');
+      else await window.confirmDialog('Error', 'La dirección es obligatoria.', 'error');
+      return;
+    }
+
+    if (!formData.healthInsuranceId) {
+      if (window.notifyError) {
+        window.notifyError('La Obra Social es obligatoria.');
+      } else {
+        await window.confirmDialog('Error', 'La Obra Social es obligatoria.', 'error');
+      }
+      return;
+    }
+
     // Alerta de confirmación
     const result = await window.confirmDialog(
       'Guardar Cambios',
@@ -48,6 +64,7 @@ export function UserModification() {
       const payload = {
         ...formData,
         dni: formData.dni || userByDni?.nationalId || userByDni?.id || formData.dni,
+        phone: `${countryCode} ${formData.phone.trim()}`,
       };
 
       try {
@@ -116,66 +133,68 @@ export function UserModification() {
   };
 
   return (
-    <div className="min-h-[calc(100vh-88px)] bg-gradient-to-b from-blue-100 to-white flex items-center justify-center p-4">
-      <div className="bg-white rounded-lg shadow-md w-full max-w-md p-6 space-y-4">
+    <div className="page-bg p-6 lg:p-10 flex items-center justify-center min-h-[80vh]">
+      <div className="glass-solid p-8 lg:p-10 rounded-3xl shadow-glass animate-slide-up w-full max-w-lg">
+        <h1 className="text-2xl font-extrabold text-gray-900 tracking-tight mb-1">Modificar datos</h1>
+        <p className="text-gray-500 text-sm mb-6">Actualizá tu información personal</p>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <p className="text-center text-gray-600 text-lg">Nombre</p>
+            <label className="label">Nombre</label>
             <input
               type="text"
               name="name"
               value={formData.name}
               onChange={handleInputChange}
               required
-              className="w-full border border-gray-300 rounded-lg p-2 focus:outline-none focus:border-blue-500"
+              className="input"
             />
           </div>
           <div>
-            <p className="text-center text-gray-600 text-lg">Apellido</p>
+            <label className="label">Apellido</label>
             <input
               type="text"
               name="lastName"
               value={formData.lastName}
               onChange={handleInputChange}
               required
-              className="w-full border border-gray-300 rounded-lg p-2 focus:outline-none focus:border-blue-500"
+              className="input"
             />
           </div>
           <div>
-            <p className="text-center text-gray-600 text-lg">Dirección</p>
+            <label className="label">Dirección</label>
             <input
               type="text"
               name="address"
               value={formData.address}
               onChange={handleInputChange}
               required
-              className="w-full border border-gray-300 rounded-lg p-2 focus:outline-none focus:border-blue-500"
+              className="input"
             />
           </div>
           <div>
-            <p className="text-center text-gray-600 text-lg">Teléfono</p>
+            <label className="label">Teléfono</label>
             <input
               type="text"
               name="phone"
               value={formData.phone}
               onChange={handleInputChange}
               required
-              className="w-full border border-gray-300 rounded-lg p-2 focus:outline-none focus:border-blue-500"
+              className="input"
             />
           </div>
           <div>
-            <p className="text-center text-gray-600 text-lg">Email</p>
+            <label className="label">Email</label>
             <input
               type="email"
               name="email"
               value={formData.email}
               onChange={handleInputChange}
               required
-              className="w-full border border-gray-300 rounded-lg p-2 focus:outline-none focus:border-blue-500"
+              className="input"
             />
           </div>
           <div>
-            <p className="text-center text-gray-600 text-lg">Obra Social</p>
+            <label className="label">Obra Social</label>
             <Select
               options={(healthInsurances || []).map((obrasociales) => {
                 return {
@@ -190,14 +209,14 @@ export function UserModification() {
           </div>
           <button
             type="submit"
-            className="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition-colors"
+            className="btn-primary"
           >
             Guardar cambios
           </button>
           <button
             type="button"
             onClick={() => navigate('/patient')}
-            className="w-full bg-gray-200 text-gray-700 py-2 rounded-lg hover:bg-gray-300 transition-colors"
+            className="btn-ghost"
           >
             Volver
           </button>

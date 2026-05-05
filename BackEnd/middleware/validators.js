@@ -13,12 +13,13 @@ export const validateUserNationalId = [
 export const validateCreateUser = [
   body('nationalId').isInt({ min: 1000000 }).withMessage('National ID must be a valid number.'),
   body('password').notEmpty().withMessage('Password is required.').isLength({ min: 3, max: 255 }),
-  body('birthDate').isDate().withMessage('Date of birth is required.'),
+  body('birthDate').isDate().withMessage('Date of birth is required.').custom(val => { if (new Date(val) > new Date()) throw new Error('Date of birth cannot be in the future.'); return true; }),
   body('firstName').trim().notEmpty().withMessage('First name is required.').isLength({ max: 100 }),
   body('lastName').trim().notEmpty().withMessage('Last name is required.').isLength({ max: 100 }),
   body('email').optional({ nullable: true }).isEmail().withMessage('Email must be valid.'),
   body('phone').optional({ nullable: true }).isLength({ max: 20 }),
-  body('address').optional({ nullable: true }).isLength({ max: 100 }),
+  body('address').trim().notEmpty().withMessage('Address is required.').isLength({ max: 100 }),
+  body('healthInsuranceId').notEmpty().withMessage('Health insurance is required.').isInt({ min: 1 }).withMessage('Health insurance must be a valid number.'),
 ];
 
 export const validateUpdateUser = [
@@ -27,6 +28,8 @@ export const validateUpdateUser = [
   body('firstName').optional().trim().notEmpty().isLength({ max: 100 }),
   body('lastName').optional().trim().notEmpty().isLength({ max: 100 }),
   body('email').optional({ nullable: true }).isEmail().withMessage('Email must be valid.'),
+  body('address').optional().trim().notEmpty().withMessage('Address cannot be empty.').isLength({ max: 100 }),
+  body('healthInsuranceId').optional().notEmpty().withMessage('Health insurance is required.').isInt({ min: 1 }).withMessage('Health insurance must be a valid number.'),
 ];
 
 // === LOCATIONS ===

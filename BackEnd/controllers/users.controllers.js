@@ -43,6 +43,13 @@ export const createUser = async (req, res) => {
     const user = await usersService.createNewUser(req.body);
     res.status(201).json(user);
   } catch (error) {
+    // Manejar error de DNI duplicado
+    if (error.code === 'DNI_ALREADY_EXISTS') {
+      return res.status(409).json({ 
+        message: error.message,
+        code: 'DNI_ALREADY_EXISTS'
+      });
+    }
     return res.status(500).json({ message: error.message });
   }
 };

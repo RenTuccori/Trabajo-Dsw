@@ -12,6 +12,7 @@ export function PersonalData() {
   const { healthInsurances, getHealthInsurances, createUserFunction, getUserByDniFunction, userByDni } = usePatients();
   const { login, dni } = useAuth();
   const [selectedObraSociales, setSelectedObraSociales] = useState(null);
+  const [countryCode, setCountryCode] = useState('+54');
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
     dni: '',
@@ -49,8 +50,22 @@ export function PersonalData() {
       notifyError('La fecha de nacimiento debe tener formato YYYY-MM-DD.');
       return;
     }
+    const today = new Date();
+    const birthDateStr = new Date(formData.birthDate + 'T00:00:00');
+    if (birthDateStr > today) {
+      notifyError('La fecha de nacimiento no puede ser posterior a hoy.');
+      return;
+    }
     if (!formData.name.trim() || !formData.lastName.trim()) {
       notifyError('Nombre y apellido son obligatorios.');
+      return;
+    }
+    if (!formData.address?.trim()) {
+      notifyError('La dirección es obligatoria.');
+      return;
+    }
+    if (!formData.healthInsuranceId) {
+      notifyError('La Obra Social es obligatoria.');
       return;
     }
       if (!formData.password.trim()) {
@@ -59,7 +74,11 @@ export function PersonalData() {
       }
 
       try {
-        await createUserFunction(formData); // Asegura que la creación del user sea asíncrona
+        const submitData = {
+          ...formData,
+          phone: `${countryCode} ${formData.phone.trim()}`,
+        };
+        await createUserFunction(submitData); // Asegura que la creación del user sea asíncrona
 
         login({
           identifier: formData.dni,
@@ -71,16 +90,23 @@ export function PersonalData() {
       navigate('/patient');
     } catch (error) {
       console.error('❌ FRONTEND - Error al registrar usuario:', error);
+      
+      // Manejar error de DNI duplicado
+      if (error?.code === 'DNI_ALREADY_EXISTS' || error?.message?.includes('ya está registrado')) {
+        notifyError(`El DNI ${formData.dni} ya está registrado. Por favor, usa otro DNI o intenta iniciar sesión.`);
+        return;
+      }
+      
       // If validation details are available from backend, show them
-        const backendErrors = error?.response?.data?.errors || error?.errors || error?.data?.errors;
-        if (backendErrors && backendErrors.length > 0) {
-          const messages = backendErrors.map((e) => `${e.field || e.param || e.path || 'field'}: ${e.message || e.msg || e}`).join('; ');
-          notifyError(messages);
-        } else if (error?.message) {
-          notifyError(error.message);
-        } else {
-          notifyError('Hubo un error al registrar el usuario. Intente nuevamente.');
-        }
+      const backendErrors = error?.response?.data?.errors || error?.errors || error?.data?.errors;
+      if (backendErrors && backendErrors.length > 0) {
+        const messages = backendErrors.map((e) => `${e.field || e.param || e.path || 'field'}: ${e.message || e.msg || e}`).join('; ');
+        notifyError(messages);
+      } else if (error?.message) {
+        notifyError(error.message);
+      } else {
+        notifyError('Hubo un error al registrar el usuario. Intente nuevamente.');
+      }
     }
   };
 
@@ -98,13 +124,27 @@ export function PersonalData() {
   useEffect(() => {
     // When user data is fetched from backend, prefill the form
     if (userByDni && Object.keys(userByDni).length > 0) {
+      let fetchedPhone = userByDni.phone || '';
+      const codes = ['+54', '+1', '+34', '+55', '+56', '+598', '+52', '+57', '+51'];
+      for (const code of codes) {
+        if (fetchedPhone.startsWith(`${code} `)) {
+          setCountryCode(code);
+          fetchedPhone = fetchedPhone.slice(code.length + 1).trim();
+          break;
+        } else if (fetchedPhone.startsWith(code)) {
+          setCountryCode(code);
+          fetchedPhone = fetchedPhone.slice(code.length).trim();
+          break;
+        }
+      }
+
       setFormData((prev) => ({
         ...prev,
         dni: userByDni.nationalId || prev.dni,
         birthDate: userByDni.birthDate || prev.birthDate,
         name: userByDni.firstName || prev.name,
         lastName: userByDni.lastName || prev.lastName,
-        phone: userByDni.phone || prev.phone,
+        phone: fetchedPhone || prev.phone,
         email: userByDni.email || prev.email,
         address: userByDni.address || prev.address,
         healthInsuranceId:
@@ -140,72 +180,76 @@ export function PersonalData() {
   };
 
   return (
-    <div className="min-h-[calc(100vh-88px)] bg-gradient-to-b from-blue-100 to-white flex items-center justify-center p-4">
-      <div className="bg-white rounded-lg shadow-md w-full max-w-md p-6 space-y-4">
+    <div className="page-bg p-6 lg:p-10 flex items-center justify-center min-h-[80vh]">
+      <div className="glass-solid p-8 lg:p-10 rounded-3xl shadow-glass animate-slide-up w-full max-w-lg">
+        <h1 className="text-2xl font-extrabold text-gray-900 tracking-tight mb-1">Registro de paciente</h1>
+        <p className="text-gray-500 text-sm mb-6">Completá tus datos para crear tu cuenta</p>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <p className="text-center text-gray-600 text-lg">DNI</p>
+            <label className="label">DNI</label>
             <input
               type="text"
               name="dni"
               value={formData.dni}
               onChange={handleInputChange}
               required
-              className="w-full border border-gray-300 rounded-lg p-2 focus:outline-none focus:border-blue-500"
+              className="input"
             />
           </div>
           <div>
-            <p className="text-center text-gray-600 text-lg">
+            <label className="label">
               Fecha de Nacimiento
-            </p>
+            </label>
             <input
               type="date"
               name="birthDate"
               value={formData.birthDate}
               onChange={handleInputChange}
               required
-              className="w-full border border-gray-300 rounded-lg p-2 focus:outline-none focus:border-blue-500"
+              className="input"
             />
           </div>
           <div>
-            <p className="text-center text-gray-600 text-lg">
+            <label className="label">
               Contraseña
-            </p>
+            </label>
             <input
               type="password"
               name="password"
               value={formData.password}
               onChange={handleInputChange}
               required
-              className="w-full border border-gray-300 rounded-lg p-2 focus:outline-none focus:border-blue-500"
+              className="input"
             />
           </div>
           <div>
-            <p className="text-center text-gray-600 text-lg">Nombre</p>
+            <label className="label">Nombre</label>
             <input
               type="text"
               name="name"
               value={formData.name}
               onChange={handleInputChange}
               required
-              className="w-full border border-gray-300 rounded-lg p-2 focus:outline-none focus:border-blue-500"
+              className="input"
             />
           </div>
           <div>
-            <p className="text-center text-gray-600 text-lg">Apellido</p>
+            <label className="label">Apellido</label>
             <input
               type="text"
               name="lastName"
               value={formData.lastName}
               onChange={handleInputChange}
               required
-              className="w-full border border-gray-300 rounded-lg p-2 focus:outline-none focus:border-blue-500"
+              className="input"
             />
           </div>
           <div>
-            <p className="text-center text-gray-600 text-lg">Dirección</p>
+            <label className="label">Dirección</label>
             <AddressAutocomplete
               initialValue={formData.address}
+              required={true}
+              className="input"
               onSelect={(place) =>
                 setFormData((prev) => ({
                   ...prev,
@@ -217,29 +261,47 @@ export function PersonalData() {
             />
           </div>
           <div>
-            <p className="text-center text-gray-600 text-lg">Teléfono</p>
-            <input
-              type="text"
-              name="phone"
-              value={formData.phone}
-              onChange={handleInputChange}
-              required
-              className="w-full border border-gray-300 rounded-lg p-2 focus:outline-none focus:border-blue-500"
-            />
+            <label className="label">Teléfono</label>
+            <div className="flex gap-2">
+              <select
+                value={countryCode}
+                onChange={(e) => setCountryCode(e.target.value)}
+                className="input w-[140px] truncate"
+              >
+                <option value="+54">🇦🇷 +54</option>
+                <option value="+1">🇺🇸 +1</option>
+                <option value="+34">🇪🇸 +34</option>
+                <option value="+55">🇧🇷 +55</option>
+                <option value="+56">🇨🇱 +56</option>
+                <option value="+598">🇺🇾 +598</option>
+                <option value="+52">🇲🇽 +52</option>
+                <option value="+57">🇨🇴 +57</option>
+                <option value="+51">🇵🇪 +51</option>
+              </select>
+              <input
+                type="text"
+                name="phone"
+                value={formData.phone}
+                onChange={handleInputChange}
+                required
+                className="input flex-1"
+                placeholder="Ej. 11 1234-5678"
+              />
+            </div>
           </div>
           <div>
-            <p className="text-center text-gray-600 text-lg">Email</p>
+            <label className="label">Email</label>
             <input
               type="email"
               name="email"
               value={formData.email}
               onChange={handleInputChange}
               required
-              className="w-full border border-gray-300 rounded-lg p-2 focus:outline-none focus:border-blue-500"
+              className="input"
             />
           </div>
           <div>
-            <p className="text-center text-gray-600 text-lg">Obra Social</p>
+            <label className="label">Obra Social</label>
             <Select
               options={(healthInsurances || []).map((obrasocial) => ({
                 value: getInsuranceId(obrasocial),
@@ -253,7 +315,7 @@ export function PersonalData() {
           </div>
           <button
             type="submit"
-            className="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition-colors"
+            className="btn-primary"
           >
             Enviar
           </button>

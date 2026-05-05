@@ -2,7 +2,8 @@
   "name": "trabajo-dsw-root",
   "private": true,
   "scripts": {
-    "postinstall": "npm --prefix BackEnd install",
+    "postinstall": "npm --prefix BackEnd install && npm --prefix FrontEnd install",
+    "dev": "npm run dev --prefix BackEnd & npm run dev --prefix FrontEnd",
     "start": "npm --prefix BackEnd start"
   }
 }

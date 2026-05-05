@@ -94,19 +94,7 @@ function ViewStudies() {
 
   if (!dni) {
     return (
-      <div className="min-h-[calc(100vh-88px)] bg-gradient-to-b from-blue-100 to-white flex items-center justify-center">
-        <div className="text-center">
-          <p className="text-xl text-gray-600">
-            Debe iniciar sesión como patient
-          </p>
-        </div>
-      </div>
-    );
-  }
-
-  if (loading) {
-    return (
-      <div className="min-h-[calc(100vh-88px)] bg-gradient-to-b from-blue-100 to-white flex items-center justify-center">
+      <div className="page-bg flex items-center justify-center">
         <div className="text-center">
           <p className="text-xl text-gray-600">Cargando estudios...</p>
         </div>
@@ -115,14 +103,14 @@ function ViewStudies() {
   }
 
   return (
-    <div className="min-h-[calc(100vh-88px)] bg-gradient-to-b from-blue-100 to-white p-4">
+    <div className="page-bg p-6 lg:p-10">
       <div className="max-w-4xl mx-auto">
-        <h1 className="text-3xl font-bold text-center text-gray-800 mb-8">
+        <h1 className="text-2xl lg:text-3xl font-extrabold text-gray-900 tracking-tight mb-8">
           Mis estudios médicos
         </h1>
 
         {pacienteData && (
-          <div className="bg-white rounded-lg shadow-md p-4 mb-6">
+          <div className="glass-solid rounded-2xl p-5 mb-6">
             <h2 className="text-lg font-semibold text-gray-800 mb-2">
               Información del paciente
             </h2>
@@ -132,7 +120,7 @@ function ViewStudies() {
           </div>
         )}
 
-        <div className="bg-white rounded-lg shadow-md p-6">
+        <div className="glass-solid rounded-2xl p-6">
           <h2 className="text-xl font-semibold text-gray-800 mb-4">
             Historial de Estudios ({estudios.length})
           </h2>
@@ -150,23 +138,23 @@ function ViewStudies() {
             <div className="overflow-x-auto">
               <table className="w-full table-auto">
                 <thead>
-                  <tr className="bg-gray-50">
-                    <th className="px-4 py-2 text-left text-sm font-medium text-gray-700">
+                  <tr className="bg-brand-50/50">
+                    <th className="px-4 py-2 text-left text-sm font-medium text-brand-700">
                       Doctor
                     </th>
-                    <th className="px-4 py-2 text-left text-sm font-medium text-gray-700">
+                    <th className="px-4 py-2 text-left text-sm font-medium text-brand-700">
                       Fecha Realización
                     </th>
-                    <th className="px-4 py-2 text-left text-sm font-medium text-gray-700">
+                    <th className="px-4 py-2 text-left text-sm font-medium text-brand-700">
                       Archivo
                     </th>
-                    <th className="px-4 py-2 text-left text-sm font-medium text-gray-700">
+                    <th className="px-4 py-2 text-left text-sm font-medium text-brand-700">
                       Descripción
                     </th>
-                    <th className="px-4 py-2 text-left text-sm font-medium text-gray-700">
+                    <th className="px-4 py-2 text-left text-sm font-medium text-brand-700">
                       Fecha Carga
                     </th>
-                    <th className="px-4 py-2 text-left text-sm font-medium text-gray-700">
+                    <th className="px-4 py-2 text-left text-sm font-medium text-brand-700">
                       Acciones
                     </th>
                   </tr>
@@ -191,7 +179,7 @@ function ViewStudies() {
                         {formatDate(performanceDate)}
                       </td>
                       <td className="px-4 py-2 text-sm">
-                        <span className="text-blue-600 font-medium">
+                        <span className="text-brand-600 font-medium">
                           {fileName || 'Archivo sin nombre'}
                         </span>
                       </td>
@@ -209,7 +197,7 @@ function ViewStudies() {
                               fileName || 'estudio'
                             )
                           }
-                          className="bg-blue-600 text-white px-3 py-1 rounded-md hover:bg-blue-700 transition-colors text-sm"
+                          className="btn-primary text-sm"
                         >
                           Descargar
                         </button>
@@ -226,7 +214,7 @@ function ViewStudies() {
         <div className="mt-6 text-center">
           <button
             onClick={() => window.history.back()}
-            className="bg-gray-200 text-gray-700 px-6 py-2 rounded-lg hover:bg-gray-300 transition-colors"
+            className="btn-ghost"
           >
             Volver
           </button>

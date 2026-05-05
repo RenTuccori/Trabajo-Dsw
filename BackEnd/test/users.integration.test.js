@@ -5,18 +5,18 @@ import express from 'express';
 // Mock the service layer
 const mockService = {
   getAllUsers: jest.fn(),
-  findUserByDni: jest.fn(),
+  findUserByNationalId: jest.fn(),
   authenticatePatient: jest.fn(),
   createNewUser: jest.fn(),
   updateExistingUser: jest.fn(),
   deleteExistingUser: jest.fn(),
 };
 
-jest.unstable_mockModule('../services/usuarios.service.js', () => mockService);
+jest.unstable_mockModule('../services/users.service.js', () => mockService);
 
-const usersRouter = await import('../routes/usuarios.routes.js');
+const usersRouter = await import('../routes/users.routes.js');
 
-describe('Usuarios API – Integration Tests', () => {
+describe('Users API – Integration Tests', () => {
   let app;
 
   beforeEach(() => {
@@ -36,12 +36,12 @@ describe('Usuarios API – Integration Tests', () => {
   describe('GET /api/userstodos', () => {
     it('should return list of users', async () => {
       const users = [
-        { dni: 12345678, nombre: 'Juan', apellido: 'Pérez' },
-        { dni: 87654321, nombre: 'María', apellido: 'García' },
+        { nationalId: 12345678, firstName: 'Juan', lastName: 'Pérez' },
+        { nationalId: 87654321, firstName: 'María', lastName: 'García' },
       ];
       mockService.getAllUsers.mockResolvedValue(users);
 
-      const response = await request(app).get('/api/userstodos').expect(200);
+      const response = await request(app).get('/api/users/all').expect(200);
 
       expect(response.body).toEqual(users);
     });
@@ -49,17 +49,17 @@ describe('Usuarios API – Integration Tests', () => {
     it('should return 404 when no users', async () => {
       mockService.getAllUsers.mockResolvedValue([]);
 
-      await request(app).get('/api/userstodos').expect(404);
+      await request(app).get('/api/users/all').expect(404);
     });
   });
 
-  describe('POST /api/usersdnifecha', () => {
+  describe('POST /api/users/login', () => {
     it('should return JWT token for valid credentials', async () => {
       mockService.authenticatePatient.mockResolvedValue({ token: 'fake.jwt.token' });
 
       const response = await request(app)
-        .post('/api/usersdnifecha')
-        .send({ dni: 12345678, fechaNacimiento: '1990-01-01' })
+        .post('/api/users/login')
+        .send({ nationalId: 12345678, password: 'password' })
         .expect(200);
 
       expect(response.text).toContain('fake.jwt.token');
@@ -69,14 +69,14 @@ describe('Usuarios API – Integration Tests', () => {
       mockService.authenticatePatient.mockResolvedValue(null);
 
       await request(app)
-        .post('/api/usersdnifecha')
-        .send({ dni: 99999999, fechaNacimiento: '2000-01-01' })
+        .post('/api/users/login')
+        .send({ nationalId: 99999999, password: 'wrong' })
         .expect(404);
     });
 
     it('should return 400 for missing required fields (validation)', async () => {
       const response = await request(app)
-        .post('/api/usersdnifecha')
+        .post('/api/users/login')
         .send({})
         .expect(400);
 
@@ -86,7 +86,7 @@ describe('Usuarios API – Integration Tests', () => {
 
   describe('POST /api/users', () => {
     it('should create a new user and return 201', async () => {
-      const newUser = { dni: 33333333, fechaNacimiento: '1995-05-05', nombre: 'Ana', apellido: 'López' };
+      const newUser = { nationalId: 33333333, birthDate: '1995-05-05', firstName: 'Ana', lastName: 'López', password: 'abc', address: '123 Fake', healthInsuranceId: 1 };
       mockService.createNewUser.mockResolvedValue(newUser);
 
       const response = await request(app)
@@ -94,36 +94,36 @@ describe('Usuarios API – Integration Tests', () => {
         .send(newUser)
         .expect(201);
 
-      expect(response.body.dni).toBe(33333333);
+      expect(response.body.nationalId).toBe(33333333);
     });
 
     it('should return 400 when validation fails', async () => {
       const response = await request(app)
         .post('/api/users')
-        .send({ dni: 123 }) // Too short DNI
+        .send({ nationalId: 123 }) // Too short DNI
         .expect(400);
 
       expect(response.body).toHaveProperty('errors');
     });
   });
 
-  describe('POST /api/usersdni', () => {
-    it('should return user by DNI', async () => {
-      const user = { dni: 12345678, nombre: 'Juan' };
-      mockService.findUserByDni.mockResolvedValue(user);
+  describe('POST /api/users/nationalId', () => {
+    it('should return user by nationalId', async () => {
+      const user = { nationalId: 12345678, firstName: 'Juan' };
+      mockService.findUserByNationalId.mockResolvedValue(user);
 
       const response = await request(app)
-        .post('/api/usersdni')
-        .send({ dni: 12345678 })
+        .post('/api/users/nationalId')
+        .send({ nationalId: 12345678 })
         .expect(200);
 
       expect(response.body).toEqual(user);
     });
 
-    it('should return 400 for invalid DNI format', async () => {
+    it('should return 400 for invalid nationalId format', async () => {
       await request(app)
-        .post('/api/usersdni')
-        .send({ dni: 'abc' })
+        .post('/api/users/nationalId')
+        .send({ nationalId: 'abc' })
         .expect(400);
     });
   });

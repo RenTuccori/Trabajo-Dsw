@@ -73,11 +73,13 @@ export function CreateInsurance() {
   };
 
   return (
-    <div className="min-h-[calc(100vh-88px)] bg-gradient-to-b from-blue-100 to-white flex items-center justify-center p-4">
-      <div className="bg-white rounded-lg shadow-md w-full max-w-md p-6 space-y-4">
-        <h2 className="text-xl font-semibold text-center text-gray-800">
-          Crear nueva obra social
-        </h2>
+    <div className="page-bg p-6 lg:p-10">
+      <div className="max-w-5xl mx-auto animate-slide-up space-y-6">
+        <div className="flex items-center gap-4">
+          <button onClick={() => navigate('/admin')} className="btn-ghost text-sm">← Volver</button>
+          <h2 className="text-2xl lg:text-3xl font-extrabold text-gray-900 tracking-tight">Crear nueva obra social</h2>
+        </div>
+        <div className="glass-solid rounded-2xl p-6 lg:p-8 space-y-5">
 
         {/* Formulario para crear una nueva obra social */}
         {!obraSocialAEditar && (
@@ -87,11 +89,11 @@ export function CreateInsurance() {
               placeholder="Nombre de la obra social"
               value={nombreObraSocial}
               onChange={(e) => setNombreObraSocial(e.target.value)}
-              className="w-full p-2 border border-gray-300 rounded-lg"
+              className="input"
             />
             <button
               type="submit"
-              className="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition-colors"
+              className="btn-primary"
             >
               Crear obra social
             </button>
@@ -106,19 +108,19 @@ export function CreateInsurance() {
               placeholder="Nuevo name de la obra social"
               value={nuevoNombreObraSocial}
               onChange={(e) => setNuevoNombreObraSocial(e.target.value)}
-              className="w-full p-2 border border-gray-300 rounded-lg"
+              className="input"
             />
             <div className="flex justify-between space-x-2">
               <button
                 type="submit"
-                className="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition-colors"
+                className="btn-primary"
               >
                 Actualizar
               </button>
               <button
                 type="button"
                 onClick={() => setObraSocialAEditar(null)}
-                className="w-full bg-gray-200 text-gray-700 py-2 rounded-lg hover:bg-gray-300 transition-colors"
+                className="btn-secondary"
               >
                 Cancelar
               </button>
@@ -126,15 +128,10 @@ export function CreateInsurance() {
           </form>
         )}
 
-        <button
-          type="button"
-          onClick={() => navigate('/admin')}
-          className="w-full bg-gray-200 text-gray-700 py-2 rounded-lg hover:bg-gray-300 transition-colors mt-4"
-        >
-          Volver
-        </button>
+        </div>
 
-        <h3 className="text-lg font-medium text-gray-800 mt-6">
+        <div className="glass-solid rounded-2xl p-6 lg:p-8">
+        <h3 className="text-lg font-bold text-gray-900 mb-4">
           Obras sociales creadas
         </h3>
         <ul className="space-y-2">
@@ -144,15 +141,15 @@ export function CreateInsurance() {
               return (
                 <li
                   key={id}
-                  className="bg-gray-100 p-4 rounded-lg flex justify-between items-center"
+                  className="glass-list-item flex justify-between items-center gap-4"
                 >
                   <span>
                     <strong>{obraSocial.name}</strong>
                   </span>
-                  <div className="flex space-x-2">
+                  <div className="flex gap-2 flex-shrink-0">
                     <button
                       onClick={() => handleBorrarObraSocial(id)}
-                      className="text-red-600 hover:text-red-800"
+                      className="text-xs font-semibold px-3 py-1.5 rounded-xl bg-coral-50 text-coral-500 hover:bg-coral-100 transition-colors"
                     >
                       Eliminar
                     </button>
@@ -161,7 +158,7 @@ export function CreateInsurance() {
                         setObraSocialAEditar(id);
                         setNuevoNombreObraSocial(obraSocial.name);
                       }}
-                      className="text-blue-600 hover:text-blue-800"
+                      className="text-xs font-semibold px-3 py-1.5 rounded-xl bg-brand-50 text-brand-600 hover:bg-brand-100 transition-colors"
                     >
                       Actualizar
                     </button>
@@ -175,6 +172,7 @@ export function CreateInsurance() {
             </p>
           )}
         </ul>
+        </div>
       </div>
     </div>
   );

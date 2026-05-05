@@ -231,10 +231,15 @@ export function UpdateDoctor() {
   };
 
   return (
-    <div className="min-h-[calc(100vh-88px)] bg-gradient-to-b from-blue-100 to-white flex items-center justify-center p-4">
-      <div className="bg-white rounded-lg shadow-md w-full max-w-md p-6 space-y-4">
+    <div className="page-bg p-6 lg:p-10">
+      <div className="max-w-5xl mx-auto animate-slide-up space-y-6">
+        <div className="flex items-center gap-4">
+          <button onClick={handleRegresar} className="btn-ghost text-sm">← Volver</button>
+          <h2 className="text-2xl lg:text-3xl font-extrabold text-gray-900 tracking-tight">Actualizar Doctor</h2>
+        </div>
+        <div className="glass-solid rounded-2xl p-6 lg:p-8 space-y-5">
         <div>
-          <p className="text-center text-gray-600 text-lg">Seleccione doctor</p>
+          <p className="label text-center">Seleccione doctor</p>
           <Select
             options={doctors.map((d) => ({ value: String(d.doctorId), label: d.fullName }))}
             onChange={handleDoctorSelect}
@@ -245,62 +250,62 @@ export function UpdateDoctor() {
         </div>
         <form onSubmit={handleSubmit} className="space-y-4">
           <div>
-            <p className="text-center text-gray-600 text-lg">Nombre</p>
+            <p className="label text-center">Nombre</p>
             <input
               type="text"
               name="name"
               value={formData.name}
               onChange={handleInputChange}
               required
-              className="w-full border border-gray-300 rounded-lg p-2 focus:outline-none focus:border-blue-500"
+              className="input"
             />
           </div>
           <div>
-            <p className="text-center text-gray-600 text-lg">Apellido</p>
+            <p className="label text-center">Apellido</p>
             <input
               type="text"
               name="lastName"
               value={formData.lastName}
               onChange={handleInputChange}
               required
-              className="w-full border border-gray-300 rounded-lg p-2 focus:outline-none focus:border-blue-500"
+              className="input"
             />
           </div>
           <div>
-            <p className="text-center text-gray-600 text-lg">Dirección</p>
+            <p className="label text-center">Dirección</p>
             <input
               type="text"
               name="address"
               value={formData.address}
               onChange={handleInputChange}
               required
-              className="w-full border border-gray-300 rounded-lg p-2 focus:outline-none focus:border-blue-500"
+              className="input"
             />
           </div>
           <div>
-            <p className="text-center text-gray-600 text-lg">Teléfono</p>
+            <p className="label text-center">Teléfono</p>
             <input
               type="text"
               name="phone"
               value={formData.phone}
               onChange={handleInputChange}
               required
-              className="w-full border border-gray-300 rounded-lg p-2 focus:outline-none focus:border-blue-500"
+              className="input"
             />
           </div>
           <div>
-            <p className="text-center text-gray-600 text-lg">Email</p>
+            <p className="label text-center">Email</p>
             <input
               type="email"
               name="email"
               value={formData.email}
               onChange={handleInputChange}
               required
-              className="w-full border border-gray-300 rounded-lg p-2 focus:outline-none focus:border-blue-500"
+              className="input"
             />
           </div>{' '}
           <div>
-            <p className="text-center text-gray-600 text-lg">Obra social</p>
+            <p className="label text-center">Obra social</p>
             <Select
               options={healthInsurances.map((obrasociales) => ({
                 value: getInsuranceId(obrasociales),
@@ -313,8 +318,8 @@ export function UpdateDoctor() {
             />
           </div>
           <div>
-            <p className="text-center text-gray-600 text-lg">
-              Duración del appointment (minutos)
+            <p className="label text-center">
+              Duración del turno (minutos)
             </p>
             <input
               type="number"
@@ -322,35 +327,28 @@ export function UpdateDoctor() {
               value={formData.appointmentDuration}
               onChange={handleInputChange}
               required
-              className="w-full border border-gray-300 rounded-lg p-2 focus:outline-none focus:border-blue-500"
+              className="input"
             />
           </div>
           <div>
-            <p className="text-center text-gray-600 text-lg">Contraseña</p>
+            <p className="label text-center">Contraseña</p>
             <input
               type="password"
               name="password"
               value={formData.password}
               onChange={handleInputChange}
               placeholder="Dejar vacio para mantener la actual"
-              className="w-full border border-gray-300 rounded-lg p-2 focus:outline-none focus:border-blue-500"
+              className="input"
             />
           </div>
           <button
             type="submit"
-            className="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition-colors"
+            className="btn-primary"
           >
             Guardar cambios
           </button>
         </form>
-
-        <button
-          type="button"
-          onClick={handleRegresar}
-          className="w-full bg-gray-200 text-gray-700 py-2 rounded-lg hover:bg-gray-300 transition-colors mt-4"
-        >
-          Volver
-        </button>
+        </div>
       </div>
     </div>
   );

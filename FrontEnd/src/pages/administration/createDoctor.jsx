@@ -27,7 +27,7 @@ export function CreateDoctor() {
   const [formData, setFormData] = useState({
     dni: '',
     birthDate: '',
-    name: '',
+    firstName: '',
     lastName: '',
     phone: '',
     email: '',
@@ -58,8 +58,8 @@ export function CreateDoctor() {
     e.preventDefault();
     if (dni.trim() !== '') {
       try {
-        await getUserByDni(dni);
-        if (user.length !== 0) {
+        const foundUser = await getUserByDni(dni);
+        if (foundUser && Object.keys(foundUser).length > 0) {
           setUsuarioExistente(true);
           window.notifySuccess(
             'Usuario encontrado, continúe con los siguientes pasos.'
@@ -70,10 +70,9 @@ export function CreateDoctor() {
             'Usuario no encontrado, complete los datos para crear uno nuevo.'
           );
         }
-        setFormularioVisible(true); // Muestra el formulario después de la búsqueda
+        setFormularioVisible(true);
       } catch (error) {
         if (error.response && error.response.status === 404) {
-          // Si es un error 404, significa que no existe el user, continuar como nuevo
           setUsuarioExistente(false);
           window.notifyError(
             'Usuario no encontrado, complete los datos para crear uno nuevo.'
@@ -108,7 +107,8 @@ export function CreateDoctor() {
         window.notifySuccess('¡Doctor creado con éxito!');
         navigate('/admin');
       } catch (error) {
-        window.notifyError('Error al crear el doctor');
+        const msg = error?.response?.data?.message || error?.message || 'Error al crear el doctor';
+        window.notifyError(msg);
         console.error('Error al crear doctor:', error);
       }
     } else {
@@ -141,27 +141,32 @@ export function CreateDoctor() {
   };
 
   return (
-    <div className="min-h-[calc(100vh-88px)] bg-gradient-to-b from-blue-100 to-white flex items-center justify-center p-4">
-      <div className="bg-white rounded-lg shadow-md w-full max-w-md p-6 space-y-4">
+    <div className="page-bg p-6 lg:p-10">
+      <div className="max-w-5xl mx-auto animate-slide-up space-y-6">
+        <div className="flex items-center gap-4">
+          <button onClick={() => navigate('/admin')} className="btn-ghost text-sm">← Volver</button>
+          <h2 className="text-2xl lg:text-3xl font-extrabold text-gray-900 tracking-tight">Crear Doctor</h2>
+        </div>
+        <div className="glass-solid rounded-2xl p-6 lg:p-8 space-y-5">
         {!formularioVisible && (
           <form onSubmit={handleBuscarDNI} className="space-y-4">
             <div>
-              <p className="text-center text-gray-600 text-lg">
+              <p className="label text-center">
                 Por favor, ingresa el DNI del doctor que quieres crear
               </p>
               <input
                 type="text"
                 value={dni}
                 onChange={(e) => setDni(e.target.value)}
-                className="w-full p-2 border border-gray-300 rounded-lg"
+                className="input"
                 required
               />
             </div>
             <button
               type="submit"
-              className="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition-colors"
+              className="btn-primary"
             >
-              Buscar user
+              Buscar usuario
             </button>
           </form>
         )}
@@ -170,7 +175,7 @@ export function CreateDoctor() {
             {!usuarioExistente && (
               <form onSubmit={handlecreateDoctor} className="space-y-4">
                 <div>
-                  <p className="text-center text-gray-600 text-lg">
+                  <p className="label text-center">
                     Fecha de nacimiento
                   </p>
                   <input
@@ -179,66 +184,66 @@ export function CreateDoctor() {
                     value={formData.birthDate}
                     onChange={handleInputChange}
                     required
-                    className="w-full border border-gray-300 rounded-lg p-2 focus:outline-none focus:border-blue-500"
+                    className="input"
                   />
                 </div>
                 <div>
-                  <p className="text-center text-gray-600 text-lg">Nombre</p>
+                  <p className="label text-center">Nombre</p>
                   <input
                     type="text"
-                    name="name"
-                    value={formData.name}
+                    name="firstName"
+                    value={formData.firstName}
                     onChange={handleInputChange}
                     required
-                    className="w-full border border-gray-300 rounded-lg p-2 focus:outline-none focus:border-blue-500"
+                    className="input"
                   />
                 </div>
                 <div>
-                  <p className="text-center text-gray-600 text-lg">Apellido</p>
+                  <p className="label text-center">Apellido</p>
                   <input
                     type="text"
                     name="lastName"
                     value={formData.lastName}
                     onChange={handleInputChange}
                     required
-                    className="w-full border border-gray-300 rounded-lg p-2 focus:outline-none focus:border-blue-500"
+                    className="input"
                   />
                 </div>
                 <div>
-                  <p className="text-center text-gray-600 text-lg">Dirección</p>
+                  <p className="label text-center">Dirección</p>
                   <input
                     type="text"
                     name="address"
                     value={formData.address}
                     onChange={handleInputChange}
                     required
-                    className="w-full border border-gray-300 rounded-lg p-2 focus:outline-none focus:border-blue-500"
+                    className="input"
                   />
                 </div>
                 <div>
-                  <p className="text-center text-gray-600 text-lg">Teléfono</p>
+                  <p className="label text-center">Teléfono</p>
                   <input
                     type="text"
                     name="phone"
                     value={formData.phone}
                     onChange={handleInputChange}
                     required
-                    className="w-full border border-gray-300 rounded-lg p-2 focus:outline-none focus:border-blue-500"
+                    className="input"
                   />
                 </div>
                 <div>
-                  <p className="text-center text-gray-600 text-lg">Email</p>
+                  <p className="label text-center">Email</p>
                   <input
                     type="email"
                     name="email"
                     value={formData.email}
                     onChange={handleInputChange}
                     required
-                    className="w-full border border-gray-300 rounded-lg p-2 focus:outline-none focus:border-blue-500"
+                    className="input"
                   />
                 </div>
                 <div>
-                  <p className="text-center text-gray-600 text-lg">
+                  <p className="label text-center">
                     Obra social
                   </p>
                   <Select
@@ -252,32 +257,32 @@ export function CreateDoctor() {
                   />
                 </div>
                 <div>
-                  <p className="text-center text-gray-600 text-lg">
-                    Duración del appointment (en minutos)
+                  <p className="label text-center">
+                    Duración del turno (en minutos)
                   </p>
                   <input
                     type="text"
                     value={appointmentDuration}
                     onChange={(e) => setDuracionTurno(e.target.value)}
-                    className="w-full p-2 border border-gray-300 rounded-lg"
+                    className="input"
                     required
                   />
                 </div>
                 <div>
-                  <p className="text-center text-gray-600 text-lg">
+                  <p className="label text-center">
                     Contraseña
                   </p>
                   <input
                     type="password"
                     value={password}
                     onChange={(e) => setContra(e.target.value)}
-                    className="w-full p-2 border border-gray-300 rounded-lg"
+                    className="input"
                     required
                   />
                 </div>
                 <button
                   type="submit"
-                  className="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition-colors"
+                  className="btn-primary"
                 >
                   Crear doctor
                 </button>
@@ -288,15 +293,15 @@ export function CreateDoctor() {
               <form onSubmit={handlecreateDoctor} className="space-y-4">
                 <input
                   type="text"
-                  placeholder="Duración del appointment (en minutos)"
+                  placeholder="Duración del turno (en minutos)"
                   value={appointmentDuration}
                   onChange={(e) => setDuracionTurno(e.target.value)}
-                  className="w-full p-2 border border-gray-300 rounded-lg"
+                  className="input"
                   required
                 />
                 <button
                   type="submit"
-                  className="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition-colors"
+                  className="btn-primary"
                 >
                   Crear doctor
                 </button>
@@ -305,15 +310,10 @@ export function CreateDoctor() {
           </>
         )}
 
-        <button
-          type="button"
-          onClick={() => navigate('/admin')}
-          className="w-full bg-gray-200 text-gray-700 py-2 rounded-lg hover:bg-gray-300 transition-colors mt-4"
-        >
-          Volver
-        </button>
+        </div>
 
-        <h3 className="text-lg font-medium text-gray-800 mt-6">
+        <div className="glass-solid rounded-2xl p-6 lg:p-8">
+        <h3 className="text-lg font-bold text-gray-900">
           Doctores creados
         </h3>
         <ul className="space-y-2">
@@ -321,21 +321,21 @@ export function CreateDoctor() {
             doctors.map((doctor) => (
               <li
                 key={doctor.doctorId}
-                className="bg-gray-100 p-4 rounded-lg flex justify-between items-center"
+                className="glass-list-item flex justify-between items-center gap-4"
               >
                 <span>
                   <strong>{doctor.fullName}</strong>
                 </span>
-                <div className="flex space-x-4">
+                <div className="flex gap-2 flex-shrink-0">
                   <button
                     onClick={() => handleDelete(doctor.doctorId)}
-                    className="text-red-600 hover:text-red-800"
+                    className="text-xs font-semibold px-3 py-1.5 rounded-xl bg-coral-50 text-coral-500 hover:bg-coral-100 transition-colors"
                   >
                     Eliminar
                   </button>
                   <button
                     onClick={() => handleUpdate(doctor.doctorId)}
-                    className="text-blue-600 hover:text-blue-800"
+                    className="text-xs font-semibold px-3 py-1.5 rounded-xl bg-brand-50 text-brand-600 hover:bg-brand-100 transition-colors"
                   >
                     Actualizar
                   </button>
@@ -344,10 +344,11 @@ export function CreateDoctor() {
             ))
           ) : (
             <p className="text-center text-gray-600">
-              No hay doctors creados aún.
+              No hay doctores creados aún.
             </p>
           )}
         </ul>
+        </div>
       </div>
     </div>
   );

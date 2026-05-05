@@ -5,10 +5,13 @@ import AddressAutocomplete from '../../components/AddressAutocomplete';
 
 export function CreateLocation() {
   const navigate = useNavigate();
-  const { locations, createNewLocation, getLocations, deleteLocation } =
+  const { locations, createNewLocation, getLocations, deleteLocation, updateLocation } =
     useAdministration();
   const [locationName, setLocationName] = useState('');
   const [locationAddress, setLocationAddress] = useState('');
+  const [editingId, setEditingId] = useState(null);
+  const [editingName, setEditingName] = useState('');
+  const [editingAddress, setEditingAddress] = useState('');
 
   // Obtener locations al cargar el componente
   useEffect(() => {
@@ -54,21 +57,41 @@ export function CreateLocation() {
     if (result.isConfirmed) {
       try {
         await deleteLocation(locationId);
-        window.notifySuccess('¡Sede eliminada con éxito!'); // Mostrar mensaje de éxito
-        getLocations(); // Actualizar la lista después de borrar una sede
+        window.notifySuccess('¡Sede eliminada con éxito!');
+        getLocations();
       } catch (error) {
-        window.notifyError('Error al eliminar la sede'); // Mostrar mensaje de error
+        window.notifyError('Error al eliminar la sede');
         console.error('Error al borrar sede:', error);
       }
     }
   };
 
+  const handleUpdateLocation = async (locationId) => {
+    if (editingName.trim() === '') {
+      window.notifyError('El nombre no puede estar vacío');
+      return;
+    }
+    try {
+      await updateLocation({ locationId, name: editingName, address: editingAddress });
+      window.notifySuccess('¡Sede actualizada con éxito!');
+      setEditingId(null);
+      setEditingName('');
+      setEditingAddress('');
+      getLocations();
+    } catch (error) {
+      window.notifyError('Error al actualizar la sede');
+      console.error('Error al actualizar sede:', error);
+    }
+  };
+
   return (
-    <div className="min-h-[calc(100vh-88px)] bg-gradient-to-b from-blue-100 to-white flex items-center justify-center p-4">
-      <div className="bg-white rounded-lg shadow-md w-full max-w-md p-6 space-y-4">
-        <h2 className="text-xl font-semibold text-center text-gray-800">
-          Crear nueva sede
-        </h2>
+    <div className="page-bg p-6 lg:p-10">
+      <div className="max-w-5xl mx-auto animate-slide-up space-y-6">
+        <div className="flex items-center gap-4">
+          <button onClick={() => navigate('/admin')} className="btn-ghost text-sm">← Volver</button>
+          <h2 className="text-2xl lg:text-3xl font-extrabold text-gray-900 tracking-tight">Crear nueva sede</h2>
+        </div>
+        <div className="glass-solid rounded-2xl p-6 lg:p-8 space-y-5">
 
         <form onSubmit={handleCreateLocation} className="space-y-4">
           <input
@@ -76,7 +99,7 @@ export function CreateLocation() {
             placeholder="Nombre de la sede"
             value={locationName}
             onChange={(e) => setLocationName(e.target.value)}
-            className="w-full p-2 border border-gray-300 rounded-lg"
+            className="input"
           />
           <AddressAutocomplete
             initialValue={locationAddress}
@@ -85,39 +108,79 @@ export function CreateLocation() {
           />
           <button
             type="submit"
-            className="w-full bg-blue-600 text-white py-2 rounded-lg hover:bg-blue-700 transition-colors"
+            className="btn-primary"
           >
             Crear sede
           </button>
         </form>
 
-        <button
-          type="button"
-          onClick={() => navigate('/admin')}
-          className="w-full bg-gray-200 text-gray-700 py-2 rounded-lg hover:bg-gray-300 transition-colors mt-4"
-        >
-          Volver
-        </button>
+        </div>
 
-        <h3 className="text-lg font-medium text-gray-800 mt-6">
+        <div className="glass-solid rounded-2xl p-6 lg:p-8">
+        <h3 className="text-lg font-bold text-gray-900 mb-4">
           Sedes creadas
         </h3>
-        <ul className="space-y-2">
+        <ul className="space-y-2 overflow-visible">
           {locations.length > 0 ? (
             locations.map((location) => (
               <li
                 key={location.id}
-                className="bg-gray-100 p-4 rounded-lg flex justify-between items-center"
+                className={`glass-list-item flex justify-between items-center gap-4 ${editingId === location.id ? 'relative z-[1000] overflow-visible' : ''}`}
               >
-                <span>
-                  <strong>{location.name}</strong> - {location.address}
-                </span>
-                <button
-                  onClick={() => handleDeleteLocation(location.id)}
-                  className="text-red-600 hover:text-red-800"
-                >
-                  Eliminar
-                </button>
+                {editingId === location.id ? (
+                  <div className="flex-1 space-y-2">
+                    <input
+                      type="text"
+                      value={editingName}
+                      onChange={(e) => setEditingName(e.target.value)}
+                      className="input"
+                      placeholder="Nombre"
+                      autoFocus
+                    />
+                    <AddressAutocomplete
+                      initialValue={editingAddress}
+                      onChange={(value) => setEditingAddress(value)}
+                      onSelect={(data) => setEditingAddress(data.address)}
+                    />
+                  </div>
+                ) : (
+                  <span>
+                    <strong>{location.name}</strong> - {location.address}
+                  </span>
+                )}
+                <div className="flex gap-2 flex-shrink-0">
+                  {editingId === location.id ? (
+                    <>
+                      <button
+                        onClick={() => handleUpdateLocation(location.id)}
+                        className="text-xs font-semibold px-3 py-1.5 rounded-xl bg-brand-50 text-brand-600 hover:bg-brand-100 transition-colors"
+                      >
+                        Guardar
+                      </button>
+                      <button
+                        onClick={() => { setEditingId(null); setEditingName(''); setEditingAddress(''); }}
+                        className="text-xs font-semibold px-3 py-1.5 rounded-xl bg-gray-100 text-gray-600 hover:bg-gray-200 transition-colors"
+                      >
+                        Cancelar
+                      </button>
+                    </>
+                  ) : (
+                    <>
+                      <button
+                        onClick={() => { setEditingId(location.id); setEditingName(location.name); setEditingAddress(location.address); }}
+                        className="text-xs font-semibold px-3 py-1.5 rounded-xl bg-brand-50 text-brand-600 hover:bg-brand-100 transition-colors"
+                      >
+                        Actualizar
+                      </button>
+                      <button
+                        onClick={() => handleDeleteLocation(location.id)}
+                        className="text-xs font-semibold px-3 py-1.5 rounded-xl bg-coral-50 text-coral-500 hover:bg-coral-100 transition-colors"
+                      >
+                        Eliminar
+                      </button>
+                    </>
+                  )}
+                </div>
               </li>
             ))
           ) : (
@@ -126,6 +189,7 @@ export function CreateLocation() {
             </p>
           )}
         </ul>
+        </div>
       </div>
     </div>
   );

@@ -42,7 +42,23 @@ export const authenticatePatient = async (nationalId, password) => {
 };
 
 export const createNewUser = async (userData) => {
+  // Verificar si el usuario ya existe
+  const existingUser = await User.findByPk(userData.nationalId);
+  if (existingUser) {
+    const error = new Error(`El usuario con DNI ${userData.nationalId} ya está registrado.`);
+    error.code = 'DNI_ALREADY_EXISTS';
+    error.statusCode = 409;
+    throw error;
+  }
+
   const data = { ...userData };
+  
+  // Convertir fecha de DD/MM/YYYY a YYYY-MM-DD si es necesario
+  if (data.birthDate && data.birthDate.includes('/')) {
+    const [day, month, year] = data.birthDate.split('/');
+    data.birthDate = `${year}-${month}-${day}`;
+  }
+  
   if (data.password) {
     data.password = await bcrypt.hash(data.password, 10);
   }
@@ -51,14 +67,17 @@ export const createNewUser = async (userData) => {
 };
 
 export const updateExistingUser = async (nationalId, userData) => {
+  const user = await User.findOne({ where: { nationalId } });
+  if (!user) return false;
+
   const data = { ...userData };
   if (data.password) {
     data.password = await bcrypt.hash(data.password, 10);
   }
-  const [affectedRows] = await User.update(data, {
+  await User.update(data, {
     where: { nationalId },
   });
-  return affectedRows > 0;
+  return true;
 };
 
 export const deleteExistingUser = async (nationalId) => {

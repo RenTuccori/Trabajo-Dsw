@@ -3,8 +3,6 @@ import { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useDoctors } from '../../context/doctors/DoctorsProvider.jsx';
 import { useTranslation } from 'react-i18next';
-import '../../estilos/home.css';
-import '../../estilos/sacarturno.css';
 
 export function HistoricalAppointments() {
   const { historicalAppointments, loadHistoricalAppointments } = useDoctors();
@@ -28,23 +26,21 @@ export function HistoricalAppointments() {
     return new Date(dateAndTime).toLocaleString('es-ES', opciones);
   };
   return (
-    <div className="min-h-[calc(100vh-88px)] bg-gradient-to-b from-blue-100 to-white flex items-center justify-center p-4">
-      <div className="bg-white rounded-lg shadow-md w-full max-w-md p-6 space-y-4">
-        <h1 className="text-2xl font-bold text-blue-800 text-center">
-          Historial de Turnos
-        </h1>
-        <button
-          className="w-full bg-gray-200 text-gray-700 py-2 rounded-lg hover:bg-gray-300 transition-colors"
-          onClick={() => navigate('/doctor')}
-        >
-          Volver
-        </button>
+    <div className="page-bg p-6 lg:p-10">
+      <div className="max-w-3xl mx-auto animate-slide-up">
+        <div className="flex items-center justify-between mb-8">
+          <div>
+            <h1 className="text-2xl lg:text-3xl font-extrabold text-gray-900 tracking-tight">Historial de turnos</h1>
+            <p className="text-gray-500 text-sm mt-1">Todos tus turnos anteriores</p>
+          </div>
+          <button className="btn-ghost" onClick={() => navigate('/doctor')}>← Volver</button>
+        </div>
         <div className="space-y-4">
           {historicalAppointments && historicalAppointments.length > 0 ? (
             historicalAppointments.map((appointment, index) => (
               <div
                 key={index}
-                className="bg-gray-50 rounded-lg p-4 shadow-sm mb-4"
+                className="glass-solid rounded-2xl p-6 space-y-2 mb-4"
               >
                 <p>
                   <strong>Localidad:</strong> {t(`locations.${appointment.location || appointment.venue}`)}
@@ -56,9 +52,10 @@ export function HistoricalAppointments() {
                   <strong>Fecha y Hora:</strong>{' '}
                   {formatFechaHora(appointment.dateTime)}
                 </p>
-                <p>
-                  <strong>Estado:</strong> {t(`statuses.${appointment.status}`)}
-                </p>
+                <div className="flex items-center gap-2">
+                  <strong className="text-gray-600">Estado:</strong>
+                  <span className={`badge ${appointment.status === 'Confirmed' ? 'badge-confirmed' : appointment.status === 'Cancelled' ? 'badge-cancelled' : 'badge-pending'}`}>{t(`statuses.${appointment.status}`)}</span>
+                </div>
                 <p>
                   <strong>DNI Paciente:</strong> {appointment.dni}
                 </p>

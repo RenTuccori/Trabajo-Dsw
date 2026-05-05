@@ -281,7 +281,7 @@ CREATE TABLE `healthinsurances` (
 
 LOCK TABLES `healthinsurances` WRITE;
 /*!40000 ALTER TABLE `healthinsurances` DISABLE KEYS */;
-INSERT INTO `healthinsurances` VALUES (1,'Particular','Enabled'),(2,'OSDE','Enabled'),(3,'Swiss Medical','Enabled'),(4,'Galeno','Enabled'),(5,'PAMI','Enabled');
+INSERT INTO `healthinsurances` VALUES (1,'Particular','Enabled'),(2,'OSDE','Enabled'),(3,'Swiss Medical','Enabled'),(4,'Galeno','Enabled'),(5,'PAMI','Enabled'),(6,'(Sin obra social)','Enabled');
 /*!40000 ALTER TABLE `healthinsurances` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -440,8 +440,8 @@ CREATE TABLE `users` (
   `lastName` varchar(100) NOT NULL,
   `phone` varchar(20) DEFAULT NULL,
   `email` varchar(100) DEFAULT NULL,
-  `address` varchar(100) DEFAULT NULL,
-  `healthInsuranceId` int DEFAULT NULL,
+  `address` varchar(100) NOT NULL,
+  `healthInsuranceId` int NOT NULL,
   PRIMARY KEY (`nationalId`),
   KEY `healthInsuranceId` (`healthInsuranceId`),
   CONSTRAINT `users_ibfk_1` FOREIGN KEY (`healthInsuranceId`) REFERENCES `healthinsurances` (`id`)
