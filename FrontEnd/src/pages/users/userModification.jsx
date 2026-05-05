@@ -64,7 +64,9 @@ export function UserModification() {
       const payload = {
         ...formData,
         dni: formData.dni || userByDni?.nationalId || userByDni?.id || formData.dni,
-        phone: `${countryCode} ${formData.phone.trim()}`,
+        phone: formData.phone.trim().startsWith(countryCode) 
+          ? formData.phone.trim() 
+          : `${countryCode} ${formData.phone.trim()}`,
       };
 
       try {
