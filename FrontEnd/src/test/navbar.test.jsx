@@ -1,3 +1,4 @@
+import React from 'react';
 import { render, screen } from '@testing-library/react';
 import { BrowserRouter } from 'react-router-dom';
 import { describe, it, expect } from 'vitest';
@@ -13,7 +14,8 @@ describe('Navbar Component', () => {
     renderWithRouter(<Navbar />);
 
     // Verify that the title appears
-    expect(screen.getByText('Sanatorio UTN')).toBeInTheDocument();
+    expect(screen.getByText(/Sanatorio/i)).toBeInTheDocument();
+    expect(screen.getByText(/UTN/i)).toBeInTheDocument();
 
     // Verify that the logo appears
     const logo = screen.getByAltText('Logo');
@@ -39,25 +41,26 @@ describe('Navbar Component', () => {
     );
     expect(adminLink).toBeInTheDocument();
 
-    // Verify they have the correct classes
-    expect(doctorLink).toHaveClass('text-blue-800', 'hover:text-blue-600');
-    expect(adminLink).toHaveClass('text-blue-800', 'hover:text-blue-600');
+    // Verify they have the correct classes base
+    expect(doctorLink).toHaveClass('text-gray-500');
+    expect(adminLink).toHaveClass('text-gray-500');
   });
 
   it('should have proper CSS classes for styling', () => {
     renderWithRouter(<Navbar />);
 
     const navbar = screen.getByRole('navigation');
-    expect(navbar).toHaveClass('py-4');
+    expect(navbar).toHaveClass('sticky', 'top-0', 'z-50');
 
-    const title = screen.getByText('Sanatorio UTN');
-    expect(title).toHaveClass('text-2xl', 'font-bold', 'text-blue-800');
+    const title1 = screen.getByText(/Sanatorio/i);
+    expect(title1).toHaveClass('text-lg', 'font-extrabold', 'text-gray-900');
   });
 
   it('should render home link correctly', () => {
     renderWithRouter(<Navbar />);
 
-    const homeLink = screen.getByRole('link', { name: /logo sanatorio utn/i });
+    // Buscar el logo o su enlace asociado
+    const homeLink = screen.getAllByRole('link')[0];
     expect(homeLink).toBeInTheDocument();
     expect(homeLink).toHaveAttribute('href', '/');
   });

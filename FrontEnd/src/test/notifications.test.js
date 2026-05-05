@@ -69,7 +69,7 @@ describe('Notification Utils', () => {
       await confirmDialog();
 
       expect(Swal.fire).toHaveBeenCalledWith({
-        title: '¿Estás seguro?',
+        title: '¿Está seguro?',
         text: 'Esta acción no se puede deshacer.',
         icon: 'warning',
         showCancelButton: true,
