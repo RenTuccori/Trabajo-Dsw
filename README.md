@@ -56,13 +56,7 @@ cd Trabajo-Dsw
 npm install
 ```
 
-Esto instalará automáticamente las dependencias del backend. Para el frontend, ejecuta:
-
-```bash
-cd FrontEnd
-npm install
-cd ..
-```
+Esto instalará automáticamente las dependencias del backend y del frontend.
 
 ### 3. Configurar variables de entorno
 
@@ -145,18 +139,16 @@ Crea un archivo llamado `.env` con este contenido:
 
 ```env
 PORT=3000
-NODE_ENV=development
-JWT_SECRET=tu_secreto_super_seguro_aqui
+JWT_SECRET=tu_clave_secreta_aqui_min_32_caracteres
 DB_HOST=localhost
 DB_PORT=3306
 DB_USER=root
 DB_PASSWORD=tu_contraseña_mysql
-DB_NAME=nombre_clinica
-SMTP_HOST=smtp.gmail.com
-SMTP_PORT=587
-SMTP_USER=tu_email@gmail.com
-SMTP_PASS=tu_contraseña_aplicacion
-VITE_API_URL=http://localhost:3000
+DB_DATABASE=clinica_db
+DB_DIALECT=mysql
+DB_SSL=false
+EMAIL_USER=tu_email@gmail.com
+DB_EMAILPASS=tu_contraseña_app_gmail
 ```
 
 Luego vuelve a la raíz:
@@ -171,30 +163,36 @@ cd ..
 
 ### Variables de entorno (Backend)
 
-Crea un archivo `.env` en la carpeta `BackEnd`:
+Copia el archivo de ejemplo y completá con tus valores:
+
+```bash
+cp BackEnd/.env.example BackEnd/.env
+```
 
 ```env
 # Puerto del servidor
 PORT=3000
 
-# Entorno (development o production)
-NODE_ENV=development
-
-# Secreto para firmar tokens JWT
+# Secreto para firmar tokens JWT (mínimo 32 caracteres)
 JWT_SECRET=tu_clave_secreta_aqui_min_32_caracteres
 
-# Configuración de Base de Datos MySQL
+# Base de datos (MySQL local)
 DB_HOST=localhost
 DB_PORT=3306
 DB_USER=root
 DB_PASSWORD=tu_contraseña_mysql
-DB_NAME=clinica_db
+DB_DATABASE=clinica_db
+DB_DIALECT=mysql
+DB_SSL=false
 
-# Configuración de Email (Gmail)
-SMTP_HOST=smtp.gmail.com
-SMTP_PORT=587
-SMTP_USER=tu_email@gmail.com
-SMTP_PASS=tu_contraseña_app_gmail
+# Para bases de datos remotas como Render Postgres, usar DATABASE_URL:
+# DATABASE_URL=postgresql://usuario:contraseña@host/nombre_db
+# DB_DIALECT=postgres
+# DB_SSL=true
+
+# Email (Gmail)
+EMAIL_USER=tu_email@gmail.com
+DB_EMAILPASS=tu_contraseña_app_gmail
 ```
 
 ### Variables de entorno (Frontend)
@@ -212,7 +210,9 @@ VITE_API_URL=http://localhost:3000
 2. Selecciona "Seguridad" en el menú izquierdo
 3. Activa "Verificación en dos pasos"
 4. Ve a "Contraseñas de aplicaciones"
-5. Genera una contraseña para aplicación y cópiala en `SMTP_PASS`
+5. Genera una contraseña para aplicación y cópiala en `DB_EMAILPASS`
+
+> Si no configurás el email, en modo desarrollo se usará automáticamente una cuenta de prueba Ethereal.
 
 ---
 
@@ -267,7 +267,7 @@ npm run preview
 
 | Script | Descripción |
 |--------|-------------|
-| `npm install` | Instala dependencias del backend |
+| `npm install` | Instala dependencias del backend y frontend |
 | `npm start` | Inicia solo el backend en producción |
 | `npm run dev` | Inicia backend y frontend en desarrollo |
 
@@ -330,7 +330,24 @@ Trabajo-Dsw/
 
 ---
 
-## 📚 Documentación adicional
+## � Deploy
+
+| Servicio | URL |
+|----------|-----|
+| **Frontend** | https://trabajo-dsw-frontend.onrender.com |
+| **Backend** | https://trabajo-dsw-backend.onrender.com |
+
+### Credenciales de prueba
+
+| Rol | Usuario | Contraseña |
+|-----|---------|------------|
+| Administrador | `admin` | `admin` |
+| Paciente | `12345678` | `123456` |
+| Doctor | `45678321` | `123456` |
+
+---
+
+## �📚 Documentación adicional
 
 ### Ver documentación de API
 
@@ -342,7 +359,7 @@ Abre el archivo [BackEnd/API_DOCUMENTATION.md](BackEnd/API_DOCUMENTATION.md) par
 - **Express.js** - Framework web
 - **Sequelize** - ORM para base de datos
 - **JWT** - Autenticación segura
-- **MySQL** - Base de datos
+- **MySQL / TiDB Cloud** - Base de datos
 - **Nodemailer** - Envío de emails
 - **Multer** - Carga de archivos
 - **Jest** - Testing
