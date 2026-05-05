@@ -342,7 +342,7 @@ Trabajo-Dsw/
 | Rol | Usuario | Contraseña |
 |-----|---------|------------|
 | Administrador | `admin` | `admin` |
-| Paciente | `12345678` | `123456` |
+| Paciente | `98760102` | `123456` |
 | Doctor | `45678321` | `123456` |
 
 ---
