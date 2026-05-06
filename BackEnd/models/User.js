@@ -39,6 +39,11 @@ export const defineUser = (sequelize) => {
       type: DataTypes.INTEGER,
       allowNull: false,
     },
+    status: {
+      type: DataTypes.STRING(45),
+      allowNull: false,
+      defaultValue: 'Enabled',
+    },
   }, {
     tableName: 'users',
     timestamps: false,

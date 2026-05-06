@@ -26,4 +26,13 @@ export const createPatient = async ({ nationalId }) => {
   return await axiosInstance.post(`patients`, { nationalId });
 };
 
+export const deletePatient = async (nationalId) => {
+  try {
+      const response = await axiosInstance.delete(`patients/${nationalId}`);
+      return response;
+  } catch (error) {
+      throw error;
+  }
+};
+
 

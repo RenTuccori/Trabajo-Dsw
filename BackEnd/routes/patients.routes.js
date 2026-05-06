@@ -3,17 +3,20 @@ import {
   getPatients,
   getPatientByNationalId,
   createPatient,
+  deletePatient,
 } from '../controllers/patients.controllers.js';
-import { Patient, DoctorOrPatient } from '../middleware/authorizeRole.js';
-import { validateCreatePatient, validateUserNationalId } from '../middleware/validators.js';
+import { Patient, DoctorOrPatient, Admin, AnyRole } from '../middleware/authorizeRole.js';
+import { validateCreatePatient, validateUserNationalId, validateNationalIdParam } from '../middleware/validators.js';
 import { validate } from '../middleware/validate.js';
 
 const router = Router();
 
-router.get('/api/patients', DoctorOrPatient, getPatients);
+router.get('/api/patients', AnyRole, getPatients);
 
-router.post('/api/patients/nationalId', Patient, validateUserNationalId, validate, getPatientByNationalId);
+router.post('/api/patients/nationalId', AnyRole, validateUserNationalId, validate, getPatientByNationalId);
 
-router.post('/api/patients', validateCreatePatient, validate, createPatient);
+router.post('/api/patients', AnyRole, validateCreatePatient, validate, createPatient);
+
+router.delete('/api/patients/:nationalId', Admin, validateNationalIdParam, validate, deletePatient);
 
 export default router;

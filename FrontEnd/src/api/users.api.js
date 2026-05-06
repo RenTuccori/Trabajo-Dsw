@@ -114,4 +114,23 @@ export const getUserByNationalId = async ({ dni }) => {
     }
 }
 
+export const getAllUsers = async () => {
+    try {
+        const response = await axiosInstance.get(`users/all`);
+        return response;
+    } catch (error) {
+        throw error;
+    }
+}
+
+export const deleteUser = async (nationalId) => {
+    try {
+        const response = await axiosInstance.delete(`users/${nationalId}`);
+        return response;
+    } catch (error) {
+        throw error;
+    }
+}
+
+
 

@@ -7,6 +7,8 @@ import { CreateInsurance } from '../pages/administration/createInsurance.jsx';
 import { CreateCombination } from '../pages/administration/createCombination.jsx';
 import { CreateDoctor } from '../pages/administration/createDoctor.jsx';
 import { UpdateDoctor } from '../pages/administration/updateDoctor.jsx';
+import { CreateUser as CreatePatient } from '../pages/administration/createPatient.jsx';
+import { UpdateUser as UpdatePatient } from '../pages/administration/updatePatient.jsx';
 import { CreateSchedules } from '../pages/administration/createSchedules.jsx';
 import { Validation } from './validation.jsx';
 import { ProtectedRoute } from '../components/ProtectedRoute.jsx';
@@ -96,6 +98,26 @@ export function AdministrationRoutes() {
             <Validation rol={rol} expected={USER_TYPES.ADMIN}>
               <ProtectedRoute requiredRole={USER_TYPES.ADMIN}>
                 <UpdateDoctor />
+              </ProtectedRoute>
+            </Validation>
+          }
+        />
+        <Route
+          path="/createPatient"
+          element={
+            <Validation rol={rol} expected={USER_TYPES.ADMIN}>
+              <ProtectedRoute requiredRole={USER_TYPES.ADMIN}>
+                <CreatePatient />
+              </ProtectedRoute>
+            </Validation>
+          }
+        />
+        <Route
+          path="/updatePatient/:id"
+          element={
+            <Validation rol={rol} expected={USER_TYPES.ADMIN}>
+              <ProtectedRoute requiredRole={USER_TYPES.ADMIN}>
+                <UpdatePatient />
               </ProtectedRoute>
             </Validation>
           }

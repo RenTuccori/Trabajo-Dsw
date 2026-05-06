@@ -17,7 +17,7 @@ router.post('/api/users/nationalId', AdminOrPatient, validateUserNationalId, val
 
 router.post('/api/users/login', validateUserLogin, validate, getUserByNationalIdPassword);
 
-router.get('/api/users/all', Patient, getUsers);
+router.get('/api/users/all', AdminOrPatient, getUsers);
 
 router.post('/api/users', validateCreateUser, validate, createUser);
 

@@ -232,7 +232,7 @@ export function UpdateDoctor() {
 
   return (
     <div className="page-bg p-6 lg:p-10">
-      <div className="max-w-5xl mx-auto animate-slide-up space-y-6">
+      <div className="max-w-3xl mx-auto animate-slide-up space-y-6">
         <div className="flex items-center gap-4">
           <button onClick={handleRegresar} className="btn-ghost text-sm">← Volver</button>
           <h2 className="text-2xl lg:text-3xl font-extrabold text-gray-900 tracking-tight">Actualizar Doctor</h2>

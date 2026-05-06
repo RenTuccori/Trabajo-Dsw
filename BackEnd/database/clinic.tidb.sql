@@ -34,6 +34,7 @@ CREATE TABLE `users` (
   `email` varchar(100) DEFAULT NULL,
   `address` varchar(100) NOT NULL,
   `healthInsuranceId` int DEFAULT NULL,
+  `status` varchar(45) NOT NULL DEFAULT 'Enabled',
   PRIMARY KEY (`nationalId`),
   KEY `healthInsuranceId` (`healthInsuranceId`),
   CONSTRAINT `users_ibfk_1` FOREIGN KEY (`healthInsuranceId`) REFERENCES `healthinsurances` (`id`)

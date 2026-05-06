@@ -1,25 +1,34 @@
-import { Patient, User, HealthInsurance } from '../models/index.js';
+import { Patient, Doctor, User, HealthInsurance } from '../models/index.js';
+import { Op } from 'sequelize';
 
 export const getAllPatients = async () => {
-  const patients = await Patient.findAll({
-    where: { status: 'Enabled' },
-    include: [{
-      model: User,
-      as: 'user',
-      include: [{
-        model: HealthInsurance,
-        as: 'healthInsurance',
-        attributes: ['name'],
-      }],
-    }],
-      order: [[{ model: User, as: 'user' }, 'lastName', 'ASC']],
+  // Obtenemos los DNIs de todos los doctores
+  const doctors = await Doctor.findAll({
+    attributes: ['nationalId'],
+    raw: true,
   });
-  return patients.map(p => ({
-    patientId: p.id,
-      nationalId: p.user?.nationalId,
-      name: p.user?.firstName,
-      lastName: p.user?.lastName,
-    healthInsurance: p.user?.healthInsurance?.name,
+  const doctorIds = doctors.map(d => d.nationalId);
+
+  // Buscamos los usuarios que NO sean doctores
+  const users = await User.findAll({
+    where: {
+      status: 'Enabled',
+      ...(doctorIds.length > 0 && { nationalId: { [Op.notIn]: doctorIds } })
+    },
+    include: [{
+      model: HealthInsurance,
+      as: 'healthInsurance',
+      attributes: ['name'],
+    }],
+    order: [['lastName', 'ASC']],
+  });
+
+  return users.map(u => ({
+    patientId: u.nationalId, // usaremos nationalId como key en frontend
+    nationalId: u.nationalId,
+    name: u.firstName,
+    lastName: u.lastName,
+    healthInsurance: u.healthInsurance?.name || null,
   }));
 };
 
@@ -36,9 +45,30 @@ export const findPatientByNationalId = async (nationalId) => {
 };
 
 export const createNewPatient = async ({ nationalId }) => {
+  const existing = await Patient.findOne({
+    where: { nationalId },
+  });
+  
+  if (existing) {
+    if (existing.status === 'Enabled') {
+      throw { status: 400, message: 'Ya existe un paciente con ese DNI.' };
+    } else {
+      await existing.update({ status: 'Enabled' });
+      return existing;
+    }
+  }
+  
   const patient = await Patient.create({
     nationalId,
     status: 'Enabled',
   });
   return patient;
+};
+
+export const softDeletePatient = async (nationalId) => {
+  const [affectedRows] = await Patient.update(
+    { status: 'Disabled' },
+    { where: { nationalId } }
+  );
+  return affectedRows > 0;
 };
