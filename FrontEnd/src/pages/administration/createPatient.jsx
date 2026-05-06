@@ -19,6 +19,7 @@ export function CreateUser() {
   const [usuarioExistente, setUsuarioExistente] = useState(false);
   const [formularioVisible, setFormularioVisible] = useState(false);
   const [dniABuscar, setDniABuscar] = useState('');
+  const [searchTerm, setSearchTerm] = useState('');
 
   const [formData, setFormData] = useState({
     dni: '',
@@ -139,6 +140,13 @@ export function CreateUser() {
     navigate(`/admin/updatePatient/${nationalId}`);
   };
 
+  const filteredPatients = patients.filter((patient) => {
+    const term = searchTerm.toLowerCase();
+    const fullName = `${patient.name} ${patient.lastName}`.toLowerCase();
+    const dni = patient.nationalId.toString();
+    return fullName.includes(term) || dni.includes(term);
+  });
+
   return (
     <div className="page-bg p-6 lg:p-10">
       <div className="max-w-3xl mx-auto animate-slide-up space-y-6">
@@ -210,10 +218,19 @@ export function CreateUser() {
         </div>
 
         <div className="glass-solid rounded-2xl p-6 lg:p-8">
-          <h3 className="text-lg font-bold text-gray-900 mb-4">Pacientes Registrados</h3>
+          <div className="flex flex-col md:flex-row justify-between items-center mb-6 gap-4">
+            <h3 className="text-lg font-bold text-gray-900">Pacientes Registrados</h3>
+            <input 
+              type="text" 
+              placeholder="Buscar por nombre, apellido o DNI..." 
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="input md:w-1/2"
+            />
+          </div>
           <ul className="space-y-2">
-            {patients.length > 0 ? (
-              patients.map((patient) => (
+            {filteredPatients.length > 0 ? (
+              filteredPatients.map((patient) => (
                 <li key={patient.patientId} className="glass-list-item flex justify-between items-center gap-4">
                   <span>
                     <strong>{patient.name} {patient.lastName}</strong> - DNI: {patient.nationalId}

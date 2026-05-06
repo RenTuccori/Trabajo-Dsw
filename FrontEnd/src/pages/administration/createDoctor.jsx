@@ -22,6 +22,7 @@ export function CreateDoctor() {
   const [password, setContra] = useState('');
   const [usuarioExistente, setUsuarioExistente] = useState(false);
   const [formularioVisible, setFormularioVisible] = useState(false);
+  const [searchTerm, setSearchTerm] = useState('');
   const [selectedObraSociales, setSelectedObraSociales] = useState(null);
 
   const [formData, setFormData] = useState({
@@ -139,6 +140,12 @@ export function CreateDoctor() {
       console.error(`Error al actualizar el doctor con ID ${doctorId}:`, error);
     }
   };
+
+  const filteredDoctors = doctors.filter((doctor) => {
+    const term = searchTerm.toLowerCase();
+    const fullName = doctor.fullName.toLowerCase();
+    return fullName.includes(term) || (doctor.nationalId && doctor.nationalId.toString().includes(term));
+  });
 
   return (
     <div className="page-bg p-6 lg:p-10">
@@ -313,12 +320,21 @@ export function CreateDoctor() {
         </div>
 
         <div className="glass-solid rounded-2xl p-6 lg:p-8">
-        <h3 className="text-lg font-bold text-gray-900">
-          Doctores creados
-        </h3>
+        <div className="flex flex-col md:flex-row justify-between items-center mb-6 gap-4">
+          <h3 className="text-lg font-bold text-gray-900">
+            Doctores creados
+          </h3>
+          <input 
+            type="text" 
+            placeholder="Buscar por nombre..." 
+            value={searchTerm}
+            onChange={(e) => setSearchTerm(e.target.value)}
+            className="input md:w-1/2"
+          />
+        </div>
         <ul className="space-y-2">
-          {doctors.length > 0 ? (
-            doctors.map((doctor) => (
+          {filteredDoctors.length > 0 ? (
+            filteredDoctors.map((doctor) => (
               <li
                 key={doctor.doctorId}
                 className="glass-list-item flex justify-between items-center gap-4"
