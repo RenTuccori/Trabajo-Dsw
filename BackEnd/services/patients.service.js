@@ -2,14 +2,15 @@ import { Patient, Doctor, User, HealthInsurance } from '../models/index.js';
 import { Op } from 'sequelize';
 
 export const getAllPatients = async () => {
-  // Obtenemos los DNIs de todos los doctores
+  // Obtenemos los DNIs de los doctores activos
   const doctors = await Doctor.findAll({
+    where: { status: 'Enabled' },
     attributes: ['nationalId'],
     raw: true,
   });
   const doctorIds = doctors.map(d => d.nationalId);
 
-  // Buscamos los usuarios que NO sean doctores
+  // Buscamos los usuarios que NO sean doctores (activos)
   const users = await User.findAll({
     where: {
       status: 'Enabled',
