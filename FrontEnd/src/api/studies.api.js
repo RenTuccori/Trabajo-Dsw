@@ -46,9 +46,7 @@ export const downloadStudy = async (studyId) => {
   } catch (error) {
     const data = error.response?.data;
     if (data instanceof Blob && data.type === 'application/json') {
-      const text = await data.text();
-      const parsed = JSON.parse(text);
-      throw new Error(parsed.message || 'Error al descargar el estudio');
+      throw new Error('Error al descargar el estudio');
     }
     throw data || error.message;
   }
