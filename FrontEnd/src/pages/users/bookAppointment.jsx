@@ -76,10 +76,6 @@ export function BookAppointment() {
     }
     
     if (selectedLocation && selectedOption) {
-      console.log('📞 FRONTEND - Obteniendo doctores para localidad y especialidad:', {
-        locationId: selectedLocation.value,
-        specialtyId: selectedOption.value
-      });
       await getDoctors({
         locationId: selectedLocation.value,
         specialtyId: selectedOption.value,

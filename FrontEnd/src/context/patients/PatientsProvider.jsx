@@ -83,10 +83,6 @@ const PatientsProvider = ({ children }) => {
   }
 
   async function getSpecialtiesFunc({ locationId }) {
-    console.log(
-      '🩺 FRONTEND - getSpecialties: Getting specialties for location:',
-      locationId
-    );
     try {
       const response = await getSpecialties({ locationId });
       setSpecialties(response.data);
@@ -96,10 +92,6 @@ const PatientsProvider = ({ children }) => {
   }
 
   async function getDoctorsFunc({ locationId, specialtyId }) {
-    console.log('👨‍⚕️ FRONTEND - getDoctors: Getting doctors for:', {
-      locationId,
-      specialtyId,
-    });
     try {
       const response = await getDoctorsAPI({ locationId, specialtyId });
       setDoctors(response.data);
@@ -112,12 +104,6 @@ const PatientsProvider = ({ children }) => {
     selectedSpecialty,
     selectedLocation,
   }) {
-    console.log('📅 FRONTEND - getDates: Getting dates for:', {
-      doctorId: selectedOption.value,
-      specialtyId: selectedSpecialty.value,
-      locationId: selectedLocation.value,
-    });
-
     try {
       const response = await getAvailableDatesByDocSpecLoc({
         doctorId: selectedOption.value,
@@ -198,22 +184,9 @@ const PatientsProvider = ({ children }) => {
 
   async function getDoctorByIdFunction() {
     try {
-      console.log(
-        '👨‍⚕️ FRONTEND - getDoctorByIdFunction: Getting doctor with ID:',
-        doctorId
-      );
       const response = await getDoctorById(doctorId);
-      console.log(
-        '📋 FRONTEND - getDoctorByIdFunction: Response received:',
-        response.data
-      );
       setDoctorName(response.data.firstName);
       setDoctorLastName(response.data.lastName);
-      console.log(
-        '✅ FRONTEND - getDoctorByIdFunction: Doctor set:',
-        response.data.firstName,
-        response.data.lastName
-      );
     } catch (error) {
       console.error(
         '💥 FRONTEND - getDoctorByIdFunction: Error getting doctor:',
@@ -257,21 +230,12 @@ const PatientsProvider = ({ children }) => {
       locationId: Number(locationId),
     };
 
-    console.log(
-      '📤 FRONTEND - Data object sent to createAppointment:',
-      appointmentData
-    );
-
     if (!appointmentData.patientId || !appointmentData.dateAndTime || !appointmentData.specialtyId || !appointmentData.doctorId || !appointmentData.locationId) {
       throw new Error('Missing required appointment fields (patientId, dateAndTime, specialtyId, doctorId, locationId)');
     }
 
     try {
       const result = await createAppointment(appointmentData);
-      console.log(
-        '✅ FRONTEND - createAppointment: Response received:',
-        result
-      );
       return result;
     } catch (error) {
       console.error('❌ FRONTEND - createAppointment: Error:', error);
@@ -280,16 +244,8 @@ const PatientsProvider = ({ children }) => {
   }
 
   const getPatientByNationalId = useCallback(async () => {
-    console.log(
-      '🔍 FRONTEND - getPatientByNationalId: Getting patient with nationalId:',
-      dni
-    );
     try {
       const response = await getPatientbyNationalId({ nationalId: dni });
-      console.log(
-        '✅ FRONTEND - getPatientByNationalId: Response received:',
-        response
-      );
       setPatientId(response.data.id);
       return response.data.id;
     } catch (error) {
@@ -313,18 +269,10 @@ const PatientsProvider = ({ children }) => {
   }, [dni, getPatientByNationalId]);
 
   async function getPatientAppointmentsFunc() {
-    console.log(
-      '🎯 FRONTEND - getPatientAppointments: Getting appointments for nationalId:',
-      dni
-    );
     setLoadingAppointments(true);
     setAppointmentsError(null);
     try {
       const response = await getPatientAppointments({ nationalId: dni });
-      console.log(
-        '📋 FRONTEND - getPatientAppointments: Response received:',
-        response
-      );
 
       // If API helper returned a string (error message), handle gracefully
       if (typeof response === 'string') {
@@ -338,16 +286,6 @@ const PatientsProvider = ({ children }) => {
           window.notifyError('Error getting appointments');
         }
       } else if (response && response.data) {
-        console.log(
-          '📊 FRONTEND - getPatientAppointments: Appointments data:',
-          response.data
-        );
-        if (response.data.length > 0) {
-          console.log(
-            '🔍 FRONTEND - getPatientAppointments: First appointment structure:',
-            response.data[0]
-          );
-        }
         setAppointments(response.data);
       } else {
         console.error('❌ FRONTEND - Could not get appointments');
@@ -369,12 +307,8 @@ const PatientsProvider = ({ children }) => {
   }
 
   async function confirmAppointmentFunc({ appointmentId }) {
-    console.log(
-      '🎯 FRONTEND - confirmAppointment: Confirming appointment with ID:',
-      appointmentId
-    );
     try {
-      const result = await confirmAppointment({ id: appointmentId });
+      await confirmAppointment({ id: appointmentId });
 
       setAppointments((prevAppointments) =>
         prevAppointments.map((appointment) =>
@@ -382,9 +316,6 @@ const PatientsProvider = ({ children }) => {
             ? { ...appointment, status: 'Confirmed' }
             : appointment
         )
-      );
-      console.log(
-        '📝 FRONTEND - confirmAppointment: Status updated in context'
       );
     } catch (error) {
       console.error('❌ FRONTEND - confirmAppointment: Error:', error);
@@ -398,10 +329,6 @@ const PatientsProvider = ({ children }) => {
       const response = await getUserByNationalId({ dni });
 
       if (response && response.data) {
-        console.log(
-          '✅ FRONTEND - User data obtained:',
-          response.data
-        );
         setUserByNationalId(response.data);
         setUserEmail(response.data.email);
       } else {
@@ -415,12 +342,8 @@ const PatientsProvider = ({ children }) => {
   }
 
   async function cancelAppointmentFunc({ appointmentId }) {
-    console.log(
-      '🎯 FRONTEND - cancelAppointment: Cancelling appointment with ID:',
-      appointmentId
-    );
     try {
-      const result = await cancelAppointment({ id: appointmentId });
+      await cancelAppointment({ id: appointmentId });
 
       setAppointments((prevAppointments) =>
         prevAppointments.map((appointment) =>
@@ -428,9 +351,6 @@ const PatientsProvider = ({ children }) => {
             ? { ...appointment, status: 'Cancelled' }
             : appointment
         )
-      );
-      console.log(
-        '📝 FRONTEND - cancelAppointment: Status updated in context'
       );
     } catch (error) {
       console.error('❌ FRONTEND - cancelAppointment: Error:', error);

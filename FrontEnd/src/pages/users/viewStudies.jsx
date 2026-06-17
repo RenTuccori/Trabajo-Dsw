@@ -136,79 +136,61 @@ function ViewStudies() {
               </p>
             </div>
           ) : (
-            <div className="overflow-x-auto">
-              <table className="w-full table-auto">
-                <thead>
-                  <tr className="bg-brand-50/50">
-                    <th className="px-4 py-2 text-left text-sm font-medium text-brand-700">
-                      Doctor
-                    </th>
-                    <th className="px-4 py-2 text-left text-sm font-medium text-brand-700">
-                      Fecha Realización
-                    </th>
-                    <th className="px-4 py-2 text-left text-sm font-medium text-brand-700">
-                      Archivo
-                    </th>
-                    <th className="px-4 py-2 text-left text-sm font-medium text-brand-700">
-                      Descripción
-                    </th>
-                    <th className="px-4 py-2 text-left text-sm font-medium text-brand-700">
-                      Fecha Carga
-                    </th>
-                    <th className="px-4 py-2 text-left text-sm font-medium text-brand-700">
-                      Acciones
-                    </th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {(estudios || []).map((estudio) => {
-                    const studyId = estudio.idEstudio ?? estudio.idStudy ?? estudio.id;
-                    const performanceDate = estudio.fechaRealizacion ?? estudio.performanceDate;
-                    const uploadDate = estudio.fechaCarga ?? estudio.uploadDate;
-                    const fileName = estudio.nombreArchivo ?? estudio.fileName;
-                    const description = estudio.descripcion ?? estudio.description;
+            <div className="grid gap-4 md:grid-cols-2">
+              {(estudios || []).map((estudio) => {
+                const studyId = estudio.idEstudio ?? estudio.idStudy ?? estudio.id;
+                const performanceDate = estudio.fechaRealizacion ?? estudio.performanceDate;
+                const uploadDate = estudio.fechaCarga ?? estudio.uploadDate;
+                const fileName = estudio.nombreArchivo ?? estudio.fileName;
+                const description = estudio.descripcion ?? estudio.description;
 
-                    return (
-                    <tr
-                      key={studyId}
-                      className="border-t border-gray-200"
-                    >
-                      <td className="px-4 py-2 text-sm">
+                return (
+                  <article
+                    key={studyId}
+                    className="glass-list-item flex h-full flex-col gap-4"
+                  >
+                    <div>
+                      <p className="text-xs font-bold uppercase tracking-widest text-brand-700">
                         Dr. {estudio.doctorName || '-'}
-                      </td>
-                      <td className="px-4 py-2 text-sm">
-                        {formatDate(performanceDate)}
-                      </td>
-                      <td className="px-4 py-2 text-sm">
-                        <span className="text-brand-600 font-medium">
-                          {fileName || 'Archivo sin nombre'}
-                        </span>
-                      </td>
-                      <td className="px-4 py-2 text-sm">
-                        {description || 'Sin descripción'}
-                      </td>
-                      <td className="px-4 py-2 text-sm">
-                        {formatDate(uploadDate)}
-                      </td>
-                      <td className="px-4 py-2 text-sm">
-                        <button
-                          onClick={() =>
-                            downloadEstudio(
-                              studyId,
-                              fileName || 'estudio'
-                            )
-                          }
-                          disabled={downloadingId === studyId}
-                          className="btn-primary text-sm disabled:opacity-50"
-                        >
-                          {downloadingId === studyId ? 'Descargando...' : 'Descargar'}
-                        </button>
-                      </td>
-                    </tr>
-                  );
-                  })}
-                </tbody>
-              </table>
+                      </p>
+                      <h3 className="mt-2 break-words text-base font-semibold text-gray-900">
+                        {fileName || 'Archivo sin nombre'}
+                      </h3>
+                    </div>
+
+                    <div className="grid gap-3 text-sm sm:grid-cols-2">
+                      <div>
+                        <p className="label mb-1">Fecha realizacion</p>
+                        <p className="text-gray-700">{formatDate(performanceDate)}</p>
+                      </div>
+                      <div>
+                        <p className="label mb-1">Fecha carga</p>
+                        <p className="text-gray-700">{formatDate(uploadDate)}</p>
+                      </div>
+                    </div>
+
+                    <div className="flex-1">
+                      <p className="label mb-1">Descripcion</p>
+                      <p className="break-words text-sm leading-6 text-gray-700">
+                        {description || 'Sin descripcion'}
+                      </p>
+                    </div>
+
+                    <button
+                      onClick={() =>
+                        downloadEstudio(
+                          studyId,
+                          fileName || 'estudio'
+                        )
+                      }
+                      disabled={downloadingId === studyId}
+                      className="btn-primary mt-auto text-sm disabled:opacity-50"
+                    >
+                      {downloadingId === studyId ? 'Descargando...' : 'Descargar'}
+                    </button>
+                  </article>
+                );
+              })}
             </div>
           )}
         </div>

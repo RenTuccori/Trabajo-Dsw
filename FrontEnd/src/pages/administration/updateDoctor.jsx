@@ -100,7 +100,7 @@ export function UpdateDoctor() {
           setHasChanges(false);
           navigate('/admin/createDoctor');
         } else {
-          console.log('Error: respuesta incompleta', { response, responseDoctor });
+          console.error('Error: respuesta incompleta', { response, responseDoctor });
           window.notifyError('Error al actualizar el user o doctor');
         }
       } catch (error) {

@@ -298,16 +298,6 @@ const AdministrationProvider = ({ children }) => {
     status,
   }) {
     try {
-      console.log(
-        'data:',
-        locationId,
-        doctorId,
-        specialtyId,
-        dia,
-        hora_inicio,
-        hora_fin,
-        status
-      );
       await createSchedulesAPI({
         locationId,
         doctorId,

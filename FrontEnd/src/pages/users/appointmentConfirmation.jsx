@@ -44,7 +44,7 @@ export function AppointmentConfirmation() {
         }
 
         // Create the appointment - all data should already be in context from bookAppointment
-        const result = await createAppointment();
+        await createAppointment();
         setTurnoCreado(true);
         setError(null);
       } catch (error) {
@@ -81,17 +81,11 @@ export function AppointmentConfirmation() {
             </div>`;
 
       // Llamar a la función para mandar el correo
-      console.log(
-        '📧 FRONTEND - appointmentConfirmation: Enviando email de confirmación'
-      );
       sendEmailFunction({
         to: userEmail, // Asegúrate de pasar el destinatario como tal
         subject: 'Turno Creado',
         html: cuerpo,
       });
-      console.log(
-        '✅ FRONTEND - appointmentConfirmation: Email enviado exitosamente'
-      );
     }
   }, [
     turnoCreado,

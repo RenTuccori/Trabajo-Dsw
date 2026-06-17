@@ -129,11 +129,6 @@ export function UserModification() {
         value: insuranceId || '',
         label: matchingInsurance?.name || 'No asignada',
       });
-      
-      console.log('✅ FRONTEND - Obra social seleccionada:', {
-        value: insuranceId,
-        label: matchingInsurance?.name || 'No asignada',
-      });
     }
   }, [userByDni, healthInsurances]);
 
