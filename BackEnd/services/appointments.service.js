@@ -147,7 +147,11 @@ export const cancelAppointment = async (appointmentId) => {
 };
 
 export const createNewAppointment = async (appointmentData) => {
-  // don't set `email` here - appointments table doesn't include that column
+  const patientExists = await Patient.findByPk(appointmentData.patientId);
+  if (!patientExists) {
+    throw new Error(`Patient with id ${appointmentData.patientId} not found`);
+  }
+
   const appointment = await Appointment.create({
     ...appointmentData,
   });
