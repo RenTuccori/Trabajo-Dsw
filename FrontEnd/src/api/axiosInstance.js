@@ -30,13 +30,8 @@ axiosInstance.interceptors.response.use(
     console.error('🔢 FRONTEND - Status code:', error.response?.status);
     console.error('📄 FRONTEND - Error data:', error.response?.data);
     
-    if (
-      error.response &&
-      (error.response.status === 401 || error.response.status === 403)
-    ) {
-      // Limpiar el token inválido
+    if (error.response && error.response.status === 401) {
       localStorage.removeItem('token');
-      // Redirigir al home
       window.location.href = '/';
     }
     return Promise.reject(error);

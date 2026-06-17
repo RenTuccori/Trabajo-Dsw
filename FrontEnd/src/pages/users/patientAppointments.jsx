@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { usePatients } from '../../context/patients/PatientsProvider.jsx';
 import { useTranslation } from 'react-i18next';
@@ -18,6 +18,8 @@ export function PatientAppointments() {
     getUserByDniFunction,
   } = usePatients();
 
+  const [actionLoading, setActionLoading] = useState(null);
+
   useEffect(() => {
     getUserByDniFunction();
     getPatientAppointments();
@@ -31,9 +33,9 @@ export function PatientAppointments() {
     );
 
     if (result.isConfirmed) {
+      const appointmentId = appointment.appointmentId;
+      setActionLoading(`confirm-${appointmentId}`);
       try {
-        const appointmentId = appointment.appointmentId;
-
         await confirmAppointment({ appointmentId });
         window.notifySuccess('¡Turno confirmado con éxito!'); // Mensaje de éxito
         const cuerpo = `<div style="background-color: #f0f4f8; padding: 20px; border-radius: 10px; font-family: Arial, sans-serif; max-width: 600px; margin: auto;">
@@ -67,6 +69,8 @@ export function PatientAppointments() {
         });
       } catch (error) {
         window.notifyError('Error al confirmar el turno');
+      } finally {
+        setActionLoading(null);
       }
     }
   };
@@ -78,9 +82,9 @@ export function PatientAppointments() {
     );
 
     if (result.isConfirmed) {
+      const appointmentId = appointment.appointmentId;
+      setActionLoading(`cancel-${appointmentId}`);
       try {
-        const appointmentId = appointment.appointmentId;
-
         await cancelAppointment({ appointmentId });
         window.notifySuccess('¡Turno cancelado con éxito!'); // Mensaje de éxito
         const cuerpo = `<div style="background-color: #f0f4f8; padding: 20px; border-radius: 10px; font-family: Arial, sans-serif; max-width: 600px; margin: auto;">
@@ -112,6 +116,8 @@ export function PatientAppointments() {
         });
       } catch (error) {
         window.notifyError('Error al cancelar el turno');
+      } finally {
+        setActionLoading(null);
       }
     }
   };
@@ -173,20 +179,44 @@ export function PatientAppointments() {
                   onClick={() => handleConfirmarTurno(appointment)}
                   disabled={
                     appointment.status === 'Confirmed' ||
-                    appointment.status === 'Cancelled'
+                    appointment.status === 'Cancelled' ||
+                    actionLoading === `confirm-${appointment.appointmentId}` ||
+                    actionLoading === `cancel-${appointment.appointmentId}`
                   }
                 >
-                  Confirmar
+                  {actionLoading === `confirm-${appointment.appointmentId}` ? (
+                    <span className="flex items-center justify-center gap-2">
+                      <svg className="animate-spin h-4 w-4" viewBox="0 0 24 24">
+                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
+                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
+                      </svg>
+                      Confirmando...
+                    </span>
+                  ) : (
+                    'Confirmar'
+                  )}
                 </button>
                 <button
                   className="btn-danger disabled:opacity-50 disabled:cursor-not-allowed"
                   onClick={() => handleCancelarTurno(appointment)}
                   disabled={
                     appointment.status === 'Cancelled' ||
-                    appointment.status === 'Confirmed'
+                    appointment.status === 'Confirmed' ||
+                    actionLoading === `cancel-${appointment.appointmentId}` ||
+                    actionLoading === `confirm-${appointment.appointmentId}`
                   }
                 >
-                  Cancelar
+                  {actionLoading === `cancel-${appointment.appointmentId}` ? (
+                    <span className="flex items-center justify-center gap-2">
+                      <svg className="animate-spin h-4 w-4" viewBox="0 0 24 24">
+                        <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
+                        <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
+                      </svg>
+                      Cancelando...
+                    </span>
+                  ) : (
+                    'Cancelar'
+                  )}
                 </button>
               </div>
             </div>

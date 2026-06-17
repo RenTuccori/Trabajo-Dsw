@@ -14,6 +14,7 @@ export function CreateInsurance() {
   const [nombreObraSocial, setNombreObraSocial] = useState('');
   const [nuevoNombreObraSocial, setNuevoNombreObraSocial] = useState('');
   const [obraSocialAEditar, setObraSocialAEditar] = useState(null);
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     getHealthInsurances();
@@ -22,7 +23,9 @@ export function CreateInsurance() {
 
   const handlecreateInsurance = async (e) => {
     e.preventDefault();
+    if (loading) return;
     if (nombreObraSocial.trim() !== '') {
+      setLoading(true);
       try {
         await createHealthInsurance({ name: nombreObraSocial });
         setNombreObraSocial('');
@@ -31,17 +34,21 @@ export function CreateInsurance() {
       } catch (error) {
         window.notifyError('Error al crear la obra social');
         console.error('Error al crear obra social:', error);
+      } finally {
+        setLoading(false);
       }
     }
   };
 
   const handleBorrarObraSocial = async (healthInsuranceId) => {
+    if (loading) return;
     const result = await window.confirmDialog(
       '¿Estás seguro?',
       '¿Deseas eliminar esta obra social?'
     );
 
     if (result.isConfirmed) {
+      setLoading(true);
       try {
         await deleteHealthInsurance(healthInsuranceId);
         window.notifySuccess('¡Obra Social eliminada con éxito!');
@@ -49,13 +56,17 @@ export function CreateInsurance() {
       } catch (error) {
         window.notifyError('No se puede eliminar esta obra social');
         console.error('Error al borrar obra social:', error);
+      } finally {
+        setLoading(false);
       }
     }
   };
 
   const handleActualizarObraSocial = async (e) => {
     e.preventDefault();
+    if (loading) return;
     if (obraSocialAEditar && nuevoNombreObraSocial.trim() !== '') {
+      setLoading(true);
       try {
         await updateHealthInsurance({
           healthInsuranceId: obraSocialAEditar,
@@ -68,6 +79,8 @@ export function CreateInsurance() {
       } catch (error) {
         window.notifyError('No se puede actualizar esta obra social');
         console.error('Error al actualizar obra social:', error);
+      } finally {
+        setLoading(false);
       }
     }
   };
@@ -93,9 +106,10 @@ export function CreateInsurance() {
             />
             <button
               type="submit"
+              disabled={loading}
               className="btn-primary"
             >
-              Crear obra social
+              {loading ? 'Creando...' : 'Crear obra social'}
             </button>
           </form>
         )}
@@ -113,9 +127,10 @@ export function CreateInsurance() {
             <div className="flex justify-between space-x-2">
               <button
                 type="submit"
+                disabled={loading}
                 className="btn-primary"
               >
-                Actualizar
+                {loading ? 'Actualizando...' : 'Actualizar'}
               </button>
               <button
                 type="button"
@@ -149,9 +164,10 @@ export function CreateInsurance() {
                   <div className="flex gap-2 flex-shrink-0">
                     <button
                       onClick={() => handleBorrarObraSocial(id)}
-                      className="text-xs font-semibold px-3 py-1.5 rounded-xl bg-coral-50 text-coral-500 hover:bg-coral-100 transition-colors"
+                      disabled={loading}
+                      className="text-xs font-semibold px-3 py-1.5 rounded-xl bg-coral-50 text-coral-500 hover:bg-coral-100 transition-colors disabled:opacity-50"
                     >
-                      Eliminar
+                      {loading ? 'Eliminando...' : 'Eliminar'}
                     </button>
                     <button
                       onClick={() => {

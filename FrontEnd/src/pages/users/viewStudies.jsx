@@ -12,6 +12,7 @@ function ViewStudies() {
   const [estudios, setEstudios] = useState([]);
   const [pacienteData, setPacienteData] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [downloadingId, setDownloadingId] = useState(null);
 
   // Cargar patient por DNI
   const loadPaciente = useCallback(async () => {
@@ -69,10 +70,11 @@ function ViewStudies() {
   }, [dni, loadPaciente, loadEstudios]);
 
   const downloadEstudio = async (idEstudio, nombreArchivo) => {
+    if (downloadingId) return;
+    setDownloadingId(idEstudio);
     try {
       const response = await downloadEstudioAPI(idEstudio);
 
-      // Crear enlace de descarga
       const url = window.URL.createObjectURL(new Blob([response.data]));
       const link = document.createElement('a');
       link.href = url;
@@ -84,6 +86,8 @@ function ViewStudies() {
     } catch (error) {
       console.error('Error al descargar estudio:', error);
       notifyError('Error al descargar el archivo');
+    } finally {
+      setDownloadingId(null);
     }
   };
 
@@ -197,9 +201,10 @@ function ViewStudies() {
                               fileName || 'estudio'
                             )
                           }
-                          className="btn-primary text-sm"
+                          disabled={downloadingId === studyId}
+                          className="btn-primary text-sm disabled:opacity-50"
                         >
-                          Descargar
+                          {downloadingId === studyId ? 'Descargando...' : 'Descargar'}
                         </button>
                       </td>
                     </tr>

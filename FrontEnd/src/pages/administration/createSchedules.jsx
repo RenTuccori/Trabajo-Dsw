@@ -24,6 +24,7 @@ export function CreateSchedules() {
   const [schedules, setSchedules] = useState(
     diasSemana.map((dayOption) => ({ dia: dayOption.value, hora_inicio: '', hora_fin: '' }))
   );
+  const [loading, setLoading] = useState(false);
 
   const normalizeDay = (value) =>
     (value || '')
@@ -128,6 +129,7 @@ export function CreateSchedules() {
     setSchedules(nuevosHorarios);
   };
   const agregarHorariosDisponibles = async () => {
+    if (loading) return;
     // Filtramos los que tienen al menos un input lleno
     const horariosConDatos = schedules.filter(
       (horario) => horario.hora_inicio || horario.hora_fin
@@ -197,6 +199,7 @@ export function CreateSchedules() {
     );
 
     if (result.isConfirmed) {
+      setLoading(true);
       try {
         
         const payloadSchedules = horariosValidos.map(h => ({
@@ -217,6 +220,8 @@ export function CreateSchedules() {
         navigate('/admin/createCombination');
       } catch (error) {
         window.notifyError('Error al guardar los schedules.');
+      } finally {
+        setLoading(false);
       }
     }
   };
@@ -295,9 +300,10 @@ export function CreateSchedules() {
 
           <button
             onClick={agregarHorariosDisponibles}
+            disabled={loading}
             className="btn-primary"
           >
-            Confirmar horarios
+            {loading ? 'Guardando...' : 'Confirmar horarios'}
           </button>
         </div>
       </div>

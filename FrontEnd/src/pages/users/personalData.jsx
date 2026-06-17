@@ -13,6 +13,7 @@ export function PersonalData() {
   const { login, dni } = useAuth();
   const [selectedObraSociales, setSelectedObraSociales] = useState(null);
   const [countryCode, setCountryCode] = useState('+54');
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
     dni: '',
@@ -38,8 +39,9 @@ export function PersonalData() {
   };
 
   const handleSubmit = async (e) => {
-    e.preventDefault(); // Previene el comportamiento por defecto del formulario
-    // Client-side validation to mirror backend validators
+    e.preventDefault();
+    if (loading) return;
+    setLoading(true);    // Client-side validation to mirror backend validators
     const nationalIdDigits = String(formData.dni).replace(/\D/g, '');
     if (nationalIdDigits.length < 7) {
       notifyError('El DNI debe tener al menos 7 dígitos.');
@@ -90,6 +92,7 @@ export function PersonalData() {
       navigate('/patient');
     } catch (error) {
       console.error('❌ FRONTEND - Error al registrar usuario:', error);
+      setLoading(false);
       
       // Manejar error de DNI duplicado
       if (error?.code === 'DNI_ALREADY_EXISTS' || error?.message?.includes('ya está registrado')) {
@@ -107,6 +110,8 @@ export function PersonalData() {
       } else {
         notifyError('Hubo un error al registrar el usuario. Intente nuevamente.');
       }
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -315,9 +320,20 @@ export function PersonalData() {
           </div>
           <button
             type="submit"
+            disabled={loading}
             className="btn-primary"
           >
-            Enviar
+            {loading ? (
+              <span className="flex items-center justify-center gap-2">
+                <svg className="animate-spin h-5 w-5" viewBox="0 0 24 24">
+                  <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4" fill="none" />
+                  <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z" />
+                </svg>
+                Registrando...
+              </span>
+            ) : (
+              'Enviar'
+            )}
           </button>
         </form>
       </div>

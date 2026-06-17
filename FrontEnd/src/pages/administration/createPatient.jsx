@@ -20,6 +20,7 @@ export function CreateUser() {
   const [formularioVisible, setFormularioVisible] = useState(false);
   const [dniABuscar, setDniABuscar] = useState('');
   const [searchTerm, setSearchTerm] = useState('');
+  const [loading, setLoading] = useState(false);
 
   const [formData, setFormData] = useState({
     dni: '',
@@ -66,7 +67,9 @@ export function CreateUser() {
 
   const handleBuscarDNI = async (e) => {
     e.preventDefault();
+    if (loading) return;
     if (dniABuscar.trim() !== '') {
+      setLoading(true);
       try {
         const foundUserRes = await getUserByNationalId({ dni: dniABuscar });
         const foundUser = foundUserRes.data;
@@ -79,6 +82,8 @@ export function CreateUser() {
         setUsuarioExistente(false);
         window.notifySuccess('Usuario no encontrado, complete los datos para crearlo.');
         setFormularioVisible(true);
+      } finally {
+        setLoading(false);
       }
     } else {
       window.notifyError('Ingrese un DNI válido');
@@ -87,16 +92,16 @@ export function CreateUser() {
 
   const handleCreatePatient = async (e) => {
     e.preventDefault();
+    if (loading) return;
     try {
       if (!usuarioExistente) {
         if (!formData.password || !formData.firstName || !formData.lastName) {
           window.notifyError('Complete todos los campos para crear al usuario');
           return;
         }
-        // Creamos al usuario base (que ya pasa a ser paciente)
         await createUserApi({ ...formData, dni: dniABuscar, nationalId: dniABuscar });
       }
-      
+      setLoading(true);
       window.notifySuccess('¡Paciente creado con éxito!');
       
       setFormData({
@@ -111,6 +116,8 @@ export function CreateUser() {
       const msg = error?.response?.data?.message || error?.message || 'Error al crear el paciente';
       window.notifyError(msg);
       console.error('Error al crear paciente:', error);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -120,12 +127,14 @@ export function CreateUser() {
   };
 
   const handleDelete = async (nationalId) => {
+    if (loading) return;
     const result = await confirmDialog(
       '¿Eliminar paciente?',
       `¿Estás seguro de que deseas eliminar al paciente con DNI ${nationalId}? Esta acción deshabilitará al usuario.`
     );
     if (!result.isConfirmed) return;
 
+    setLoading(true);
     try {
       await deleteUserApi(nationalId);
       window.notifySuccess(`Paciente con DNI ${nationalId} borrado.`);
@@ -133,6 +142,8 @@ export function CreateUser() {
     } catch (error) {
       window.notifyError(`Error al borrar el paciente ${nationalId}`);
       console.error(`Error al borrar el paciente ${nationalId}:`, error);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -163,7 +174,7 @@ export function CreateUser() {
                   <p className="label text-center">Por favor, ingresa el DNI del paciente que quieres crear</p>
                   <input type="text" value={dniABuscar} onChange={(e) => setDniABuscar(e.target.value)} className="input" required />
                 </div>
-                <button type="submit" className="btn-primary">Buscar usuario</button>
+                <button type="submit" disabled={loading} className="btn-primary">{loading ? 'Buscando...' : 'Buscar usuario'}</button>
               </form>
             )}
 
@@ -210,7 +221,7 @@ export function CreateUser() {
                       <p className="label text-center">Contraseña</p>
                       <input type="password" name="password" value={formData.password} onChange={handleInputChange} required className="input" />
                     </div>
-                    <button type="submit" className="btn-primary">Crear Paciente</button>
+                    <button type="submit" disabled={loading} className="btn-primary">{loading ? 'Creando...' : 'Crear Paciente'}</button>
                   </form>
                 )}
               </>
@@ -238,9 +249,10 @@ export function CreateUser() {
                   <div className="flex gap-2 flex-shrink-0">
                     <button
                       onClick={() => handleDelete(patient.nationalId)}
-                      className="text-xs font-semibold px-3 py-1.5 rounded-xl bg-coral-50 text-coral-500 hover:bg-coral-100 transition-colors"
+                      disabled={loading}
+                      className="text-xs font-semibold px-3 py-1.5 rounded-xl bg-coral-50 text-coral-500 hover:bg-coral-100 transition-colors disabled:opacity-50"
                     >
-                      Eliminar
+                      {loading ? 'Eliminando...' : 'Eliminar'}
                     </button>
                     <button
                       onClick={() => handleUpdate(patient.nationalId)}

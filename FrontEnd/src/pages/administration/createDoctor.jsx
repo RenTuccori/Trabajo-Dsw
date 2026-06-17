@@ -24,6 +24,7 @@ export function CreateDoctor() {
   const [formularioVisible, setFormularioVisible] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedObraSociales, setSelectedObraSociales] = useState(null);
+  const [loading, setLoading] = useState(false);
 
   const [formData, setFormData] = useState({
     dni: '',
@@ -57,7 +58,9 @@ export function CreateDoctor() {
 
   const handleBuscarDNI = async (e) => {
     e.preventDefault();
+    if (loading) return;
     if (dni.trim() !== '') {
+      setLoading(true);
       try {
         const foundUser = await getUserByDni(dni);
         if (foundUser && Object.keys(foundUser).length > 0) {
@@ -83,6 +86,8 @@ export function CreateDoctor() {
           window.notifyError('Error al buscar el user');
           console.error('Error al buscar user:', error);
         }
+      } finally {
+        setLoading(false);
       }
     } else {
       window.notifyError('Ingrese un DNI válido');
@@ -91,17 +96,19 @@ export function CreateDoctor() {
 
   const handlecreateDoctor = async (e) => {
     e.preventDefault();
+    if (loading) return;
     if (appointmentDuration.trim() !== '') {
       if (!usuarioExistente && password.trim() === '') {
         window.notifyError('Complete todos los campos');
         return;
       }
+      setLoading(true);
       try {
         if (!usuarioExistente) {
           await createUser({
             ...formData,
-            dni, // Agregar el dni al nuevo user
-            password, // Password para el usuario
+            dni,
+            password,
           });
         }
         await createDoctor({ dni, appointmentDuration });
@@ -111,6 +118,8 @@ export function CreateDoctor() {
         const msg = error?.response?.data?.message || error?.message || 'Error al crear el doctor';
         window.notifyError(msg);
         console.error('Error al crear doctor:', error);
+      } finally {
+        setLoading(false);
       }
     } else {
       window.notifyError('Complete todos los campos');
@@ -118,27 +127,23 @@ export function CreateDoctor() {
   };
 
   const handleDelete = async (doctorId) => {
+    if (loading) return;
+    setLoading(true);
     try {
       await deleteDoctor(doctorId);
       window.notifySuccess(`Doctor con ID ${doctorId} borrado.`);
-      // Actualiza la lista de doctors
       await getDoctors();
     } catch (error) {
       window.notifyError(`Error al borrar el doctor con ID ${doctorId}`);
       console.error(`Error al borrar el doctor con ID ${doctorId}:`, error);
+    } finally {
+      setLoading(false);
     }
   };
 
   const handleUpdate = async (doctorId) => {
-    try {
-      // Redirigir a un formulario de actualización de doctor con el ID del doctor
-      navigate(`/admin/updateDoctor/${doctorId}`);
-      // Después de actualizar, recargar la lista de doctors
-      await getDoctors();
-    } catch (error) {
-      window.notifyError(`Error al actualizar el doctor con ID ${doctorId}`);
-      console.error(`Error al actualizar el doctor con ID ${doctorId}:`, error);
-    }
+    if (loading) return;
+    navigate(`/admin/updateDoctor/${doctorId}`);
   };
 
   const filteredDoctors = doctors.filter((doctor) => {
@@ -171,9 +176,10 @@ export function CreateDoctor() {
             </div>
             <button
               type="submit"
+              disabled={loading}
               className="btn-primary"
             >
-              Buscar usuario
+              {loading ? 'Buscando...' : 'Buscar usuario'}
             </button>
           </form>
         )}
@@ -289,9 +295,10 @@ export function CreateDoctor() {
                 </div>
                 <button
                   type="submit"
+                  disabled={loading}
                   className="btn-primary"
                 >
-                  Crear doctor
+                  {loading ? 'Creando...' : 'Crear doctor'}
                 </button>
               </form>
             )}
@@ -308,9 +315,10 @@ export function CreateDoctor() {
                 />
                 <button
                   type="submit"
+                  disabled={loading}
                   className="btn-primary"
                 >
-                  Crear doctor
+                  {loading ? 'Creando...' : 'Crear doctor'}
                 </button>
               </form>
             )}
@@ -345,15 +353,17 @@ export function CreateDoctor() {
                 <div className="flex gap-2 flex-shrink-0">
                   <button
                     onClick={() => handleDelete(doctor.doctorId)}
-                    className="text-xs font-semibold px-3 py-1.5 rounded-xl bg-coral-50 text-coral-500 hover:bg-coral-100 transition-colors"
+                    disabled={loading}
+                    className="text-xs font-semibold px-3 py-1.5 rounded-xl bg-coral-50 text-coral-500 hover:bg-coral-100 transition-colors disabled:opacity-50"
                   >
-                    Eliminar
+                    {loading ? 'Eliminando...' : 'Eliminar'}
                   </button>
                   <button
                     onClick={() => handleUpdate(doctor.doctorId)}
-                    className="text-xs font-semibold px-3 py-1.5 rounded-xl bg-brand-50 text-brand-600 hover:bg-brand-100 transition-colors"
+                    disabled={loading}
+                    className="text-xs font-semibold px-3 py-1.5 rounded-xl bg-brand-50 text-brand-600 hover:bg-brand-100 transition-colors disabled:opacity-50"
                   >
-                    Actualizar
+                    {loading ? 'Cargando...' : 'Actualizar'}
                   </button>
                 </div>
               </li>

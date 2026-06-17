@@ -16,6 +16,7 @@ export function CreateSpecialty() {
   const [specialtyName, setSpecialtyName] = useState('');
   const [editingId, setEditingId] = useState(null);
   const [editingName, setEditingName] = useState('');
+  const [loading, setLoading] = useState(false);
 
   // Obtener specialties al cargar el componente
   useEffect(() => {
@@ -26,26 +27,32 @@ export function CreateSpecialty() {
   // Manejar la creación de una nueva especialidad
   const handlecreateSpecialty = async (e) => {
     e.preventDefault();
+    if (loading) return;
     if (specialtyName.trim() !== '') {
+      setLoading(true);
       try {
         await createSpecialty({ name: specialtyName });
-        setSpecialtyName(''); // Reiniciar el campo de texto
+        setSpecialtyName('');
         window.notifySuccess('¡Especialidad creada con éxito!');
-        getAvailableSpecialties(); // Actualizar la lista después de crear una especialidad
+        getAvailableSpecialties();
       } catch (error) {
         window.notifyError('Error al crear la especialidad');
         console.error('Error al crear especialidad:', error);
+      } finally {
+        setLoading(false);
       }
     }
   };
 
   const handleBorrarEspecialidad = async (specialtyId) => {
+    if (loading) return;
     const result = await window.confirmDialog(
       '¿Está seguro?',
       'Esta acción no se puede deshacer.'
     );
 
     if (result.isConfirmed) {
+      setLoading(true);
       try {
         await deleteSpecialty(specialtyId);
         window.notifySuccess('¡Especialidad eliminada con éxito!');
@@ -53,15 +60,19 @@ export function CreateSpecialty() {
       } catch (error) {
         window.notifyError('Error al eliminar la especialidad');
         console.error('Error al borrar especialidad:', error);
+      } finally {
+        setLoading(false);
       }
     }
   };
 
   const handleUpdateSpecialty = async (specialtyId) => {
+    if (loading) return;
     if (editingName.trim() === '') {
       window.notifyError('El nombre no puede estar vacío');
       return;
     }
+    setLoading(true);
     try {
       await updateSpecialty({ specialtyId, name: editingName });
       window.notifySuccess('¡Especialidad actualizada con éxito!');
@@ -71,6 +82,8 @@ export function CreateSpecialty() {
     } catch (error) {
       window.notifyError('Error al actualizar la especialidad');
       console.error('Error al actualizar especialidad:', error);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -93,9 +106,10 @@ export function CreateSpecialty() {
           />
           <button
             type="submit"
+            disabled={loading}
             className="btn-primary"
           >
-            Crear especialidad
+            {loading ? 'Creando...' : 'Crear especialidad'}
           </button>
         </form>
 
@@ -131,9 +145,10 @@ export function CreateSpecialty() {
                     <>
                       <button
                         onClick={() => handleUpdateSpecialty(especialidad.id)}
-                        className="text-xs font-semibold px-3 py-1.5 rounded-xl bg-brand-50 text-brand-600 hover:bg-brand-100 transition-colors"
+                        disabled={loading}
+                        className="text-xs font-semibold px-3 py-1.5 rounded-xl bg-brand-50 text-brand-600 hover:bg-brand-100 transition-colors disabled:opacity-50"
                       >
-                        Guardar
+                        {loading ? 'Guardando...' : 'Guardar'}
                       </button>
                       <button
                         onClick={() => { setEditingId(null); setEditingName(''); }}
@@ -152,9 +167,10 @@ export function CreateSpecialty() {
                       </button>
                       <button
                         onClick={() => handleBorrarEspecialidad(especialidad.id)}
-                        className="text-xs font-semibold px-3 py-1.5 rounded-xl bg-coral-50 text-coral-500 hover:bg-coral-100 transition-colors"
+                        disabled={loading}
+                        className="text-xs font-semibold px-3 py-1.5 rounded-xl bg-coral-50 text-coral-500 hover:bg-coral-100 transition-colors disabled:opacity-50"
                       >
-                        Eliminar
+                        {loading ? 'Eliminando...' : 'Eliminar'}
                       </button>
                     </>
                   )}

@@ -16,8 +16,9 @@ export function UpdateDoctor() {
   const { doctors, getDoctors } = useAdministration();
 
   const [selectedObraSociales, setSelectedObraSociales] = useState(null);
-  const [hasChanges, setHasChanges] = useState(false); // Estado para rastrear cambios
-  const [, setOriginalData] = useState({}); // Datos originales para comparar
+  const [hasChanges, setHasChanges] = useState(false);
+  const [, setOriginalData] = useState({});
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
   const { doctorId } = useParams(); // Usa useParams para obtener el doctorId desde la URL
 
@@ -51,17 +52,16 @@ export function UpdateDoctor() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    if (loading) return;
 
-    // Alerta de confirmación
     const result = await window.confirmDialog(
       'Guardar cambios',
       '¿Estás seguro que deseas guardar los cambios?'
     );
 
     if (result.isConfirmed) {
+      setLoading(true);
       try {
-
-        // Verificar que el token existe
         const token = localStorage.getItem('token');
         if (!token) {
           window.notifyError(
@@ -71,7 +71,6 @@ export function UpdateDoctor() {
           return;
         }
 
-        // Preparar datos para actualizar user (solo los campos que espera el backend)
         const usuarioData = {
           dni: formData.dni,
           nationalId: formData.dni ? Number(formData.dni) : undefined,
@@ -86,31 +85,20 @@ export function UpdateDoctor() {
             : {}),
         };
 
-        // Preparar datos para actualizar doctor
         const doctorData = {
           doctorId: formData.doctorId,
           appointmentDuration: formData.appointmentDuration,
         };
 
-
         const response = await updateUser(usuarioData);
-
         const responseDoctor = await updateDoctor(doctorData);
 
-        if (
-          response &&
-          response.data &&
-          responseDoctor &&
-          responseDoctor.data
-        ) {
+        if (response && response.data && responseDoctor && responseDoctor.data) {
           window.notifySuccess('Usuario actualizado con éxito');
           setHasChanges(false);
           navigate('/admin/createDoctor');
         } else {
-          console.log('Error: respuesta incompleta', {
-            response,
-            responseDoctor,
-          });
+          console.log('Error: respuesta incompleta', { response, responseDoctor });
           window.notifyError('Error al actualizar el user o doctor');
         }
       } catch (error) {
@@ -118,16 +106,13 @@ export function UpdateDoctor() {
         if (error.response?.status === 403) {
           window.notifyError('No tienes permisos para realizar esta acción');
         } else if (error.response?.status === 401) {
-          window.notifyError(
-            'Sesión expirada. Por favor, inicia sesión nuevamente.'
-          );
+          window.notifyError('Sesión expirada. Por favor, inicia sesión nuevamente.');
           navigate('/login');
         } else {
-          window.notifyError(
-            'Error al actualizar el user: ' +
-              (error.message || 'Error desconocido')
-          );
+          window.notifyError('Error al actualizar el user: ' + (error.message || 'Error desconocido'));
         }
+      } finally {
+        setLoading(false);
       }
     }
   };
@@ -343,9 +328,10 @@ export function UpdateDoctor() {
           </div>
           <button
             type="submit"
+            disabled={loading}
             className="btn-primary"
           >
-            Guardar cambios
+            {loading ? 'Guardando...' : 'Guardar cambios'}
           </button>
         </form>
         </div>

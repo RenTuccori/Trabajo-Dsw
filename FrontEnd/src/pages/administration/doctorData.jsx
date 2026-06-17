@@ -8,7 +8,8 @@ export function DoctorData() {
   const { healthInsurances, getHealthInsurances, createUser, createDoctor } =
     useAdministration();
   const [selectedObraSociales, setSelectedObraSociales] = useState(null);
-  const [usuarioCreado, setUsuarioCreado] = useState(false); // Para manejar el flujo de creación de user y doctor
+  const [usuarioCreado, setUsuarioCreado] = useState(false);
+  const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
     dni: '',
@@ -44,28 +45,36 @@ export function DoctorData() {
 
   const handleSubmitUsuario = async (e) => {
     e.preventDefault();
+    if (loading) return;
+    setLoading(true);
     try {
-      await createUser(formData); // Crea el user
-      setUsuarioCreado(true); // Marca que el user ha sido creado
+      await createUser(formData);
+      setUsuarioCreado(true);
       window.notifySuccess(
         'Usuario creado con éxito. Ahora complete los datos del doctor.'
       );
     } catch (error) {
       window.notifyError('Error al crear el user');
       console.error('Error al crear user:', error);
+    } finally {
+      setLoading(false);
     }
   };
 
   const handleSubmitDoctor = async (e) => {
     e.preventDefault();
+    if (loading) return;
+    setLoading(true);
     try {
       const { dni } = formData;
-      await createDoctor({ dni, ...doctorData }); // Crea el doctor utilizando el DNI del user creado
+      await createDoctor({ dni, ...doctorData });
       window.notifySuccess('¡Doctor creado con éxito!');
-      navigate('/admin'); // Redirige después de crear el doctor
+      navigate('/admin');
     } catch (error) {
       window.notifyError('Error al crear el doctor');
       console.error('Error al crear doctor:', error);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -185,9 +194,10 @@ export function DoctorData() {
             </div>
             <button
               type="submit"
+              disabled={loading}
               className="btn-primary"
             >
-              Crear user
+              {loading ? 'Creando...' : 'Crear user'}
             </button>
           </form>
         )}
@@ -221,9 +231,10 @@ export function DoctorData() {
             </div>
             <button
               type="submit"
+              disabled={loading}
               className="btn-primary"
             >
-              Crear doctor
+              {loading ? 'Creando...' : 'Crear doctor'}
             </button>
           </form>
         )}

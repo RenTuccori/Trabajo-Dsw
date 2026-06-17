@@ -10,6 +10,7 @@ export function UpdateUser() {
 
   const [healthInsurances, setHealthInsurances] = useState([]);
   const [selectedObraSociales, setSelectedObraSociales] = useState(null);
+  const [loading, setLoading] = useState(false);
 
   const [formData, setFormData] = useState({
     firstName: '',
@@ -68,6 +69,8 @@ export function UpdateUser() {
 
   const handleUpdatePatient = async (e) => {
     e.preventDefault();
+    if (loading) return;
+    setLoading(true);
     try {
       await updateUser({
         nationalId: id,
@@ -84,6 +87,8 @@ export function UpdateUser() {
     } catch (error) {
       window.notifyError('Error al actualizar el paciente');
       console.error(error);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -132,7 +137,7 @@ export function UpdateUser() {
               <p className="label">Nueva Contraseña (opcional)</p>
               <input type="password" name="password" value={formData.password} onChange={handleInputChange} placeholder="Dejar en blanco para no cambiar" className="input" />
             </div>
-            <button type="submit" className="btn-primary w-full mt-4">Actualizar Paciente</button>
+            <button type="submit" disabled={loading} className="btn-primary w-full mt-4">{loading ? 'Actualizando...' : 'Actualizar Paciente'}</button>
           </form>
         </div>
       </div>

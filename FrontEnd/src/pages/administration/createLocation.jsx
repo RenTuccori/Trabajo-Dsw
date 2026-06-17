@@ -12,6 +12,7 @@ export function CreateLocation() {
   const [editingId, setEditingId] = useState(null);
   const [editingName, setEditingName] = useState('');
   const [editingAddress, setEditingAddress] = useState('');
+  const [loading, setLoading] = useState(false);
 
   // Obtener locations al cargar el componente
   useEffect(() => {
@@ -22,6 +23,7 @@ export function CreateLocation() {
   // Manejar la creación de una nueva location
   const handleCreateLocation = async (e) => {
     e.preventDefault();
+    if (loading) return;
     if (locationName.trim() === '') {
       window.notifyError('Debes ingresar un nombre para la sede.');
       return;
@@ -36,25 +38,30 @@ export function CreateLocation() {
       return;
     }
 
+    setLoading(true);
     try {
       await createNewLocation({ name: locationName, address: locationAddress });
-      setLocationName(''); // Reiniciar el campo de texto
+      setLocationName('');
       setLocationAddress('');
-      window.notifySuccess('¡Sede creada con éxito!'); // Mostrar mensaje de éxito
-      getLocations(); // Actualizar la lista después de crear una sede
+      window.notifySuccess('¡Sede creada con éxito!');
+      getLocations();
     } catch (error) {
-      window.notifyError('Error al crear la sede'); // Mostrar mensaje de error
+      window.notifyError('Error al crear la sede');
       console.error('Error al crear sede:', error);
+    } finally {
+      setLoading(false);
     }
   };
 
   const handleDeleteLocation = async (locationId) => {
+    if (loading) return;
     const result = await window.confirmDialog(
       '¿Estás seguro?',
       '¿Deseas eliminar esta sede?'
     );
 
     if (result.isConfirmed) {
+      setLoading(true);
       try {
         await deleteLocation(locationId);
         window.notifySuccess('¡Sede eliminada con éxito!');
@@ -62,15 +69,19 @@ export function CreateLocation() {
       } catch (error) {
         window.notifyError('Error al eliminar la sede');
         console.error('Error al borrar sede:', error);
+      } finally {
+        setLoading(false);
       }
     }
   };
 
   const handleUpdateLocation = async (locationId) => {
+    if (loading) return;
     if (editingName.trim() === '') {
       window.notifyError('El nombre no puede estar vacío');
       return;
     }
+    setLoading(true);
     try {
       await updateLocation({ locationId, name: editingName, address: editingAddress });
       window.notifySuccess('¡Sede actualizada con éxito!');
@@ -81,6 +92,8 @@ export function CreateLocation() {
     } catch (error) {
       window.notifyError('Error al actualizar la sede');
       console.error('Error al actualizar sede:', error);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -108,9 +121,10 @@ export function CreateLocation() {
           />
           <button
             type="submit"
+            disabled={loading}
             className="btn-primary"
           >
-            Crear sede
+            {loading ? 'Creando...' : 'Crear sede'}
           </button>
         </form>
 
@@ -153,9 +167,10 @@ export function CreateLocation() {
                     <>
                       <button
                         onClick={() => handleUpdateLocation(location.id)}
-                        className="text-xs font-semibold px-3 py-1.5 rounded-xl bg-brand-50 text-brand-600 hover:bg-brand-100 transition-colors"
+                        disabled={loading}
+                        className="text-xs font-semibold px-3 py-1.5 rounded-xl bg-brand-50 text-brand-600 hover:bg-brand-100 transition-colors disabled:opacity-50"
                       >
-                        Guardar
+                        {loading ? 'Guardando...' : 'Guardar'}
                       </button>
                       <button
                         onClick={() => { setEditingId(null); setEditingName(''); setEditingAddress(''); }}
@@ -174,9 +189,10 @@ export function CreateLocation() {
                       </button>
                       <button
                         onClick={() => handleDeleteLocation(location.id)}
-                        className="text-xs font-semibold px-3 py-1.5 rounded-xl bg-coral-50 text-coral-500 hover:bg-coral-100 transition-colors"
+                        disabled={loading}
+                        className="text-xs font-semibold px-3 py-1.5 rounded-xl bg-coral-50 text-coral-500 hover:bg-coral-100 transition-colors disabled:opacity-50"
                       >
-                        Eliminar
+                        {loading ? 'Eliminando...' : 'Eliminar'}
                       </button>
                     </>
                   )}

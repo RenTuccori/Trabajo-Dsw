@@ -24,6 +24,7 @@ export function CreateCombination() {
   const [selectedSpecialty, setSelectedSpecialty] = useState(null);
   const [selectedDoctor, setSelectedDoctor] = useState(null);
   const [searchFilter, setSearchFilter] = useState('');
+  const [loading, setLoading] = useState(false);
 
   useEffect(() => {
     getLocations();
@@ -80,6 +81,7 @@ export function CreateCombination() {
   };
 
   const confirmCombination = async () => {
+    if (loading) return;
     if (selectedLocation && selectedSpecialty && selectedDoctor) {
       const result = await window.confirmDialog(
         '¿Está seguro?',
@@ -87,6 +89,7 @@ export function CreateCombination() {
       );
 
       if (result.isConfirmed) {
+        setLoading(true);
         try {
           await createLocationSpecialtyDoctor({
             locationId: selectedLocation.value,
@@ -95,7 +98,6 @@ export function CreateCombination() {
           });
 
           window.notifySuccess('¡Combinación creada con éxito!');
-          // Navegar automáticamente a crear horarios para esta combinación
           navigate('/admin/createSchedules', {
             state: {
               locationId: selectedLocation.value,
@@ -112,25 +114,30 @@ export function CreateCombination() {
           } else {
             window.notifyError('Error al crear la combinación');
           }
+        } finally {
+          setLoading(false);
         }
       }
     }
   };
 
   const handleDeleteCombination = async (locationId, doctorId, specialtyId) => {
+    if (loading) return;
     const result = await window.confirmDialog(
       '¿Estás seguro?',
       '¿Deseas eliminar esta combinación?'
     );
 
     if (result.isConfirmed) {
+      setLoading(true);
       try {
         await deleteLocationSpecialtyDoctor({ locationId, doctorId, specialtyId });
         window.notifySuccess('¡Combinación eliminada con éxito!');
-        // Refresca las combinations después de la eliminación
         getCombinations();
       } catch (error) {
         window.notifySuccess('Error al eliminar la combinación');
+      } finally {
+        setLoading(false);
       }
     }
   };
@@ -208,10 +215,10 @@ export function CreateCombination() {
           <button
             type="button"
             className="btn-primary"
-            disabled={!selectedDoctor}
+            disabled={!selectedDoctor || loading}
             onClick={confirmCombination}
           >
-            Confirmar
+            {loading ? 'Creando...' : 'Confirmar'}
           </button>
         </form>
 
@@ -254,7 +261,7 @@ export function CreateCombination() {
                     </span>
                     <div className="flex gap-2 flex-shrink-0">
                       <button
-                        className="text-xs font-semibold px-3 py-1.5 rounded-xl bg-coral-50 text-coral-500 hover:bg-coral-100 transition-colors"
+                        className="text-xs font-semibold px-3 py-1.5 rounded-xl bg-coral-50 text-coral-500 hover:bg-coral-100 transition-colors disabled:opacity-50"
                         onClick={() =>
                           handleDeleteCombination(
                             combination.locationId,
@@ -262,8 +269,9 @@ export function CreateCombination() {
                             combination.specialtyId
                           )
                         }
+                        disabled={loading}
                       >
-                        Eliminar
+                        {loading ? 'Eliminando...' : 'Eliminar'}
                       </button>
                       <button
                         className="text-xs font-semibold px-3 py-1.5 rounded-xl bg-brand-50 text-brand-600 hover:bg-brand-100 transition-colors"
