@@ -20,39 +20,55 @@ const renderWithRouter = (component) => {
 describe('ProtectedRoute Component', () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    mockComprobarToken.mockReturnValue(true);
   });
 
-  it('should render children when provided', () => {
+  it('should render children when the token is valid for the required role', async () => {
     const testContent = <div>Protected Content</div>;
 
     renderWithRouter(
       <ProtectedRoute requiredRole="Admin">{testContent}</ProtectedRoute>
     );
 
-    expect(screen.getByText('Protected Content')).toBeInTheDocument();
+    expect(await screen.findByText('Protected Content')).toBeInTheDocument();
   });
 
-  it('should call comprobarToken with required role', () => {
+  it('should call comprobarToken with required role', async () => {
     const testContent = <div>Test Content</div>;
 
     renderWithRouter(
       <ProtectedRoute requiredRole="Doctor">{testContent}</ProtectedRoute>
     );
 
+    await screen.findByText('Test Content');
     expect(mockComprobarToken).toHaveBeenCalledWith('Doctor');
   });
 
-  it('should call comprobarToken with Patient role', () => {
+  it('should call comprobarToken with Patient role', async () => {
     const testContent = <div>Patient Area</div>;
 
     renderWithRouter(
       <ProtectedRoute requiredRole="Patient">{testContent}</ProtectedRoute>
     );
 
+    await screen.findByText('Patient Area');
     expect(mockComprobarToken).toHaveBeenCalledWith('Patient');
   });
 
-  it('should render multiple children correctly', () => {
+  it('should render access denied when the token is not valid for the role', async () => {
+    mockComprobarToken.mockReturnValue(false);
+
+    renderWithRouter(
+      <ProtectedRoute requiredRole="Admin">
+        <div>Protected Content</div>
+      </ProtectedRoute>
+    );
+
+    expect(await screen.findByText('Acceso Denegado')).toBeInTheDocument();
+    expect(screen.queryByText('Protected Content')).not.toBeInTheDocument();
+  });
+
+  it('should render multiple children correctly', async () => {
     renderWithRouter(
       <ProtectedRoute requiredRole="Admin">
         <h1>Title</h1>
@@ -61,7 +77,7 @@ describe('ProtectedRoute Component', () => {
       </ProtectedRoute>
     );
 
-    expect(screen.getByText('Title')).toBeInTheDocument();
+    expect(await screen.findByText('Title')).toBeInTheDocument();
     expect(screen.getByText('Description')).toBeInTheDocument();
     expect(screen.getByText('Action')).toBeInTheDocument();
   });

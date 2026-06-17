@@ -1,5 +1,5 @@
 import { AuthContext } from './AuthContext.jsx';
-import { useContext, useState, useEffect } from 'react';
+import { useCallback, useContext, useState, useEffect } from 'react';
 import { jwtDecode } from 'jwt-decode';
 import PropTypes from 'prop-types';
 import { useNavigate } from 'react-router-dom';
@@ -24,38 +24,66 @@ const AuthProvider = ({ children }) => {
   const [rol, setRol] = useState('');
   const navigate = useNavigate();
 
-  useEffect(() => {
-    // Initialize status from localStorage when component mounts
-    const token = localStorage.getItem('token');
-    if (token) {
-      try {
-        const decoded = jwtDecode(token);
-        if (decoded.exp > Date.now() / 1000) {
-          // Valid token, restore status based on token role
-          if (decoded.role === 'Patient') {
-            setDni(decoded.nationalId);
-            setNombreUsuario(decoded.firstName || '');
-            setApellidoUsuario(decoded.lastName || '');
-            setRol('Patient');
-          } else if (decoded.role === 'Doctor') {
-            setDoctorId(decoded.doctorId);
-            setNombreUsuario(decoded.firstName || '');
-            setApellidoUsuario(decoded.lastName || '');
-            setRol('Doctor');
-          } else if (decoded.role === 'Admin') {
-            setIdAdmin(decoded.id);
-            setRol('Admin');
-          }
-        } else {
-          // Token expired, clear
-          localStorage.removeItem('token');
-        }
-      } catch (error) {
-        console.error('Error al restaurar sesión:', error);
-        localStorage.removeItem('token');
-      }
+  const clearSessionState = useCallback((removeToken = false) => {
+    if (removeToken) {
+      localStorage.removeItem('token');
     }
+
+    setDni('');
+    setDoctorId('');
+    setIdAdmin('');
+    setNombreUsuario('');
+    setApellidoUsuario('');
+    setRol('');
   }, []);
+
+  const restoreSessionState = useCallback((decoded) => {
+    setDni('');
+    setDoctorId('');
+    setIdAdmin('');
+    setNombreUsuario(decoded.firstName || '');
+    setApellidoUsuario(decoded.lastName || '');
+
+    switch (decoded.role) {
+      case 'Patient':
+        setDni(decoded.nationalId);
+        setRol('Patient');
+        break;
+      case 'Doctor':
+        setDoctorId(decoded.doctorId);
+        setRol('Doctor');
+        break;
+      case 'Admin':
+        setIdAdmin(decoded.id);
+        setNombreUsuario('');
+        setApellidoUsuario('');
+        setRol('Admin');
+        break;
+      default:
+        clearSessionState(true);
+    }
+  }, [clearSessionState]);
+
+  useEffect(() => {
+    const token = localStorage.getItem('token');
+
+    if (!token) {
+      return;
+    }
+
+    try {
+      const decoded = jwtDecode(token);
+
+      if (decoded.exp > Date.now() / 1000) {
+        restoreSessionState(decoded);
+      } else {
+        clearSessionState(true);
+      }
+    } catch (error) {
+      console.error('Error al restaurar sesión:', error);
+      clearSessionState(true);
+    }
+  }, [clearSessionState, restoreSessionState]);
 
   async function login({ identifier, credential, userType }) {
     try {
@@ -74,11 +102,7 @@ const AuthProvider = ({ children }) => {
           localStorage.setItem('token', token);
 
           const decodedPatient = jwtDecode(token);
-
-          setDni(decodedPatient.nationalId);
-          setNombreUsuario(decodedPatient.firstName || '');
-          setApellidoUsuario(decodedPatient.lastName || '');
-          setRol('Patient');
+          restoreSessionState(decodedPatient);
           navigate('/patient');
           break;
         }
@@ -91,10 +115,7 @@ const AuthProvider = ({ children }) => {
           token = response.data;
           localStorage.setItem('token', token);
           const decodedDoctor = jwtDecode(token);
-          setDoctorId(decodedDoctor.doctorId);
-          setNombreUsuario(decodedDoctor.firstName || '');
-          setApellidoUsuario(decodedDoctor.lastName || '');
-          setRol('Doctor');
+          restoreSessionState(decodedDoctor);
           navigate('/doctor');
           break;
         }
@@ -107,8 +128,7 @@ const AuthProvider = ({ children }) => {
           token = response.data;
           localStorage.setItem('token', token);
           const decodedAdmin = jwtDecode(token);
-          setIdAdmin(decodedAdmin.id);
-          setRol('Admin');
+          restoreSessionState(decodedAdmin);
           navigate('/admin');
           break;
         }
@@ -136,66 +156,39 @@ const AuthProvider = ({ children }) => {
     }
   }
 
-  function comprobarToken(userType) {
-    if (localStorage.getItem('token')) {
-      try {
-        const decoded = jwtDecode(localStorage.getItem('token'));
+  const comprobarToken = useCallback((userType) => {
+    const token = localStorage.getItem('token');
 
-        if (decoded.exp < Date.now() / 1000) {
-          console.error('⏰ FRONTEND - Token expired');
-          localStorage.removeItem('token');
-          // Limpiar todos los estados
-          setDni('');
-          setDoctorId('');
-          setIdAdmin('');
-          setNombreUsuario('');
-          setApellidoUsuario('');
-          setRol('');
-          navigate('/');
-        } else {
-          switch (userType) {
-            case 'Patient': // Paciente
-              setDni(decoded.nationalId);
-              setNombreUsuario(decoded.firstName || '');
-              setApellidoUsuario(decoded.lastName || '');
-              setRol('Patient');
-              break;
-            case 'Doctor': // Doctor
-              setDoctorId(decoded.doctorId);
-              setNombreUsuario(decoded.firstName || '');
-              setApellidoUsuario(decoded.lastName || '');
-              setRol('Doctor');
-              break;
-            case 'Admin': // Admin
-              setIdAdmin(decoded.id);
-              setRol('Admin');
-              break;
-            default:
-              throw new Error('Tipo de user no válido');
-          }
-        }
-      } catch (error) {
-        console.error('💥 FRONTEND - Error decoding token:', error);
-        localStorage.removeItem('token');
-        // Limpiar todos los estados
-        setDni('');
-        setDoctorId('');
-        setIdAdmin('');
-        setNombreUsuario('');
-        setApellidoUsuario('');
-        setRol('');
-        navigate('/');
-      }
-    } else {
-      // Limpiar todos los estados cuando no hay token
-      setDni('');
-      setDoctorId('');
-      setIdAdmin('');
-      setNombreUsuario('');
-      setApellidoUsuario('');
-      setRol('');
+    if (!token) {
+      clearSessionState();
+      return false;
     }
-  }
+
+    try {
+      const decoded = jwtDecode(token);
+
+      if (decoded.exp < Date.now() / 1000) {
+        console.error('⏰ FRONTEND - Token expired');
+        clearSessionState(true);
+        navigate('/');
+        return false;
+      }
+
+      restoreSessionState(decoded);
+
+      if (userType && decoded.role !== userType) {
+        return false;
+      }
+
+      return true;
+    } catch (error) {
+      console.error('💥 FRONTEND - Error decoding token:', error);
+      clearSessionState(true);
+      navigate('/');
+      return false;
+    }
+  }, [clearSessionState, navigate, restoreSessionState]);
+
 
   return (
     <AuthContext.Provider

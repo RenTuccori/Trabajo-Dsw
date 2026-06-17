@@ -7,13 +7,10 @@ import { UserModification } from '../pages/users/userModification.jsx';
 import { PatientAppointments } from '../pages/users/patientAppointments.jsx';
 import { AppointmentConfirmation } from '../pages/users/appointmentConfirmation';
 import ViewStudies from '../pages/users/viewStudies.jsx';
-import { Validation } from './validation.jsx';
 import { ProtectedRoute } from '../components/ProtectedRoute.jsx';
-import { useAuth } from '../context/global/AuthProvider.jsx';
 import { USER_TYPES } from '../constants/userTypes.js';
 
 export function PatientsRoutes() {
-  const { rol } = useAuth();
   return (
     <PatientsProvider>
       <Routes>
@@ -22,51 +19,41 @@ export function PatientsRoutes() {
         <Route
           path="/bookAppointment"
           element={
-            <Validation rol={rol} expected={USER_TYPES.PATIENT}>
-              <ProtectedRoute requiredRole={USER_TYPES.PATIENT}>
-                <BookAppointment />
-              </ProtectedRoute>
-            </Validation>
+            <ProtectedRoute requiredRole={USER_TYPES.PATIENT}>
+              <BookAppointment />
+            </ProtectedRoute>
           }
         />
         <Route
           path="/editPersonalData"
           element={
-            <Validation rol={rol} expected={USER_TYPES.PATIENT}>
-              <ProtectedRoute requiredRole={USER_TYPES.PATIENT}>
-                <UserModification />
-              </ProtectedRoute>
-            </Validation>
+            <ProtectedRoute requiredRole={USER_TYPES.PATIENT}>
+              <UserModification />
+            </ProtectedRoute>
           }
         />
         <Route
           path="/appointmentConfirmation"
           element={
-            <Validation rol={rol} expected={USER_TYPES.PATIENT}>
-              <ProtectedRoute requiredRole={USER_TYPES.PATIENT}>
-                <AppointmentConfirmation />
-              </ProtectedRoute>
-            </Validation>
+            <ProtectedRoute requiredRole={USER_TYPES.PATIENT}>
+              <AppointmentConfirmation />
+            </ProtectedRoute>
           }
         />
         <Route
           path="/myAppointments"
           element={
-            <Validation rol={rol} expected={USER_TYPES.PATIENT}>
-              <ProtectedRoute requiredRole={USER_TYPES.PATIENT}>
-                <PatientAppointments />
-              </ProtectedRoute>
-            </Validation>
+            <ProtectedRoute requiredRole={USER_TYPES.PATIENT}>
+              <PatientAppointments />
+            </ProtectedRoute>
           }
         />
         <Route
           path="/myStudies"
           element={
-            <Validation rol={rol} expected={USER_TYPES.PATIENT}>
-              <ProtectedRoute requiredRole={USER_TYPES.PATIENT}>
-                <ViewStudies />
-              </ProtectedRoute>
-            </Validation>
+            <ProtectedRoute requiredRole={USER_TYPES.PATIENT}>
+              <ViewStudies />
+            </ProtectedRoute>
           }
         />
       </Routes>
