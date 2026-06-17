@@ -149,7 +149,7 @@ export const cancelAppointment = async (appointmentId) => {
 export const createNewAppointment = async (appointmentData) => {
   const patientExists = await Patient.findByPk(appointmentData.patientId);
   if (!patientExists) {
-    throw new Error(`Patient with id ${appointmentData.patientId} not found`);
+    throw new Error(`Paciente con id ${appointmentData.patientId} no encontrado`);
   }
 
   const appointment = await Appointment.create({
