@@ -2,7 +2,6 @@ import { Patient, Doctor, User, HealthInsurance } from '../models/index.js';
 import { Op } from 'sequelize';
 
 export const getAllPatients = async () => {
-  // Obtenemos los DNIs de los doctores activos
   const doctors = await Doctor.findAll({
     where: { status: 'Enabled' },
     attributes: ['nationalId'],
@@ -10,26 +9,29 @@ export const getAllPatients = async () => {
   });
   const doctorIds = doctors.map(d => d.nationalId);
 
-  // Buscamos los usuarios que NO sean doctores (activos)
-  const users = await User.findAll({
+  const patients = await Patient.findAll({
     where: {
       status: 'Enabled',
       ...(doctorIds.length > 0 && { nationalId: { [Op.notIn]: doctorIds } })
     },
     include: [{
-      model: HealthInsurance,
-      as: 'healthInsurance',
-      attributes: ['name'],
+      model: User,
+      as: 'user',
+      include: [{
+        model: HealthInsurance,
+        as: 'healthInsurance',
+        attributes: ['name'],
+      }],
     }],
-    order: [['lastName', 'ASC']],
+    order: [[{ model: User, as: 'user' }, 'lastName', 'ASC']],
   });
 
-  return users.map(u => ({
-    patientId: u.nationalId, // usaremos nationalId como key en frontend
-    nationalId: u.nationalId,
-    name: u.firstName,
-    lastName: u.lastName,
-    healthInsurance: u.healthInsurance?.name || null,
+  return patients.map(p => ({
+    patientId: p.id,
+    nationalId: p.nationalId,
+    name: p.user?.firstName || '',
+    lastName: p.user?.lastName || '',
+    healthInsurance: p.user?.healthInsurance?.name || null,
   }));
 };
 
