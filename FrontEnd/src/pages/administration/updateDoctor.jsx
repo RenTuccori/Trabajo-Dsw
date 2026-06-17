@@ -124,7 +124,7 @@ export function UpdateDoctor() {
       setPageLoading(true);
       await Promise.all([getHealthInsurances(), getDoctors()]);
       if (doctorId) await getDoctorById(doctorId);
-      setPageLoading(false);
+      setTimeout(() => setPageLoading(false), 400);
     })();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [doctorId]);

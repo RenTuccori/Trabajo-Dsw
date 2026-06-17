@@ -15,7 +15,7 @@ export function HistoricalAppointments() {
     (async () => {
       setPageLoading(true);
       await loadHistoricalAppointments();
-      setPageLoading(false);
+      setTimeout(() => setPageLoading(false), 400);
     })();
   }, []);
 

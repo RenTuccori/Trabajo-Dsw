@@ -41,7 +41,7 @@ export function BookAppointment() {
     (async () => {
       setPageLoading(true);
       await getLocations();
-      setPageLoading(false);
+      setTimeout(() => setPageLoading(false), 400);
     })();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);

@@ -22,7 +22,7 @@ export function AppointmentsByDate() {
     (async () => {
       setPageLoading(true);
       await loadHistoricalAppointments();
-      setPageLoading(false);
+      setTimeout(() => setPageLoading(false), 400);
     })();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);

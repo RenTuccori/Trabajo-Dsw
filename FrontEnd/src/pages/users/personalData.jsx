@@ -121,7 +121,7 @@ export function PersonalData() {
     (async () => {
       setPageLoading(true);
       await getHealthInsurances();
-      setPageLoading(false);
+      setTimeout(() => setPageLoading(false), 400);
     })();
   }, []);
 

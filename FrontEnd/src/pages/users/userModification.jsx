@@ -100,7 +100,7 @@ export function UserModification() {
     (async () => {
       setPageLoading(true);
       await Promise.all([getHealthInsurances(), getUserByDniFunction()]);
-      setPageLoading(false);
+      setTimeout(() => setPageLoading(false), 400);
     })();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);

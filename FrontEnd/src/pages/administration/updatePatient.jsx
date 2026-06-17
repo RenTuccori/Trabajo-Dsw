@@ -53,7 +53,7 @@ export function UpdateUser() {
         console.error('Error cargando usuario:', error);
         window.notifyError('No se pudo cargar la información del usuario.');
       } finally {
-        setPageLoading(false);
+        setTimeout(() => setPageLoading(false), 400);
       }
     };
     initData();

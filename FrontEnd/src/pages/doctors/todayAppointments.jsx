@@ -13,7 +13,7 @@ export function TodayAppointments() {
     (async () => {
       setPageLoading(true);
       await loadTodayAppointments();
-      setPageLoading(false);
+      setTimeout(() => setPageLoading(false), 400);
     })();
   }, []);
 
