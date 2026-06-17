@@ -3,7 +3,7 @@ import { Study, Doctor, Patient, User } from '../models/index.js';
 export const createStudy = async ({ patientId, doctorId, performanceDate, uploadDate, fileName, filePath, description }) => {
   const patientExists = await Patient.findByPk(patientId);
   if (!patientExists) {
-    throw new Error(`Paciente con id ${patientId} no encontrado`);
+    throw new Error(`Patient with id ${patientId} not found`);
   }
 
   return Study.create({ patientId, doctorId, performanceDate, uploadDate, fileName, filePath, description });

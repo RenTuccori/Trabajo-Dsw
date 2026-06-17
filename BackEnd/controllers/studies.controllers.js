@@ -25,7 +25,7 @@ const fileFilter = (req, file, cb) => {
   if (allowedTypes.includes(fileExt)) {
     cb(null, true);
   } else {
-    cb(new Error('Tipo de archivo no permitido. Solo se aceptan PDF, JPG, JPEG, PNG, DOC, DOCX'), false);
+    cb(new Error('File type not allowed. Only PDF, JPG, JPEG, PNG, DOC, DOCX are permitted'), false);
   }
 };
 
@@ -41,11 +41,11 @@ export const createStudy = async (req, res) => {
     const doctorId = req.session.doctorId;
 
     if (!doctorId) {
-      return res.status(400).json({ message: 'ID del doctor no encontrado en el token' });
+      return res.status(400).json({ message: 'Doctor ID not found in token' });
     }
 
     if (!req.file) {
-      return res.status(400).json({ message: 'No se subió ningún archivo' });
+      return res.status(400).json({ message: 'No file was uploaded' });
     }
 
     const uploadDate = new Date();
@@ -60,7 +60,7 @@ export const createStudy = async (req, res) => {
     });
 
     res.status(201).json({
-      message: 'Estudio subido exitosamente',
+      message: 'Study uploaded successfully',
       id: study.id,
       fileName: finalFileName,
       uploadDate,
@@ -95,10 +95,10 @@ export const downloadStudy = async (req, res) => {
   try {
     const study = await studiesService.findStudyById(req.params.id);
     if (!study) {
-      return res.status(404).json({ message: 'Estudio no encontrado' });
+      return res.status(404).json({ message: 'Study not found' });
     }
     if (!fs.existsSync(study.filePath)) {
-      return res.status(404).json({ message: 'Archivo no encontrado en el servidor' });
+      return res.status(404).json({ message: 'File not found on server' });
     }
     res.download(study.filePath, study.fileName);
   } catch (error) {
@@ -110,7 +110,7 @@ export const deleteStudy = async (req, res) => {
   try {
     const study = await studiesService.findStudyById(req.params.id);
     if (!study) {
-      return res.status(404).json({ message: 'Estudio no encontrado' });
+      return res.status(404).json({ message: 'Study not found' });
     }
 
     await studiesService.deleteStudyById(req.params.id);
@@ -119,7 +119,7 @@ export const deleteStudy = async (req, res) => {
       fs.unlinkSync(study.filePath);
     }
 
-    res.json({ message: 'Estudio eliminado exitosamente' });
+    res.json({ message: 'Study deleted successfully' });
   } catch (error) {
     return res.status(500).json({ message: error.message });
   }

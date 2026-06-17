@@ -5,7 +5,7 @@ export const getAppointmentByNationalId = async (req, res) => {
     const { nationalId } = req.body;
     const appointments = await appointmentsService.getAppointmentsByPatientNationalId(nationalId);
     if (appointments.length === 0) {
-      return res.status(404).json({ message: 'No hay turnos próximos para este paciente' });
+      return res.status(404).json({ message: 'No upcoming appointments for this patient' });
     }
     res.json(appointments);
   } catch (error) {
@@ -18,7 +18,7 @@ export const getAppointmentsByDoctorHistory = async (req, res) => {
     const { doctorId } = req.body;
     const appointments = await appointmentsService.getDoctorAppointmentHistory(doctorId);
     if (appointments.length === 0) {
-      return res.status(200).json({ message: 'No hay historial de turnos', data: [] });
+      return res.status(200).json({ message: 'No appointment history', data: [] });
     }
     return res.json({ data: appointments });
   } catch (error) {
@@ -31,7 +31,7 @@ export const getAppointmentsByDoctorToday = async (req, res) => {
     const { doctorId } = req.body;
     const appointments = await appointmentsService.getDoctorAppointmentsToday(doctorId);
     if (appointments.length === 0) {
-      return res.status(404).json({ message: 'No se encontraron turnos' });
+      return res.status(404).json({ message: 'No appointments found' });
     }
     res.json(appointments);
   } catch (error) {
@@ -44,7 +44,7 @@ export const getAppointmentsByDoctorDate = async (req, res) => {
     const { doctorId, dateTime } = req.body;
     const appointments = await appointmentsService.getDoctorAppointmentsByDate(doctorId, dateTime);
     if (appointments.length === 0) {
-      return res.status(404).json({ message: 'No se encontraron turnos' });
+      return res.status(404).json({ message: 'No appointments found' });
     }
     res.json(appointments);
   } catch (error) {
@@ -57,9 +57,9 @@ export const confirmAppointment = async (req, res) => {
     const { id } = req.body;
     const updated = await appointmentsService.confirmAppointment(id);
     if (!updated) {
-      return res.status(404).json({ message: 'Turno no encontrado' });
+      return res.status(404).json({ message: 'Appointment not found' });
     }
-    res.json({ message: 'Turno confirmado exitosamente' });
+    res.json({ message: 'Appointment status updated to "Confirmed"' });
   } catch (error) {
     return res.status(500).json({ message: error.message });
   }
@@ -70,9 +70,9 @@ export const cancelAppointment = async (req, res) => {
     const { id } = req.body;
     const updated = await appointmentsService.cancelAppointment(id);
     if (!updated) {
-      return res.status(404).json({ message: 'Turno no encontrado' });
+      return res.status(404).json({ message: 'Appointment not found' });
     }
-    res.json({ message: 'Turno cancelado exitosamente' });
+    res.json({ message: 'Appointment status updated to "Cancelled"' });
   } catch (error) {
     return res.status(500).json({ message: error.message });
   }
