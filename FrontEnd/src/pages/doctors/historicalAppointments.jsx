@@ -1,16 +1,22 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useDoctors } from '../../context/doctors/DoctorsProvider.jsx';
 import { useTranslation } from 'react-i18next';
+import { Spinner } from '../../components/Spinner';
 
 export function HistoricalAppointments() {
   const { historicalAppointments, loadHistoricalAppointments } = useDoctors();
   const { t } = useTranslation();
+  const [pageLoading, setPageLoading] = useState(true);
   const navigate = useNavigate();
 
   useEffect(() => {
-    loadHistoricalAppointments();
+    (async () => {
+      setPageLoading(true);
+      await loadHistoricalAppointments();
+      setPageLoading(false);
+    })();
   }, []);
 
   const formatFechaHora = (dateAndTime) => {
@@ -25,6 +31,8 @@ export function HistoricalAppointments() {
     };
     return new Date(dateAndTime).toLocaleString('es-ES', opciones);
   };
+  if (pageLoading) return <Spinner text="Cargando historial..." />;
+
   return (
     <div className="page-bg p-6 lg:p-10">
       <div className="max-w-3xl mx-auto animate-slide-up">

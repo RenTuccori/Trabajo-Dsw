@@ -7,6 +7,7 @@ import Select from 'react-select';
 import { notifyError } from '../../components/ToastConfig';
 import { confirmDialog } from '../../components/SwalConfig';
 import AddressAutocomplete from '../../components/AddressAutocomplete';
+import { Spinner } from '../../components/Spinner';
 
 export function PersonalData() {
   const { healthInsurances, getHealthInsurances, createUserFunction, getUserByDniFunction, userByDni } = usePatients();
@@ -14,6 +15,7 @@ export function PersonalData() {
   const [selectedObraSociales, setSelectedObraSociales] = useState(null);
   const [countryCode, setCountryCode] = useState('+54');
   const [loading, setLoading] = useState(false);
+  const [pageLoading, setPageLoading] = useState(true);
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
     dni: '',
@@ -116,7 +118,11 @@ export function PersonalData() {
   };
 
   useEffect(() => {
-    getHealthInsurances();
+    (async () => {
+      setPageLoading(true);
+      await getHealthInsurances();
+      setPageLoading(false);
+    })();
   }, []);
 
   useEffect(() => {
@@ -183,6 +189,8 @@ export function PersonalData() {
       healthInsuranceId: selectedOption.value,
     }));
   };
+
+  if (pageLoading) return <Spinner text="Cargando..." />;
 
   return (
     <div className="page-bg p-6 lg:p-10 flex items-center justify-center min-h-[80vh]">

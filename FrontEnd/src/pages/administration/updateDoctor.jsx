@@ -1,7 +1,8 @@
 import { useEffect, useState } from 'react';
-import { useNavigate, useParams } from 'react-router-dom'; // Importa useParams
+import { useNavigate, useParams } from 'react-router-dom';
 import Select from 'react-select';
 import { useAdministration } from '../../context/administration/AdministrationProvider';
+import { Spinner } from '../../components/Spinner';
 
 export function UpdateDoctor() {
   const {
@@ -19,6 +20,7 @@ export function UpdateDoctor() {
   const [hasChanges, setHasChanges] = useState(false);
   const [, setOriginalData] = useState({});
   const [loading, setLoading] = useState(false);
+  const [pageLoading, setPageLoading] = useState(true);
   const navigate = useNavigate();
   const { doctorId } = useParams(); // Usa useParams para obtener el doctorId desde la URL
 
@@ -118,11 +120,12 @@ export function UpdateDoctor() {
   };
 
   useEffect(() => {
-    getHealthInsurances();
-    // Cargar lista de doctors para el selector
-    getDoctors();
-    // Si viene doctorId en la URL, cargar datos de ese doctor
-    if (doctorId) getDoctorById(doctorId);
+    (async () => {
+      setPageLoading(true);
+      await Promise.all([getHealthInsurances(), getDoctors()]);
+      if (doctorId) await getDoctorById(doctorId);
+      setPageLoading(false);
+    })();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [doctorId]);
 
@@ -214,6 +217,8 @@ export function UpdateDoctor() {
       navigate('/admin/createDoctor');
     }
   };
+
+  if (pageLoading) return <Spinner text="Cargando datos del doctor..." />;
 
   return (
     <div className="page-bg p-6 lg:p-10">

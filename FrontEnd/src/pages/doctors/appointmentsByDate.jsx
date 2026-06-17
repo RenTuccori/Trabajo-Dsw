@@ -4,11 +4,13 @@ import DatePicker from 'react-datepicker';
 import 'react-datepicker/dist/react-datepicker.css';
 import { useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
+import { Spinner } from '../../components/Spinner';
 
 export function AppointmentsByDate() {
   const navigate = useNavigate();
   const { t } = useTranslation();
   const [selectedDate, setSelectedDate] = useState(null);
+  const [pageLoading, setPageLoading] = useState(true);
   const {
     availableDates,
     loadHistoricalAppointments,
@@ -16,9 +18,12 @@ export function AppointmentsByDate() {
     loadAppointmentsByDate,
   } = useDoctors();
 
-  // Llamar a obtenerTurnos cuando se monta el componente
   useEffect(() => {
-    loadHistoricalAppointments();
+    (async () => {
+      setPageLoading(true);
+      await loadHistoricalAppointments();
+      setPageLoading(false);
+    })();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -48,6 +53,8 @@ export function AppointmentsByDate() {
       loadAppointmentsByDate(null);
     }
   };
+  if (pageLoading) return <Spinner text="Cargando fechas disponibles..." />;
+
   return (
     <div className="page-bg p-6 lg:p-10">
       <div className="max-w-3xl mx-auto animate-slide-up">

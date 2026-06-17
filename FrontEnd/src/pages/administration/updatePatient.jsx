@@ -3,6 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import Select from 'react-select';
 import { getUserByNationalId, updateUser } from '../../api/users.api.js';
 import { getInsurance } from '../../api/insurance.api.js';
+import { Spinner } from '../../components/Spinner';
 
 export function UpdateUser() {
   const { id } = useParams(); // nationalId
@@ -11,6 +12,7 @@ export function UpdateUser() {
   const [healthInsurances, setHealthInsurances] = useState([]);
   const [selectedObraSociales, setSelectedObraSociales] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [pageLoading, setPageLoading] = useState(true);
 
   const [formData, setFormData] = useState({
     firstName: '',
@@ -24,6 +26,7 @@ export function UpdateUser() {
 
   useEffect(() => {
     const initData = async () => {
+      setPageLoading(true);
       try {
         const resUser = await getUserByNationalId({ dni: id });
         const user = resUser.data;
@@ -49,6 +52,8 @@ export function UpdateUser() {
       } catch (error) {
         console.error('Error cargando usuario:', error);
         window.notifyError('No se pudo cargar la información del usuario.');
+      } finally {
+        setPageLoading(false);
       }
     };
     initData();
@@ -91,6 +96,8 @@ export function UpdateUser() {
       setLoading(false);
     }
   };
+
+  if (pageLoading) return <Spinner text="Cargando datos del paciente..." />;
 
   return (
     <div className="page-bg p-6 lg:p-10">

@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import Select from 'react-select';
 import { usePatients } from '../../context/patients/PatientsProvider';
+import { Spinner } from '../../components/Spinner';
 
 export function UserModification() {
   const {
@@ -14,6 +15,7 @@ export function UserModification() {
   const [selectedObraSociales, setSelectedObraSociales] = useState(null);
   const [countryCode, setCountryCode] = useState('+54');
   const [loading, setLoading] = useState(false);
+  const [pageLoading, setPageLoading] = useState(true);
   const navigate = useNavigate();
   const [formData, setFormData] = useState({
     dni: '',
@@ -95,9 +97,11 @@ export function UserModification() {
   };
 
   useEffect(() => {
-    
-    getHealthInsurances();
-    getUserByDniFunction();
+    (async () => {
+      setPageLoading(true);
+      await Promise.all([getHealthInsurances(), getUserByDniFunction()]);
+      setPageLoading(false);
+    })();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -140,6 +144,8 @@ export function UserModification() {
       healthInsuranceId: selectedOption.value,
     }));
   };
+
+  if (pageLoading) return <Spinner text="Cargando tus datos..." />;
 
   return (
     <div className="page-bg p-6 lg:p-10 flex items-center justify-center min-h-[80vh]">

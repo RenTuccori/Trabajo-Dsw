@@ -1,14 +1,20 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useDoctors } from '../../context/doctors/DoctorsProvider.jsx';
+import { Spinner } from '../../components/Spinner';
 
 export function TodayAppointments() {
   const { todayAppointments, loadTodayAppointments } = useDoctors();
+  const [pageLoading, setPageLoading] = useState(true);
   const navigate = useNavigate();
 
   useEffect(() => {
-    loadTodayAppointments();
+    (async () => {
+      setPageLoading(true);
+      await loadTodayAppointments();
+      setPageLoading(false);
+    })();
   }, []);
 
   const formatFechaHora = (dateAndTime) => {
@@ -23,6 +29,8 @@ export function TodayAppointments() {
     };
     return new Date(dateAndTime).toLocaleString('es-ES', opciones);
   };
+
+  if (pageLoading) return <Spinner text="Cargando turnos de hoy..." />;
 
   return (
     <div className="page-bg p-6 lg:p-10">

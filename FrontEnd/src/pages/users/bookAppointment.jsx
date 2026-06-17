@@ -5,6 +5,7 @@ import DatePicker from 'react-datepicker';
 import { useNavigate } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import 'react-datepicker/dist/react-datepicker.css';
+import { Spinner } from '../../components/Spinner';
 
 export function BookAppointment() {
   const { t } = useTranslation();
@@ -34,9 +35,14 @@ export function BookAppointment() {
   const [selectedDate, setSelectedDate] = useState(null);
   const [selectedSchedule, setSelectedSchedule] = useState(null);
   const [formattedDate, setFormattedDate] = useState(null);
+  const [pageLoading, setPageLoading] = useState(true);
 
   useEffect(() => {
-    getLocations();
+    (async () => {
+      setPageLoading(true);
+      await getLocations();
+      setPageLoading(false);
+    })();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -168,6 +174,8 @@ export function BookAppointment() {
     setCancellationDate(null);
     setConfirmationDate(null);
   };
+
+  if (pageLoading) return <Spinner text="Cargando formulario..." />;
 
   return (
     <form className="page-bg p-6 lg:p-10 flex items-center justify-center min-h-[80vh]">

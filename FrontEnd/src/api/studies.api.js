@@ -44,7 +44,13 @@ export const downloadStudy = async (studyId) => {
     });
     return response;
   } catch (error) {
-    throw error.response?.data || error.message;
+    const data = error.response?.data;
+    if (data instanceof Blob && data.type === 'application/json') {
+      const text = await data.text();
+      const parsed = JSON.parse(text);
+      throw new Error(parsed.message || 'Error al descargar el estudio');
+    }
+    throw data || error.message;
   }
 };
 
