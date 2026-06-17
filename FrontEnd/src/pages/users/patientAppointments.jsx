@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { usePatients } from '../../context/patients/PatientsProvider.jsx';
 import { useTranslation } from 'react-i18next';
+import { Spinner } from '../../components/Spinner';
 
 export function PatientAppointments() {
   const navigate = useNavigate();
@@ -19,10 +20,15 @@ export function PatientAppointments() {
   } = usePatients();
 
   const [actionLoading, setActionLoading] = useState(null);
+  const [pageLoading, setPageLoading] = useState(true);
 
   useEffect(() => {
-    getUserByDniFunction();
-    getPatientAppointments();
+    const start = Date.now();
+    (async () => {
+      await Promise.all([getUserByDniFunction(), getPatientAppointments()]);
+      const elapsed = Date.now() - start;
+      setTimeout(() => setPageLoading(false), Math.max(0, 400 - elapsed));
+    })();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -143,8 +149,8 @@ export function PatientAppointments() {
           </div>
           <button onClick={() => navigate('/patient')} className="btn-ghost">← Volver</button>
         </div>
-        {loadingAppointments ? (
-          <div className="glass-solid rounded-2xl p-8 text-center"><p className="text-gray-600">Cargando turnos...</p></div>
+        {pageLoading || loadingAppointments ? (
+          <Spinner text="Cargando turnos..." />
         ) : appointmentsError ? (
           <div className="glass-solid rounded-2xl p-8 text-center"><p className="text-red-600">{appointmentsError}</p></div>
         ) : appointments && appointments.length > 0 ? (

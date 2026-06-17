@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/global/AuthProvider';
 import {
   getStudiesByPatient,
@@ -6,9 +7,11 @@ import {
 } from '../../api/studies.api';
 import { getPatientbyNationalId } from '../../api/patients.api';
 import { notifyError } from '../../components/ToastConfig';
+import { Spinner } from '../../components/Spinner';
 
 function ViewStudies() {
   const { dni } = useAuth();
+  const navigate = useNavigate();
   const [estudios, setEstudios] = useState([]);
   const [pacienteData, setPacienteData] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -96,14 +99,8 @@ function ViewStudies() {
     return new Date(dateString).toLocaleDateString('es-ES');
   };
 
-  if (!dni) {
-    return (
-      <div className="page-bg flex items-center justify-center">
-        <div className="text-center">
-          <p className="text-xl text-gray-600">Cargando estudios...</p>
-        </div>
-      </div>
-    );
+  if (!dni || loading) {
+    return <Spinner text="Cargando estudios..." />;
   }
 
   return (
@@ -218,7 +215,7 @@ function ViewStudies() {
 
         <div className="mt-6 text-center">
           <button
-            onClick={() => window.history.back()}
+            onClick={() => navigate('/patient')}
             className="btn-ghost"
           >
             Volver
