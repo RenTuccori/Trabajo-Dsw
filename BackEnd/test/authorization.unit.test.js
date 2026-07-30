@@ -5,6 +5,7 @@ import {
   Patient,
   AdminOrPatient,
 } from '../middleware/authorizeRole.js';
+import { authorizeOwnerOrAdmin } from '../middleware/authorizeOwnerOrAdmin.js';
 
 describe('Authorization Middleware Tests', () => {
   let req, res, next;
@@ -23,6 +24,7 @@ describe('Authorization Middleware Tests', () => {
 
     jest.clearAllMocks();
   });
+
 
   describe('authorizeRole', () => {
     it('should allow access when user has required role', () => {
@@ -106,4 +108,41 @@ describe('Authorization Middleware Tests', () => {
       expect(next).not.toHaveBeenCalled();
     });
   });
+
+  describe('authorizeOwnerOrAdmin', () => {
+    const getTargetId = (req) => req.body.nationalId;
+
+    it('should allow access if role is Admin', () => {
+      req.session = { role: 'Admin', nationalId: '11111111' };
+      req.body = { nationalId: '22222222' };
+      const middleware = authorizeOwnerOrAdmin(getTargetId);
+
+      middleware(req, res, next);
+
+      expect(next).toHaveBeenCalled();
+    });
+
+    it('should allow access if role is Patient and nationalId matches', () => {
+      req.session = { role: 'Patient', nationalId: '11111111' };
+      req.body = { nationalId: '11111111' };
+      const middleware = authorizeOwnerOrAdmin(getTargetId);
+
+      middleware(req, res, next);
+
+      expect(next).toHaveBeenCalled();
+    });
+
+    it('should deny access if role is Patient and nationalId does not match (IDOR attempt)', () => {
+      req.session = { role: 'Patient', nationalId: '11111111' };
+      req.body = { nationalId: '22222222' };
+      const middleware = authorizeOwnerOrAdmin(getTargetId);
+
+      middleware(req, res, next);
+
+      expect(res.status).toHaveBeenCalledWith(403);
+      expect(next).not.toHaveBeenCalled();
+    });
+  });
 });
+
+

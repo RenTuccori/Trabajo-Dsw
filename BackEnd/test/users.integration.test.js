@@ -18,6 +18,8 @@ const usersRouter = await import('../routes/users.routes.js');
 
 describe('Users API – Integration Tests', () => {
   let app;
+  let currentRole = 'Patient';
+  let currentNationalId = 12345678;
 
   beforeEach(() => {
     app = express();
@@ -25,16 +27,19 @@ describe('Users API – Integration Tests', () => {
 
     // Mock JWT session middleware
     app.use((req, res, next) => {
-      req.session = { role: 'Patient' };
+      req.session = { role: currentRole, nationalId: currentNationalId };
       next();
     });
 
     app.use(usersRouter.default);
     jest.clearAllMocks();
+    currentRole = 'Patient';
+    currentNationalId = 12345678;
   });
 
-  describe('GET /api/userstodos', () => {
-    it('should return list of users', async () => {
+  describe('GET /api/users/all', () => {
+    it('should return list of users when Admin', async () => {
+      currentRole = 'Admin';
       const users = [
         { nationalId: 12345678, firstName: 'Juan', lastName: 'Pérez' },
         { nationalId: 87654321, firstName: 'María', lastName: 'García' },
@@ -46,7 +51,13 @@ describe('Users API – Integration Tests', () => {
       expect(response.body).toEqual(users);
     });
 
-    it('should return 404 when no users', async () => {
+    it('should return 403 when Patient tries to access GET /api/users/all', async () => {
+      currentRole = 'Patient';
+      await request(app).get('/api/users/all').expect(403);
+    });
+
+    it('should return 404 when no users and Admin', async () => {
+      currentRole = 'Admin';
       mockService.getAllUsers.mockResolvedValue([]);
 
       await request(app).get('/api/users/all').expect(404);
@@ -108,7 +119,7 @@ describe('Users API – Integration Tests', () => {
   });
 
   describe('POST /api/users/nationalId', () => {
-    it('should return user by nationalId', async () => {
+    it('should return user by nationalId when nationalId matches session', async () => {
       const user = { nationalId: 12345678, firstName: 'Juan' };
       mockService.findUserByNationalId.mockResolvedValue(user);
 
@@ -120,7 +131,16 @@ describe('Users API – Integration Tests', () => {
       expect(response.body).toEqual(user);
     });
 
-    it('should return 400 for invalid nationalId format', async () => {
+    it('should return 403 when Patient tries to fetch another user nationalId', async () => {
+      currentNationalId = 99999999;
+      await request(app)
+        .post('/api/users/nationalId')
+        .send({ nationalId: 12345678 })
+        .expect(403);
+    });
+
+    it('should return 400 for invalid nationalId format when matching session', async () => {
+      currentNationalId = 'abc';
       await request(app)
         .post('/api/users/nationalId')
         .send({ nationalId: 'abc' })
@@ -128,3 +148,4 @@ describe('Users API – Integration Tests', () => {
     });
   });
 });
+

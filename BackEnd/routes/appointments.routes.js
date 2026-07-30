@@ -9,7 +9,7 @@ import {
   confirmAppointment,
   cancelAppointment,
 } from '../controllers/appointments.controllers.js';
-import { Doctor, Patient } from '../middleware/authorizeRole.js';
+import { Doctor, Patient, AdminOrPatient } from '../middleware/authorizeRole.js';
 import { validateCreateAppointment, validateAppointmentAction, validateAppointmentId, validateUserNationalId } from '../middleware/validators.js';
 import { validate } from '../middleware/validate.js';
 
@@ -27,7 +27,8 @@ router.post('/api/appointments', Patient, validateCreateAppointment, validate, c
 
 router.put('/api/appointments/confirm', Patient, validateAppointmentAction, validate, confirmAppointment);
 
-router.delete('/api/appointments/:id', validateAppointmentId, validate, deleteAppointment);
+router.delete('/api/appointments/:id', AdminOrPatient, validateAppointmentId, validate, deleteAppointment);
+
 
 router.put('/api/appointments/cancel', Patient, validateAppointmentAction, validate, cancelAppointment);
 

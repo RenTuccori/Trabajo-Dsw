@@ -5,18 +5,19 @@ import {
   getSpecialtyById,
   getAllSpecialties,
 } from '../controllers/specialties.controllers.js';
-import { Patient } from '../middleware/authorizeRole.js';
+import { AdminOrPatient, AnyRole } from '../middleware/authorizeRole.js';
 import { validateSpecialtyId, validateLocationIdBody } from '../middleware/validators.js';
 import { validate } from '../middleware/validate.js';
 
 const router = Router();
 
-router.post('/api/specialties', Patient, validateLocationIdBody, validate, getSpecialties);
+router.post('/api/specialties', AdminOrPatient, validateLocationIdBody, validate, getSpecialties);
 
-router.post('/api/specialties/all', getAllSpecialties);
+router.post('/api/specialties/all', AnyRole, getAllSpecialties);
 
-router.post('/api/specialties/available', Patient, validateLocationIdBody, validate, getAvailableSpecialties);
+router.post('/api/specialties/available', AdminOrPatient, validateLocationIdBody, validate, getAvailableSpecialties);
 
-router.get('/api/specialties/:id', Patient, validateSpecialtyId, validate, getSpecialtyById);
+router.get('/api/specialties/:id', AdminOrPatient, validateSpecialtyId, validate, getSpecialtyById);
 
 export default router;
+
