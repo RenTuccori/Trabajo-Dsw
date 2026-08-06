@@ -13,6 +13,31 @@ describe('Home Page E2E', () => {
   });
 
   it('Debe poder navegar al área de pacientes y realizar login', () => {
+    if (!Cypress.env('useRealBackend')) {
+      const toBase64Url = (value) =>
+        btoa(JSON.stringify(value))
+          .replace(/=/g, '')
+          .replace(/\+/g, '-')
+          .replace(/\//g, '_');
+
+      const token = [
+        toBase64Url({ alg: 'HS256', typ: 'JWT' }),
+        toBase64Url({
+          nationalId: 98760102,
+          firstName: 'Paciente',
+          lastName: 'Prueba',
+          role: 'Patient',
+          exp: 4102444800,
+        }),
+        'test-signature',
+      ].join('.');
+
+      cy.intercept('POST', '**/api/users/login', {
+        statusCode: 200,
+        body: token,
+      }).as('patientLogin');
+    }
+
     // Al visitar '/' redirige automáticamente a '/patient'
     cy.visit('/');
     cy.url().should('include', '/patient');
@@ -26,6 +51,10 @@ describe('Home Page E2E', () => {
 
     // Accionar el botón de ingreso
     cy.contains('button', 'Ingresar').click();
+
+    if (!Cypress.env('useRealBackend')) {
+      cy.wait('@patientLogin');
+    }
 
     // Verificar que el login fue exitoso 
     cy.contains('¿Qué necesitás hoy?', { timeout: 10000 }).should('be.visible');

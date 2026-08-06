@@ -18,4 +18,15 @@ module.exports = {
       { allowConstantExport: true },
     ],
   },
+  overrides: [
+    {
+      files: ['cypress/**/*.js'],
+      globals: {
+        Cypress: 'readonly',
+        cy: 'readonly',
+        describe: 'readonly',
+        it: 'readonly',
+      },
+    },
+  ],
 }

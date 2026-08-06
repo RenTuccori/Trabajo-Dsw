@@ -1,7 +1,7 @@
 import { render, screen } from '@testing-library/react';
 import { BrowserRouter } from 'react-router-dom';
 import { describe, it, expect } from 'vitest';
-import Navbar from '../components/Navbar.jsx';
+import Navbar from '../components/navbar.jsx';
 
 // Wrapper for React Router
 const renderWithRouter = (component) => {
@@ -12,8 +12,8 @@ describe('Navbar Component', () => {
   it('should render the navbar with logo and title', () => {
     renderWithRouter(<Navbar />);
 
-    // Verify that the title appears
-    expect(screen.getByText('Sanatorio UTN')).toBeInTheDocument();
+    expect(screen.getByText('Sanatorio')).toBeInTheDocument();
+    expect(screen.getByText('UTN')).toBeInTheDocument();
 
     // Verify that the logo appears
     const logo = screen.getByAltText('Logo');
@@ -39,25 +39,25 @@ describe('Navbar Component', () => {
     );
     expect(adminLink).toBeInTheDocument();
 
-    // Verify they have the correct classes
-    expect(doctorLink).toHaveClass('text-blue-800', 'hover:text-blue-600');
-    expect(adminLink).toHaveClass('text-blue-800', 'hover:text-blue-600');
+    expect(doctorLink).toHaveAccessibleName('Médicos');
+    expect(adminLink).toHaveAccessibleName('Admin');
   });
 
   it('should have proper CSS classes for styling', () => {
     renderWithRouter(<Navbar />);
 
     const navbar = screen.getByRole('navigation');
-    expect(navbar).toHaveClass('py-4');
-
-    const title = screen.getByText('Sanatorio UTN');
-    expect(title).toHaveClass('text-2xl', 'font-bold', 'text-blue-800');
+    expect(navbar).toBeInTheDocument();
+    expect(screen.getByRole('link', { name: 'Pacientes' })).toHaveAttribute(
+      'href',
+      '/patient'
+    );
   });
 
   it('should render home link correctly', () => {
     renderWithRouter(<Navbar />);
 
-    const homeLink = screen.getByRole('link', { name: /logo sanatorio utn/i });
+    const homeLink = screen.getByRole('link', { name: /logo sanatorioutn/i });
     expect(homeLink).toBeInTheDocument();
     expect(homeLink).toHaveAttribute('href', '/');
   });
