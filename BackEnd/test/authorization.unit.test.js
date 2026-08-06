@@ -5,7 +5,10 @@ import {
   Patient,
   AdminOrPatient,
 } from '../middleware/authorizeRole.js';
-import { authorizeOwnerOrAdmin } from '../middleware/authorizeOwnerOrAdmin.js';
+import {
+  authorizeOwnerOrAdmin,
+  authorizePatientOwnerOrStaff,
+} from '../middleware/authorizeOwnerOrAdmin.js';
 
 describe('Authorization Middleware Tests', () => {
   let req, res, next;
@@ -136,6 +139,43 @@ describe('Authorization Middleware Tests', () => {
       req.session = { role: 'Patient', nationalId: '11111111' };
       req.body = { nationalId: '22222222' };
       const middleware = authorizeOwnerOrAdmin(getTargetId);
+
+      middleware(req, res, next);
+
+      expect(res.status).toHaveBeenCalledWith(403);
+      expect(next).not.toHaveBeenCalled();
+    });
+  });
+
+  describe('authorizePatientOwnerOrStaff', () => {
+    const getTargetId = (request) => request.body.nationalId;
+
+    it.each(['Admin', 'Doctor'])('should allow %s to access any patient', (role) => {
+      req.session = { role, nationalId: '11111111' };
+      req.body = { nationalId: '22222222' };
+      const middleware = authorizePatientOwnerOrStaff(getTargetId);
+
+      middleware(req, res, next);
+
+      expect(next).toHaveBeenCalled();
+      expect(res.status).not.toHaveBeenCalled();
+    });
+
+    it('should allow a patient to access their own record', () => {
+      req.session = { role: 'Patient', nationalId: '11111111' };
+      req.body = { nationalId: 11111111 };
+      const middleware = authorizePatientOwnerOrStaff(getTargetId);
+
+      middleware(req, res, next);
+
+      expect(next).toHaveBeenCalled();
+      expect(res.status).not.toHaveBeenCalled();
+    });
+
+    it('should reject a patient trying to access another record', () => {
+      req.session = { role: 'Patient', nationalId: '11111111' };
+      req.body = { nationalId: '22222222' };
+      const middleware = authorizePatientOwnerOrStaff(getTargetId);
 
       middleware(req, res, next);
 

@@ -1028,7 +1028,7 @@ Authorization: Bearer <token>
 ```
 **Descripción:** Obtiene la lista de todos los pacientes
 
-**Roles Requeridos:** `DoctorOrPatient`
+**Roles Requeridos:** `Doctor` o `Admin`
 
 **Respuesta (200):**
 ```json
@@ -1049,9 +1049,9 @@ Authorization: Bearer <token>
 POST /api/patients/nationalId
 Authorization: Bearer <token>
 ```
-**Descripción:** Obtiene la información de un paciente por su dni
+**Descripción:** Obtiene la información de un paciente por su DNI. Los pacientes sólo pueden consultar el DNI incluido en su propio token; médicos y administradores pueden consultar cualquier paciente.
 
-**Roles Requeridos:** `Patient`
+**Roles Requeridos:** `Patient` (sólo propietario), `Doctor` o `Admin`
 
 **Body:**
 ```json
