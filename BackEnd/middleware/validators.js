@@ -1,4 +1,5 @@
 import { body, param, query } from 'express-validator';
+import { normalizeClinicDateTimeToUtc } from '../utils/dateTime.js';
 
 // === USERS ===
 export const validateUserLogin = [
@@ -78,7 +79,12 @@ export const validateUpdateDoctor = [
 // === APPOINTMENTS ===
 export const validateCreateAppointment = [
   body('patientId').isInt({ min: 1 }).withMessage('Patient ID is required.'),
-  body('dateTime').notEmpty().withMessage('Date and time are required.'),
+  body('dateTime')
+    .notEmpty().withMessage('Date and time are required.')
+    .custom((value) => {
+      normalizeClinicDateTimeToUtc(value);
+      return true;
+    }).withMessage('Date and time must be valid.'),
   body('specialtyId').isInt({ min: 1 }).withMessage('Specialty ID is required.'),
   body('doctorId').isInt({ min: 1 }).withMessage('Doctor ID is required.'),
   body('locationId').isInt({ min: 1 }).withMessage('Location ID is required.'),

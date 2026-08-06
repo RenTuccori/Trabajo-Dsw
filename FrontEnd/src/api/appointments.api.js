@@ -55,6 +55,15 @@ export const createAppointment = async ({ patientId, dateAndTime, cancellationDa
         const backendPayload = error.response?.data;
         const validationErrors = backendPayload?.errors;
 
+        if (
+            error.response?.status === 409 ||
+            backendPayload?.code === 'APPOINTMENT_SLOT_UNAVAILABLE'
+        ) {
+            throw new Error(
+                'Ese horario acaba de ser reservado. Volvé a la agenda y elegí otro turno.'
+            );
+        }
+
         if (Array.isArray(validationErrors) && validationErrors.length > 0) {
             const message = validationErrors
                 .map((e) => `${e.field}: ${e.message}`)

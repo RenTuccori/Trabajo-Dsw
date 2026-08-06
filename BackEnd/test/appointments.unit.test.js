@@ -120,6 +120,21 @@ describe('Appointments Controller – Unit Tests', () => {
 
       expect(res.status).toHaveBeenCalledWith(201);
     });
+
+    it('should return 409 when the selected slot is no longer available', async () => {
+      const conflict = new Error('The selected appointment time is no longer available.');
+      conflict.statusCode = 409;
+      conflict.code = 'APPOINTMENT_SLOT_UNAVAILABLE';
+      mockService.createNewAppointment.mockRejectedValue(conflict);
+
+      await createAppointment(req, res);
+
+      expect(res.status).toHaveBeenCalledWith(409);
+      expect(res.json).toHaveBeenCalledWith({
+        message: conflict.message,
+        code: conflict.code,
+      });
+    });
   });
 
   describe('deleteAppointment', () => {

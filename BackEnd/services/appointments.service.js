@@ -1,5 +1,13 @@
-import { Appointment, Patient, User, Location, Doctor, Specialty } from '../models/index.js';
+import { Appointment, Patient, User, Location, Doctor, Specialty, sequelize } from '../models/index.js';
 import { Op, literal } from 'sequelize';
+import { normalizeClinicDateTimeToUtc } from '../utils/dateTime.js';
+
+const createSlotUnavailableError = () => {
+  const error = new Error('The selected appointment time is no longer available.');
+  error.statusCode = 409;
+  error.code = 'APPOINTMENT_SLOT_UNAVAILABLE';
+  return error;
+};
 
 export const getAppointmentsByPatientNationalId = async (nationalId) => {
   const patient = await Patient.findOne({
@@ -147,15 +155,59 @@ export const cancelAppointment = async (appointmentId) => {
 };
 
 export const createNewAppointment = async (appointmentData) => {
-  const patientExists = await Patient.findByPk(appointmentData.patientId);
-  if (!patientExists) {
-    throw new Error(`Patient with id ${appointmentData.patientId} not found`);
-  }
+  const normalizedDateTime = normalizeClinicDateTimeToUtc(appointmentData.dateTime);
 
-  const appointment = await Appointment.create({
-    ...appointmentData,
+  return sequelize.transaction(async (transaction) => {
+    const patientExists = await Patient.findByPk(appointmentData.patientId, { transaction });
+    if (!patientExists) {
+      const error = new Error(`Patient with id ${appointmentData.patientId} not found`);
+      error.statusCode = 404;
+      throw error;
+    }
+
+    const doctorExists = await Doctor.findByPk(appointmentData.doctorId, {
+      transaction,
+      lock: transaction.LOCK.UPDATE,
+    });
+    if (!doctorExists) {
+      const error = new Error(`Doctor with id ${appointmentData.doctorId} not found`);
+      error.statusCode = 404;
+      throw error;
+    }
+
+    const occupiedAppointment = await Appointment.findOne({
+      where: {
+        doctorId: appointmentData.doctorId,
+        dateTime: normalizedDateTime,
+        status: { [Op.ne]: 'Cancelled' },
+        cancellationDate: null,
+      },
+      transaction,
+      lock: transaction.LOCK.UPDATE,
+    });
+
+    if (occupiedAppointment) {
+      throw createSlotUnavailableError();
+    }
+
+    try {
+      return await Appointment.create(
+        {
+          ...appointmentData,
+          dateTime: normalizedDateTime,
+          status: 'Pending',
+          cancellationDate: null,
+          confirmationDate: null,
+        },
+        { transaction }
+      );
+    } catch (error) {
+      if (error.name === 'SequelizeUniqueConstraintError') {
+        throw createSlotUnavailableError();
+      }
+      throw error;
+    }
   });
-  return appointment;
 };
 
 export const deleteExistingAppointment = async (appointmentId) => {

@@ -147,6 +147,7 @@ DB_PASSWORD=tu_contraseña_mysql
 DB_DATABASE=clinica_db
 DB_DIALECT=mysql
 DB_SSL=false
+CLINIC_TIMEZONE_OFFSET=-03:00
 EMAIL_USER=tu_email@gmail.com
 DB_EMAILPASS=tu_contraseña_app_gmail
 ```
@@ -184,6 +185,7 @@ DB_PASSWORD=tu_contraseña_mysql
 DB_DATABASE=clinica_db
 DB_DIALECT=mysql
 DB_SSL=false
+CLINIC_TIMEZONE_OFFSET=-03:00
 
 # Para bases de datos remotas como Render Postgres, usar DATABASE_URL:
 # DATABASE_URL=postgresql://usuario:contraseña@host/nombre_db

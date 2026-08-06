@@ -613,7 +613,7 @@ Authorization: Bearer <token>
 POST /api/appointments
 Authorization: Bearer <token>
 ```
-**Descripción:** Crea una nueva cita
+**Descripción:** Crea una nueva cita. Los horarios enviados sin zona se interpretan como hora de Argentina (`-03:00`) y se almacenan como UTC. El servidor vuelve a comprobar que el médico esté libre antes de guardar.
 
 **Roles Requeridos:** `Patient`
 
@@ -634,6 +634,14 @@ Authorization: Bearer <token>
   "doctorId": 1,
   "dateTime": "2025-06-15T10:00:00",
   "status": "pending"
+}
+```
+
+**Respuesta por conflicto de horario (409):**
+```json
+{
+  "message": "The selected appointment time is no longer available.",
+  "code": "APPOINTMENT_SLOT_UNAVAILABLE"
 }
 ```
 

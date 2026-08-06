@@ -58,7 +58,9 @@ CREATE TABLE `appointments` (
   `doctorId` int NOT NULL,
   `locationId` int DEFAULT NULL,
   `emailSent` int DEFAULT NULL,
+  `activeDateTime` datetime GENERATED ALWAYS AS ((case when ((`cancellationDate` is null) and (`status` <> _utf8mb4'Cancelled')) then `dateTime` else NULL end)) STORED,
   PRIMARY KEY (`id`,`doctorId`),
+  UNIQUE KEY `uq_appointments_doctor_active_datetime` (`doctorId`,`activeDateTime`),
   KEY `specialtyId` (`specialtyId`),
   KEY `doctorId` (`doctorId`),
   KEY `locationId` (`locationId`),
@@ -74,7 +76,7 @@ CREATE TABLE `appointments` (
 
 LOCK TABLES `appointments` WRITE;
 /*!40000 ALTER TABLE `appointments` DISABLE KEYS */;
-INSERT INTO `appointments` VALUES
+INSERT INTO `appointments` (`id`,`patientId`,`dateTime`,`cancellationDate`,`confirmationDate`,`status`,`specialtyId`,`doctorId`,`locationId`,`emailSent`) VALUES
   (1,1,'2026-03-30 10:00:00',NULL,'2026-03-26 15:30:00','Confirmed',1,1,1,1),
   (2,2,'2026-04-02 09:30:00',NULL,NULL,'Pending',2,2,1,0),
   (3,3,'2026-04-07 14:00:00',NULL,NULL,'Pending',3,3,2,0),

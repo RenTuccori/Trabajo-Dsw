@@ -1,5 +1,5 @@
 import { sequelize } from '../models/index.js';
-import { QueryTypes } from 'sequelize';
+import { CLINIC_TIMEZONE_OFFSET } from '../utils/dateTime.js';
 
 export const getAvailableDatesByDocSpecLoc = async (doctorId, specialtyId, locationId) => {
   const [results] = await sequelize.query(`
@@ -30,13 +30,12 @@ export const getAvailableDatesByDocSpecLoc = async (doctorId, specialtyId, locat
     LEFT JOIN appointments tur
       ON tur.doctorId = ts.doctorId AND tur.specialtyId = ts.specialtyId
       AND tur.locationId = ts.locationId
-      AND ts.day = DAYNAME(tur.dateTime)
-      AND CONCAT(ts.fecha, ' ', ts.start_time) = tur.dateTime
+      AND CONVERT_TZ(CONCAT(ts.fecha, ' ', ts.start_time), ?, '+00:00') = tur.dateTime
     WHERE (tur.id IS NULL OR tur.cancellationDate IS NOT NULL)
       AND ts.doctorId = ? AND ts.specialtyId = ? AND ts.locationId = ?
     GROUP BY ts.fecha, ts.day, usu.firstName, usu.lastName
     ORDER BY ts.fecha
-  `, { replacements: [doctorId, specialtyId, locationId, doctorId, specialtyId, locationId] });
+  `, { replacements: [doctorId, specialtyId, locationId, CLINIC_TIMEZONE_OFFSET, doctorId, specialtyId, locationId] });
   return results;
 };
 
@@ -68,13 +67,12 @@ export const getAvailableDatesBySpecLoc = async (specialtyId, locationId) => {
     LEFT JOIN appointments tur
       ON tur.doctorId = ts.doctorId AND tur.specialtyId = ts.specialtyId
       AND tur.locationId = ts.locationId
-      AND ts.day = DAYNAME(tur.dateTime)
-      AND CONCAT(ts.fecha, ' ', ts.start_time) = tur.dateTime
+      AND CONVERT_TZ(CONCAT(ts.fecha, ' ', ts.start_time), ?, '+00:00') = tur.dateTime
     WHERE (tur.id IS NULL OR tur.cancellationDate IS NOT NULL)
       AND ts.specialtyId = ? AND ts.locationId = ?
     GROUP BY ts.fecha, ts.day, usu.firstName, usu.lastName
     ORDER BY ts.fecha
-  `, { replacements: [specialtyId, locationId, specialtyId, locationId] });
+  `, { replacements: [specialtyId, locationId, CLINIC_TIMEZONE_OFFSET, specialtyId, locationId] });
   return results;
 };
 
@@ -103,14 +101,13 @@ export const getAvailableSchedulesByDocSpecLoc = async (doctorId, specialtyId, l
     LEFT JOIN appointments tur
       ON tur.doctorId = ts.doctorId AND tur.specialtyId = ts.specialtyId
       AND tur.locationId = ts.locationId
-      AND ts.day = DAYNAME(tur.dateTime)
-      AND CONCAT(fe.date, ' ', ts.start_time) = tur.dateTime
+      AND CONVERT_TZ(CONCAT(fe.date, ' ', ts.start_time), ?, '+00:00') = tur.dateTime
     JOIN doctors doc_ts ON doc_ts.id = ts.doctorId JOIN users usu ON usu.nationalId = doc_ts.nationalId
     WHERE (tur.id IS NULL OR tur.cancellationDate IS NOT NULL)
       AND ts.doctorId = ? AND ts.specialtyId = ? AND ts.locationId = ?
       AND fe.date = ?
     ORDER BY ts.day, ts.start_time
-  `, { replacements: [doctorId, specialtyId, locationId, doctorId, specialtyId, locationId, fecha] });
+  `, { replacements: [doctorId, specialtyId, locationId, CLINIC_TIMEZONE_OFFSET, doctorId, specialtyId, locationId, fecha] });
   return results;
 };
 
@@ -139,13 +136,12 @@ export const getAvailableSchedulesBySpecLoc = async (specialtyId, locationId, fe
     LEFT JOIN appointments tur
       ON tur.doctorId = ts.doctorId AND tur.specialtyId = ts.specialtyId
       AND tur.locationId = ts.locationId
-      AND ts.day = DAYNAME(tur.dateTime)
-      AND CONCAT(fe.date, ' ', ts.start_time) = tur.dateTime
+      AND CONVERT_TZ(CONCAT(fe.date, ' ', ts.start_time), ?, '+00:00') = tur.dateTime
     JOIN doctors doc_ts ON doc_ts.id = ts.doctorId JOIN users usu ON usu.nationalId = doc_ts.nationalId
     WHERE (tur.id IS NULL OR tur.cancellationDate IS NOT NULL)
       AND ts.specialtyId = ? AND ts.locationId = ?
       AND fe.date = ?
     ORDER BY ts.day, ts.start_time
-  `, { replacements: [specialtyId, locationId, specialtyId, locationId, fecha] });
+  `, { replacements: [specialtyId, locationId, CLINIC_TIMEZONE_OFFSET, specialtyId, locationId, fecha] });
   return results;
 };

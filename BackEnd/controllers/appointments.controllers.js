@@ -83,7 +83,11 @@ export const createAppointment = async (req, res) => {
     const appointment = await appointmentsService.createNewAppointment(req.body);
     res.status(201).json(appointment);
   } catch (error) {
-    return res.status(500).json({ message: error.message });
+    const statusCode = error.statusCode || 500;
+    return res.status(statusCode).json({
+      message: error.message,
+      ...(error.code && { code: error.code }),
+    });
   }
 };
 
